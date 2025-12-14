@@ -5,7 +5,7 @@
                         "Version": "2.0.7",
 						"Info": "App",
 						"Size": 8388608,
-                        "File": ""https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/frimware/frimware.bin"
+                        "File": "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/frimware/frimware.bin"
                     }
                   ] 
 }
