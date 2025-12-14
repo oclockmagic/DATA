@@ -5,64 +5,7 @@
                         "Version": "2.0.7",
 						"Info": "App",
 						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew27.bin"
-                    },                     {
-                        "Version": "2.0.6",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew26.bin"
-                    },                     {
-                        "Version": "2.0.5",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew25.bin"
-                    },                    {
-                        "Version": "2.0.4",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew24.bin"
-                    },                    {
-                        "Version": "2.0.3",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew23.bin"
-                    },                    {
-                        "Version": "2.0.2",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew22.bin"
-                    },                     {
-                        "Version": "2.0.1",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew21.bin"
-                    },                    {
-                        "Version": "2.0.0",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew20.bin"
-                    },                    {
-                        "Version": "1.1.4",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew11.bin"
-                    },	  
-                    {
-                        "Version": "1.1.3",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew10.bin"
-                    },                    {
-                        "Version": "1.1.2",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew9.bin"
-                    },	  
-                    {
-                        "Version": "1.1.1",
-						"Info": "App",
-						"Size": 8388608,
-                        "File": "https://raw.githubusercontent.com/mrlankann/magicoclock/refs/heads/main/frimware/frimwarenew8.bin"
+                        "File": ""https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/frimware/frimware.bin"
                     }
                   ] 
 }
