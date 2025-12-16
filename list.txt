@@ -1,7 +1,1 @@
 new.dat
-a5.dat
-a6.dat
-a4.dat
-a2.dat
-nn3.dat
-nn2.dat 
