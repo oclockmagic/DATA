@@ -1,2 +1,2 @@
-new1.dat
-new2.dat
+vietnam.dat
+english.dat
