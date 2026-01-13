@@ -1,6 +1,12 @@
 {
       "Board": "1.0.0",
       "Frimware": [
+	  	            {
+                        "Version": "4.0.0",
+						"Info": "App",
+						"Size": 6291456,
+                        "File": "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/frimware/frimwarenew4.bin"
+                    },
 	                {
                         "Version": "3.0.0",
 						"Info": "App",
