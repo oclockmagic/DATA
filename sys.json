@@ -1,10 +1,22 @@
 {
-  "BXH": 29529567,
-  "TOP": 29529568,
-  "NEW": 29529566,
-  "CDE": 29526874,
-  "NSY": 29527648,
-  "COT": 29527667,
-  "RAD": 29527654,
-  "ZIN": 29527656
+	"sys":
+	{
+         "zingmp3.dat": 29529567,
+         "radio.dat": 29529568,
+         "truyen.dat": 29529566,
+         "nghesy.dat": 29526874,
+         "chude.dat": 29527648,
+         "top100.dat": 29527667,
+         "bangxh.dat": 29527654,
+         "newchart.dat": 29527656
+	},
+	"media":
+	{
+         "melody.dat": 29529567,
+         "quota.dat": 29529568,
+         "fcard.dat": 29529566,
+         "coloreq.dat": 29526874,
+         "colorpk.dat": 29527648,
+         "bass.dat": 29527667
+	}
 }
