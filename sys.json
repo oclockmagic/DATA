@@ -23,5 +23,5 @@
 	{
          "url_find": "http://zing.ledienbien.edu.vn/api/get_stream_by_id?id=",
          "url_play": "http://zing.ledienbien.edu.vn/stream_mp3?id=",
-		 
+	}
 }	
