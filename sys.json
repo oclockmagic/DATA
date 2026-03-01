@@ -1,5 +1,5 @@
 {
-	"sys":
+	"media":
 	{
          "zingmp3.dat": 29529567,
          "radio.dat": 29529568,
@@ -10,7 +10,7 @@
          "bangxh.dat": 29527654,
          "newchart.dat": 29527656
 	},
-	"media":
+	"sys":
 	{
          "melody.dat": 29529567,
          "quota.dat": 29529568,
@@ -19,4 +19,4 @@
          "colorpk.dat": 29527648,
          "bass.dat": 29527667
 	}
-}
+}	
