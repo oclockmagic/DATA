@@ -1,31 +1,27 @@
 {
-	"media":
-	{
-         "zingmp3.dat": 29529567,
-         "radio.dat": 29529568,
-         "truyen.dat": 29529566,
-         "nghesy.dat": 29526874,
-         "chude.dat": 29527648,
-         "top100.dat": 29527667,
-         "bangxh.dat": 29527655,
-         "newchar.dat": 29527657
-	},
-	"sys":
-	{
-         "melody.dat": 29529567,
-         "quota.dat": 29529568,
-         "fcard.dat": 29529566,
-         "coloreq.dat": 29526875,
-         "colorpk.dat": 29527648,
-         "bass.dat": 29527667
-	},
-	"data":
-	{
-         "0001.dat": 29529567
-	},
-	"url_music":
-	{
-         "url_find": "http://zing.ledienbien.edu.vn/api/get_stream_by_id?id=",
-         "url_play": "http://zing.ledienbien.edu.vn/stream_mp3?id="
-	}
-}	
+  "media": {
+    "zingmp3.dat": 29529567,
+    "radio.dat": 29529568,
+    "truyen.dat": 29529566,
+    "nghesy.dat": 29526874,
+    "chude.dat": 29527648,
+    "top100.dat": 29527667,
+    "bangxh.dat": 29527655,
+    "newchar.dat": 29527657
+  },
+  "sys": {
+    "melody.dat": 29529567,
+    "quota.dat": 29529568,
+    "fcard.dat": 29529566,
+    "coloreq.dat": 29526875,
+    "colorpk.dat": 29527648,
+    "bass.dat": 29527667
+  },
+  "data": {
+    "001.dat": 29542451
+  },
+  "url_music": {
+    "url_find": "http://zing.ledienbien.edu.vn/api/get_stream_by_id?id=",
+    "url_play": "http://zing.ledienbien.edu.vn/stream_mp3?id="
+  }
+}
