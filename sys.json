@@ -19,6 +19,10 @@
          "colorpk.dat": 29527648,
          "bass.dat": 29527667
 	},
+	"data":
+	{
+         "0001.dat": 29529567
+	},
 	"url_music":
 	{
          "url_find": "http://zing.ledienbien.edu.vn/api/get_stream_by_id?id=",
