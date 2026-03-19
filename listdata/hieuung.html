@@ -1,81 +1,46 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <title>Magic - Hiệu ứng</title>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width,initial-scale=0.8, user-scalable=no'>
-    <style>
-        body { display: flex; padding: 10px; min-height: 100vh; align-items: center; justify-content: center; background-color: rgb(6,2,29); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; }
-        .wrapper { width: 450px; max-width: 95vw; background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        h1 { text-align: center; font-weight: 300; font-size: 20px; margin: 10px 0; }
-        hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255, 0.2), transparent); margin: 15px 0; }
-        .home-img { width: 100%; background: rgba(255, 255, 255, 0.05); height: 40px; color: #FFF; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); margin-top: 20px; cursor: pointer; }
-        .conectt { display: block; font-size: 10px; color: rgba(255, 255, 255, 0.4); margin-top: 15px; text-align: right; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #4facfe; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
+﻿<!DOCTYPE html><html><head><title>Magic - Hiệu ứng</title><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=0.8, user-scalable=no'>
+<style>body { display: flex; padding: 10px; min-height: 100vh; align-items: center; justify-content: center; background-color: rgb(6,2,29); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; }
+.wrapper { width: 450px; max-width: 95vw; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
+h1 { text-align: center; font-weight: 300; font-size: 20px; margin: 10px 0; } hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255, 0.2), transparent); margin: 15px 0; }
+.home-img { width: 100%; background: rgba(255,255,255,0.05); height: 40px; color: #FFF; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); margin-top: 20px; cursor: pointer; }
+.conectt { display: block; font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 15px; text-align: right; }
+.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+.loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #4facfe; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } 
         .view_wrap { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; margin-top: 10px; }
-        .view_item { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 10px; display: inline-flex; flex-direction: column; align-items: center; width: 100px; }
+        .view_item { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; display: inline-flex; flex-direction: column; align-items: center; width: 100px; }
         .vi_left img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; }
-        .btn-download { background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; border: none; border-radius: 6px; padding: 6px 0; width: 100%; font-size: 11px; font-weight: bold; margin-top: 8px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div id='overlay' class='overlay'><div style='text-align:center; color:white;'><div class='loader' style='margin:0 auto 10px;'></div><p id='status-text'>Processing...</p></div></div>
-    <div class='wrapper'>
-        <h1>Magic Store</h1>
-        <hr>
-        <div class='view_wrap' id='items-container'>
+        .btn-download { background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; border: none; border-radius: 6px; padding: 6px 0; width: 100%; font-size: 11px; font-weight: bold; margin-top: 8px; cursor: pointer; }</style></head>
+<body><div id='overlay' class='overlay'><div style='text-align:center; color:white;'><div class='loader' style='margin:0 auto 10px;'></div><p id='status-text'>Processing...</p></div></div>
+<div class='wrapper'><h1>Magic Store</h1><hr><div class='view_wrap' id='items-container'>
                 <div class='view_item'>
                     <div class='vi_left'>
-                        <img src='hieuung/d1.bmp' alt='d1.bmp'>
+                        <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hieuung/d1.bmp' alt='d1.bmp'>
                         <div class='file-name'>d1.clk</div>
                     </div>
-                    <button class='btn-download' data-url='hieuung/d1.clk'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hieuung/d1.clk'>Download</button>
                 </div>
                 <div class='view_item'>
                     <div class='vi_left'>
-                        <img src='hieuung/d2.bmp' alt='d2.bmp'>
+                        <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hieuung/d2.bmp' alt='d2.bmp'>
                         <div class='file-name'>d2.clk</div>
                     </div>
-                    <button class='btn-download' data-url='hieuung/d2.clk'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hieuung/d2.clk'>Download</button>
                 </div>
                 <div class='view_item'>
                     <div class='vi_left'>
-                        <img src='hieuung/d3.bmp' alt='d3.bmp'>
+                        <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hieuung/d3.bmp' alt='d3.bmp'>
                         <div class='file-name'>d3.clk</div>
                     </div>
-                    <button class='btn-download' data-url='hieuung/d3.clk'>Download</button>
-                </div>
-        </div>
-        <hr>
-        <button class='home-img' onclick="window.location.href='listclock.html'">BACK TO LIST</button>
-        <label class='conectt' id='conet'>Status: Connecting...</label>
-    </div>
-    <script>
-        var BASE_DOWNLOAD_PATH = window.location.origin + '/listdata/';
-        var websocket;
-        function initWebSocket() {
-            var targetHost = window.location.host || '192.168.4.1';
-            websocket = new WebSocket('ws://' + targetHost + '/ws');
-            websocket.onopen = function() { document.getElementById('conet').innerHTML = 'Status: Connected'; };
-            websocket.onmessage = function(evt) {
-                if (evt.data === 'SAVEOK') {
-                    document.getElementById('status-text').innerText = 'OK!';
-                    setTimeout(() => { document.getElementById('overlay').style.display='none'; }, 1000);
-                }
-            };
-        }
-        function download(url) {
-            document.getElementById('overlay').style.display='flex';
-            if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + (url.startsWith('http') ? url : BASE_DOWNLOAD_PATH + url));
-        }
-        document.getElementById('items-container').addEventListener('click', function(e) {
-            var t = e.target.closest('.btn-download');
-            if (t) download(t.getAttribute('data-url'));
-        });
-        window.onload = initWebSocket;
-    </script>
-</body>
-</html>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hieuung/d3.clk'>Download</button>
+                </div></div><hr><button class='home-img' onclick="window.location.href='listclock.html'">BACK TO LIST</button>
+<label class='conectt' id='conet'>Status: Connecting...</label></div>
+<script>var websocket; function initWebSocket() {
+var host = window.location.host || '192.168.4.1'; websocket = new WebSocket('ws://' + host + '/ws');
+websocket.onopen = function() { document.getElementById('conet').innerHTML = 'Status: Connected'; };
+websocket.onmessage = function(evt) { if (evt.data === 'SAVEOK') { document.getElementById('status-text').innerText = 'OK!'; setTimeout(() => { document.getElementById('overlay').style.display='none'; }, 1000); } };
+}
+function download(url) { document.getElementById('overlay').style.display='flex'; if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + url); }
+document.getElementById('items-container').addEventListener('click', function(e) {
+var t = e.target.closest('.btn-download'); if (t) download(t.getAttribute('data-url'));
+}); window.onload = initWebSocket;</script></body></html>
