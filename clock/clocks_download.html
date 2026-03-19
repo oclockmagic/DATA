@@ -261,13 +261,6 @@
     </div>
 
     <div class="wrapper">
-        <div class="settings-panel">
-            <div class="ip-group">
-                <span id="mode-badge" class="ip-badge">Detecting...</span>
-                <input type="text" id="esp-ip" placeholder="ESP32 IP Address" />
-            </div>
-            <button class="btn-download" style="width: auto; padding: 6px 15px; margin-top: 0; font-size: 10px;" onclick="updateIP()">Kết nối</button>
-        </div>
         <h2>REMOTE CLOCK STORE</h2>
         <hr color="rgba(186, 104, 200, 0.3)">
         
@@ -275,29 +268,29 @@
             <div class="view_wrap">
                 <!-- Item 1 -->
                 <div class='view_item'>
-                    <div class='vi_left' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d1.bmp" data-name="d1.bmp">
+                    <div class='vi_left' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d1.bmp" data-name="d1.clk">
                         <img src="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d1.bmp" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'%3E%3Crect width=\'80\' height=\'80\' fill=\'%23333\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'white\' font-size=\'10\' dy=\'.3em\'%3EBMP%3C/text%3E%3C/svg%3E'" alt="d1.bmp">
-                        <div class="file-name">d1.bmp</div>
+                        <div class="file-name">d1.clk</div>
                     </div>
-                    <button class='btn-download' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d1.bmp" data-name="d1.bmp">Download</button>
+                    <button class='btn-download' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d1.bmp" data-name="d1.clk">Download</button>
                 </div>
 
                 <!-- Item 2 -->
                 <div class='view_item'>
-                    <div class='vi_left' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d2.bmp" data-name="d2.bmp">
+                    <div class='vi_left' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d2.bmp" data-name="d2.clk">
                         <img src="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d2.bmp" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'%3E%3Crect width=\'80\' height=\'80\' fill=\'%23333\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'white\' font-size=\'10\' dy=\'.3em\'%3EBMP%3C/text%3E%3C/svg%3E'" alt="d2.bmp">
-                        <div class="file-name">d2.bmp</div>
+                        <div class="file-name">d2.clk</div>
                     </div>
-                    <button class='btn-download' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d2.bmp" data-name="d2.bmp">Download</button>
+                    <button class='btn-download' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d2.bmp" data-name="d2.clk">Download</button>
                 </div>
 
                 <!-- Item 3 -->
                 <div class='view_item'>
-                    <div class='vi_left' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d3.bmp" data-name="d3.bmp">
+                    <div class='vi_left' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d3.bmp" data-name="d3.clk">
                         <img src="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d3.bmp" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\'%3E%3Crect width=\'80\' height=\'80\' fill=\'%23333\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'white\' font-size=\'10\' dy=\'.3em\'%3EBMP%3C/text%3E%3C/svg%3E'" alt="d3.bmp">
-                        <div class="file-name">d3.bmp</div>
+                        <div class="file-name">d3.clk</div>
                     </div>
-                    <button class='btn-download' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d3.bmp" data-name="d3.bmp">Download</button>
+                    <button class='btn-download' data-url="https://raw.githubusercontent.com/oclockmagic/DATA/main/clock/d3.bmp" data-name="d3.clk">Download</button>
                 </div>
             </div>
         </div>
@@ -315,33 +308,9 @@
         var progressBar = document.getElementById('p-bar');
         var progressText = document.getElementById('p-text');
         var progressContainer = document.getElementById('p-container');
-        var espIpInput = document.getElementById('esp-ip');
-        var modeBadge = document.getElementById('mode-badge');
-
-        // Logic tự động phát hiện IP
-        var isLocal = window.location.hostname.includes("192.168.") || window.location.hostname.includes(".local") || window.location.hostname === "localhost";
-        var savedIP = localStorage.getItem('esp_ip');
-        var currentIP = savedIP || window.location.hostname;
-
-        if (isLocal) {
-            modeBadge.innerText = "LOCAL MODE";
-            modeBadge.className = "ip-badge badge-local";
-            if (!savedIP) currentIP = window.location.hostname;
-        } else {
-            modeBadge.innerText = "ONLINE MODE";
-            modeBadge.className = "ip-badge badge-remote";
-            if (!savedIP) currentIP = "192.168.4.1"; // Mặc định của ESP32 AP
-        }
-        
-        espIpInput.value = currentIP;
-
-        function updateIP() {
-            localStorage.setItem('esp_ip', espIpInput.value);
-            location.reload();
-        }
 
         function initWebSocket() {
-            var targetHost = espIpInput.value;
+            var targetHost = window.location.host || "192.168.4.1";
             buttonconect.innerHTML = "Status: Connecting to " + targetHost + "...";
             
             websocket = new WebSocket(`ws://${targetHost}/ws`);
@@ -349,7 +318,6 @@
             websocket.onopen = function(evt) {
                 buttonconect.innerHTML = "Status: Connected to " + targetHost;
                 buttonconect.style.color = "#4facfe";
-                modeBadge.innerText = isLocal ? "LOCAL: Connected" : "ONLINE: Connected";
             };
             
             websocket.onclose = function(evt) {
@@ -386,17 +354,19 @@
         }
 
         document.querySelector(".view_wrap").addEventListener("click", function (e) {
-            var downloadBtn = e.target.closest(".btn-download");
-            var leftPart = e.target.closest(".vi_left");
-            
-            var target = downloadBtn || leftPart;
+            var target = e.target.closest(".btn-download");
             
             if (target) {
                 var url = target.getAttribute("data-url");
                 var name = target.getAttribute("data-name");
                 
+                // Đảm bảo tên hiển thị là .clk
+                if (name.endsWith(".bmp")) {
+                    name = name.substring(0, name.length - 4) + ".clk";
+                }
+                
                 overlay.style.display = 'flex';
-                statusText.innerText = "Đang chuẩn bị tải " + name + "...";
+                statusText.innerText = "Đang tải " + name + "...";
                 progressContainer.style.display = 'none';
                 progressBar.style.width = "0%";
                 progressText.innerText = "0%";
@@ -404,7 +374,7 @@
                 if (websocket && websocket.readyState === WebSocket.OPEN) {
                     websocket.send("#DLD@" + url);
                 } else {
-                    alert("Chưa kết nối đến ESP32! Vui lòng kiểm tra IP và Wifi.");
+                    alert("Chưa kết nối đến ESP32!");
                     overlay.style.display = 'none';
                 }
             }
