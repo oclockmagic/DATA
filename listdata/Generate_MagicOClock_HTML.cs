@@ -64,7 +64,7 @@ namespace MagicOClockGenerator
                 GenerateMainListFile(categories);
                 htmlFilesBuilt.Insert(0, MAIN_LIST_NAME);
                 GenerateSimpleJson(htmlFilesBuilt);
-                MessageBox.Show("Xong! Đã sửa thanh tiến trình và font chữ.");
+                MessageBox.Show("Xong! Đã tăng kích thước font chữ.");
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
         }
@@ -116,7 +116,6 @@ namespace MagicOClockGenerator
             {
                 string githubImg = string.IsNullOrEmpty(item.BmpFile) ? "" : GITHUB_URL + cat.Id + "/" + item.BmpFile;
                 string githubClk = GITHUB_URL + cat.Id + "/" + item.ClkFile;
-                // Bỏ đuôi file khi hiển thị
                 string displayName = Path.GetFileNameWithoutExtension(item.ClkFile);
                 sb.Append($@"
                 <div class='view_item'>
@@ -137,13 +136,13 @@ namespace MagicOClockGenerator
         .category_grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
         .category_item { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; text-decoration: none; color: inherit; }
         .category_item img { width: 100%; aspect-ratio: 1; border-radius: 8px; object-fit: cover; }
-        .category_title { font-size: 10px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .category_count { font-size: 8px; opacity: 0.6; }" : @"
+        .category_title { font-size: 11px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .category_count { font-size: 9px; opacity: 0.6; }" : @"
         .view_wrap { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; margin-top: 10px; }
         .view_item { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; display: inline-flex; flex-direction: column; align-items: center; width: 95px; }
         .vi_left img { width: 75px; height: 75px; border-radius: 8px; object-fit: cover; }
         .btn-download { background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; border: none; border-radius: 6px; padding: 5px 0; width: 100%; font-size: 10px; font-weight: bold; margin-top: 8px; cursor: pointer; }
-        .file-name { font-size: 8px; margin-top: 4px; opacity: 0.7; color: #00f2fe; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px; }";
+        .file-name { font-size: 10px; margin-top: 4px; opacity: 0.8; color: #00f2fe; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px; }";
 
             return $@"<!DOCTYPE html><html><head><title>{title}</title><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=0.8, user-scalable=no'>
 <style>body {{ display: flex; padding: 10px; min-height: 100vh; align-items: center; justify-content: center; background-color: rgb(6,2,29); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; }}
