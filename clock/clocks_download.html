@@ -30,7 +30,7 @@
             display: inline-flex;
             flex-direction: column;
             align-items: center;
-            width: 80px;
+            width: 100px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -42,8 +42,8 @@
         }
 
         .vi_left img {
-            width: 64px;
-            height: 64px;
+            width: 80px;
+            height: 80px;
             border-radius: 8px;
             object-fit: cover;
             cursor: pointer;
@@ -353,6 +353,54 @@
             };
         }
 
+        async function checkAndDownload(url, name) {
+            try {
+                // Hiển thị trạng thái đang kiểm tra
+                buttonconect.innerHTML = "Status: Checking storage...";
+                
+                // 1. Lấy dung lượng còn trống từ ESP32 qua HTTP API mới
+                const spaceResp = await fetch('/free_space');
+                if (!spaceResp.ok) throw new Error("Không thể kết nối tới ESP32 để kiểm tra bộ nhớ!");
+                const freeSpace = parseInt(await spaceResp.text());
+
+                // 2. Lấy kích thước file từ GitHub (HEAD request)
+                const fileResp = await fetch(url, { method: 'HEAD' });
+                const fileSize = parseInt(fileResp.headers.get('content-length')) || 0;
+
+                console.log("Storage check:", { free: freeSpace, needed: fileSize });
+
+                if (fileSize > 0 && fileSize > freeSpace) {
+                    const freeKB = (freeSpace / 1024).toFixed(1);
+                    const needKB = (fileSize / 1024).toFixed(1);
+                    alert(`⚠️ KHÔNG ĐỦ BỘ NHỚ!\n\nBộ nhớ trống: ${freeKB} KB\nYêu cầu: ${needKB} KB\n\nVui lòng xóa bớt các Clock cũ trước khi tải thêm.`);
+                    buttonconect.innerHTML = "Status: Insufficient storage!";
+                    buttonconect.style.color = "#ff4d4d";
+                    return;
+                }
+
+                // 3. Nếu đủ dung lượng, tiến hành gửi lệnh download qua WebSocket
+                overlay.style.display = 'flex';
+                statusText.innerText = "Đang tải " + name + "...";
+                progressContainer.style.display = 'none';
+                progressBar.style.width = "0%";
+                progressText.innerText = "0%";
+                
+                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    websocket.send("#DLD@" + url);
+                } else {
+                    alert("Mất kết nối WebSocket. Vui lòng tải lại trang!");
+                    overlay.style.display = 'none';
+                }
+            } catch (err) {
+                console.error("Download check error:", err);
+                alert("Lỗi kiểm tra: " + err.message);
+            } finally {
+                if (buttonconect.innerHTML.includes("Checking")) {
+                    buttonconect.innerHTML = "Status: Connected";
+                }
+            }
+        }
+
         document.querySelector(".view_wrap").addEventListener("click", function (e) {
             var target = e.target.closest(".btn-download");
             
@@ -365,20 +413,10 @@
                     name = name.substring(0, name.length - 4) + ".clk";
                 }
                 
-                overlay.style.display = 'flex';
-                statusText.innerText = "Đang tải " + name + "...";
-                progressContainer.style.display = 'none';
-                progressBar.style.width = "0%";
-                progressText.innerText = "0%";
-                
-                if (websocket && websocket.readyState === WebSocket.OPEN) {
-                    websocket.send("#DLD@" + url);
-                } else {
-                    alert("Chưa kết nối đến ESP32!");
-                    overlay.style.display = 'none';
-                }
+                checkAndDownload(url, name);
             }
         });
+
 
         window.addEventListener('load', initWebSocket);
     </script>
