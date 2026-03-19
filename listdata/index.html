@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Magic Store</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=0.8, user-scalable=no'>
+    <style>
+        body { display: flex; padding: 10px; min-height: 100vh; align-items: center; justify-content: center; background-color: rgb(6,2,29); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; }
+        .wrapper { width: 450px; max-width: 95vw; background: rgba(0, 0, 0, 0.3); padding: 25px; border-radius: 25px; backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        h1 { text-align: center; font-weight: 300; letter-spacing: 2px; font-size: 24px; }
+        hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(186, 104, 200, 0.5), transparent); margin: 20px 0; }
+        .home-img { width: 100%; background: rgba(255, 255, 255, 0.05); height: 40px; color: #FFF; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.2); margin-top: 20px; cursor: pointer; }
+        .conectt { display: block; font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 15px; text-align: right; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .overlay-content { background: rgba(20,20,20,0.8); padding: 40px; border-radius: 20px; text-align: center; }
+        .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #4facfe; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .progress-container { width: 200px; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 15px; overflow: hidden; display: none; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); transition: width 0.3s; }
+        
+        .category_grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+        .category_item { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.3s; text-decoration: none; color: inherit; }
+        .category_item:hover { background: rgba(255, 255, 255, 0.15); transform: translateY(-5px); border-color: #4facfe; }
+        .category_item img { width: 100%; aspect-ratio: 1; border-radius: 8px; object-fit: cover; margin-bottom: 8px; }
+        .category_title { font-size: 11px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .category_count { font-size: 9px; opacity: 0.6; }
+    </style>
+</head>
+<body>
+    <div id='overlay' class='overlay'><div class='overlay-content'><div class='loader'></div><p id='status-text'>Đang tải...</p><div class='progress-container' id='p-container'><div class='progress-bar' id='p-bar'></div></div></div></div>
+    <div class='wrapper'>
+        <h1>Magic Store</h1>
+        <hr>
+        <div class='category_grid' id='items-container'>
+            <a href='hieuung_view.html' class='category_item'>
+                <img src='hieuung.jpg' alt='Hiệu ứng'>
+                <div class='category_title'>Hiệu ứng</div>
+                <div class='category_count'>3 Clocks</div>
+            </a>
+            <a href='hoa_view.html' class='category_item'>
+                <img src='hoa.jpg' alt='Hoa'>
+                <div class='category_title'>Hoa</div>
+                <div class='category_count'>6 Clocks</div>
+            </a>
+            <a href='ngayle_view.html' class='category_item'>
+                <img src='ngayle.jpg' alt='Ngày lễ'>
+                <div class='category_title'>Ngày lễ</div>
+                <div class='category_count'>4 Clocks</div>
+            </a>
+            <a href='phongcanh_view.html' class='category_item'>
+                <img src='phongcanh.jpg' alt='Phong cảnh'>
+                <div class='category_title'>Phong cảnh</div>
+                <div class='category_count'>3 Clocks</div>
+            </a>
+        </div>
+        <hr>
+        
+        <label class='conectt' id='conet'>Status: Connecting...</label>
+    </div>
+    <script>
+        var BASE_DOWNLOAD_PATH = window.location.origin + '/listdata/';
+        var websocket;
+        function initWebSocket() {
+            var targetHost = window.location.host || '192.168.4.1';
+            websocket = new WebSocket('ws://' + targetHost + '/ws');
+            websocket.onopen = function() { document.getElementById('conet').innerHTML = 'Status: Connected'; };
+            websocket.onmessage = function(evt) {
+                if (evt.data === 'SAVEOK') {
+                    document.getElementById('status-text').innerText = 'Thành công!';
+                    setTimeout(() => { document.getElementById('overlay').style.display='none'; }, 1500);
+                } else if (evt.data.startsWith('#PRG@')) {
+                    var p = evt.data.substring(5);
+                    document.getElementById('p-container').style.display='block';
+                    document.getElementById('p-bar').style.width = p + '%';
+                }
+            };
+        }
+        function download(url) {
+            document.getElementById('overlay').style.display='flex';
+            if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + (url.startsWith('http') ? url : BASE_DOWNLOAD_PATH + url));
+        }
+        document.getElementById('items-container').addEventListener('click', function(e) {
+            var t = e.target.closest('.btn-download');
+            if (t) download(t.getAttribute('data-url'));
+        });
+        window.onload = initWebSocket;
+    </script>
+</body>
+</html>
