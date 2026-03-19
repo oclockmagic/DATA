@@ -1,9 +1,9 @@
 ﻿{
-  "data": {
-    "listclock.html": 1773911613,
-    "hieuung.html": 1773911613,
-    "hoa.html": 1773911613,
-    "ngayle.html": 1773911613,
-    "phongcanh.html": 1773911613
-  }
+  "data": [
+    "listclock.html",
+    "hieuung.html",
+    "hoa.html",
+    "ngayle.html",
+    "phongcanh.html"
+  ]
 }
