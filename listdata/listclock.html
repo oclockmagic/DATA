@@ -4,15 +4,18 @@
 h1 { text-align: center; font-weight: 300; font-size: 20px; margin: 10px 0; } hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255, 0.2), transparent); margin: 15px 0; }
 .home-img { width: 100%; background: rgba(255,255,255,0.05); height: 40px; color: #FFF; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); margin-top: 20px; cursor: pointer; }
 .conectt { display: block; font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 15px; text-align: right; }
-.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-.loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #4facfe; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+.overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+.overlay-content { background: rgba(20,20,20,0.8); padding: 30px; border-radius: 15px; text-align: center; width: 260px; }
+.loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #4facfe; border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+.progress-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 15px; overflow: hidden; display: none; }
+.progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe); transition: width 0.3s; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } 
         .category_grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
         .category_item { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; text-decoration: none; color: inherit; }
         .category_item img { width: 100%; aspect-ratio: 1; border-radius: 8px; object-fit: cover; }
         .category_title { font-size: 10px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .category_count { font-size: 8px; opacity: 0.6; }</style></head>
-<body><div id='overlay' class='overlay'><div style='text-align:center; color:white;'><div class='loader' style='margin:0 auto 10px;'></div><p id='status-text'>Processing...</p></div></div>
+<body><div id='overlay' class='overlay'><div class='overlay-content'><div class='loader'></div><p id='status-text' style='font-size:14px;'>Đang tải...</p><div class='progress-container' id='p-container'><div class='progress-bar' id='p-bar'></div></div><p id='p-text' style='font-size:10px; margin-top:5px; color:#4facfe;'></p></div></div>
 <div class='wrapper'><h1>Magic Store</h1><hr><div class='category_grid' id='items-container'>
             <a href='hieuung.html' class='category_item'>
                 <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hieuung.jpg' alt='Hiệu ứng'>
@@ -38,9 +41,25 @@ h1 { text-align: center; font-weight: 300; font-size: 20px; margin: 10px 0; } hr
 <script>var websocket; function initWebSocket() {
 var host = window.location.host || '192.168.4.1'; websocket = new WebSocket('ws://' + host + '/ws');
 websocket.onopen = function() { document.getElementById('conet').innerHTML = 'Status: Connected'; };
-websocket.onmessage = function(evt) { if (evt.data === 'SAVEOK') { document.getElementById('status-text').innerText = 'OK!'; setTimeout(() => { document.getElementById('overlay').style.display='none'; }, 1000); } };
+websocket.onmessage = function(evt) { 
+    var data = evt.data;
+    if (data === 'SAVEOK') {
+        document.getElementById('status-text').innerText = 'Thành công!';
+        document.getElementById('p-container').style.display = 'none';
+        setTimeout(() => { document.getElementById('overlay').style.display='none'; }, 1500);
+    } else if (data.startsWith('#PRG@')) {
+        var p = data.substring(5);
+        document.getElementById('p-container').style.display = 'block';
+        document.getElementById('p-bar').style.width = p + '%';
+        document.getElementById('p-text').innerText = p + '%';
+    }
+};
 }
-function download(url) { document.getElementById('overlay').style.display='flex'; if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + url); }
+function download(url, name) { 
+    document.getElementById('overlay').style.display='flex'; 
+    document.getElementById('status-text').innerText = 'Đang tải ' + name + '...';
+    if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + url); 
+}
 document.getElementById('items-container').addEventListener('click', function(e) {
-var t = e.target.closest('.btn-download'); if (t) download(t.getAttribute('data-url'));
+var t = e.target.closest('.btn-download'); if (t) download(t.getAttribute('data-url'), t.getAttribute('data-name'));
 }); window.onload = initWebSocket;</script></body></html>
