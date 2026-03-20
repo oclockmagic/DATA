@@ -11,6 +11,7 @@ namespace MagicOClockGenerator
     {
         private string rootPath = @"F:\MagicOClock2026\DATA\listdata";
         private string alarmPath = @"F:\MagicOClock2026\DATA\listalarm";
+        private string webPath = @"F:\MagicOClock2026\DATA\wed";
         private const string MAIN_LIST_NAME = "listclock.html";
         private const string GITHUB_URL = "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/";
         private const string GITHUB_URL_ALF = "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/";
@@ -44,6 +45,7 @@ namespace MagicOClockGenerator
             try
             {
                 if (!Directory.Exists(rootPath)) { MessageBox.Show("Error: " + rootPath); return; }
+                if (!Directory.Exists(webPath)) Directory.CreateDirectory(webPath);
                 var categories = new List<CategoryInfo>();
                 var htmlFilesBuilt = new List<string>();
                 var subDirs = Directory.GetDirectories(rootPath);
@@ -107,14 +109,14 @@ namespace MagicOClockGenerator
                     </div>");
                     }
                     sbAlarm.Append(GetFooter(false));
-                    File.WriteAllText(Path.Combine(alarmPath, "listalarm.html"), sbAlarm.ToString(), Encoding.UTF8);
+                    File.WriteAllText(Path.Combine(webPath, "listalarm.html"), sbAlarm.ToString(), Encoding.UTF8);
                     
                     // Thêm listalarm.html vào danh sách file cho data.json
                     htmlFilesBuilt.Add("listalarm.html");
                 }
 
                 GenerateSimpleJson(htmlFilesBuilt);
-                MessageBox.Show("Xong! Đã tạo tất cả các file HTML và JSON.");
+                MessageBox.Show("Xong! Đã tạo tất cả các file HTML và JSON vào thư mục wed.");
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
         }
@@ -129,7 +131,7 @@ namespace MagicOClockGenerator
             var en = htmlFiles.Select(f => $"    \"{f}\"").ToList();
             sb.Append(string.Join("," + Environment.NewLine, en));
             sb.AppendLine("\n  ]\n}");
-            File.WriteAllText(Path.Combine(rootPath, "data.json"), sb.ToString(), Encoding.UTF8);
+            File.WriteAllText(Path.Combine(webPath, "data.json"), sb.ToString(), Encoding.UTF8);
         }
 
         private List<ClockItem> GetClockItems(string dirPath)
@@ -158,7 +160,7 @@ namespace MagicOClockGenerator
             </a>");
             }
             sb.Append(GetFooter(true));
-            File.WriteAllText(Path.Combine(rootPath, MAIN_LIST_NAME), sb.ToString(), Encoding.UTF8);
+            File.WriteAllText(Path.Combine(webPath, MAIN_LIST_NAME), sb.ToString(), Encoding.UTF8);
         }
 
         private void GenerateDetailFile(CategoryInfo cat)
@@ -180,7 +182,7 @@ namespace MagicOClockGenerator
                 </div>");
             }
             sb.Append(GetFooter(false));
-            File.WriteAllText(Path.Combine(rootPath, cat.SafeFileName), sb.ToString(), Encoding.UTF8);
+            File.WriteAllText(Path.Combine(webPath, cat.SafeFileName), sb.ToString(), Encoding.UTF8);
         }
 
         private string GetHeader(string title, bool isIndex)
