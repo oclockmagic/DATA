@@ -71,7 +71,9 @@ namespace MagicOClockGenerator
         private void GenerateSimpleJson(List<string> htmlFiles)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("{\n  \"data\": [");
+            sb.AppendLine("{");
+            sb.AppendLine($"  \"time\": \"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}\",");
+            sb.AppendLine("  \"data\": [");
             var en = htmlFiles.Select(f => $"    \"{f}\"").ToList();
             sb.Append(string.Join("," + Environment.NewLine, en));
             sb.AppendLine("\n  ]\n}");
