@@ -28,26 +28,15 @@ namespace MagicOClockGenerator
             this.Controls.Add(lbl);
 
             Button button6 = new Button();
-            button6.Text = "BẮT ĐẦU TẠO HTML + JSON";
-            button6.Size = new System.Drawing.Size(250, 45);
-            button6.Location = new System.Drawing.Point(100, 100);
+            button6.Text = "BẮT ĐẦU TẠO TẤT CẢ (STORES + ALARM)";
+            button6.Size = new System.Drawing.Size(300, 60);
+            button6.Location = new System.Drawing.Point(75, 100);
             button6.BackColor = System.Drawing.Color.FromArgb(79, 172, 254);
             button6.ForeColor = System.Drawing.Color.White;
             button6.FlatStyle = FlatStyle.Flat;
             button6.Font = new System.Drawing.Font("Segoe UI", 10, System.Drawing.FontStyle.Bold);
             button6.Click += button6_Click;
             this.Controls.Add(button6);
-
-            Button button7 = new Button();
-            button7.Text = "TẠO DANH SÁCH BÁO THỨC";
-            button7.Size = new System.Drawing.Size(250, 45);
-            button7.Location = new System.Drawing.Point(100, 155);
-            button7.BackColor = System.Drawing.Color.FromArgb(255, 126, 179);
-            button7.ForeColor = System.Drawing.Color.White;
-            button7.FlatStyle = FlatStyle.Flat;
-            button7.Font = new System.Drawing.Font("Segoe UI", 10, System.Drawing.FontStyle.Bold);
-            button7.Click += button7_Click;
-            this.Controls.Add(button7);
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -75,56 +64,57 @@ namespace MagicOClockGenerator
                 }
                 GenerateMainListFile(categories);
                 htmlFilesBuilt.Insert(0, MAIN_LIST_NAME);
-                GenerateSimpleJson(htmlFilesBuilt);
-                MessageBox.Show("Xong! Đã làm nhỏ nút Back To List.");
-            }
-            catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
-        }
 
-        private void button7_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!Directory.Exists(alarmPath)) { MessageBox.Show("Error: " + alarmPath); return; }
-                StringBuilder sb = new StringBuilder();
-                sb.Append(GetHeader("REMOTE ALARM STORE", false));
-                
-                var files = Directory.GetFiles(alarmPath, "*.ala");
-                foreach (var file in files)
+                // Góp chức năng tạo danh sách báo thức
+                if (Directory.Exists(alarmPath))
                 {
-                    string name = Path.GetFileName(file);
-                    string nameNoExt = Path.GetFileNameWithoutExtension(file);
-                    string bmp = nameNoExt + ".bmp";
-                    string githubImg = File.Exists(Path.Combine(alarmPath, bmp)) ? GITHUB_URL_ALF + bmp : "";
-                    string githubAla = GITHUB_URL_ALF + name;
+                    StringBuilder sbAlarm = new StringBuilder();
+                    sbAlarm.Append(GetHeader("REMOTE ALARM STORE", false));
+                    var alaFiles = Directory.GetFiles(alarmPath, "*.ala");
+                    foreach (var file in alaFiles)
+                    {
+                        string name = Path.GetFileName(file);
+                        string nameNoExt = Path.GetFileNameWithoutExtension(file);
+                        string bmp = nameNoExt + ".bmp";
+                        string githubImg = File.Exists(Path.Combine(alarmPath, bmp)) ? GITHUB_URL_ALF + bmp : "";
+                        string githubAla = GITHUB_URL_ALF + name;
 
-                    byte[] info = new byte[32];
-                    using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read)) { fs.Read(info, 0, 32); }
+                        byte[] info = new byte[32];
+                        using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read)) { fs.Read(info, 0, 32); }
+                        
+                        int hType = info[17];
+                        int hGio = info[18];
+                        int hPhut = info[19];
+                        int hNgay = info[20];
+                        int hThang = info[21];
+                        int hThu = info[22];
+                        int hAm = info[23];
+
+                        string hAmStr = hAm == 1 ? "Âm lịch" : "Dương lịch";
+                        string alarmInfoText = "";
+                        if (hType == 0) alarmInfoText = $"{hGio:D2}-{hPhut:D2} Thứ {hThu}";
+                        else if (hType == 1) alarmInfoText = $"{hNgay:D2}/{hThang:D2} {hAmStr}";
+                        else if (hType == 2) alarmInfoText = $"{hGio:D2}-{hPhut:D2} {hNgay:D2}/{hThang:D2} {hAmStr}";
+
+                        sbAlarm.Append($@"
+                    <div class='view_item'>
+                        <div class='vi_left'>
+                            <img src='{githubImg}' alt='{nameNoExt}'>
+                            <div class='file-name'>{nameNoExt}</div>
+                            <div class='alarm-data'>{alarmInfoText}</div>
+                        </div>
+                        <button class='btn-download' data-url='{githubAla}' data-name='{name}'>Download</button>
+                    </div>");
+                    }
+                    sbAlarm.Append(GetFooter(false));
+                    File.WriteAllText(Path.Combine(alarmPath, "listalarm.html"), sbAlarm.ToString(), Encoding.UTF8);
                     
-                    int hType = info[17];
-                    int hGio = info[18];
-                    int hPhut = info[19];
-                    int hNgay = info[20];
-                    int hThang = info[21];
-                    int hThu = info[22];
-                    int hAm = info[23];
-
-                    string alarmInfo = $"<div class='alarm-data'>{hGio:D2}:{hPhut:D2}</div>";
-                    alarmInfo += $"<div class='alarm-sub'>T{hType} - {hNgay:D2}/{hThang:D2} - Thứ {hThu} {(hAm == 1 ? "(Am)" : "")}</div>";
-
-                    sb.Append($@"
-                <div class='view_item'>
-                    <div class='vi_left'>
-                        <img src='{githubImg}' alt='{nameNoExt}'>
-                        <div class='file-name'>{nameNoExt}</div>
-                        {alarmInfo}
-                    </div>
-                    <button class='btn-download' data-url='{githubAla}' data-name='{name}'>Download</button>
-                </div>");
+                    // Thêm listalarm.html vào danh sách file cho data.json
+                    htmlFilesBuilt.Add("listalarm.html");
                 }
-                sb.Append(GetFooter(false));
-                File.WriteAllText(Path.Combine(alarmPath, "listalarm.html"), sb.ToString(), Encoding.UTF8);
-                MessageBox.Show("Xong! Đã tạo file listalarm.html.");
+
+                GenerateSimpleJson(htmlFilesBuilt);
+                MessageBox.Show("Xong! Đã tạo tất cả các file HTML và JSON.");
             }
             catch (Exception ex) { MessageBox.Show("Error: " + ex.Message); }
         }
@@ -204,12 +194,12 @@ namespace MagicOClockGenerator
         .category_title {{ font-size: 10px; font-weight: 500; letter-spacing: 0.2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }}
         .category_count {{ font-size: 8px; opacity: 0.5; }}" : $@"
         .view_wrap {{ display: grid; grid-template-columns: repeat(4, 90px); gap: 10px; justify-content: flex-start; margin-top: 10px; }}
-        .view_item {{ background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; align-items: center; width: 90px; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); box-sizing: border-box; }}
+        .view_item {{ background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; align-items: center; width: 90px; min-height: 145px; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.2); box-sizing: border-box; }}
         .vi_left img {{ width: 70px; height: 70px; border-radius: 6px; object-fit: cover; background: rgba(0,0,0,0.3); }}
-        .btn-download {{ background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; border: none; border-radius: 4px; padding: 4px 0; width: 100%; font-size: 9px; font-weight: bold; margin-top: 6px; cursor: pointer; text-transform: uppercase; }}
+        .btn-download {{ background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; border: none; border-radius: 4px; padding: 4px 0; width: 100%; font-size: 9px; font-weight: bold; margin-top: auto; cursor: pointer; text-transform: uppercase; }}
         .file-name {{ font-size: 10px; margin-top: 4px; opacity: 0.8; color: #00f2fe; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }}
-        .alarm-data {{ font-size: 14px; color: #ffeb3b; font-weight: bold; margin-top: 2px; }}
-        .alarm-sub {{ font-size: 8px; opacity: 0.7; color: #fff; }}";
+        .alarm-data {{ font-size: 11px; color: #ffeb3b; font-weight: bold; margin-top: 2px; text-align: center; }}
+        .alarm-sub {{ font-size: 7px; opacity: 0.6; color: #fff; text-align: center; }}";
 
             return $@"<!DOCTYPE html><html><head><title>{title}</title><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=0.8, user-scalable=no'>
 <style>
