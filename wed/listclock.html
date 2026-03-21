@@ -78,23 +78,21 @@ function initWebSocket() {
 function processQueue() {
     if (downloadQueue.length > 0) {
         var nextUrl = downloadQueue.shift();
-        document.getElementById('status-text').innerText = 'Đang tải ' + (downloadQueue.length > 0 ? 'file ảnh...' : currentName + '...');
+        document.getElementById('status-text').innerText = 'Đang tải ' + currentName + '...';
         if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + nextUrl); 
     }
 }
 
-function download(url, imgUrl, name) { 
+function download(url, name) { 
     currentName = name;
-    downloadQueue = [];
-    if (imgUrl && imgUrl.trim() !== '') downloadQueue.push(imgUrl);
-    downloadQueue.push(url);
+    downloadQueue = [url];
     document.getElementById('overlay').style.display='flex'; 
     processQueue();
 }
 
 document.getElementById('items-container').addEventListener('click', function(e) {
     var t = e.target.closest('.btn-download'); 
-    if (t) download(t.getAttribute('data-url'), t.getAttribute('data-img'), t.getAttribute('data-name'));
+    if (t) download(t.getAttribute('data-url'), t.getAttribute('data-name'));
 });
 window.onload = initWebSocket;
 </script></body></html>

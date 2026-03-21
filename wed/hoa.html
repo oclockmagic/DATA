@@ -29,46 +29,46 @@ hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb
 <body><div id='overlay' class='overlay'><div class='overlay-content'><div class='loader'></div><p id='status-text' style='font-size:16px; margin:0;'>Đang tải...</p><div class='progress-container' id='p-container'><div class='progress-bar' id='p-bar'></div></div><p id='p-text' style='font-size:12px; margin-top:8px; color:#4facfe; font-weight:bold;'></p></div></div>
 <div class='wrapper'><h2>STORE - HOA</h2><hr><div class='view_wrap' id='items-container'>
                 <div class='view_item'>
-                    <div class='vi_left'>
+                    <div class='vi_left' data-name='h1.clk'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h1.png' alt='h1'>
                         <div class='file-name'>h1</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h1.clk' data-name='h1.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h1.png'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h1.clk' data-name='h1.clk'>Download</button>
                 </div>
                 <div class='view_item'>
-                    <div class='vi_left'>
+                    <div class='vi_left' data-name='h2.clk'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h2.png' alt='h2'>
                         <div class='file-name'>h2</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h2.clk' data-name='h2.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h2.png'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h2.clk' data-name='h2.clk'>Download</button>
                 </div>
                 <div class='view_item'>
-                    <div class='vi_left'>
+                    <div class='vi_left' data-name='h3.clk'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h3.png' alt='h3'>
                         <div class='file-name'>h3</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h3.clk' data-name='h3.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h3.png'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h3.clk' data-name='h3.clk'>Download</button>
                 </div>
                 <div class='view_item'>
-                    <div class='vi_left'>
+                    <div class='vi_left' data-name='h4.clk'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h4.png' alt='h4'>
                         <div class='file-name'>h4</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h4.clk' data-name='h4.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h4.png'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h4.clk' data-name='h4.clk'>Download</button>
                 </div>
                 <div class='view_item'>
-                    <div class='vi_left'>
+                    <div class='vi_left' data-name='h5.clk'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h5.png' alt='h5'>
                         <div class='file-name'>h5</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h5.clk' data-name='h5.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h5.png'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h5.clk' data-name='h5.clk'>Download</button>
                 </div>
                 <div class='view_item'>
-                    <div class='vi_left'>
+                    <div class='vi_left' data-name='h6.clk'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h6.png' alt='h6'>
                         <div class='file-name'>h6</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h6.clk' data-name='h6.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h6.png'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/hoa/h6.clk' data-name='h6.clk'>Download</button>
                 </div></div><hr><button class='home-img' onclick="window.location.href='listclock.html'">BACK TO LIST</button>
 <label class='conectt' id='conet'>Status: Connecting...</label></div>
 <script>
@@ -102,23 +102,21 @@ function initWebSocket() {
 function processQueue() {
     if (downloadQueue.length > 0) {
         var nextUrl = downloadQueue.shift();
-        document.getElementById('status-text').innerText = 'Đang tải ' + (downloadQueue.length > 0 ? 'file ảnh...' : currentName + '...');
+        document.getElementById('status-text').innerText = 'Đang tải ' + currentName + '...';
         if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + nextUrl); 
     }
 }
 
-function download(url, imgUrl, name) { 
+function download(url, name) { 
     currentName = name;
-    downloadQueue = [];
-    if (imgUrl && imgUrl.trim() !== '') downloadQueue.push(imgUrl);
-    downloadQueue.push(url);
+    downloadQueue = [url];
     document.getElementById('overlay').style.display='flex'; 
     processQueue();
 }
 
 document.getElementById('items-container').addEventListener('click', function(e) {
     var t = e.target.closest('.btn-download'); 
-    if (t) download(t.getAttribute('data-url'), t.getAttribute('data-img'), t.getAttribute('data-name'));
+    if (t) download(t.getAttribute('data-url'), t.getAttribute('data-name'));
 });
 window.onload = initWebSocket;
 </script></body></html>

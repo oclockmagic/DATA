@@ -29,20 +29,20 @@ hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb
 <body><div id='overlay' class='overlay'><div class='overlay-content'><div class='loader'></div><p id='status-text' style='font-size:16px; margin:0;'>Đang tải...</p><div class='progress-container' id='p-container'><div class='progress-bar' id='p-bar'></div></div><p id='p-text' style='font-size:12px; margin-top:8px; color:#4facfe; font-weight:bold;'></p></div></div>
 <div class='wrapper'><h2>REMOTE ALARM STORE</h2><hr><div class='view_wrap' id='items-container'>
                     <div class='view_item'>
-                        <div class='vi_left'>
+                        <div class='vi_left' data-name='a1.ala'>
                             <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/a1.png' alt='a1'>
                             <div class='file-name'>a1</div>
                             <div class='alarm-data'>06-28 Thứ 3</div>
                         </div>
-                        <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/a1.ala' data-name='a1.ala' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/a1.png'>Download</button>
+                        <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/a1.ala' data-name='a1.ala'>Download</button>
                     </div>
                     <div class='view_item'>
-                        <div class='vi_left'>
+                        <div class='vi_left' data-name='a2.ala'>
                             <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/a2.png' alt='a2'>
                             <div class='file-name'>a2</div>
                             <div class='alarm-data'>09-33 29/09 Dương lịch</div>
                         </div>
-                        <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/a2.ala' data-name='a2.ala' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/a2.png'>Download</button>
+                        <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listalarm/a2.ala' data-name='a2.ala'>Download</button>
                     </div></div><hr><button class='home-img' onclick="window.location.href='listclock.html'">BACK TO LIST</button>
 <label class='conectt' id='conet'>Status: Connecting...</label></div>
 <script>
@@ -76,23 +76,21 @@ function initWebSocket() {
 function processQueue() {
     if (downloadQueue.length > 0) {
         var nextUrl = downloadQueue.shift();
-        document.getElementById('status-text').innerText = 'Đang tải ' + (downloadQueue.length > 0 ? 'file ảnh...' : currentName + '...');
+        document.getElementById('status-text').innerText = 'Đang tải ' + currentName + '...';
         if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + nextUrl); 
     }
 }
 
-function download(url, imgUrl, name) { 
+function download(url, name) { 
     currentName = name;
-    downloadQueue = [];
-    if (imgUrl && imgUrl.trim() !== '') downloadQueue.push(imgUrl);
-    downloadQueue.push(url);
+    downloadQueue = [url];
     document.getElementById('overlay').style.display='flex'; 
     processQueue();
 }
 
 document.getElementById('items-container').addEventListener('click', function(e) {
     var t = e.target.closest('.btn-download'); 
-    if (t) download(t.getAttribute('data-url'), t.getAttribute('data-img'), t.getAttribute('data-name'));
+    if (t) download(t.getAttribute('data-url'), t.getAttribute('data-name'));
 });
 window.onload = initWebSocket;
 </script></body></html>
