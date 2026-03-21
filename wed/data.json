@@ -1,11 +1,12 @@
 ﻿{
-  "time": 1774110908,
+  "time": 1774113683,
   "data": [
     "listclock.html",
     "hieuung.html",
     "hoa.html",
     "ngayle.html",
     "phongcanh.html",
-    "listalarm.html"
+    "listalarm.html",
+    "editarm.html"
   ]
 }
