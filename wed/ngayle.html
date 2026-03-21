@@ -33,52 +33,78 @@ hr { border: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle1.bmp' alt='ngayle1'>
                         <div class='file-name'>ngayle1</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle1.clk' data-name='ngayle1.clk'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle1.clk' data-name='ngayle1.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle1.bmp'>Download</button>
                 </div>
                 <div class='view_item'>
                     <div class='vi_left'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle2.bmp' alt='ngayle2'>
                         <div class='file-name'>ngayle2</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle2.clk' data-name='ngayle2.clk'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle2.clk' data-name='ngayle2.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle2.bmp'>Download</button>
                 </div>
                 <div class='view_item'>
                     <div class='vi_left'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle3.bmp' alt='ngayle3'>
                         <div class='file-name'>ngayle3</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle3.clk' data-name='ngayle3.clk'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle3.clk' data-name='ngayle3.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle3.bmp'>Download</button>
                 </div>
                 <div class='view_item'>
                     <div class='vi_left'>
                         <img src='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle4.bmp' alt='ngayle4'>
                         <div class='file-name'>ngayle4</div>
                     </div>
-                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle4.clk' data-name='ngayle4.clk'>Download</button>
+                    <button class='btn-download' data-url='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle4.clk' data-name='ngayle4.clk' data-img='https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/listdata/ngayle/ngayle4.bmp'>Download</button>
                 </div></div><hr><button class='home-img' onclick="window.location.href='listclock.html'">BACK TO LIST</button>
 <label class='conectt' id='conet'>Status: Connecting...</label></div>
-<script>var websocket; function initWebSocket() {
-var host = window.location.host || '192.168.4.1'; websocket = new WebSocket('ws://' + host + '/ws');
-websocket.onopen = function() { document.getElementById('conet').innerHTML = 'Status: Connected'; };
-websocket.onmessage = function(evt) { 
-    var data = evt.data;
-    if (data === 'SAVEOK') {
-        document.getElementById('status-text').innerText = 'Thành công!';
-        document.getElementById('p-container').style.display = 'none';
-        setTimeout(() => { document.getElementById('overlay').style.display='none'; }, 1500);
-    } else if (data.startsWith('#PRG@')) {
-        var p = data.substring(5);
-        document.getElementById('p-container').style.display = 'block';
-        document.getElementById('p-bar').style.width = p + '%';
-        document.getElementById('p-text').innerText = p + '%';
+<script>
+var websocket;
+var downloadQueue = [];
+var currentName = '';
+
+function initWebSocket() {
+    var host = window.location.host || '192.168.4.1';
+    websocket = new WebSocket('ws://' + host + '/ws');
+    websocket.onopen = function() { document.getElementById('conet').innerHTML = 'Status: Connected'; };
+    websocket.onmessage = function(evt) { 
+        var data = evt.data;
+        if (data === 'SAVEOK') {
+            if (downloadQueue.length > 0) {
+                processQueue();
+            } else {
+                document.getElementById('status-text').innerText = 'Thành công!';
+                document.getElementById('p-container').style.display = 'none';
+                setTimeout(() => { document.getElementById('overlay').style.display='none'; }, 1500);
+            }
+        } else if (data.startsWith('#PRG@')) {
+            var p = data.substring(5);
+            document.getElementById('p-container').style.display = 'block';
+            document.getElementById('p-bar').style.width = p + '%';
+            document.getElementById('p-text').innerText = p + '%';
+        }
+    };
+}
+
+function processQueue() {
+    if (downloadQueue.length > 0) {
+        var nextUrl = downloadQueue.shift();
+        document.getElementById('status-text').innerText = 'Đang tải ' + (downloadQueue.length > 0 ? 'file ảnh...' : currentName + '...');
+        if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + nextUrl); 
     }
-};
 }
-function download(url, name) { 
+
+function download(url, imgUrl, name) { 
+    currentName = name;
+    downloadQueue = [];
+    if (imgUrl && imgUrl.trim() !== '') downloadQueue.push(imgUrl);
+    downloadQueue.push(url);
     document.getElementById('overlay').style.display='flex'; 
-    document.getElementById('status-text').innerText = 'Đang tải ' + name + '...';
-    if (websocket && websocket.readyState === 1) websocket.send('#DLD@' + url); 
+    processQueue();
 }
+
 document.getElementById('items-container').addEventListener('click', function(e) {
-var t = e.target.closest('.btn-download'); if (t) download(t.getAttribute('data-url'), t.getAttribute('data-name'));
-}); window.onload = initWebSocket;</script></body></html>
+    var t = e.target.closest('.btn-download'); 
+    if (t) download(t.getAttribute('data-url'), t.getAttribute('data-img'), t.getAttribute('data-name'));
+});
+window.onload = initWebSocket;
+</script></body></html>
