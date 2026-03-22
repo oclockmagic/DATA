@@ -450,28 +450,47 @@
             let data_melody = parseInt(document.querySelector(".listmelody").value);
 
             let data_goi = "";
-            data_goi += byteToHex(data_arm);
-            data_goi += byteToHex(data_gio);
-            data_goi += byteToHex(data_phut);
-            data_goi += byteToHex(data_ngay);
-            data_goi += byteToHex(data_thang);
-            data_goi += byteToHex(data_thungay);
-            data_goi += byteToHex(data_am);
-            data_goi += byteToHex(data_melody);
-            data_goi += byteToHex(textValue.length);
+            // info[16-25] Alarm Settings
+            data_goi += byteToHex(data_arm > 0 ? 1 : 0); // 16: checkhengio
+            data_goi += byteToHex(data_arm);             // 17: Hengio_type
+            data_goi += byteToHex(data_gio);             // 18: Hengio_gio
+            data_goi += byteToHex(data_phut);            // 19: Hengio_phut
+            data_goi += byteToHex(data_ngay);            // 20: Hengio_ngay
+            data_goi += byteToHex(data_thang);           // 21: Hengio_thang
+            data_goi += byteToHex(data_thungay);         // 22: Hengio_thungay
+            data_goi += byteToHex(data_am);              // 23: Hengio_amlich
+            data_goi += byteToHex(data_melody);          // 24: Hengio_song
+            data_goi += byteToHex(10);                   // 25: Hengio_tempo
 
-            // Note: Replace with your actual encoding if needed
+            // Padding Gap [26-63] (38 bytes)
+            for(let i=0; i<38; i++) data_goi += "00";
+
+            // info[64-77] Text/UI Settings
+            data_goi += byteToHex(1);                    // 64: Chu_check
+            data_goi += byteToHex(1);                    // 65: Chu_noidung
+            for(let i=0; i<6; i++) data_goi += "00";     // 66-71: Effects/Colors defaults
+            data_goi += byteToHex(0);                    // 72: Chu_x
+            data_goi += byteToHex(32);                   // 73: Chu_y (centered?)
+            data_goi += byteToHex(64);                   // 74: Chu_w
+            data_goi += byteToHex(16);                   // 75: Chu_h
+            data_goi += byteToHex(textValue.length);     // 76: Chu_text.Length
+            data_goi += byteToHex(0);                    // 77: Chu_color.Length
+
+            // Gap [78-79]
+            data_goi += "0000";
+
+            // info[80+z] Text Content
             for (let i = 0; i < textValue.length; i++) {
                 data_goi += byteToHex(textValue.charCodeAt(i));
             }
 
-            console.log("SENDING:", data_goi);
+            console.log("SENDING PACKET:", data_goi);
             if (websocket && websocket.readyState === 1) {
                 websocket.send("#HGH$" + data_goi);
             }
         };
 
-        const homeImage = () => { window.location.href = "/viewarm"; };
+        const homeImage = () => { window.location.href = "/alarm.html"; };
 
         const updateUI = () => {
             const val = document.querySelector(".listarm").value;
@@ -519,7 +538,7 @@
             };
             
             websocket.onmessage = (evt) => { 
-                if (evt.data === "SAVEOK") window.location.href = "/editarm"; 
+                if (evt.data === "SAVEOK") window.location.href = "/alarm.html"; 
             };
         }
 
