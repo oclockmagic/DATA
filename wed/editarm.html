@@ -499,9 +499,7 @@
             // Reset
             [al, th, ng, gi, ph, tn, ml].forEach(el => el.classList.remove("disable"));
 
-            if (val == "0") { // Default/Off
-                [al, th, ng, gi, ph, tn, ml].forEach(el => el.classList.add("disable"));
-            } else if (val == "1") { // Daily/Weekly
+            if (val == "0") { // Daily/Weekly
                 [al, th, ng].forEach(el => el.classList.add("disable"));
             } else if (val == "2") { // Annual
                 [gi, ph, tn].forEach(el => el.classList.add("disable"));
