@@ -190,7 +190,6 @@
             -webkit-appearance: none;
             margin: 0;
         }
-
     </style>
 </head>
 
@@ -201,8 +200,7 @@
 
         <div class="form-group">
             <label>Text View</label>
-            <input class="%ENTEXT%" autocomplete="off" placeholder="text view" type="text" id='text' maxlength="255"
-                value="%VALTEXT%">
+            <input autocomplete="off" placeholder="text view" type="text" id='text' maxlength="255" value="%VALTEXT%">
         </div>
 
         <div class="form-group">
@@ -214,7 +212,7 @@
                     <option value="2" %TYP2%>-Theo Ngày - Tháng</option>
                     <option value="3" %TYP3%>-Theo Giờ -Ngày Tháng</option>
                 </select>
-                <select class="listamlich %DAL%" name="armamlich">
+                <select class="listamlich" name="armamlich">
                     <option value="0" %AML0%>Dương lịch</option>
                     <option value="1" %AML1%>Âm lịch</option>
                 </select>
@@ -223,7 +221,7 @@
 
         <div class="form-group">
             <label>DAYS & REPEAT</label>
-            <select class="listthungay %DTT%" name="armthungay">
+            <select class="listthungay" name="armthungay">
                 <option value="0" %THU0%>Cả Tuần</option>
                 <option value="1" %THU1%>Chủ Nhật</option>
                 <option value="2" %THU2%>Thứ 2</option>
@@ -238,23 +236,20 @@
         <div class="form-group">
             <label>TIME & DATE</label>
             <div class="row">
-                <input class="col numbergio %DGI%" type="number" id='tgio' value="%GIO%" min="0" max="23"
-                    placeholder="HH">
+                <input class="col numbergio" type="number" id='tgio' value="%GIO%" min="0" max="23" placeholder="HH">
                 <div style="padding-top:8px">:</div>
-                <input class="col numberphut %DPT%" type="number" id='tphut' value="%PHT%" min="0" max="59"
-                    placeholder="MM">
+                <input class="col numberphut" type="number" id='tphut' value="%PHT%" min="0" max="59" placeholder="MM">
                 <div style="padding-top:8px">|</div>
-                <input class="col numberngay %DNG%" type="number" id='tngay' value="%NGA%" min="1" max="31"
-                    placeholder="DD">
+                <input class="col numberngay" type="number" id='tngay' value="%NGA%" min="1" max="31" placeholder="DD">
                 <div style="padding-top:8px">/</div>
-                <input class="col numberthang %DTH%" type="number" id='tthang' value="%THA%" min="1" max="12"
+                <input class="col numberthang" type="number" id='tthang' value="%THA%" min="1" max="12"
                     placeholder="MM">
             </div>
         </div>
 
         <div class="form-group">
             <label>MELODY</label>
-            <select class="listmelody %DML%" name="armmelody">
+            <select class="listmelody" name="armmelody">
                 <option value="0">-No melody</option>
 <option value="1">HappyBirthday</option>
 <option value="2">Pokemon</option>
@@ -463,12 +458,12 @@
             data_goi += byteToHex(10);                   // 25: Hengio_tempo
 
             // Padding Gap [26-63] (38 bytes)
-            for(let i=0; i<38; i++) data_goi += "00";
+            for (let i = 0; i < 38; i++) data_goi += "00";
 
             // info[64-77] Text/UI Settings
             data_goi += byteToHex(1);                    // 64: Chu_check
             data_goi += byteToHex(1);                    // 65: Chu_noidung
-            for(let i=0; i<6; i++) data_goi += "00";     // 66-71: Effects/Colors defaults
+            for (let i = 0; i < 6; i++) data_goi += "00";     // 66-71: Effects/Colors defaults
             data_goi += byteToHex(0);                    // 72: Chu_x
             data_goi += byteToHex(32);                   // 73: Chu_y (centered?)
             data_goi += byteToHex(64);                   // 74: Chu_w
@@ -523,22 +518,22 @@
         function initWebSocket() {
             var targetHost = window.location.hostname || "192.168.4.1";
             buttonconect.innerHTML = "Status: Connecting...";
-            
+
             websocket = new WebSocket(`ws://${targetHost}/ws`);
-            
-            websocket.onopen = () => { 
-                buttonconect.innerHTML = "Status: Connected"; 
+
+            websocket.onopen = () => {
+                buttonconect.innerHTML = "Status: Connected";
                 buttonconect.style.color = "#4facfe";
             };
-            
-            websocket.onclose = () => { 
-                buttonconect.innerHTML = "Status: Disconnected"; 
+
+            websocket.onclose = () => {
+                buttonconect.innerHTML = "Status: Disconnected";
                 buttonconect.style.color = "rgba(255, 255, 255, 0.3)";
-                setTimeout(initWebSocket, 2000); 
+                setTimeout(initWebSocket, 2000);
             };
-            
-            websocket.onmessage = (evt) => { 
-                if (evt.data === "SAVEOK") window.location.href = "/alarm.html"; 
+
+            websocket.onmessage = (evt) => {
+                if (evt.data === "SAVEOK") window.location.href = "/alarm.html";
             };
         }
 
