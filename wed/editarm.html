@@ -535,6 +535,9 @@
             websocket.onmessage = (evt) => {
                 if (evt.data === "SAVEOK") window.location.href = "/alarm.html";
             };
+
+            // Tự động chọn nhạc hiện tại
+            document.querySelector(".listmelody").value = "%VALMLD%";
         }
 
         window.onload = () => {
