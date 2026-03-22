@@ -613,7 +613,7 @@
             };
 
             websocket.onmessage = (evt) => {
-                if (evt.data === "SAVEOK") window.location.href = "/alarm.html";
+                if (evt.data === "SAVEOK") window.location.href = "/alarm.html?v=" + Date.now();
             };
 
             // Tự động chọn nhạc hiện tại
