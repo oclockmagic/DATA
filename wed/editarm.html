@@ -200,7 +200,7 @@
 
         <div class="form-group">
             <label>Text View</label>
-            <input autocomplete="off" placeholder="text view" type="text" id='text' maxlength="255" value="%VALTEXT%">
+            <input autocomplete="off" placeholder="text view" type="text" id='text' maxlength="255" value="">
         </div>
 
         <div class="form-group">
@@ -432,6 +432,59 @@
             return unsignedByte.toString(16).padStart(2, '0');
         }
 
+        function chuyendoi2(man) {
+            switch (man) {
+                case 'à': return byteToHex(127); case 'ả': return byteToHex(128); case 'ã': return byteToHex(129);
+                case 'á': return byteToHex(130); case 'ạ': return byteToHex(131); case 'ă': return byteToHex(132);
+                case 'ằ': return byteToHex(133); case 'ẳ': return byteToHex(134); case 'ẵ': return byteToHex(135);
+                case 'ắ': return byteToHex(136); case 'ặ': return byteToHex(137); case 'â': return byteToHex(138);
+                case 'ầ': return byteToHex(139); case 'ẩ': return byteToHex(140); case 'ẫ': return byteToHex(141);
+                case 'ấ': return byteToHex(142); case 'ậ': return byteToHex(143); case 'đ': return byteToHex(144);
+                case 'è': return byteToHex(145); case 'ẻ': return byteToHex(146); case 'ẽ': return byteToHex(147);
+                case 'é': return byteToHex(148); case 'ẹ': return byteToHex(149); case 'ê': return byteToHex(150);
+                case 'ề': return byteToHex(151); case 'ể': return byteToHex(152); case 'ễ': return byteToHex(153);
+                case 'ế': return byteToHex(154); case 'ệ': return byteToHex(155); case 'ì': return byteToHex(156);
+                case 'ỉ': return byteToHex(157); case 'ĩ': return byteToHex(158); case 'í': return byteToHex(159);
+                case 'ị': return byteToHex(160); case 'ò': return byteToHex(161); case 'ỏ': return byteToHex(162);
+                case 'õ': return byteToHex(163); case 'ó': return byteToHex(164); case 'ọ': return byteToHex(165);
+                case 'ô': return byteToHex(166); case 'ồ': return byteToHex(167); case 'ổ': return byteToHex(168);
+                case 'ỗ': return byteToHex(169); case 'ố': return byteToHex(170); case 'ộ': return byteToHex(171);
+                case 'ơ': return byteToHex(172); case 'ờ': return byteToHex(173); case 'ở': return byteToHex(174);
+                case 'ỡ': return byteToHex(175); case 'ớ': return byteToHex(176); case 'ợ': return byteToHex(177);
+                case 'ù': return byteToHex(178); case 'ủ': return byteToHex(179); case 'ũ': return byteToHex(180);
+                case 'ú': return byteToHex(181); case 'ụ': return byteToHex(182); case 'ư': return byteToHex(183);
+                case 'ừ': return byteToHex(184); case 'ử': return byteToHex(185); case 'ữ': return byteToHex(186);
+                case 'ứ': return byteToHex(187); case 'ự': return byteToHex(188); case 'ỳ': return byteToHex(189);
+                case 'ỷ': return byteToHex(190); case 'ỹ': return byteToHex(191); case 'ý': return byteToHex(192);
+                case 'ỵ': return byteToHex(193); case 'À': return byteToHex(194); case 'Ả': return byteToHex(195);
+                case 'Ã': return byteToHex(196); case 'Á': return byteToHex(197); case 'Ạ': return byteToHex(198);
+                case 'Ă': return byteToHex(199); case 'Ằ': return byteToHex(200); case 'Ẳ': return byteToHex(201);
+                case 'Ẵ': return byteToHex(202); case 'Ắ': return byteToHex(203); case 'Ặ': return byteToHex(204);
+                case 'Â': return byteToHex(205); case 'Ầ': return byteToHex(206); case 'Ẩ': return byteToHex(207);
+                case 'Ẫ': return byteToHex(208); case 'Ấ': return byteToHex(209); case 'Ậ': return byteToHex(210);
+                case 'Đ': return byteToHex(211); case 'È': return byteToHex(212); case 'Ẻ': return byteToHex(213);
+                case 'Ẽ': return byteToHex(214); case 'É': return byteToHex(215); case 'Ẹ': return byteToHex(216);
+                case 'Ê': return byteToHex(217); case 'Ề': return byteToHex(218); case 'Ể': return byteToHex(219);
+                case 'Ễ': return byteToHex(220); case 'Ế': return byteToHex(221); case 'Ệ': return byteToHex(222);
+                case 'Ì': return byteToHex(223); case 'Ỉ': return byteToHex(224); case 'Ĩ': return byteToHex(225);
+                case 'Í': return byteToHex(226); case 'Ị': return byteToHex(227); case 'Ò': return byteToHex(228);
+                case 'Ỏ': return byteToHex(229); case 'Õ': return byteToHex(230); case 'Ó': return byteToHex(231);
+                case 'Ọ': return byteToHex(232); case 'Ô': return byteToHex(233); case 'Ồ': return byteToHex(234);
+                case 'Ổ': return byteToHex(235); case 'Ỗ': return byteToHex(236); case 'Ố': return byteToHex(237);
+                case 'Ộ': return byteToHex(238); case 'Ơ': return byteToHex(239); case 'Ờ': return byteToHex(240);
+                case 'Ở': return byteToHex(241); case 'Ỡ': return byteToHex(242); case 'Ớ': return byteToHex(243);
+                case 'Ợ': return byteToHex(244); case 'Ù': return byteToHex(245); case 'Ủ': return byteToHex(246);
+                case 'Ũ': return byteToHex(247); case 'Ú': return byteToHex(248); case 'Ụ': return byteToHex(249);
+                case 'Ư': return byteToHex(250); case 'Ừ': return byteToHex(251); case 'Ử': return byteToHex(252);
+                case 'Ữ': return byteToHex(253); case 'Ứ': return byteToHex(254); case 'Ự': return byteToHex(255);
+                case 'Ỳ': return byteToHex(31); case 'Ỷ': return byteToHex(30); case 'Ỹ': return byteToHex(29);
+                case 'Ý': return byteToHex(28); case 'Ỵ': return byteToHex(27);
+                default:
+                    const code = man.charCodeAt(0);
+                    return byteToHex(code < 128 ? code : 0x20); // Fallback to space for unknown high characters
+            }
+        }
+
         const luuImage = () => {
             let textValue = document.getElementById('text').value;
             let data_arm = parseInt(document.querySelector(".listarm").value);
@@ -475,7 +528,7 @@
 
             // info[80+z] Text Content
             for (let i = 0; i < textValue.length; i++) {
-                data_goi += byteToHex(textValue.charCodeAt(i));
+                data_goi += chuyendoi2(textValue[i]);
             }
 
             console.log("SENDING PACKET:", data_goi);
@@ -512,6 +565,32 @@
         document.querySelector(".luu-img").addEventListener("click", luuImage);
         document.querySelector(".home-img").addEventListener("click", homeImage);
 
+        function reverse_chuyendoi2(hex) {
+            const map = {
+                127: 'à', 128: 'ả', 129: 'ã', 130: 'á', 131: 'ạ', 132: 'ă', 133: 'ằ', 134: 'ẳ', 135: 'ẵ',
+                136: 'ắ', 137: 'ặ', 138: 'â', 139: 'ầ', 140: 'ẩ', 141: 'ẫ', 142: 'ấ', 143: 'ậ', 144: 'đ',
+                145: 'è', 146: 'ẻ', 147: 'ẽ', 148: 'é', 149: 'ẹ', 150: 'ê', 151: 'ề', 152: 'ể', 153: 'ễ',
+                154: 'ế', 155: 'ệ', 156: 'ì', 157: 'ỉ', 158: 'ĩ', 159: 'í', 160: 'ị', 161: 'ò', 162: 'ỏ',
+                163: 'õ', 164: 'ó', 165: 'ọ', 166: 'ô', 167: 'ồ', 168: 'ổ', 169: 'ỗ', 170: 'ố', 171: 'ộ',
+                172: 'ơ', 173: 'ờ', 174: 'ở', 175: 'ỡ', 176: 'ớ', 177: 'ợ', 178: 'ù', 179: 'ủ', 180: 'ũ',
+                181: 'ú', 182: 'ụ', 183: 'ư', 184: 'ừ', 185: 'ử', 186: 'ữ', 187: 'ứ', 188: 'ự', 189: 'ỳ',
+                190: 'ỷ', 191: 'ỹ', 192: 'ý', 193: 'ỵ', 194: 'À', 195: 'Ả', 196: 'Ã', 197: 'Á', 198: 'Ạ',
+                199: 'Ă', 200: 'Ằ', 201: 'Ẳ', 202: 'Ẵ', 203: 'Ắ', 204: 'Ặ', 205: 'Â', 206: 'Ầ', 207: 'Ẩ',
+                208: 'Ẫ', 209: 'Ấ', 210: 'Ậ', 211: 'Đ', 212: 'È', 213: 'Ẻ', 214: 'Ẽ', 215: 'É', 216: 'Ẹ',
+                217: 'Ê', 218: 'Ề', 219: 'Ể', 220: 'Ễ', 221: 'Ế', 222: 'Ệ', 223: 'Ì', 224: 'Ỉ', 225: 'Ĩ',
+                226: 'Í', 227: 'Ị', 228: 'Ò', 229: 'Ỏ', 230: 'Õ', 231: 'Ó', 232: 'Ọ', 233: 'Ô', 234: 'Ồ',
+                235: 'Ổ', 236: 'Ỗ', 237: 'Ố', 238: 'Ộ', 239: 'Ơ', 240: 'Ờ', 241: 'Ở', 242: 'Ỡ', 243: 'Ớ',
+                244: 'Ợ', 245: 'Ù', 246: 'Ủ', 247: 'Ũ', 248: 'Ú', 249: 'Ụ', 250: 'Ư', 251: 'Ừ', 252: 'Ử',
+                253: 'Ữ', 254: 'Ứ', 255: 'Ự', 31: 'Ỳ', 30: 'Ỷ', 29: 'Ỹ', 28: 'Ý', 27: 'Ỵ'
+            };
+            let res = "";
+            for (let i = 0; i < hex.length; i += 2) {
+                let b = parseInt(hex.substring(i, i + 2), 16);
+                res += map[b] || String.fromCharCode(b);
+            }
+            return res;
+        }
+
         function initWebSocket() {
             var targetHost = window.location.hostname || "192.168.4.1";
             buttonconect.innerHTML = "Status: Connecting...";
@@ -535,6 +614,8 @@
 
             // Tự động chọn nhạc hiện tại
             document.querySelector(".listmelody").value = "%VALMLD%";
+            // Giải mã Text ban đầu
+            document.getElementById('text').value = reverse_chuyendoi2("%VALTEXT%");
         }
 
         window.onload = () => {
