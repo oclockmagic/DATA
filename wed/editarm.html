@@ -294,7 +294,7 @@
                 <input type="number" id="pos-y" value="%POS_Y%">
                 <input type="number" id="pos-w" value="%POS_W%">
                 <input type="number" id="pos-h" value="%POS_H%">
-                <input type="checkbox" id="tutao-check" %TUTAO_CHECK% disabled> 
+                <input type="hidden" id="tutao-check" value="%TUTAO_CHECK%"> 
             </div>
         </div>
 
@@ -628,11 +628,8 @@
 
         // Tự động nạp ảnh cũ nếu có
         window.addEventListener('load', () => {
-            const hasImg = document.getElementById('tutao-check').checked;
+            const hasImg = document.getElementById('tutao-check').value == "1";
             if (hasImg) {
-                // Tên file ảnh tương ứng (thường là tên file báo thức .raw)
-                // Ta có thể đoán tên file từ URL hiện tại hoặc ESP32 trả về. 
-                // Ở đây ta dùng 1 mẹo: nạp ảnh .raw trực tiếp từ server
                 initCropper("/get_file?name=%NAME%.raw");
             }
         });
