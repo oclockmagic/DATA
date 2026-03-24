@@ -40,23 +40,50 @@
             websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
             websocket.onopen = () => { document.getElementById('conet').innerHTML = "CONNECTED"; };
             websocket.onmessage = (e) => {
-                if (e.data === "SAVEOK") window.location.href = "/alarm.html?v=" + Date.now();
-                if (e.data === "UP" && uploadQueue.length > 0) websocket.send(uploadQueue.shift());
-                else if (e.data === "UP") saveAlarmSettings();
+                if (e.data === "SAVEOK") {
+                    if (uploadQueue.length === 0 && tutaoActive) {
+                        // Sau khi nạp ảnh (BUP) thành công, mới lưu cấu hình báo thức
+                        tutaoActive = false; // Reset cờ để không bị lặp
+                        saveAlarmSettings();
+                    } else {
+                        window.location.href = "/alarm.html?v=" + Date.now();
+                    }
+                }
+                if (e.data === "UP") {
+                    if (uploadQueue.length > 0) {
+                        websocket.send(uploadQueue.shift());
+                    } else if (tutaoActive) {
+                        websocket.send("#BUP$");
+                    } else {
+                        saveAlarmSettings();
+                    }
+                }
             };
         }
         function saveAlarmSettings() {
             const par = new URLSearchParams(window.location.search);
             const tx = chuyendoi2(document.getElementById('text').value);
             let c = `#HGH$${par.get('idx')||0}|${tx}|${document.querySelector('.listarm').value}|${document.querySelector('.listamlich').value}|${document.querySelector('.listthungay').value}|${document.getElementById('tgio').value}|${document.getElementById('tphut').value}|${document.getElementById('tngay').value}|${document.getElementById('tthang').value}|${document.querySelector('.listmelody').value}`;
-            c += tutaoActive ? `|1|${document.getElementById('pos-x').value}|${document.getElementById('pos-y').value}|64|64` : `|0|0|0|0|0`;
+            c += tutaoActive ? `|1|${document.getElementById('pos-x').value}|${document.getElementById('pos-y').value}|${document.getElementById('pos-w').value}|${document.getElementById('pos-h').value}` : `|0|0|0|0|0`;
             websocket.send(c);
         }
         window.onload = () => {
             initWebSocket();
+            const par = new URLSearchParams(window.location.search);
             document.getElementById('text').value = invert_hex("%VALTEXT%");
             document.querySelector(".listmelody").value = "%VALMLD%";
-            if ("%TUTAO_CHECK%" == "1") { tutaoActive = true; document.getElementById('tutao-section').classList.remove('hidden'); }
+            
+            // Ưu tiên nạp tọa độ từ URL nếu có
+            const ux = par.get('x'), uy = par.get('y'), uw = par.get('w'), uh = par.get('h');
+            if (ux !== null) document.getElementById('pos-x').value = ux;
+            if (uy !== null) document.getElementById('pos-y').value = uy;
+            if (uw !== null) document.getElementById('pos-w').value = uw;
+            if (uh !== null) document.getElementById('pos-h').value = uh;
+
+            if ("%TUTAO_CHECK%" == "1" || ux !== null) { 
+                tutaoActive = true; 
+                document.getElementById('tutao-section').classList.remove('hidden'); 
+            }
             document.getElementById('file-input').onchange = (e) => {
                 const rd = new FileReader();
                 rd.onload = (ev) => {
@@ -70,6 +97,8 @@
                             onUpdate: (v) => { 
                                 document.getElementById('pos-x').value = Math.round(v.x); 
                                 document.getElementById('pos-y').value = Math.round(v.y); 
+                                document.getElementById('pos-w').value = Math.round(v.width); 
+                                document.getElementById('pos-h').value = Math.round(v.height); 
                             } 
                         }); 
                     };
@@ -81,7 +110,8 @@
                 document.getElementById('tutao-section').classList.remove('hidden');
             };
             document.querySelector(".luu-img").onclick = () => {
-                if (tutaoActive && croppr) {
+                const imgCheck = document.getElementById('cropper-target');
+                if (tutaoActive && croppr && imgOrig && imgOrig.complete) {
                     const cv = document.createElement('canvas'); cv.width = 64; cv.height = 64;
                     const ctx = cv.getContext('2d'); const r = croppr.getValue();
                     ctx.drawImage(imgOrig, r.x, r.y, r.width, r.height, 0, 0, 64, 64);
@@ -89,7 +119,10 @@
                     for(let i=0; i<d.length; i+=4) { o.push(Math.floor(d[i]/17)<<4); o.push((Math.floor(d[i+2]/17)<<4)|Math.floor(d[i+1]/17)); }
                     uploadQueue = []; for(let i=0; i<o.length; i+=512) { uploadQueue.push("#GI1$" + o.slice(i, i+512).map(b => byteToHex(b)).join('').toUpperCase()); }
                     websocket.send(uploadQueue.shift());
-                } else saveAlarmSettings();
+                } else {
+                    tutaoActive = false; // Đảm bảo không nhảy vào vòng lặp SAVEOK của ảnh
+                    saveAlarmSettings();
+                }
             };
         };
     </script>
@@ -99,10 +132,12 @@
         <h2>EDIT ALARM</h2>
         <div id="tutao-section" class="section-glass hidden">
             <div class="preview-area"><img id="cropper-target" style="display:none;" /></div>
+            <input type="hidden" id="pos-x" value="%POS_X%">
+            <input type="hidden" id="pos-y" value="%POS_Y%">
+            <input type="hidden" id="pos-w" value="%POS_W%">
+            <input type="hidden" id="pos-h" value="%POS_H%">
             <div class="row">
-                <div style="flex:1"><label>X</label><input type="number" id="pos-x" value="%POS_X%"></div>
-                <div style="flex:1"><label>Y</label><input type="number" id="pos-y" value="%POS_Y%"></div>
-                <button class="btn" onclick="document.getElementById('file-input').click()" style="flex:2; margin-top:14px;">UPLOAD</button>
+                <button class="btn" onclick="document.getElementById('file-input').click()" style="width:100%%; margin-top:5px;">UPLOAD NEW IMAGE</button>
                 <input type="file" id="file-input" accept="image/*" hidden>
             </div>
         </div>
