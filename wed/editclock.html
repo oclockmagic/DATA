@@ -105,36 +105,38 @@
             object-fit: contain;
         }
         .btn {
-            padding: 12px;
-            border-radius: 12px;
+            padding: 8px 12px;
+            border-radius: 10px;
             border: none;
             color: white;
-            font-weight: 600;
+            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0px;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 12px;
+            font-size: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
             flex: 1;
         }
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #4a90e2);
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
         }
         .btn-secondary {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .btn-accent {
-            background: linear-gradient(135deg, var(--accent), #9b59b6);
+            background: linear-gradient(135deg, #BA68C8, #9b59b6); /* Tương tự tone màu Accent cũ */
         }
         .btn:hover {
-            transform: translateY(-2px);
             filter: brightness(1.2);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            filter: none;
         }
         .btn:disabled {
             opacity: 0.5;
@@ -166,12 +168,14 @@
             align-items: center;
         }
         .modal-content {
-            background: var(--bg-dark);
+            background: rgba(20, 20, 20, 0.75);
+            backdrop-filter: blur(20px);
             padding: 30px;
             border-radius: 20px;
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
-            width: 300px;
+            width: 280px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.6);
         }
         .progress-container {
             width: 100%;
@@ -180,23 +184,26 @@
             border-radius: 5px;
             margin: 20px 0;
             overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .progress-bar {
             height: 100%;
-            background: var(--primary);
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
             width: 0%;
             transition: width 0.3s;
+            box-shadow: 0 0 10px rgba(79,172,254,0.6);
         }
         .status-tag {
-            font-size: 10px;
+            display: block;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 15px;
             text-align: right;
-            opacity: 0.5;
-            margin-top: 5px;
         }
         hr {
             border: none;
             height: 1px;
-            background: var(--glass-border);
+            background: linear-gradient(90deg, transparent, rgba(186, 104, 200, 0.4), transparent);
             margin: 15px 0;
         }
         /* Croppr Specific Styles (Subset) */
@@ -223,7 +230,8 @@
         </div>
 
         <div class="preview-area" id="preview-container">
-            <p style="opacity: 0.3;">No Image Selected</p>
+            <p style="opacity: 0.3;" id="no-image-text">No Image Selected</p>
+            <img id="target-image" style="display: none;" />
         </div>
 
         <div class="section-glass filter-controls">
@@ -352,20 +360,27 @@
                         // Vẽ ảnh nguyên bản đã scale để vừa khung nhìn
                         ctxUI.drawImage(img, -uiW/2, -uiH/2, uiW, uiH);
                         
-                        const scaledImg = new Image();
-                        scaledImg.src = canvasUI.toDataURL();
-                        scaledImg.onload = () => {
-                            imgOrig = scaledImg; // Lấy ảnh này làm gốc để crop
-                            if (croppr) {
-                                try { croppr.destroy(); } catch (e) { console.log(e); }
-                                croppr = null;
-                            }
+                        const scaledImgSrc = canvasUI.toDataURL();
+                        
+                        if (croppr) {
+                            try { croppr.destroy(); } catch (e) { console.log(e); }
+                            croppr = null;
+                        }
+                        
+                        document.getElementById('no-image-text').style.display = 'none';
+                        const targetImg = document.createElement("img");
+                        targetImg.src = scaledImgSrc;
+                        
+                        previewContainer.innerHTML = '';
+                        previewContainer.appendChild(targetImg);
+                        
+                        targetImg.onload = () => {
+                            imgOrig = targetImg; // Lấy ảnh này làm gốc để crop
                             
-                            previewContainer.innerHTML = '';
-                            previewContainer.appendChild(scaledImg);
-                            
-                            croppr = new Croppr(scaledImg, {
-                                // BỎ aspectRatio ĐỂ CẮT TỰ DO (Free Crop Ratio)
+                            croppr = new Croppr(targetImg, {
+                                // Khai báo rõ kích thước mặc định để không bị mất vòng bao (Handle Bug)
+                                startSize: [80, 80, '%'],
+                                minSize: [10, 10, 'px'],
                                 returnMode: 'real',
                                 onInitialize: () => {
                                     btnPreview.disabled = false;
@@ -506,6 +521,9 @@
                     }
                 } else if (e.data === "SAVEOK") {
                     uploadModal.style.display = 'none';
+                    if (isSaving) {
+                        window.location.href = '/clock.html?v=' + Date.now();
+                    }
                 }
             };
         }
