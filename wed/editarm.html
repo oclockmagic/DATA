@@ -711,15 +711,15 @@
             canvas.width = targetW; canvas.height = targetH;
             const ctx = canvas.getContext('2d');
 
-            // Sửa bộ lọc: Chỉ dùng một dấu % duy nhất cho đơn vị
-            ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+            // Sửa bộ lọc: Dùng %% cho ESP32
+            ctx.filter = `brightness(${brightness}%%) saturate(${saturation}%%) invert(${inversion}%%) grayscale(${grayscale}%%)`;
             ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
             const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
             let hexData = "";
             for (let i = 0; i < imgData.length; i += 4) {
                 const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
-                if (i < 100 && i % 20 === 0) console.log(`Pixel ${i/4}: R=${r}, G=${g}, B=${b}, A=${a}`);
+                if (i < 100 && i % 20 === 0) console.log(`Pixel ${i / 4}: R=${r}, G=${g}, B=${b}, A=${a}`);
                 hexData += byteToHex(a | (r << 4));
                 hexData += byteToHex(g | (b << 4));
             }
