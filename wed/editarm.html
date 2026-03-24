@@ -188,6 +188,97 @@
             letter-spacing: 1px;
         }
 
+        /* Croppr Specific Styles */
+        .croppr-container { position: relative; display: inline-block; width: 100%; border-radius: 12px; overflow: hidden; background: #000; margin-bottom: 10px; }
+        .croppr-overlay { background: rgba(0,0,0,0.5); position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 1; }
+        .croppr-region { border: 1px dashed white; position: absolute; z-index: 3; cursor: move; }
+        .croppr-handle { border: 1px solid white; background-color: #4facfe; width: 10px; height: 10px; position: absolute; z-index: 4; }
+        .croppr-imageClipped { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 2; pointer-events: none; }
+
+        .preview-area {
+            width: 100%;
+            height: 220px;
+            background: rgba(0,0,0,0.4);
+            border: 2px dashed rgba(255,255,255,0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .btn-filter {
+            background: rgba(255,255,255,0.08);
+            font-size: 9px;
+            height: 28px;
+        }
+
+        .btn-filter.active {
+            background: #4facfe;
+            color: #000;
+        }
+
+        .slider-group {
+            grid-column: span 2;
+            margin-top: 5px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: #4facfe;
+            background: transparent;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            justify-content: center; align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.8);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center; width: 280px;
+        }
+
+        .progress-container {
+            width: 100%; height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px; margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%; background: linear-gradient(90deg, #4facfe, #00f2fe);
+            width: 0%; transition: width 0.3s;
+        }
+
+        .tutao-panel {
+            border: 1px solid rgba(79, 172, 254, 0.3);
+            background: rgba(79, 172, 254, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
         /* Chrome/Safari hidden arrows */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -195,6 +286,8 @@
             margin: 0;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/gh/jamessouth/Croppr.js@master/dist/croppr.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/jamessouth/Croppr.js@master/dist/croppr.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -419,6 +512,39 @@
             </select>
         </div>
 
+        <div id="tutao-section" class="hidden">
+            <hr>
+            <div class="tutao-panel">
+                <label>IMAGE OVERLAY (TUTAO)</label>
+                <button class="btn btn-save" onclick="document.getElementById('file-input').click()" style="width: 100%; margin-bottom: 10px;">
+                    CHOOSE IMAGE
+                </button>
+                <input type="file" id="file-input" accept="image/*" hidden>
+
+                <div class="preview-area" id="preview-container">
+                    <p style="opacity: 0.3;" id="no-image-text">No Image Selected</p>
+                    <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;" />
+                </div>
+
+                <div class="filter-controls">
+                    <button class="btn btn-filter active" onclick="setFilter('brightness')">Brigh.</button>
+                    <button class="btn btn-filter" onclick="setFilter('saturation')">Satur.</button>
+                    <button class="btn btn-filter" onclick="setFilter('grayscale')">Gray.</button>
+                    <button class="btn btn-filter" onclick="setFilter('inversion')">Invert</button>
+                    <div class="slider-group">
+                        <input type="range" id="filter-slider" min="0" max="200" value="100" oninput="updateFilterLabel()">
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col"><label>X</label><input type="number" id="pos-x" value="0" min="0" max="64"></div>
+                    <div class="col"><label>Y</label><input type="number" id="pos-y" value="0" min="0" max="64"></div>
+                    <div class="col"><label>W</label><input type="number" id="pos-w" value="64" min="1" max="64" readonly></div>
+                    <div class="col"><label>H</label><input type="number" id="pos-h" value="64" min="1" max="64" readonly></div>
+                </div>
+            </div>
+        </div>
+
         <div class="btn-group">
             <button class="btn btn-save luu-img">SAVE</button>
             <button class="btn home-img">BACK</button>
@@ -427,9 +553,29 @@
         <label class="conectt" id="conet">STATUS: CONNECTING...</label>
     </div>
 
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="margin-top:0; font-size:16px;">Saving...</h3>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <p id="progress-percent" style="font-size:12px; color:#4facfe;">0%</p>
+        </div>
+    </div>
+
     <script>
         var websocket;
         var buttonconect = document.getElementById('conet');
+        var croppr = null;
+        var imgOrig = null;
+        var uploadQueue = [];
+        var totalPackets = 0;
+        var isSaving = false;
+        var tutaoActive = false;
+
+        // Filter variables
+        var brightness = 100, saturation = 100, grayscale = 0, inversion = 0;
+        var activeFilter = 'brightness';
 
         function byteToHex(byte) {
             const unsignedByte = byte & 0xff;
@@ -485,11 +631,19 @@
                 case 'Ý': return byteToHex(28); case 'Ỵ': return byteToHex(27);
                 default:
                     const code = man.charCodeAt(0);
-                    return byteToHex(code < 128 ? code : 0x20); // Fallback to space for unknown high characters
+                    return byteToHex(code < 128 ? code : 0x20);
             }
         }
 
         const luuImage = () => {
+            if (croppr && imgOrig) {
+                sendImageData();
+            } else {
+                saveAlarmSettings();
+            }
+        };
+
+        function saveAlarmSettings() {
             let textValue = document.getElementById('text').value;
             let data_arm = parseInt(document.querySelector(".listarm").value);
             let data_am = parseInt(document.querySelector(".listamlich").value);
@@ -501,45 +655,40 @@
             let data_melody = parseInt(document.querySelector(".listmelody").value);
 
             let data_goi = "";
-            // info[16-25] Alarm Settings
-            data_goi += byteToHex(data_arm > 0 ? 1 : 0); // 16: checkhengio
-            data_goi += byteToHex(data_arm);             // 17: Hengio_type
-            data_goi += byteToHex(data_gio);             // 18: Hengio_gio
-            data_goi += byteToHex(data_phut);            // 19: Hengio_phut
-            data_goi += byteToHex(data_ngay);            // 20: Hengio_ngay
-            data_goi += byteToHex(data_thang);           // 21: Hengio_thang
-            data_goi += byteToHex(data_thungay);         // 22: Hengio_thungay
-            data_goi += byteToHex(data_am);              // 23: Hengio_amlich
-            data_goi += byteToHex(data_melody);          // 24: Hengio_song
-            data_goi += byteToHex(10);                   // 25: Hengio_tempo
+            data_goi += byteToHex(data_arm > 0 ? 1 : 0);
+            data_goi += byteToHex(data_arm);
+            data_goi += byteToHex(data_gio);
+            data_goi += byteToHex(data_phut);
+            data_goi += byteToHex(data_ngay);
+            data_goi += byteToHex(data_thang);
+            data_goi += byteToHex(data_thungay);
+            data_goi += byteToHex(data_am);
+            data_goi += byteToHex(data_melody);
+            data_goi += byteToHex(10);
 
-            // Padding Gap [26-63] (38 bytes)
             for (let i = 0; i < 38; i++) data_goi += "00";
-
-            // info[64-77] Text/UI Settings
-            data_goi += byteToHex(1);                    // 64: Chu_check
-            data_goi += byteToHex(1);                    // 65: Chu_noidung
-            for (let i = 0; i < 6; i++) data_goi += "00";     // 66-71: Effects/Colors defaults
-            data_goi += byteToHex(0);                    // 72: Chu_x
-            data_goi += byteToHex(32);                   // 73: Chu_y (centered?)
-            data_goi += byteToHex(64);                   // 74: Chu_w
-            data_goi += byteToHex(16);                   // 75: Chu_h
-            data_goi += byteToHex(textValue.length);     // 76: Chu_text.Length
-            data_goi += byteToHex(0);                    // 77: Chu_color.Length
-
-            // Gap [78-79]
+            data_goi += byteToHex(1);
+            data_goi += byteToHex(1);
+            for (let i = 0; i < 6; i++) data_goi += "00";
+            data_goi += byteToHex(0);
+            data_goi += byteToHex(32);
+            data_goi += byteToHex(64);
+            data_goi += byteToHex(16);
+            data_goi += byteToHex(textValue.length);
+            data_goi += byteToHex(0);
             data_goi += "0000";
 
-            // info[80+z] Text Content
             for (let i = 0; i < textValue.length; i++) {
                 data_goi += chuyendoi2(textValue[i]);
             }
 
-            console.log("SENDING PACKET:", data_goi);
             if (websocket && websocket.readyState === 1) {
                 websocket.send("#HGH$" + data_goi);
+                if (!croppr) {
+                    document.getElementById('upload-modal').style.display = 'flex';
+                }
             }
-        };
+        }
 
         const homeImage = () => { window.location.href = "/alarm.html"; };
 
@@ -553,21 +702,102 @@
             const tn = document.querySelector(".listthungay");
             const ml = document.querySelector(".listmelody");
 
-            // Reset
             [al, th, ng, gi, ph, tn, ml].forEach(el => el.classList.remove("disable"));
 
-            if (val == "0") { // Daily/Weekly
-                [al, th, ng].forEach(el => el.classList.add("disable"));
-            } else if (val == "1") { // Annual
-                [gi, ph, tn].forEach(el => el.classList.add("disable"));
-            } else if (val == "2") { // Date/Time once
-                [tn].forEach(el => el.classList.add("disable"));
+            if (val == "0") { [al, th, ng].forEach(el => el.classList.add("disable")); }
+            else if (val == "1") { [gi, ph, tn].forEach(el => el.classList.add("disable")); }
+            else if (val == "2") { [tn].forEach(el => el.classList.add("disable")); }
+        };
+
+        // IMAGE EDITOR LOGIC (from editclock.html)
+        document.getElementById('file-input').onchange = (e) => {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (re) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const pW = 300, pH = 220;
+                        let uiW, uiH;
+                        if (img.width / img.height > pW / pH) {
+                            uiW = pW; uiH = uiW * img.height / img.width;
+                        } else {
+                            uiH = pH; uiW = uiH * img.width / img.height;
+                        }
+                        const canvasUI = document.createElement("canvas");
+                        canvasUI.width = pW; canvasUI.height = pH;
+                        const ctxUI = canvasUI.getContext("2d");
+                        ctxUI.translate(pW/2, pH/2);
+                        ctxUI.drawImage(img, -uiW/2, -uiH/2, uiW, uiH);
+                        
+                        if (croppr) { croppr.destroy(); croppr = null; }
+                        document.getElementById('no-image-text').style.display = 'none';
+                        const targetImg = document.getElementById('cropper-target');
+                        targetImg.style.display = 'block';
+                        targetImg.onload = () => {
+                            imgOrig = targetImg;
+                            croppr = new Croppr(targetImg, {
+                                startSize: [80, 80, '%'],
+                                returnMode: 'real'
+                            });
+                        };
+                        targetImg.src = canvasUI.toDataURL();
+                    };
+                    img.src = re.target.result;
+                };
+                reader.readAsDataURL(e.target.files[0]);
             }
         };
 
-        document.querySelector(".listarm").addEventListener("change", updateUI);
-        document.querySelector(".luu-img").addEventListener("click", luuImage);
-        document.querySelector(".home-img").addEventListener("click", homeImage);
+        function setFilter(f) {
+            activeFilter = f;
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.btn-filter[onclick="setFilter('${f}')"]`).classList.add('active');
+            const s = document.getElementById('filter-slider');
+            if (f === 'brightness') s.value = brightness;
+            else if (f === 'saturation') s.value = saturation;
+            else if (f === 'grayscale') s.value = grayscale;
+            else if (f === 'inversion') s.value = inversion;
+        }
+
+        function updateFilterLabel() {
+            const v = document.getElementById('filter-slider').value;
+            if (activeFilter === 'brightness') brightness = v;
+            else if (activeFilter === 'saturation') saturation = v;
+            else if (activeFilter === 'grayscale') grayscale = v;
+            else if (activeFilter === 'inversion') inversion = v;
+            if (imgOrig) {
+                const f = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                document.querySelector('.croppr-image').style.filter = f;
+                document.querySelector('.croppr-imageClipped').style.filter = f;
+            }
+        }
+
+        function sendImageData() {
+            const targetW = 64, targetH = 64;
+            const crop = croppr.getValue();
+            const canvas = document.createElement('canvas');
+            canvas.width = targetW; canvas.height = targetH;
+            const ctx = canvas.getContext('2d');
+            ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+            ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+            const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
+            let hexData = "";
+            for (let i = 0; i < imgData.length; i += 4) {
+                const r = imgData[i] >> 4, g = imgData[i+1] >> 4, b = imgData[i+2] >> 4, a = imgData[i+3] >> 4;
+                hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+            }
+            startUpload(hexData);
+        }
+
+        function startUpload(data) {
+            document.getElementById('upload-modal').style.display = 'flex';
+            uploadQueue = [];
+            for (let i = 0; i < data.length; i += 1024) {
+                uploadQueue.push("#GI1$" + data.substring(i, i + 1024));
+            }
+            totalPackets = uploadQueue.length;
+            websocket.send("#BDA$");
+        }
 
         function reverse_chuyendoi2(hex) {
             const map = {
@@ -596,35 +826,48 @@
         }
 
         function initWebSocket() {
-            var targetHost = window.location.hostname || "192.168.4.1";
-            buttonconect.innerHTML = "Status: Connecting...";
-
-            websocket = new WebSocket(`ws://${targetHost}/ws`);
-
+            websocket = new WebSocket(`ws://${window.location.hostname || "192.168.4.1"}/ws`);
             websocket.onopen = () => {
-                buttonconect.innerHTML = "Status: Connected";
-                buttonconect.style.color = "#4facfe";
+                buttonconect.innerHTML = "Status: Connected"; buttonconect.style.color = "#4facfe";
+                const p = new URLSearchParams(window.location.search);
+                const idx = p.get('idx'); if (idx) websocket.send("#ARM$" + idx);
             };
-
             websocket.onclose = () => {
-                buttonconect.innerHTML = "Status: Disconnected";
-                buttonconect.style.color = "rgba(255, 255, 255, 0.3)";
+                buttonconect.innerHTML = "Status: Disconnected"; buttonconect.style.color = "rgba(255,255,255,0.3)";
                 setTimeout(initWebSocket, 2000);
             };
-
-            websocket.onmessage = (evt) => {
-                if (evt.data === "SAVEOK") window.location.href = "/alarm.html?v=" + Date.now();
+            websocket.onmessage = (e) => {
+                if (e.data === "UP") {
+                    if (uploadQueue.length > 0) {
+                        websocket.send(uploadQueue.shift());
+                        const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
+                        document.getElementById('progress-bar').style.width = prog + '%';
+                        document.getElementById('progress-percent').innerText = prog + '%';
+                    } else {
+                        websocket.send("#BUP$");
+                        saveAlarmSettings(); // Final save for alarm settings
+                    }
+                } else if (e.data === "SAVEOK") {
+                    window.location.href = "/alarm.html?v=" + Date.now();
+                }
             };
-
-            // Tự động chọn nhạc hiện tại
             document.querySelector(".listmelody").value = "%VALMLD%";
-            // Giải mã Text ban đầu
             document.getElementById('text').value = reverse_chuyendoi2("%VALTEXT%");
         }
 
         window.onload = () => {
             initWebSocket();
-            document.querySelector(".listmelody").value = "%MELODY_VAL%";
+            document.querySelector(".listarm").addEventListener("change", updateUI);
+            document.querySelector(".luu-img").addEventListener("click", luuImage);
+            document.querySelector(".home-img").addEventListener("click", homeImage);
+            const p = new URLSearchParams(window.location.search);
+            if (p.get('x')) {
+                document.getElementById('tutao-section').classList.remove('hidden');
+                document.getElementById('pos-x').value = p.get('x');
+                document.getElementById('pos-y').value = p.get('y');
+                document.getElementById('pos-w').value = p.get('w');
+                document.getElementById('pos-h').value = p.get('h');
+            }
             updateUI();
         };
     </script>
