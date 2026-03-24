@@ -513,7 +513,7 @@
             let ph = parseInt(document.querySelector(".numberphut").value) || 0; let ng = parseInt(document.querySelector(".numberngay").value) || 1;
             let th = parseInt(document.querySelector(".numberthang").value) || 1; let tnu = parseInt(document.querySelector(".listthungay").value);
             let mel = parseInt(document.querySelector(".listmelody").value);
-            let pk = ""; pk += byteToHex(typ > 0 ? 1 : 0); pk += byteToHex(typ); pk += by / teToHex(gi); pk += byteToHex(ph); pk += byteToHex(ng); pk += byteToHex(th); pk += byteToHex(tnu); pk += byteToHex(am); pk += byteToHex(mel); pk += byteToHex(10);
+            let pk = ""; pk += byteToHex(typ > 0 ? 1 : 0); pk += byteToHex(typ); pk += byteToHex(gi); pk += byteToHex(ph); pk += byteToHex(ng); pk += byteToHex(th); pk += byteToHex(tnu); pk += byteToHex(am); pk += byteToHex(mel); pk += byteToHex(10);
             for (let i = 0; i < 38; i++) pk += "00"; pk += byteToHex(1); pk += byteToHex(1); for (let i = 0; i < 6; i++) pk += "00"; pk += byteToHex(0); pk += byteToHex(32); pk += byteToHex(64); pk += byteToHex(16); pk += byteToHex(tv.length); pk += byteToHex(0); pk += "0000";
             for (let i = 0; i < tv.length; i++) pk += chuyendoi2(tv[i]);
             if (websocket && websocket.readyState === 1) {
