@@ -202,36 +202,39 @@
         <h2>EDIT ALARM</h2>
         <hr>
 
-        <div class="form-group %TXT_DISABLE%">
-            <label>Text View</label>
-            <input autocomplete="off" placeholder="text view" type="text" id='text' maxlength="255" value="">
-        </div>
-
-        <!-- TUTAO CONFIGURATION -->
-        <div class="form-group">
-            <label style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 5px;">
                 <span>CUSTOM ICON (TUTAO)</span>
                 <div style="display: flex; align-items: center; gap: 5px;">
                     <input type="checkbox" id="tutao-enable" style="width: 14px; height: 14px; margin: 0;">
-                    <span style="color: #fff;">ENABLE</span>
+                    <span style="color: #fff; font-size: 10px; font-weight: bold; opacity: 0.6; text-transform: uppercase;">ENABLE</span>
                 </div>
             </label>
-            <div id="tutao-body" style="display: none; margin-top: 10px;">
-                <button class="btn" style="width: 100%; margin-bottom: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="document.getElementById('file-input').click()">CHOOSE CLOCK IMAGE (FOR CROP REF)</button>
-                <input type="file" id="file-input" accept="image/*" hidden>
-                
-                <div style="width: 100%; height: 260px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; position: relative;">
-                    <span id="no-img-alert" style="opacity: 0.3; font-size: 12px; position: absolute; z-index: 0;">No Image Selected</span>
-                    <img id="cropper-target" style="display: none; max-width: 100%; max-height: 100%; z-index: 1;">
+            <div id="tutao-body" style="display: none; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 15px; margin-top: 5px;">
+                <div style="display: flex; flex-direction: column; margin-bottom: 10px;">
+                    <button class="btn" style="width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);" onclick="document.getElementById('file-input').click()">
+                        CHOOSE IMAGE
+                    </button>
+                    <input type="file" id="file-input" accept="image/*" hidden>
                 </div>
                 
-                <div class="row">
-                    <input class="col" type="number" id="pos-x" value="%POS_X%" placeholder="X">
-                    <input class="col" type="number" id="pos-y" value="%POS_Y%" placeholder="Y">
-                    <input class="col" type="number" id="pos-w" value="%POS_W%" placeholder="W">
-                    <input class="col" type="number" id="pos-h" value="%POS_H%" placeholder="H">
+                <div style="width: 100%; height: 380px; background: #000; border-radius: 15px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid rgba(255, 255, 255, 0.1); position: relative;">
+                    <p id="no-img-alert" style="opacity: 0.3; font-size: 14px; margin: 0;">No Image Selected</p>
+                    <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;">
+                </div>
+                
+                <div class="row" style="display: none;">
+                    <input type="number" id="pos-x" value="%POS_X%">
+                    <input type="number" id="pos-y" value="%POS_Y%">
+                    <input type="number" id="pos-w" value="%POS_W%">
+                    <input type="number" id="pos-h" value="%POS_H%">
                 </div>
             </div>
+        </div>
+
+        <div class="form-group %TXT_DISABLE%">
+            <label>Text View</label>
+            <input autocomplete="off" placeholder="text view" type="text" id='text' maxlength="255" value="">
         </div>
 
         <div class="form-group">
