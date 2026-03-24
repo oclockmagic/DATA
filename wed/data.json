@@ -1,5 +1,5 @@
 ﻿{
-  "time": 1774338247,
+  "time": 1774340515,
   "data": [
     "listclock.html",
     "hieuung.html",
@@ -7,6 +7,7 @@
     "ngayle.html",
     "phongcanh.html",
     "listalarm.html",
-    "editarm.html"
+    "editarm.html",
+    "editclock.html"
   ]
 }
