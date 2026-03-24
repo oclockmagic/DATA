@@ -290,10 +290,11 @@
             </div>
 
             <div style="display: none;">
-                <input type="number" id="pos-x" value="0">
-                <input type="number" id="pos-y" value="0">
-                <input type="number" id="pos-w" value="64">
-                <input type="number" id="pos-h" value="64">
+                <input type="number" id="pos-x" value="%POS_X%">
+                <input type="number" id="pos-y" value="%POS_Y%">
+                <input type="number" id="pos-w" value="%POS_W%">
+                <input type="number" id="pos-h" value="%POS_H%">
+                <input type="checkbox" id="tutao-check" %TUTAO_CHECK% disabled> 
             </div>
         </div>
 
@@ -588,21 +589,53 @@
         document.getElementById('file-input').onchange = (e) => {
             if (e.target.files.length) {
                 const rd = new FileReader(); rd.onload = (ev) => {
-                    const img = new Image(); img.src = ev.target.result; img.onload = () => {
-                        const pW = 380, pH = 380; let uW, uH; if (img.width / img.height > pW / pH) { uW = pW; uH = uW * img.height / img.width; } else { uH = pH; uW = uH * img.width / img.height; }
-                        const cv = document.createElement("canvas"); cv.width = pW; cv.height = pH; const ctx = cv.getContext("2d"); ctx.translate(pW / 2, pH / 2); ctx.drawImage(img, -uW / 2, -uH / 2, uW, uH);
-                        if (croppr) { try { croppr.destroy(); } catch (e) { } }
-                        document.getElementById('no-img-alert').style.display = 'none'; const tg = document.getElementById('cropper-target'); tg.style.display = 'block'; tg.onload = () => {
-                            imgOrig = tg; croppr = new Croppr(tg, {
-                                startSize: [80, 80, '%%'], onCropMove: (v) => {
-                                    document.getElementById('pos-x').value = Math.round(v.x); document.getElementById('pos-y').value = Math.round(v.y); document.getElementById('pos-w').value = Math.round(v.width); document.getElementById('pos-h').value = Math.round(v.height);
-                                }
-                            });
-                        }; tg.src = cv.toDataURL();
-                    };
+                    initCropper(ev.target.result);
                 }; rd.readAsDataURL(e.target.files[0]);
             }
         };
+
+        function initCropper(imgSrc) {
+            const img = new Image(); img.src = imgSrc; img.onload = () => {
+                const pW = 380, pH = 380; let uW, uH; if (img.width / img.height > pW / pH) { uW = pW; uH = uW * img.height / img.width; } else { uH = pH; uW = uH * img.width / img.height; }
+                const cv = document.createElement("canvas"); cv.width = pW; cv.height = pH; const ctx = cv.getContext("2d"); ctx.translate(pW / 2, pH / 2); ctx.drawImage(img, -uW / 2, -uH / 2, uW, uH);
+                if (croppr) { try { croppr.destroy(); } catch (e) { } }
+                document.getElementById('no-img-alert').style.display = 'none'; 
+                const tg = document.getElementById('cropper-target'); 
+                tg.style.display = 'block'; 
+                tg.onload = () => {
+                    imgOrig = tg; 
+                    // Lấy tọa độ ban đầu nếu có
+                    let startX = parseInt(document.getElementById('pos-x').value) || 0;
+                    let startY = parseInt(document.getElementById('pos-y').value) || 0;
+                    let startW = parseInt(document.getElementById('pos-w').value) || 64;
+                    let startH = parseInt(document.getElementById('pos-h').value) || 64;
+
+                    croppr = new Croppr(tg, {
+                        startSize: [startW, startH, 'px'], 
+                        onCropMove: (v) => {
+                            document.getElementById('pos-x').value = Math.round(v.x); 
+                            document.getElementById('pos-y').value = Math.round(v.y); 
+                            document.getElementById('pos-w').value = Math.round(v.width); 
+                            document.getElementById('pos-h').value = Math.round(v.height);
+                        }
+                    });
+                    // Di chuyển đến vị trí cũ
+                    croppr.moveTo(startX, startY);
+                }; 
+                tg.src = cv.toDataURL();
+            };
+        }
+
+        // Tự động nạp ảnh cũ nếu có
+        window.addEventListener('load', () => {
+            const hasImg = document.getElementById('tutao-check').checked;
+            if (hasImg) {
+                // Tên file ảnh tương ứng (thường là tên file báo thức .raw)
+                // Ta có thể đoán tên file từ URL hiện tại hoặc ESP32 trả về. 
+                // Ở đây ta dùng 1 mẹo: nạp ảnh .raw trực tiếp từ server
+                initCropper("/get_file?name=%NAME%.raw");
+            }
+        });
 
         document.querySelectorAll('.btn-filter').forEach(btn => {
             btn.onclick = () => {
