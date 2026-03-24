@@ -667,15 +667,14 @@
             };
 
             // Tự động chọn nhạc hiện tại
-            document.querySelector(".listmelody").value = "%VALMLD%";
+            const listMelody = document.querySelector(".listmelody");
+            if (listMelody) listMelody.value = "%MELODY_VAL%";
             // Giải mã Text ban đầu
             document.getElementById('text').value = reverse_chuyendoi2("%VALTEXT%");
         }
 
         window.onload = () => {
             initWebSocket();
-            const listMelody = document.querySelector(".listmelody");
-            if (listMelody) listMelody.value = "%MELODY_VAL%";
 
             // Logic for Tutao Visibility
             const tutaoCheck = "%TUTAO_CHECK%" === "1";
@@ -691,6 +690,7 @@
             const fileInput = document.getElementById('file-input');
             if (fileInput) {
                 fileInput.onchange = (e) => {
+                    if (!e.target.files.length) return;
                     const rd = new FileReader();
                     rd.onload = (ev) => {
                         const el = document.getElementById('cropper-target');
@@ -717,10 +717,9 @@
                         };
                         el.src = ev.target.result;
                     };
-                    if (e && e.target && e.target.files.length) rd.readAsDataURL(e.target.files[0]);
+                    rd.readAsDataURL(e.target.files[0]);
                 };
-                if (e.target.files.length) rd.readAsDataURL(e.target.files[0]);
-            };
+            }
 
             updateUI();
         };
