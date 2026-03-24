@@ -245,7 +245,7 @@
                 <div class="slider-group">
                     <div class="flex-row" style="justify-content: space-between; margin-bottom: 5px;">
                         <span id="filter-name" style="font-size: 10px;">Brightness</span>
-                        <span id="filter-value" style="font-size: 10px; color: var(--primary);">100%</span>
+                        <span id="filter-value" style="font-size: 10px; color: var(--primary);">100%%%%</span>
                     </div>
                     <input type="range" id="filter-slider" min="0" max="200" value="100">
                 </div>
@@ -503,7 +503,7 @@
         function byteToHex(byte) { return (byte & 0xff).toString(16).padStart(2, '0'); }
 
         function chuyendoi2(man) {
-            const map = { 'à': 127, 'ả': 128, 'ã': 129, 'á': 130, 'ạ': 131, 'ă': 132, 'ằ': 133, 'ẳ': 134, 'ẵ': 135, 'ắ': 136, 'ặ': 137, 'â': 138, 'ầ': 139, 'ẩ': 140, 'ẫ': 141, 'ấ': 142, 'ậ': 143, 'đ': 144, 'è': 145, 'ẻ': 146, 'ẽ': 147, 'é': 148, 'ẹ': 149, 'ê': 150, 'ề': 151, 'ể': 152, 'ễ': 153, 'ế': 154, 'ệ': 155, 'ì': 156, 'ỉ': 157, 'ĩ': 158, 'í': 159, 'ị': 160, 'ò': 161, 'ỏ': 162, 'õ': 163, 'ó': 164, 'ọ': 165, 'ô': 166, 'ồ': 167, 'ổ': 168, 'ỗ': 169, 'ố': 170, 'ộ': 171, 'ơ': 172, 'ờ': 173, 'ở': 174, 'ỡ': 175, 'ớ': 176, 'ợ': 177, 'ù': 178, 'ủ': 179, 'ũ': 180, 'ú': 181, 'ụ': 182, 'ư': 183, 'ừ': 184, 'ử': 185, 'ữ': 186, 'ứ': 187, 'ự': 188, 'ỳ': 189, 'ỷ': 190, 'ỹ': 191, 'ý': 192, 'ỵ': 193, 'À': 194, 'Ả': 195, 'Ã': 196, 'Á': 197, 'Ạ': 198, 'Ă': 199, 'Ằ': 200, 'Ẳ': 201, 'Ẵ': 202, 'Ắ': 203, 'Ặ': 204, 'Â': 205, 'Ầ': 206, 'Ẩ': 207, 'Ẫ': 208, 'Ấ': 209, 'Ậ': 210, 'Đ': 211, 'È': 212, 'Ẻ': 213, 'Ẽ': 214, 'É': 215, 'Ẹ': 216, 'Ê': 217, 'Ề': 218, 'Ể': 219, 'Ễ': 220, 'Ế': 221, 'Ệ': 222, 'Ì': 223, 'Ỉ': 224, 'Ĩ': 225, 'Í': 226, 'Ị': 227, 'Ò': 228, 'Ỏ': 229, 'Õ': 230, 'Ó': 231, 'Ọ': 232, 'Ô': 233, 'Ồ': 234, 'Ổ': 235, 'Ỗ': 236, 'Ố': 237, 'Ộ': 238, 'Ơ': 239, 'Ờ': 240, 'Ở': 241, 'Ỡ': 242, 'Ớ': 243, 'Ợ': 244, 'Ù': 245, 'Ủ': 246, 'Ũ': 247, 'Ú': 248, 'Ụ': 249, 'Ư': 250, 'Ừ': 251, 'Ử': 252, 'Ữ': 253, 'Ứ': 254, 'Ự': 255, 'Ỳ': 31, 'Ỷ': 30, 'Ỹ': 29, 'Ý': 28, 'Ỵ': 27 };
+            const map = { 'à': 127, 'ả': 128, 'ã': 129, 'á': 130, 'ạ': 131, 'ă': 132, 'ằ': 133, 'ẳ': 134, 'ẵ': 135, 'ắ': 136, 'ặ': 137, 'â': 138, 'ầ': 139, 'ẩ': 140, 'ẫ': 141, 'ấ': 142, 'ậ': 143, 'đ': 144, 'è': 145, 'ẻ': 146, 'ẽ': 147, 'é': 148, 'ẹ': 149, 'ê': 150, 'ề': 151, 'ể': 152, 'ễ': 153, 'ế': 154, 'ệ': 155, 'ì': 156, 'ỉ': 157, 'ĩ': 158, 'í': 159, 'ị': 160, 'ò': 161, 'ỏ': 162, 'õ': 163, 'ó': 164, 'ọ': 165, 'ô': 166, 'ồ': 167, 'ổ': 168, 'ỗ': 169, 'ố': 170: 'ộ': 171, 'ơ': 172, 'ờ': 173, 'ở': 174, 'ỡ': 175, 'ớ': 176, 'ợ': 177, 'ù': 178, 'ủ': 179, 'ũ': 180, 'ú': 181, 'ụ': 182, 'ư': 183, 'ừ': 184, 'ử': 185, 'ữ': 186, 'ứ': 187, 'ự': 188, 'ỳ': 189, 'ỷ': 190, 'ỹ': 191, 'ý': 192, 'ỵ': 193, 'À': 194, 'Ả': 195, 'Ã': 196, 'Á': 197, 'Ạ': 198, 'Ă': 199, 'Ằ': 200, 'Ẳ': 201, 'Ẵ': 202, 'Ắ': 203, 'Ặ': 204, 'Â': 205, 'Ầ': 206, 'Ẩ': 207, 'Ẫ': 208, 'Ấ': 209, 'Ậ': 210, 'Đ': 211, 'È': 212, 'Ẻ': 213, 'Ẽ': 214, 'É': 215, 'Ẹ': 216, 'Ê': 217, 'Ề': 218, 'Ể': 219, 'Ễ': 220, 'Ế': 221, 'Ệ': 222, 'Ì': 223, 'Ỉ': 224, 'Ĩ': 225, 'Í': 226, 'Ị': 227, 'Ò': 228, 'Ỏ': 229, 'Õ': 230, 'Ó': 231, 'Ọ': 232, 'Ô': 233, 'Ồ': 234, 'Ổ': 235, 'Ỗ': 236, 'Ố': 237, 'Ộ': 238, 'Ơ': 239, 'Ờ': 240, 'Ở': 241, 'Ỡ': 242, 'Ớ': 243, 'Ợ': 244, 'Ù': 245, 'Ủ': 246, 'Ũ': 247, 'Ú': 248, 'Ụ': 249, 'Ư': 250, 'Ừ': 251, 'Ử': 252, 'Ữ': 253, 'Ứ': 254, 'Ự': 255, 'Ỳ': 31, 'Ỷ': 30, 'Ỹ': 29, 'Ý': 28, 'Ỵ': 27 };
             return byteToHex(map[man] || (man.charCodeAt(0) < 128 ? man.charCodeAt(0) : 32));
         }
 
@@ -539,7 +539,7 @@
                         if (croppr) { try { croppr.destroy(); } catch (e) { } }
                         document.getElementById('no-img-alert').style.display = 'none'; const tg = document.getElementById('cropper-target'); tg.style.display = 'block'; tg.onload = () => {
                             imgOrig = tg; croppr = new Croppr(tg, {
-                                startSize: [80, 80, '%%'], onCropMove: (v) => {
+                                startSize: [80, 80, '%%%%'], onCropMove: (v) => {
                                     document.getElementById('pos-x').value = Math.round(v.x); document.getElementById('pos-y').value = Math.round(v.y); document.getElementById('pos-w').value = Math.round(v.width); document.getElementById('pos-h').value = Math.round(v.height);
                                 }
                             });
@@ -554,15 +554,15 @@
                 document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active')); btn.classList.add('active');
                 const sl = document.getElementById('filter-slider'); const nm = document.getElementById('filter-name'); nm.innerText = btn.innerText;
                 if (btn.id === 'brightness' || btn.id === 'saturation') { sl.max = 200; sl.value = (btn.id === 'brightness') ? brightness : saturation; } else { sl.max = 100; sl.value = (btn.id === 'inversion') ? inversion : grayscale; }
-                document.getElementById('filter-value').innerText = sl.value + '%';
+                document.getElementById('filter-value').innerText = sl.value + '%%%%';
             };
         });
 
         document.getElementById('filter-slider').oninput = (e) => {
-            const v = e.target.value; document.getElementById('filter-value').innerText = v + '%'; const id = document.querySelector('.btn-filter.active').id;
+            const v = e.target.value; document.getElementById('filter-value').innerText = v + '%%%%'; const id = document.querySelector('.btn-filter.active').id;
             if (id === 'brightness') brightness = v; else if (id === 'saturation') saturation = v; else if (id === 'inversion') inversion = v; else grayscale = v;
             if (imgOrig) {
-                const f = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                const f = `brightness(${brightness}%%%%) saturate(${saturation}%%%%) invert(${inversion}%%%%) grayscale(${grayscale}%%%%)`;
                 document.querySelector('.croppr-image').style.filter = f; document.querySelector('.croppr-imageClipped').style.filter = f;
             }
         };
