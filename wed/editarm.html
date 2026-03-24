@@ -741,20 +741,27 @@
             document.querySelector(".listarm").addEventListener("change", updateUI); 
             document.querySelector(".luu-img").addEventListener("click", luuAlarm);
             
-            const melVal = document.getElementById('melody-val-hidden').value;
-            const txtVal = document.getElementById('text-val-hidden').value;
-            const tutaoVal = document.getElementById('tutao-check-value').value;
+            const melEl = document.getElementById('melody-val-hidden');
+            const txtEl = document.getElementById('text-val-hidden');
+            const tutaoEl = document.getElementById('tutao-check-value');
 
-            if (document.querySelector(".listmelody")) {
-                document.querySelector(".listmelody").value = melVal;
+            const melVal = melEl ? melEl.value : "0";
+            const txtVal = txtEl ? txtEl.value : "";
+            const tutaoVal = tutaoEl ? tutaoEl.value : "0";
+
+            const melSelect = document.querySelector(".listmelody");
+            if (melSelect) {
+                melSelect.value = melVal;
             }
-            document.getElementById('text').value = reverse_chuyendoid2(txtVal);
+            
+            const txtInput = document.getElementById('text');
+            if (txtInput) {
+                txtInput.value = reverse_chuyendoid2(txtVal);
+            }
 
             const tutaoSec = document.getElementById('tutao-section');
-            if (tutaoVal === "1") {
-                tutaoSec.style.display = 'block';
-            } else {
-                tutaoSec.style.display = 'none';
+            if (tutaoSec) {
+                tutaoSec.style.display = (tutaoVal === "1") ? 'block' : 'none';
             }
 
             updateUI();
