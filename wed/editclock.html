@@ -511,6 +511,9 @@
             websocket.onopen = () => {
                 connectt = 1;
                 document.getElementById('ws-status').innerText = "Connected";
+                const params = new URLSearchParams(window.location.search);
+                const idx = params.get('idx');
+                if (idx !== null) websocket.send("#CLK$" + idx);
             };
             websocket.onclose = () => {
                 setTimeout(initWebSocket, 2000);
