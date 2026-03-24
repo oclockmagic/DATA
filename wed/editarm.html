@@ -1,310 +1,283 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0, user-scalable=no">
     <title>MAGIC O'CLOCK - EDIT ALARM</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=0.8, user-scalable=no">
     <style>
-        :root {
-            --primary: #4facfe;
-            --secondary: #00f2fe;
-            --accent: #BA68C8;
-            --bg-dark: rgb(6, 2, 29);
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
-        }
         body {
-            margin: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: var(--bg-dark);
-            background: linear-gradient(135deg, #06021d, #1a1a2e);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            color: white;
             padding: 10px;
-            box-sizing: border-box;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            background-image: url("data:image/svg+xml,%%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' id='eAMJOgF4ve61' viewBox='0 0 640 480' shape-rendering='geometricPrecision' text-rendering='geometricPrecision' style='background-color:rgb(6,2,29)'%%3E%%3Cstyle%%3E%%3C!%%5BCDATA%%5B%%23eAMJOgF4ve62 %%7Banimation: eAMJOgF4ve62_s_do 12000ms linear infinite normal forwards%%7D@keyframes eAMJOgF4ve62_s_do %%7B 0%%25 %%7Bstroke-dashoffset: 0%%7D 100%%25 %%7Bstroke-dashoffset: 300%%7D%%7D %%23eAMJOgF4ve63 %%7Banimation: eAMJOgF4ve63_s_do 12000ms linear infinite normal forwards%%7D@keyframes eAMJOgF4ve63_s_do %%7B 0%%25 %%7Bstroke-dashoffset: 0%%7D 100%%25 %%7Bstroke-dashoffset: 360%%7D%%7D %%23eAMJOgF4ve64 %%7Banimation: eAMJOgF4ve64_s_do 12000ms linear infinite normal forwards%%7D@keyframes eAMJOgF4ve64_s_do %%7B 0%%25 %%7Bstroke-dashoffset: 0%%7D 100%%25 %%7Bstroke-dashoffset: 500%%7D%%7D %%23eAMJOgF4ve65 %%7Banimation: eAMJOgF4ve65_s_do 12000ms linear infinite normal forwards%%7D@keyframes eAMJOgF4ve65_s_do %%7B 0%%25 %%7Bstroke-dashoffset: 0%%7D 100%%25 %%7Bstroke-dashoffset: 360%%7D%%7D%%5D%%5D%%3E%%3C/style%%3E%%3Cdefs%%3E%%3ClinearGradient id='eAMJOgF4ve62-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%%3E%%3Cstop id='eAMJOgF4ve62-stroke-0' offset='0%%25' stop-color='rgb(0,54,164)'/%%3E%%3Cstop id='eAMJOgF4ve62-stroke-1' offset='49%%25' stop-color='rgb(106,35,100)'/%%3E%%3Cstop id='eAMJOgF4ve62-stroke-2' offset='100%%25' stop-color='rgb(76,206,255)'/%%3E%%3C/linearGradient%%3E%%3ClinearGradient id='eAMJOgF4ve63-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%%3E%%3Cstop id='eAMJOgF4ve63-stroke-0' offset='0%%25' stop-color='rgb(255,255,255)'/%%3E%%3Cstop id='eAMJOgF4ve63-stroke-1' offset='48%%25' stop-color='rgb(53,159,173)'/%%3E%%3Cstop id='eAMJOgF4ve63-stroke-2' offset='100%%25' stop-color='rgb(175,172,122)'/%%3E%%3C/linearGradient%%3E%%3ClinearGradient id='eAMJOgF4ve64-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%%3E%%3Cstop id='eAMJOgF4ve64-stroke-0' offset='0%%25' stop-color='rgb(174,59,212)'/%%3E%%3Cstop id='eAMJOgF4ve64-stroke-1' offset='48%%25' stop-color='rgb(43,196,195)'/%%3E%%3Cstop id='eAMJOgF4ve64-stroke-2' offset='100%%25' stop-color='rgb(255,0,246)'/%%3E%%3C/linearGradient%%3E%%3ClinearGradient id='eAMJOgF4ve65-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%%3E%%3Cstop id='eAMJOgF4ve65-stroke-0' offset='0%%25' stop-color='rgb(255,255,255)'/%%3E%%3Cstop id='eAMJOgF4ve65-stroke-1' offset='48%%25' stop-color='rgba(255,176,195,0.77)'/%%3E%%3Cstop id='eAMJOgF4ve65-stroke-2' offset='100%%25' stop-color='rgba(255,255,255,0.52)'/%%3E%%3C/linearGradient%%3E%%3C/defs%%3E%%3Cpath id='eAMJOgF4ve62' d='M-28.184069,236.782402C-22.416319,115.994587,38.36794,34.85463,85.69268,12.37538C108.26693,1.65261,173.97045,-28.611139,211.0966,56.92678C233.149683,107.736648,222.30834,173.14729,192.94603,209.55655C180.87628,224.52304,153.37119,253.70863,131.0691,242.55758C101.64318,227.84462,116.11517,176.6412,126.11895,154.27982C147.51903,106.44435,210.91994,48.61763,268.02338,67.65211C341.23469,92.05588,235.732082,215.216436,272.97353,252.45789C329.075282,308.559651,352.0863,178.50731,396.72739,173.25542C431.40946,169.17518,433.482921,234.616969,512.23102,253.28292C599.246683,273.908562,661.790667,187.658672,640,147.67962C596.380836,67.65211,512.53453,103.63856,480.88002,147.67962C424.67957,225.87155,486.667172,336.323752,395.07734,403.4376C337.65606,445.51392,251.977514,417.583961,192.94603,366.31145C94.894284,281.147418,16.936504,270.279162,-54.962907,480' opacity='0.25' fill='none' stroke='url(%%23eAMJOgF4ve62-stroke)' stroke-width='40' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,300'/%%3E%%3Cpath id='eAMJOgF4ve63' d='M396.72739,-4.304194C420.88375,-42.954374,585.244446,-26.551229,584.00825,77.55242C583.56083,115.230987,523.444062,140.787676,524.60639,187.28085C526.25644,253.282922,571.59109,279.36741,561.73255,315.98488C556.17101,336.64202,498.41773,385.89287,483.3551,366.31145C468.45238,346.93792,495.81252,341.05431,508.9309,344.03575C548.39828,353.00561,543.77554,402.23247,518.83121,423.23822C502.06494,437.35718,482.69094,444.53157,461.07941,445.51392C449.73791,446.02944,435.51289,445.52413,427.25335,436.43864C414.28693,422.17557,417.2577,394.76786,413.22791,377.03678C405.27593,342.04805,363.11233,316.78273,329.07528,326.71021C284.5875,339.68581,282.76889,421.48323,310.92471,449.63905C324.58467,463.29901,350.01171,460.68992,356.30113,440.56377C358.10767,434.78283,353.59627,428.00948,351.35098,423.23823C337.9788,394.82234,321.36838,372.83261,287.82399,370.43658C258.37375,368.33299,224.53122,374.89214,196.24613,382.81197C155.3483,394.26336,90.98727,441.7813,50.21657,405.08767C22.95809,380.55504,61.55718,322.53284,85.69268,308.55965C114.32654,291.98215,149.71689,304.32619,180.57064,301.13442C226.99826,296.33156,317.86146,243.80578,322.47507,193.05604C324.95336,165.79479,298.66113,148.92717,274.62358,144.37952C215.32272,133.16044,151.16094,142.17429,93.11791,121.2788C58.91504,108.96577,75.205588,61.180899,103.410878,47.861739C186.880648,8.445459,279.13896,62.98071,353.82606,92.4029C382.8255,103.82692,475.92988,92.4029,422.936361,-15.839694' fill='none' stroke='url(%%23eAMJOgF4ve63-stroke)' stroke-width='4' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,72'/%%3E%%3Cpath id='eAMJOgF4ve64' d='M-28.184069,160.488657C-19.493039,108.342477,109.34716,30.07385,136.84428,75.90237C162.16007,118.09535,66.12632,202.7843,93.94294,236.7824C102.8133,247.62395,182.09019,231.25226,197.07116,230.18219C279.99924,224.25875,360.83785,241.38077,428.07838,292.88415C451.91037,311.13844,493.12496,347.59677,475.92988,381.98693C469.25479,395.33711,451.77057,401.96044,438.80372,406.7377C374.56781,430.40356,264.68068,427.71352,240.79753,346.51082C232.99567,319.9845,234.38033,295.92804,250.69784,273.08353C283.5518,227.08799,347.80165,219.41818,378.57684,173.25541C419.06886,112.51739,369.59554,47.24183,301.02442,52.80165C263.08117,55.87813,229.93217,127.44909,273.79857,145.20454C335.04087,169.99309,400.1067,133.91001,463.5545,182.3307C502.27689,211.882,475.01255,274.09139,512.23102,303.60949C532.68594,319.83236,594.83376,317.46556,584.00826,358.06119C565.54615,427.29409,488.39249,392.0697,442.10383,382.81196C385.73167,371.53753,363.89654,350.9891,321.65007,315.98487C306.66535,303.56896,290.10766,293.51774,276.27365,279.68374C263.80244,267.21253,254.15425,251.23953,238.32246,242.55758C209.06388,226.51255,165.91535,237.61377,138.49434,253.28292C43.29108,307.68478,89.63333,370.55854,173.97045,390.2372C220.75228,401.15296,301.024421,431.984879,356.30113,524.680857' opacity='0.2' fill='none' stroke='url(%%23eAMJOgF4ve64-stroke)' stroke-width='20' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,500'/%%3E%%3Cpath id='eAMJOgF4ve65' d='M-48.371193,173.25542C24.64077,173.25542,32.53264,115.77056,35.3661,97.35304C38.63356,76.11456,34.22546,34.69538,49.39154,18.15056C55.84046,11.11538,58.44735,12.7887,68.36713,12.37538C107.56341,10.7422,135.30024,60.89528,139.31935,94.05293C140.8168,106.40691,133.486233,160.05502,160.915728,171.60537C205.012625,190.174235,287.05645,119.52971,305.14953,199.65623C320.05156,265.65094,183.921725,292.33601,136.01925,301.13442C95.59298,308.55965,72.363341,354.983711,95.59298,396.01236C118.481569,436.43864,180.57064,429.512986,217.357279,405.08767C246.525743,385.720612,280.39876,358.06118C282.61014,369.11807,220.01651,448.28793,251.52286,454.5892C275.67397,459.41942,315.18558,400.30219,323.3001,386.93709C359.95609,326.56252,368.47449,258.32159,395.07734,194.70608C403.55438,174.43489,420.73201,129.72802,446.22894,122.92884C481.08247,113.63457,487.90668,155.77563,490.78033,180.68064C492.96727,199.63411,493.89428,220.22682,492.43038,239.25747C489.86596,272.59496,456.51134,371.52049,486.6552,396.01237C497.79271,405.06159,512.73269,405.42639,526.25644,403.4376C584.52411,394.86883,561.9366,319.61191,589.78342,283.80886C599.31738,271.55091,653.452698,246.102803,652.822387,308.55965' fill='none' stroke='url(%%23eAMJOgF4ve65-stroke)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,72'/%%3E%%3C/svg%%3E%%0A");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            overflow-x: hidden;
         }
-        .container {
-            width: 420px;
-            max-width: 98vw;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 25px;
+
+        .wrapper {
+            width: 440px;
+            max-width: 95vw;
+            background: rgba(0, 0, 0, 0.3);
             padding: 20px;
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             box-sizing: border-box;
         }
+
         h2 {
             text-align: center;
             font-weight: 300;
             font-size: 20px;
             letter-spacing: 2px;
-            margin: 0 0 15px 0;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            color: #fff;
+            text-transform: uppercase;
         }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(186, 104, 200, 0.4), transparent);
+            margin: 12px 0;
+        }
+
         .section-glass {
-            background: var(--glass);
-            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 12px;
             margin-bottom: 15px;
         }
-        .flex-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
+
+        .form-group {
+            margin-bottom: 12px;
         }
-        .flex-column {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
+
         label {
+            display: block;
             font-size: 10px;
-            opacity: 0.7;
             margin-bottom: 4px;
-            color: var(--secondary);
+            opacity: 0.6;
             text-transform: uppercase;
             letter-spacing: 1px;
+            color: #4facfe;
+            font-weight: 600;
         }
-        select, input[type="number"], input[type="text"] {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            color: white;
-            padding: 8px;
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 10px;
             font-size: 14px;
-            outline: none;
-            transition: all 0.3s;
-            width: 100%;
             box-sizing: border-box;
+            outline: none;
         }
-        select:focus, input:focus {
-            border-color: var(--primary);
-            background: rgba(255,255,255,0.1);
+
+        .row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
         }
-        select option { background: #1a1a2e; color: #fff; }
+
+        .col {
+            flex: 1;
+        }
 
         .btn-group {
             display: flex;
             gap: 10px;
-            margin-top: 5px;
+            margin-top: 20px;
         }
+
         .btn {
             flex: 1;
-            height: 38px;
-            border-radius: 10px;
+            height: 36px;
+            border-radius: 8px;
             border: none;
             color: white;
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
             text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 1px;
+            font-size: 10px;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         .btn-save {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
         }
-        .btn-back {
+
+        .home-img {
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--glass-border);
         }
-        .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
-        .btn:active { transform: scale(0.98); }
 
         .preview-area {
-            width: 100%;
-            height: 220px;
+            width: 100%%;
+            height: 180px;
             background: #000;
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid var(--glass-border);
             position: relative;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
+
         .filter-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 6px;
             margin-bottom: 10px;
         }
+
         .btn-filter {
             font-size: 8px;
             height: 24px;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 5px;
             color: white;
-            cursor: pointer;
         }
-        .btn-filter.active { background: var(--primary); color: #000; }
 
+        .btn-filter.active { background: #4facfe; color: #000; }
+
+        .hidden { display: none !important; }
+        
         .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
-            z-index: 10000;
-            justify-content: center; align-items: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%%; height: 100%%;
+            background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
         }
         .modal-content {
-            background: rgba(20, 20, 20, 0.95);
-            padding: 25px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center; width: 280px;
-        }
-        .progress-container {
-            width: 100%; height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px; margin: 15px 0;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%; transition: width 0.3s;
-        }
-        .hidden { display: none !important; }
-        .conectt { font-size: 9px; opacity: 0.4; text-align: right; margin-top: 10px; text-transform: uppercase; }
-
-        input[type="range"] {
-            width: 100%;
-            accent-color: var(--primary);
-            background: transparent;
+            background: #1a1a2e; padding: 20px; border-radius: 15px; text-align: center; width: 250px;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/gh/jamessouth/Croppr.js@master/dist/croppr.min.js"></script>
     <link href="https://cdn.jsdelivr.net/gh/jamessouth/Croppr.js@master/dist/croppr.min.css" rel="stylesheet">
 </head>
+
 <body>
-    <div class="container" id="main-container">
+    <div class="wrapper">
         <h2>EDIT ALARM</h2>
+        <hr>
 
-        <div class="section-glass">
-            <div class="flex-column %TXT_DISABLE%" style="margin-bottom:12px;">
-                <label>Title Text</label>
-                <input autocomplete="off" placeholder="Alarm name..." type="text" id='text' maxlength="255">
+        <div id="tutao-section" class="section-glass hidden">
+            <label>IMAGE EDITOR</label>
+            <div class="preview-area">
+                <p id="no-image-text" style="opacity:0.3; font-size:11px;">Select Image</p>
+                <img id="cropper-target" style="max-height: 100%%; display: none;" />
             </div>
-
-            <div class="flex-row">
-                <div class="flex-column">
-                    <label>Type</label>
-                    <select class="listarm" name="arm">
-                        <option value="0" %TYP0%>Hour-Weekday</option>
-                        <option value="1" %TYP1%>Day-Month</option>
-                        <option value="2" %TYP2%>Full Date</option>
-                    </select>
-                </div>
-                <div class="flex-column">
-                    <label>Calendar</label>
-                    <select class="listamlich" name="armamlich">
-                        <option value="0" %AML0%>Solar</option>
-                        <option value="1" %AML1%>Lunar</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="flex-column" style="margin:12px 0;">
-                <label>Repeat Pattern</label>
-                <select class="listthungay" name="armthungay">
-                    <option value="0" %THU0%>Everyday</option>
-                    <option value="1" %THU1%>Sunday</option>
-                    <option value="2" %THU2%>Monday</option>
-                    <option value="3" %THU3%>Tuesday</option>
-                    <option value="4" %THU4%>Wednesday</option>
-                    <option value="5" %THU5%>Thursday</option>
-                    <option value="6" %THU6%>Friday</option>
-                    <option value="7" %THU7%>Saturday</option>
-                </select>
-            </div>
-
-            <label>Time & Date</label>
-            <div class="flex-row" style="margin-bottom:12px;">
-                <input type="number" id='tgio' value="%GIO%" min="0" max="23">
-                <span style="opacity:0.5">:</span>
-                <input type="number" id='tphut' value="%PHT%" min="0" max="59">
-                <span style="opacity:0.2; margin:0 5px;">|</span>
-                <input type="number" id='tngay' value="%NGA%" min="1" max="31">
-                <span style="opacity:0.5">/</span>
-                <input type="number" id='tthang' value="%THA%" min="1" max="12">
-            </div>
-
-            <div class="flex-column">
-                <label>Melody</label>
-                <select class="listmelody" style="margin-top:4px;">
-                    %MELODY_LIST%
-                </select>
-            </div>
-        </div>
-
-        <div id="tutao-section" class="hidden section-glass" style="border-color: rgba(79, 172, 254, 0.4);">
-            <label style="display:block; margin-bottom:10px; color:var(--primary); font-size:12px;">Image Overlay</label>
-            <div class="preview-area" id="preview-container">
-                <p style="opacity: 0.3; font-size: 11px;" id="no-image-text">Preview will appear here</p>
-                <img id="cropper-target" style="max-height: 100%; display: none;" />
-            </div>
-
+            
             <div class="filter-grid">
                 <button class="btn-filter active" onclick="setFilter('brightness')">Bright</button>
                 <button class="btn-filter" onclick="setFilter('saturation')">Satur</button>
                 <button class="btn-filter" onclick="setFilter('grayscale')">Gray</button>
                 <button class="btn-filter" onclick="setFilter('inversion')">Invert</button>
-                <div style="grid-column: span 4;">
-                    <input type="range" id="filter-slider" min="0" max="200" value="100" oninput="updateFilterLabel()">
+                <div style="grid-column: span 4; margin-top:5px;">
+                    <input type="range" id="filter-slider" min="0" max="200" value="100" oninput="updateFilterLabel()" style="width:100%%;">
                 </div>
             </div>
 
-            <div class="flex-row">
-                <div class="flex-column"><label>X</label><input type="number" id="pos-x" value="0"></div>
-                <div class="flex-column"><label>Y</label><input type="number" id="pos-y" value="0"></div>
-                <button class="btn" onclick="document.getElementById('file-input').click()" style="background:var(--accent); font-size:9px; height:34px; margin-top:14px; flex:2;">
-                    UPLOAD IMG
-                </button>
+            <div class="row">
+                <div class="col"><label>X</label><input type="number" id="pos-x" value="%POS_X%"></div>
+                <div class="col"><label>Y</label><input type="number" id="pos-y" value="%POS_Y%"></div>
+                <button class="btn" onclick="document.getElementById('file-input').click()" style="background:#BA68C8; margin-top:14px; flex:2;">UPLOAD</button>
                 <input type="file" id="file-input" accept="image/*" hidden>
             </div>
-            <div class="hidden">
-                 <input type="number" id="pos-w" value="64" readonly>
-                 <input type="number" id="pos-h" value="64" readonly>
+        </div>
+
+        <div class="form-group %TXT_DISABLE%">
+            <label>TEXT VIEW</label>
+            <input autocomplete="off" placeholder="Message content" type="text" id='text' maxlength="255">
+        </div>
+
+        <div class="form-group">
+            <label>TYPE & CALENDAR</label>
+            <div class="row">
+                <select class="listarm" name="arm">
+                    <option value="0" %TYP0%>Theo Giờ - Thứ ngày</option>
+                    <option value="1" %TYP1%>Theo Ngày - Tháng</option>
+                    <option value="2" %TYP2%>Theo Giờ - Ngày Tháng</option>
+                </select>
+                <select class="listamlich" name="armamlich">
+                    <option value="0" %AML0%>Dương lịch</option>
+                    <option value="1" %AML1%>Âm lịch</option>
+                </select>
             </div>
+        </div>
+
+        <div class="form-group">
+            <label>DAYS & REPEAT</label>
+            <select class="listthungay" name="armthungay">
+                <option value="0" %THU0%>Cả Tuần</option>
+                <option value="1" %THU1%>Chủ Nhật</option>
+                <option value="2" %THU2%>Thứ 2</option>
+                <option value="3" %THU3%>Thứ 3</option>
+                <option value="4" %THU4%>Thứ 4</option>
+                <option value="5" %THU5%>Thứ 5</option>
+                <option value="6" %THU6%>Thứ 6</option>
+                <option value="7" %THU7%>Thứ 7</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>TIME & DATE</label>
+            <div class="row">
+                <input class="col" type="number" id='tgio' value="%GIO%" min="0" max="23">
+                <span>:</span>
+                <input class="col" type="number" id='tphut' value="%PHT%" min="0" max="59">
+                <span style="opacity:0.2">|</span>
+                <input class="col" type="number" id='tngay' value="%NGA%" min="1" max="31">
+                <span>/</span>
+                <input class="col" type="number" id='tthang' value="%THA%" min="1" max="12">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>MELODY</label>
+            <select class="listmelody">
+                %MELODY_LIST%
+            </select>
         </div>
 
         <div class="btn-group">
-            <button class="btn btn-save luu-img">SAVE CHANGES</button>
-            <button class="btn btn-back">CANCEL</button>
+            <button class="btn btn-save luu-img">SAVE</button>
+            <button class="btn home-img">BACK</button>
         </div>
 
-        <div class="conectt" id="conet">CONNECTING...</div>
+        <label class="conectt" id="conet">STATUS: CONNECTING...</label>
     </div>
 
     <div id="upload-modal" class="modal">
         <div class="modal-content">
-            <h3 style="margin:0 0 5px 0; font-size:16px;">Saving</h3>
-            <p id="sync-msg" style="font-size:11px; opacity:0.6;">Syncing with device...</p>
-            <div class="progress-container">
-                <div id="progress-bar" class="progress-bar"></div>
+            <h3>Saving...</h3>
+            <div style="height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin:15px 0;">
+                <div id="progress-bar" style="height:100%%; width:0%%; background:#4facfe; transition:0.3s;"></div>
             </div>
-            <p id="progress-percent" style="font-size:13px; color:var(--primary); font-weight:bold;">0%</p>
+            <p id="progress-percent">0%%</p>
         </div>
     </div>
 
     <script>
-        var websocket, croppr = null, imgOrig = null, uploadQueue = [], totalPackets = 0, isSaving = false, tutaoActive = false;
+        var websocket, croppr = null, imgOrig = null, uploadQueue = [], totalPackets = 0, tutaoActive = false;
         var brightness = 100, saturation = 100, grayscale = 0, inversion = 0, activeFilter = 'brightness';
         var pct = String.fromCharCode(37);
 
@@ -330,28 +303,23 @@
         function updateFilterLabel() {
             let v = parseInt(document.getElementById('filter-slider').value);
             if (activeFilter === 'brightness') brightness = v; else if (activeFilter === 'saturation') saturation = v; else if (activeFilter === 'grayscale') grayscale = v; else if (activeFilter === 'inversion') inversion = v;
-            applyFilters();
-        }
-
-        function applyFilters() {
             const s = `brightness(${brightness}${pct}) saturate(${saturation}${pct}) grayscale(${grayscale}${pct}) invert(${inversion}${pct})`;
-            const ci = document.querySelector('.croppr-image'); if (ci) ci.style.filter = s;
-            const tg = document.getElementById('cropper-target'); if (tg) tg.style.filter = s;
+            document.querySelectorAll('.croppr-image, #cropper-target').forEach(el => el.style.filter = s);
         }
 
         function initWebSocket() {
             websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
-            websocket.onopen = () => { document.getElementById('conet').innerHTML = "CONNECTED"; };
-            websocket.onclose = () => { setTimeout(initWebSocket, 2000); document.getElementById('conet').innerHTML = "CONNECTING..."; };
+            websocket.onopen = () => { document.getElementById('conet').innerHTML = "STATUS: CONNECTED"; };
+            websocket.onclose = () => { setTimeout(initWebSocket, 2000); document.getElementById('conet').innerHTML = "STATUS: RECONNECTING..."; };
             websocket.onmessage = (e) => {
-                if (e.data === "SAVEOK") window.location.href = "/alarm.html";
+                if (e.data === "SAVEOK") window.location.href = "/alarm.html?v=" + Date.now();
                 if (e.data === "UP") {
                     if (uploadQueue.length > 0) {
                         websocket.send(uploadQueue.shift());
                         const p = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
                         document.getElementById('progress-bar').style.width = p + pct;
                         document.getElementById('progress-percent').innerText = p + pct;
-                    } else { document.getElementById('sync-msg').innerText = "Finishing..."; saveAlarmSettings(); }
+                    } else saveAlarmSettings();
                 }
             };
         }
@@ -369,9 +337,7 @@
             const ta = document.getElementById('tthang').value;
             const me = document.querySelector('.listmelody').value;
             let c = `#HGH$${id}|${tx}|${ty}|${am}|${th}|${gi}|${ph}|${ng}|${ta}|${me}`;
-            if (tutaoActive) {
-                c += `|1|${document.getElementById('pos-x').value}|${document.getElementById('pos-y').value}|64|64`;
-            } else { c += `|0|0|0|0|0`; }
+            c += tutaoActive ? `|1|${document.getElementById('pos-x').value}|${document.getElementById('pos-y').value}|64|64` : `|0|0|0|0|0`;
             websocket.send(c);
         }
 
@@ -385,15 +351,12 @@
             const d = ctx.getImageData(0, 0, 64, 64).data;
             let o = [];
             for (let i = 0; i < d.length; i += 4) {
-                const r_val = Math.floor(d[i]/17);
-                const g_val = Math.floor(d[i+1]/17);
-                const b_val = Math.floor(d[i+2]/17);
-                o.push(r_val << 4);
-                o.push((b_val << 4) | g_val);
+                o.push(Math.floor(d[i]/17) << 4);
+                o.push((Math.floor(d[i+2]/17) << 4) | Math.floor(d[i+1]/17));
             }
             uploadQueue = [];
             for (let i = 0; i < o.length; i += 512) {
-                uploadQueue.push("#GI1$" + o.slice(i, i+512).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase());
+                uploadQueue.push("#GI1$" + o.slice(i, i+512).map(b => byteToHex(b)).join('').toUpperCase());
             }
             totalPackets = uploadQueue.length;
             document.getElementById('upload-modal').style.display = 'flex';
@@ -402,23 +365,15 @@
 
         window.onload = () => {
             initWebSocket();
-            const par = new URLSearchParams(window.location.search);
-            const id = par.get('idx');
-            if (id !== null) {
-                websocket.onopen = () => { document.getElementById('conet').innerHTML = "CONNECTED"; websocket.send("#ARM$" + id); };
-            }
             document.querySelector(".listmelody").value = "%VALMLD%";
             document.getElementById('text').value = invert_hex("%VALTEXT%");
-
-            if (par.get('x')) {
+            
+            if ("%TUTAO_CHECK%" == "1") {
                 tutaoActive = true;
                 document.getElementById('tutao-section').classList.remove('hidden');
-                document.getElementById('pos-x').value = par.get('x');
-                document.getElementById('pos-y').value = par.get('y');
             }
 
             document.getElementById('file-input').onchange = (e) => {
-                const f = e.target.files[0]; if (!f) return;
                 const rd = new FileReader();
                 rd.onload = (ev) => {
                     const el = document.getElementById('cropper-target');
@@ -429,21 +384,21 @@
                         croppr = new Croppr(el, { aspectRatio: 1, startSize: [80, 80, 'px'], 
                             onUpdate: (v) => { document.getElementById('pos-x').value = Math.round(v.x); document.getElementById('pos-y').value = Math.round(v.y); }
                         });
-                        applyFilters();
+                        updateFilterLabel();
                     };
                 };
-                rd.readAsDataURL(f);
+                rd.readAsDataURL(e.target.files[0]);
                 tutaoActive = true;
                 document.getElementById('tutao-section').classList.remove('hidden');
             };
 
             document.querySelector(".luu-img").onclick = () => {
-                if (isSaving) return; isSaving = true;
                 if (tutaoActive && imgOrig) processImage();
                 else { document.getElementById('upload-modal').style.display = 'flex'; saveAlarmSettings(); }
             };
-            document.querySelector(".btn-back").onclick = () => { window.location.href = "/alarm.html"; };
+            document.querySelector(".home-img").onclick = () => { window.location.href = "/alarm.html"; };
         };
     </script>
 </body>
+
 </html>
