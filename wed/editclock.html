@@ -369,10 +369,6 @@
                         
                         document.getElementById('no-image-text').style.display = 'none';
                         const targetImg = document.createElement("img");
-                        targetImg.src = scaledImgSrc;
-                        
-                        previewContainer.innerHTML = '';
-                        previewContainer.appendChild(targetImg);
                         
                         targetImg.onload = () => {
                             imgOrig = targetImg; // Lấy ảnh này làm gốc để crop
@@ -388,6 +384,11 @@
                                 }
                             });
                         };
+                        
+                        targetImg.src = scaledImgSrc;
+                        
+                        previewContainer.innerHTML = '';
+                        previewContainer.appendChild(targetImg);
                     };
                 };
                 reader.readAsDataURL(e.target.files[0]);
