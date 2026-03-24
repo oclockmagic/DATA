@@ -649,7 +649,9 @@
         function sendImageData() {
             if (!websocket || websocket.readyState !== 1 || !croppr) return;
             
-            const targetW = 64, targetH = 64;
+            // Dùng kích thước Tutao thực tế (pos-w x pos-h) để firmware vẽ đúng
+            const targetW = parseInt(document.getElementById('pos-w').value) || 64;
+            const targetH = parseInt(document.getElementById('pos-h').value) || 64;
             const crop = croppr.getValue();
             const canvas = document.createElement('canvas');
             canvas.width = targetW; canvas.height = targetH;
