@@ -231,7 +231,7 @@
 
         <div class="preview-area" id="preview-container">
             <p style="opacity: 0.3;" id="no-image-text">No Image Selected</p>
-            <img id="target-image" style="display: none;" />
+            <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;" />
         </div>
 
         <div class="section-glass filter-controls">
@@ -367,8 +367,12 @@
                             croppr = null;
                         }
                         
-                        document.getElementById('no-image-text').style.display = 'none';
-                        const targetImg = document.createElement("img");
+                        const noImageText = document.getElementById('no-image-text');
+                        if (noImageText) noImageText.style.display = 'none';
+                        
+                        const targetImg = document.getElementById('cropper-target');
+                        if (!targetImg) return;
+                        targetImg.style.display = 'block';
                         
                         targetImg.onload = () => {
                             imgOrig = targetImg; // Lấy ảnh này làm gốc để crop
@@ -386,9 +390,6 @@
                         };
                         
                         targetImg.src = scaledImgSrc;
-                        
-                        previewContainer.innerHTML = '';
-                        previewContainer.appendChild(targetImg);
                     };
                 };
                 reader.readAsDataURL(e.target.files[0]);
