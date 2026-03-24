@@ -196,12 +196,12 @@
     <div class="container" id="main-container">
         <h2>EDIT ALARM</h2>
 
-        <div class="section-glass %TXT_DISABLE%">
-            <label>Title Text</label>
-            <input autocomplete="off" placeholder="Alarm name..." type="text" id='text' maxlength="255">
-        </div>
-
         <div class="section-glass">
+            <div class="flex-column %TXT_DISABLE%" style="margin-bottom:12px;">
+                <label>Title Text</label>
+                <input autocomplete="off" placeholder="Alarm name..." type="text" id='text' maxlength="255">
+            </div>
+
             <div class="flex-row">
                 <div class="flex-column">
                     <label>Type</label>
@@ -219,51 +219,44 @@
                     </select>
                 </div>
             </div>
-        </div>
 
-        <div class="section-glass">
-            <label>Repeat Pattern</label>
-            <select class="listthungay" name="armthungay">
-                <option value="0" %THU0%>Everyday</option>
-                <option value="1" %THU1%>Sunday</option>
-                <option value="2" %THU2%>Monday</option>
-                <option value="3" %THU3%>Tuesday</option>
-                <option value="4" %THU4%>Wednesday</option>
-                <option value="5" %THU5%>Thursday</option>
-                <option value="6" %THU6%>Friday</option>
-                <option value="7" %THU7%>Saturday</option>
-            </select>
-        </div>
+            <div class="flex-column" style="margin:12px 0;">
+                <label>Repeat Pattern</label>
+                <select class="listthungay" name="armthungay">
+                    <option value="0" %THU0%>Everyday</option>
+                    <option value="1" %THU1%>Sunday</option>
+                    <option value="2" %THU2%>Monday</option>
+                    <option value="3" %THU3%>Tuesday</option>
+                    <option value="4" %THU4%>Wednesday</option>
+                    <option value="5" %THU5%>Thursday</option>
+                    <option value="6" %THU6%>Friday</option>
+                    <option value="7" %THU7%>Saturday</option>
+                </select>
+            </div>
 
-        <div class="section-glass">
             <label>Time & Date</label>
-            <div class="flex-row">
+            <div class="flex-row" style="margin-bottom:12px;">
                 <input type="number" id='tgio' value="%GIO%" min="0" max="23">
-                <span>:</span>
+                <span style="opacity:0.5">:</span>
                 <input type="number" id='tphut' value="%PHT%" min="0" max="59">
-                <span style="opacity:0.3">|</span>
+                <span style="opacity:0.2; margin:0 5px;">|</span>
                 <input type="number" id='tngay' value="%NGA%" min="1" max="31">
-                <span>/</span>
+                <span style="opacity:0.5">/</span>
                 <input type="number" id='tthang' value="%THA%" min="1" max="12">
+            </div>
+
+            <div class="flex-column">
+                <label>Melody</label>
+                <select class="listmelody" style="margin-top:4px;">
+                    %MELODY_LIST%
+                </select>
             </div>
         </div>
 
-        <div class="section-glass">
-            <label>Melody</label>
-            <select class="listmelody">
-                %MELODY_LIST%
-            </select>
-        </div>
-
         <div id="tutao-section" class="hidden section-glass" style="border-color: rgba(79, 172, 254, 0.4);">
-            <label>Overlay Image</label>
-            <button class="btn btn-save" onclick="document.getElementById('file-input').click()" style="width:100%; height:30px; margin-bottom:10px;">
-                CHANGE IMAGE
-            </button>
-            <input type="file" id="file-input" accept="image/*" hidden>
-
+            <label style="display:block; margin-bottom:10px; color:var(--primary); font-size:12px;">Image Overlay</label>
             <div class="preview-area" id="preview-container">
-                <p style="opacity: 0.3; font-size: 12px;" id="no-image-text">No Selection</p>
+                <p style="opacity: 0.3; font-size: 11px;" id="no-image-text">Preview will appear here</p>
                 <img id="cropper-target" style="max-height: 100%; display: none;" />
             </div>
 
@@ -280,14 +273,20 @@
             <div class="flex-row">
                 <div class="flex-column"><label>X</label><input type="number" id="pos-x" value="0"></div>
                 <div class="flex-column"><label>Y</label><input type="number" id="pos-y" value="0"></div>
-                <div class="flex-column"><label>W</label><input type="number" id="pos-w" value="64" readonly></div>
-                <div class="flex-column"><label>H</label><input type="number" id="pos-h" value="64" readonly></div>
+                <button class="btn" onclick="document.getElementById('file-input').click()" style="background:var(--accent); font-size:9px; height:34px; margin-top:14px; flex:2;">
+                    UPLOAD IMG
+                </button>
+                <input type="file" id="file-input" accept="image/*" hidden>
+            </div>
+            <div class="hidden">
+                 <input type="number" id="pos-w" value="64" readonly>
+                 <input type="number" id="pos-h" value="64" readonly>
             </div>
         </div>
 
         <div class="btn-group">
-            <button class="btn btn-save luu-img">SAVE</button>
-            <button class="btn btn-back">BACK</button>
+            <button class="btn btn-save luu-img">SAVE CHANGES</button>
+            <button class="btn btn-back">CANCEL</button>
         </div>
 
         <div class="conectt" id="conet">CONNECTING...</div>
