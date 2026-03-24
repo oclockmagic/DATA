@@ -60,11 +60,25 @@
             document.getElementById('file-input').onchange = (e) => {
                 const rd = new FileReader();
                 rd.onload = (ev) => {
-                    const el = document.getElementById('cropper-target'); el.src = ev.target.result; el.style.display = 'block';
-                    el.onload = () => { if (croppr) croppr.destroy(); croppr = new Croppr(el, { aspectRatio: 1, startSize: [80, 80, '%%'], onUpdate: (v) => { document.getElementById('pos-x').value = Math.round(v.x); document.getElementById('pos-y').value = Math.round(v.y); } }); };
+                    const el = document.getElementById('cropper-target');
+                    el.onload = () => { 
+                        imgOrig = el; 
+                        if (croppr) croppr.destroy(); 
+                        croppr = new Croppr(el, { 
+                            aspectRatio: 1, 
+                            startSize: [80, 80, '%%'], 
+                            onUpdate: (v) => { 
+                                document.getElementById('pos-x').value = Math.round(v.x); 
+                                document.getElementById('pos-y').value = Math.round(v.y); 
+                            } 
+                        }); 
+                    };
+                    el.src = ev.target.result; 
+                    el.style.display = 'block';
                 };
                 rd.readAsDataURL(e.target.files[0]);
-                tutaoActive = true; document.getElementById('tutao-section').classList.remove('hidden');
+                tutaoActive = true; 
+                document.getElementById('tutao-section').classList.remove('hidden');
             };
             document.querySelector(".luu-img").onclick = () => {
                 if (tutaoActive && croppr) {
