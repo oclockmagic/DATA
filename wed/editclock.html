@@ -343,29 +343,44 @@
                     const img = new Image();
                     img.src = ev.target.result;
                     img.onload = () => {
-                        imgOrig = img;
-                        previewContainer.innerHTML = '';
-                        previewContainer.appendChild(img);
+                        // Kích thước khu vực hiển thị (preview container)
+                        const pW = 368; 
+                        const pH = 380;
                         
-                        // Destroy old croppr
-                        if (croppr) croppr.destroy();
-                        
-                        // Scaled size for UI
+                        // Tính toán kích thước ảnh thu nhỏ (cogiax) để vừa khung
                         let uiW, uiH;
-                        if (img.width/img.height > 283/420) {
-                            uiW = 283; uiH = uiW * img.height / img.width;
+                        if (img.width/img.height > pW/pH) {
+                            uiW = pW; uiH = uiW * img.height / img.width;
                         } else {
-                            uiH = 420; uiW = uiH * img.width / img.height;
+                            uiH = pH; uiW = uiH * img.width / img.height;
                         }
                         
-                        croppr = new Croppr(img, {
-                            aspectRatio: (parseInt(posW.value) / parseInt(posH.value)) || 1,
-                            returnMode: 'real',
-                            onInitialize: () => {
-                                btnPreview.disabled = false;
-                                btnSave.disabled = false;
-                            }
-                        });
+                        const canvasUI = document.createElement("canvas");
+                        const ctxUI = canvasUI.getContext("2d");
+                        canvasUI.width = pW; 
+                        canvasUI.height = pH;
+                        ctxUI.translate(pW/2, pH/2);
+                        // Vẽ ảnh nguyên bản đã scale để vừa khung nhìn
+                        ctxUI.drawImage(img, -uiW/2, -uiH/2, uiW, uiH);
+                        
+                        const scaledImg = new Image();
+                        scaledImg.src = canvasUI.toDataURL();
+                        scaledImg.onload = () => {
+                            imgOrig = scaledImg; // Lấy ảnh này làm gốc để crop
+                            previewContainer.innerHTML = '';
+                            previewContainer.appendChild(scaledImg);
+                            
+                            if (croppr) croppr.destroy();
+                            
+                            croppr = new Croppr(scaledImg, {
+                                // BỎ aspectRatio ĐỂ CẮT TỰ DO (Free Crop Ratio)
+                                returnMode: 'real',
+                                onInitialize: () => {
+                                    btnPreview.disabled = false;
+                                    btnSave.disabled = false;
+                                }
+                            });
+                        };
                     };
                 };
                 reader.readAsDataURL(e.target.files[0]);
