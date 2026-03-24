@@ -577,6 +577,15 @@
         window.onload = () => {
             initWebSocket(); document.querySelector(".listarm").addEventListener("change", updateUI); document.querySelector(".luu-img").addEventListener("click", luuAlarm);
             const m = document.querySelector(".listmelody"); if (m) m.value = "%MELODY_VAL%"; document.getElementById('text').value = reverse_chuyendoid2("%VALTEXT%");
+            
+            // Ẩn hiện tutao-section dựa trên TUTAO_CHECK
+            const tutao = document.getElementById('tutao-section');
+            if ("%TUTAO_CHECK%" === "1") { 
+                tutao.style.display = 'block'; 
+            } else { 
+                tutao.style.display = 'none'; 
+            }
+
             updateUI();
         };
     </script>
