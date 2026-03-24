@@ -359,7 +359,8 @@
                         }
                         
                         croppr = new Croppr(img, {
-                            startSize: [80, 80, '%'],
+                            aspectRatio: (parseInt(posW.value) / parseInt(posH.value)) || 1,
+                            returnMode: 'real',
                             onInitialize: () => {
                                 btnPreview.disabled = false;
                                 btnSave.disabled = false;
@@ -417,67 +418,32 @@
         function sendImageData(isFinalSave) {
             if (!connectt || !croppr) return;
             
+            const targetW = parseInt(posW.value) || 64;
+            const targetH = parseInt(posH.value) || 64;
+            
             const crop = croppr.getValue();
             const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Width/Height for the LED Matrix
-            const targetW = parseInt(posW.value);
-            const targetH = parseInt(posH.value);
             canvas.width = targetW;
             canvas.height = targetH;
+            const ctx = canvas.getContext('2d');
             
             ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-            
-            // Draw cropped area to target size
+            // Resize and draw the cropped region directly to target dimensions
             ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
             
             const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
-            
-            // Also prepare 64x64 thumbnail
-            const thumbCanvas = document.createElement('canvas');
-            thumbCanvas.width = 64; thumbCanvas.height = 64;
-            const tCtx = thumbCanvas.getContext('2d');
-            tCtx.filter = ctx.filter;
-            tCtx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, 64, 64);
-            const thumbUrl = thumbCanvas.toDataURL("image/png");
-
-            // Binary packing logic
-            let dataGoi = "";
-            dataGoi += byteToHex(currentLayer);
-            dataGoi += byteToHex(typeof m_t !== 'undefined' ? m_t[currentLayer] : 0);
-            dataGoi += byteToHex(targetW);
-            dataGoi += byteToHex(targetH);
-            dataGoi += byteToHex(parseInt(posX.value));
-            dataGoi += byteToHex(parseInt(posY.value));
-            
-            // Unused fields for this mode (alarm etc)
-            for(let i=0; i<8; i++) dataGoi += "00"; 
-            
-            const imgSize = targetW * targetH * 2;
-            const headerSize = 21;
-            const vt = imgSize + headerSize;
-            
-            dataGoi += byteToHex(Math.floor(vt/256));
-            dataGoi += byteToHex(vt % 256);
-            dataGoi += "00"; // Text length 0
-            dataGoi += "0000"; // vt1 unused
-            dataGoi += byteToHex(Math.floor(thumbUrl.length / 256));
-            dataGoi += byteToHex(thumbUrl.length % 256);
-
-            // Pack pixels RGB444 (A4 R4 G4 B4 -> 2 bytes)
-            // Original format: dataGoi+=byteToHex(a+r*16); dataGoi+=byteToHex(g+b*16)
+            let hexData = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                const r = Math.floor(imgData[i] / 16);
-                const g = Math.floor(imgData[i+1] / 16);
-                const b = Math.floor(imgData[i+2] / 16);
-                const a = Math.floor(imgData[i+3] / 16);
-                dataGoi += byteToHex(a + r * 16);
-                dataGoi += byteToHex(g + b * 16);
+                const r = imgData[i] >> 4;
+                const g = imgData[i+1] >> 4;
+                const b = imgData[i+2] >> 4;
+                const a = imgData[i+3] >> 4;
+                // Standard ESP format: Byte 0 (A4 R4), Byte 1 (G4 B4)
+                hexData += byteToHex(a | (r << 4));
+                hexData += byteToHex(g | (b << 4));
             }
 
-            // Upload sequence
-            startUpload(dataGoi, thumbUrl, isFinalSave);
+            startUpload(hexData, "", isFinalSave);
         }
 
         let uploadQueue = [];
