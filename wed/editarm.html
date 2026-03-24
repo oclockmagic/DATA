@@ -674,33 +674,50 @@
 
         window.onload = () => {
             initWebSocket();
-            document.querySelector(".listmelody").value = "%MELODY_VAL%";
-            // Gui logic for Tutao
-            var tutaoCheck = "%TUTAO_CHECK%" === "1";
-            document.getElementById('tutao-enable').checked = tutaoCheck;
-            if (tutaoCheck) document.getElementById('tutao-body').style.display = 'block';
-            else document.getElementById('tutao-body').style.display = 'none';
+            const listMelody = document.querySelector(".listmelody");
+            if (listMelody) listMelody.value = "%MELODY_VAL%";
 
-            document.getElementById('file-input').onchange = (e) => {
-                const rd = new FileReader();
-                rd.onload = (ev) => {
-                    const el = document.getElementById('cropper-target');
-                    el.onload = () => {
-                        document.getElementById('no-img-alert').style.display = 'none';
-                        el.style.display = 'block';
-                        if (croppr) { try { croppr.destroy(); } catch (e) { } }
-                        croppr = new Croppr(el, {
-                            aspectRatio: 1,
-                            startSize: [80, 80, '%%'],
-                            onCropMove: (v) => {
-                                document.getElementById('pos-x').value = Math.round(v.x);
-                                document.getElementById('pos-y').value = Math.round(v.y);
-                                document.getElementById('pos-w').value = Math.round(v.width);
-                                document.getElementById('pos-h').value = Math.round(v.height);
-                            }
-                        });
+            // Logic for Tutao Visibility
+            const tutaoCheck = "%TUTAO_CHECK%" === "1";
+            const tutaoBody = document.getElementById('tutao-body');
+            const tutaoEnable = document.getElementById('tutao-enable');
+            
+            if (tutaoEnable) tutaoEnable.checked = tutaoCheck;
+            if (tutaoBody) {
+                tutaoBody.style.display = tutaoCheck ? 'block' : 'none';
+            }
+
+            // File input handle with safety check
+            const fileInput = document.getElementById('file-input');
+            if (fileInput) {
+                fileInput.onchange = (e) => {
+                    const rd = new FileReader();
+                    rd.onload = (ev) => {
+                        const el = document.getElementById('cropper-target');
+                        if (!el) return;
+                        el.onload = () => {
+                            const alertImg = document.getElementById('no-img-alert');
+                            if (alertImg) alertImg.style.display = 'none';
+                            el.style.display = 'block';
+                            if (croppr) { try { croppr.destroy(); } catch (e) { } }
+                            croppr = new Croppr(el, {
+                                aspectRatio: 1,
+                                startSize: [80, 80, '%%'],
+                                onCropMove: (v) => {
+                                    const px = document.getElementById('pos-x');
+                                    const py = document.getElementById('pos-y');
+                                    const pw = document.getElementById('pos-w');
+                                    const ph = document.getElementById('pos-h');
+                                    if (px) px.value = Math.round(v.x);
+                                    if (py) py.value = Math.round(v.y);
+                                    if (pw) pw.value = Math.round(v.width);
+                                    if (ph) ph.value = Math.round(v.height);
+                                }
+                            });
+                        };
+                        el.src = ev.target.result;
                     };
-                    el.src = ev.target.result;
+                    if (e && e.target && e.target.files.length) rd.readAsDataURL(e.target.files[0]);
                 };
                 if (e.target.files.length) rd.readAsDataURL(e.target.files[0]);
             };
