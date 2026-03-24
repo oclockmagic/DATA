@@ -297,7 +297,9 @@
                 <input type="number" id="pos-y" value="%POS_Y%">
                 <input type="number" id="pos-w" value="%POS_W%">
                 <input type="number" id="pos-h" value="%POS_H%">
-                <input type="hidden" id="tutao-check" value="%TUTAO_CHECK%">
+                <input type="hidden" id="tutao-check-value" value="%TUTAO_CHECK%">
+                <input type="hidden" id="melody-val-hidden" value="%MELODY_VAL%">
+                <input type="hidden" id="text-val-hidden" value="%VALTEXT%">
             </div>
         </div>
 
@@ -739,9 +741,9 @@
             document.querySelector(".listarm").addEventListener("change", updateUI); 
             document.querySelector(".luu-img").addEventListener("click", luuAlarm);
             
-            const melVal = "%MELODY_VAL%";
-            const txtVal = "%VALTEXT%";
-            const tutaoVal = "%TUTAO_CHECK%";
+            const melVal = document.getElementById('melody-val-hidden').value;
+            const txtVal = document.getElementById('text-val-hidden').value;
+            const tutaoVal = document.getElementById('tutao-check-value').value;
 
             if (document.querySelector(".listmelody")) {
                 document.querySelector(".listmelody").value = melVal;
