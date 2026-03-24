@@ -325,17 +325,6 @@
         const layerSelect = null;
 
 
-        // Initialize inputs from data if available
-        window.addEventListener('load', () => {
-            initWebSocket();
-            if (typeof m_x !== 'undefined') {
-                posX.value = m_x[0];
-                posY.value = m_y[0];
-                posW.value = m_w[0];
-                posH.value = m_h[0];
-            }
-        });
-
         fileInput.onchange = (e) => {
             if (e.target.files.length) {
                 const reader = new FileReader();
@@ -367,10 +356,13 @@
                         scaledImg.src = canvasUI.toDataURL();
                         scaledImg.onload = () => {
                             imgOrig = scaledImg; // Lấy ảnh này làm gốc để crop
+                            if (croppr) {
+                                try { croppr.destroy(); } catch (e) { console.log(e); }
+                                croppr = null;
+                            }
+                            
                             previewContainer.innerHTML = '';
                             previewContainer.appendChild(scaledImg);
-                            
-                            if (croppr) croppr.destroy();
                             
                             croppr = new Croppr(scaledImg, {
                                 // BỎ aspectRatio ĐỂ CẮT TỰ DO (Free Crop Ratio)
@@ -488,6 +480,7 @@
         }
 
         function initWebSocket() {
+            if (websocket && (websocket.readyState === WebSocket.CONNECTING || websocket.readyState === WebSocket.OPEN)) return;
             websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
             websocket.onopen = () => {
                 connectt = 1;
