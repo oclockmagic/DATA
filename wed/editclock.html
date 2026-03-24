@@ -271,7 +271,7 @@
         </div>
 
         <div class="flex-row">
-            <button class="btn btn-secondary" onclick="window.location.href='/viewtutao'">BACK</button>
+            <button class="btn btn-secondary" id="btn-back">BACK</button>
             <button class="btn btn-primary" id="btn-preview" disabled>PREVIEW</button>
             <button class="btn btn-accent" id="btn-save" disabled>SAVE</button>
         </div>
@@ -437,6 +437,32 @@
         // Action Logic
         btnPreview.onclick = () => sendImageData(false);
         btnSave.onclick = () => sendImageData(true);
+        let isCanceling = false;
+        document.getElementById('btn-back').onclick = () => {
+            if (connectt) {
+                isCanceling = true;
+                uploadModal.style.display = 'flex';
+                document.getElementById('modal-title').innerText = "Canceling...";
+                websocket.send("#DEL@" + currentLayer);
+            } else {
+                goBackWithReferrer();
+            }
+        };
+
+        function goBackWithReferrer() {
+            const ref = document.referrer;
+            if (ref) {
+                try {
+                    const url = new URL(ref);
+                    url.searchParams.set('v', Date.now());
+                    window.location.href = url.toString();
+                } catch(e) {
+                    window.location.href = '/clock.html?v=' + Date.now();
+                }
+            } else {
+                window.location.href = '/clock.html?v=' + Date.now();
+            }
+        }
 
         function sendImageData(isFinalSave) {
             if (!connectt || !croppr) return;
@@ -524,6 +550,8 @@
                     uploadModal.style.display = 'none';
                     if (isSaving) {
                         window.location.href = '/clock.html?v=' + Date.now();
+                    } else if (isCanceling) {
+                        goBackWithReferrer();
                     }
                 }
             };
