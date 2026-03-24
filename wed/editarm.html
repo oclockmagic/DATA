@@ -224,12 +224,13 @@
             left: 0;
             width: 100%%;
             height: 100%%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             backdrop-filter: blur(5px);
         }
+
         .modal-content {
             background: var(--bg-dark);
             padding: 30px;
@@ -239,14 +240,16 @@
             width: 80%%;
             max-width: 300px;
         }
+
         .progress-container {
             width: 100%%;
             height: 6px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
             margin: 20px 0;
             overflow: hidden;
         }
+
         .progress-bar {
             width: 0%%;
             height: 100%%;
@@ -294,7 +297,7 @@
                 <input type="number" id="pos-y" value="%POS_Y%">
                 <input type="number" id="pos-w" value="%POS_W%">
                 <input type="number" id="pos-h" value="%POS_H%">
-                <input type="hidden" id="tutao-check" value="%TUTAO_CHECK%"> 
+                <input type="hidden" id="tutao-check" value="%TUTAO_CHECK%">
             </div>
         </div>
 
@@ -568,9 +571,9 @@
             for (let i = 0; i < tv.length; i++) pk += chuyendoi2(tv[i]);
             if (websocket && websocket.readyState === 1) {
                 let tc = (croppr) ? 1 : 0; let tx = document.getElementById('pos-x').value; let ty = document.getElementById('pos-y').value; let tw = document.getElementById('pos-w').value; let th = document.getElementById('pos-h').value;
-                websocket.send(`#HGT$${tc}:${tx}:${ty}:${tw}:${th}`); 
+                websocket.send(`#HGT$${tc}:${tx}:${ty}:${tw}:${th}`);
                 websocket.send("#HGH$" + pk);
-                
+
                 if (tc === 1) {
                     sendImageData(); // Tải ảnh lên nếu có chọn ảnh
                 } else {
@@ -599,11 +602,11 @@
                 const pW = 380, pH = 380; let uW, uH; if (img.width / img.height > pW / pH) { uW = pW; uH = uW * img.height / img.width; } else { uH = pH; uW = uH * img.width / img.height; }
                 const cv = document.createElement("canvas"); cv.width = pW; cv.height = pH; const ctx = cv.getContext("2d"); ctx.translate(pW / 2, pH / 2); ctx.drawImage(img, -uW / 2, -uH / 2, uW, uH);
                 if (croppr) { try { croppr.destroy(); } catch (e) { } }
-                document.getElementById('no-img-alert').style.display = 'none'; 
-                const tg = document.getElementById('cropper-target'); 
-                tg.style.display = 'block'; 
+                document.getElementById('no-img-alert').style.display = 'none';
+                const tg = document.getElementById('cropper-target');
+                tg.style.display = 'block';
                 tg.onload = () => {
-                    imgOrig = tg; 
+                    imgOrig = tg;
                     // Lấy tọa độ ban đầu nếu có
                     let startX = parseInt(document.getElementById('pos-x').value) || 0;
                     let startY = parseInt(document.getElementById('pos-y').value) || 0;
@@ -611,17 +614,21 @@
                     let startH = parseInt(document.getElementById('pos-h').value) || 64;
 
                     croppr = new Croppr(tg, {
-                        startSize: [startW, startH, 'px'], 
+                        startSize: [startW, startH, 'px'],
                         onCropMove: (v) => {
-                            document.getElementById('pos-x').value = Math.round(v.x); 
-                            document.getElementById('pos-y').value = Math.round(v.y); 
-                            document.getElementById('pos-w').value = Math.round(v.width); 
+                            document.getElementById('pos-x').value = Math.round(v.x);
+                            document.getElementById('pos-y').value = Math.round(v.y);
+                            document.getElementById('pos-w').value = Math.round(v.width);
+                            document.getElementById('pos-h').value = Math.round(v.height);
+                        },
+                        onCropEnd: (v) => {
+                            document.getElementById('pos-w').value = Math.round(v.width);
                             document.getElementById('pos-h').value = Math.round(v.height);
                         }
                     });
                     // Di chuyển đến vị trí cũ
                     croppr.moveTo(startX, startY);
-                }; 
+                };
                 tg.src = cv.toDataURL();
             };
         }
@@ -635,12 +642,12 @@
                 const posW = document.getElementById('pos-w').value;
                 const posH = document.getElementById('pos-h').value;
                 const fileName = "%NAME%";
-                
+
                 console.log("ALARM IMAGE INFO:");
                 console.log("- Check (Tutao): " + checkVal);
                 console.log("- Position: X=" + posX + ", Y=" + posY + ", W=" + posW + ", H=" + posH);
                 console.log("- File: " + fileName);
-                
+
                 if (checkVal == "1" && fileName !== "" && fileName !== "%%NAME%%") {
                     const imgUrl = "/get_file?name=" + fileName + ".raw";
                     console.log("Attempting to load: " + imgUrl);
@@ -674,7 +681,7 @@
             var host = window.location.hostname || "192.168.4.1"; websocket = new WebSocket(`ws://${host}/ws`);
             websocket.onopen = () => { document.getElementById('conet').innerText = "STATUS: CONNECTED"; document.getElementById('conet').style.color = "#4facfe"; };
             websocket.onclose = () => { document.getElementById('conet').innerText = "STATUS: DISCONNECTED"; setTimeout(initWebSocket, 2000); };
-            websocket.onmessage = (evt) => { 
+            websocket.onmessage = (evt) => {
                 if (evt.data === "UP") {
                     if (uploadQueue.length > 0) {
                         websocket.send(uploadQueue.shift());
@@ -686,7 +693,7 @@
                     }
                 } else if (evt.data === "SAVEOK") {
                     document.getElementById('upload-modal').style.display = 'none';
-                    window.location.href = "/alarm.html?v=" + Date.now(); 
+                    window.location.href = "/alarm.html?v=" + Date.now();
                 }
             };
         }
@@ -696,22 +703,23 @@
 
         function sendImageData() {
             if (!websocket || websocket.readyState !== 1 || !croppr) return;
-            
-            // Dùng kích thước Tutao thực tế (pos-w x pos-h) để firmware vẽ đúng
+
             const targetW = parseInt(document.getElementById('pos-w').value) || 64;
             const targetH = parseInt(document.getElementById('pos-h').value) || 64;
             const crop = croppr.getValue();
             const canvas = document.createElement('canvas');
             canvas.width = targetW; canvas.height = targetH;
             const ctx = canvas.getContext('2d');
-            
-            ctx.filter = `brightness(${brightness}%%) saturate(${saturation}%%) invert(${inversion}%%) grayscale(${grayscale}%%)`;
+
+            // Sửa bộ lọc: Chỉ dùng một dấu % duy nhất cho đơn vị
+            ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
             ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
-            
+
             const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
             let hexData = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                const r = imgData[i] >> 4, g = imgData[i+1] >> 4, b = imgData[i+2] >> 4, a = imgData[i+3] >> 4;
+                const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
+                if (i < 100 && i % 20 === 0) console.log(`Pixel ${i/4}: R=${r}, G=${g}, B=${b}, A=${a}`);
                 hexData += byteToHex(a | (r << 4));
                 hexData += byteToHex(g | (b << 4));
             }
@@ -721,21 +729,21 @@
                 uploadQueue.push("#GI1$" + hexData.substring(i, i + 1024));
             }
             totalPackets = uploadQueue.length;
-            
+
             document.getElementById('upload-modal').style.display = 'flex';
-            websocket.send("#BDA$"); 
+            websocket.send("#BDA$");
         }
 
         window.onload = () => {
             initWebSocket(); document.querySelector(".listarm").addEventListener("change", updateUI); document.querySelector(".luu-img").addEventListener("click", luuAlarm);
             const m = document.querySelector(".listmelody"); if (m) m.value = "%MELODY_VAL%"; document.getElementById('text').value = reverse_chuyendoid2("%VALTEXT%");
-            
+
             // Ẩn hiện tutao-section dựa trên TUTAO_CHECK
             const tutao = document.getElementById('tutao-section');
-            if ("%TUTAO_CHECK%" === "1") { 
-                tutao.style.display = 'block'; 
-            } else { 
-                tutao.style.display = 'none'; 
+            if ("%TUTAO_CHECK%" === "1") {
+                tutao.style.display = 'block';
+            } else {
+                tutao.style.display = 'none';
             }
 
             updateUI();
