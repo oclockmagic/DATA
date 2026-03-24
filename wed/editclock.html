@@ -47,6 +47,7 @@
             margin: 0 0 20px 0;
             background: linear-gradient(to right, var(--primary), var(--secondary));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .section-glass {
@@ -490,21 +491,19 @@
             isSaving = finalSave;
             layerToSave = currentLayer;
             
-            websocket.send("#BDA$");
-            
+            // Clear queue and start sequence
             uploadQueue = [];
             // Chunk mainData
             for (let i = 0; i < mainData.length; i += 1024) {
                 uploadQueue.push("#GI1$" + mainData.substring(i, i + 1024));
             }
-            const mainPackets = uploadQueue.length;
-            // Chunk thumbData
+            // Chunk thumbData (if any)
             for (let i = 0; i < thumbData.length; i += 1024) {
                 uploadQueue.push("#GI2$" + thumbData.substring(i, i + 1024));
             }
             
             totalPackets = uploadQueue.length;
-            websocket.send("#BUP$");
+            websocket.send("#BDA$"); // Begin Data Upload
         }
 
         function initWebSocket() {
@@ -526,18 +525,37 @@
                         progressBar.style.width = prog + '%';
                         progressPercent.innerText = prog + '%';
                     } else {
-                        websocket.send("#KET$");
-                        if (isSaving) {
-                            websocket.send("#SAV$" + layerToSave);
-                        } else {
-                            uploadModal.style.display = 'none';
-                        }
+                        websocket.send("#BUP$");
                     }
                 } else if (e.data === "SAVEOK") {
-                    window.location.href = "/viewtutao";
+                    uploadModal.style.display = 'none';
+                    alert("Cập nhật thành công!");
                 }
             };
         }
+
+        window.addEventListener('load', () => {
+            initWebSocket();
+            const params = new URLSearchParams(window.location.search);
+            const idx = params.get('idx');
+            const x = params.get('x');
+            const y = params.get('y');
+            const w = params.get('w');
+            const h = params.get('h');
+
+            if (idx !== null) currentLayer = parseInt(idx);
+            if (x !== null) posX.value = x;
+            if (y !== null) posY.value = y;
+            if (w !== null) posW.value = w;
+            if (h !== null) posH.value = h;
+            
+            if (typeof m_x !== 'undefined' && idx === null) {
+                posX.value = m_x[0];
+                posY.value = m_y[0];
+                posW.value = m_w[0];
+                posH.value = m_h[0];
+            }
+        });
     </script>
 </body>
 </html>
