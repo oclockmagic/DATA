@@ -626,12 +626,22 @@
             };
         }
 
-        // Tự động nạp ảnh cũ nếu có
+        // Tự động nạp ảnh cũ nếu có (Trì hoãn 500ms để đảm bảo các thành phần khác đã sẵn sàng)
         window.addEventListener('load', () => {
-            const hasImg = document.getElementById('tutao-check').value == "1";
-            if (hasImg) {
-                initCropper("/get_file?name=%NAME%.raw");
-            }
+            setTimeout(() => {
+                const checkVal = document.getElementById('tutao-check').value;
+                const fileName = "%NAME%";
+                console.log("Check initial image: check=" + checkVal + ", name=" + fileName);
+                
+                if (checkVal == "1" && fileName !== "" && fileName !== "%%NAME%%") {
+                    const imgUrl = "/get_file?name=" + fileName + ".raw";
+                    console.log("Attempting to load: " + imgUrl);
+                    initCropper(imgUrl);
+                } else {
+                    console.log("No initial image to load.");
+                    document.getElementById('no-img-alert').style.display = 'block';
+                }
+            }, 500);
         });
 
         document.querySelectorAll('.btn-filter').forEach(btn => {
