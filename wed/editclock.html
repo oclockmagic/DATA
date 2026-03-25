@@ -11,7 +11,7 @@
             --secondary: #00f2fe;
             --accent: #BA68C8;
             --bg-dark: rgb(6, 2, 29);
-            --glass: rgba(255, 255, 255, 0.05);
+            --glass: rgba(0, 0, 0, 0.2);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -296,8 +296,6 @@
     <div class="container">
         <h2>CUSTOM EDITOR</h2>
 
-        <div class="section-glass">
-            <!-- Removed layer-select as requested -->
         <div id="section-image" style="display: none;">
             <div class="section-glass">
                 <div class="flex-column">
@@ -314,7 +312,7 @@
                 <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;" />
             </div>
 
-            <div class="section-glass filter-controls">
+            <div class="section-glass filter-controls" style="margin-top: 20px;">
                 <button class="btn btn-secondary btn-filter active" id="brightness">Brightness</button>
                 <button class="btn btn-secondary btn-filter" id="saturation">Saturation</button>
                 <button class="btn btn-secondary btn-filter" id="inversion">Inversion</button>
@@ -329,59 +327,62 @@
             </div>
         </div>
 
-        <div class="section-glass">
-            <div id="section-text" style="display: none;">
-                <label>Alarm Title / Note</label>
-                <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+        <div style="height: 10px;"></div>
+
+        <div id="section-text" class="section-glass" style="display: none;">
+            <label>Alarm Title / Note</label>
+            <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255"
+                style="width: 100%; box-sizing: border-box;">
+        </div>
+
+        <div id="section-alarm" class="section-glass" style="display: none;">
+            <div
+                style="margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <label style="margin: 0; font-weight: bold; color: var(--primary);">ENABLE TIMER</label>
+                <input type="checkbox" id="chk" style="width: 22px; height: 22px; cursor: pointer;">
             </div>
-            
-            <div id="section-alarm" style="display: none;">
-                <div class="flex-row" style="margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; justify-content: space-between; align-items: center;">
-                    <label style="margin: 0; font-weight: bold; color: var(--primary);">ENABLE TIMER</label>
-                    <input type="checkbox" id="chk" style="width: 22px; height: 22px; cursor: pointer;">
-                </div>
-                <div class="flex-row">
-                    <div class="flex-column">
-                        <label>Alarm Type</label>
-                        <select id="typ" onchange="updateUI()">
-                            <option value="0">Time - Days</option>
-                            <option value="1">Date - Month</option>
-                            <option value="2">Once</option>
-                        </select>
-                    </div>
-                    <div class="flex-column">
-                        <label>Calendar</label>
-                        <select id="am">
-                            <option value="0">Solar</option>
-                            <option value="1">Lunar</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex-column" style="margin-top: 10px;">
-                    <label>Repeat (Day of week)</label>
-                    <select id="thu">
-                        <option value="0">Daily</option>
-                        <option value="1">Sun</option>
-                        <option value="2">Mon</option>
-                        <option value="3">Tue</option>
-                        <option value="4">Wed</option>
-                        <option value="5">Thu</option>
-                        <option value="6">Fri</option>
-                        <option value="7">Sat</option>
+            <div class="flex-row">
+                <div class="flex-column">
+                    <label>Alarm Type</label>
+                    <select id="typ" onchange="updateUI()">
+                        <option value="0">Time - Days</option>
+                        <option value="1">Date - Month</option>
+                        <option value="2">Once</option>
                     </select>
                 </div>
-                <div style="margin-top: 10px;">
-                    <label>Time & Date</label>
-                    <div class="flex-row">
-                        <div class="flex-column"><label>Hour</label><input type="number" id='gio' min="0" max="23"></div>
-                        <div class="flex-column"><label>Min</label><input type="number" id='phut' min="0" max="59"></div>
-                        <div class="flex-column"><label>Day</label><input type="number" id='ngay' min="1" max="31"></div>
-                        <div class="flex-column"><label>Month</label><input type="number" id='thang' min="1" max="12"></div>
-                    </div>
+                <div class="flex-column">
+                    <label>Calendar</label>
+                    <select id="am">
+                        <option value="0">Solar</option>
+                        <option value="1">Lunar</option>
+                    </select>
                 </div>
-                <div class="flex-column" style="margin-top: 10px;">
-                    <label>Melody</label>
-                    <select id="mel"><option value="0">-No melody</option>
+            </div>
+            <div class="flex-column" style="margin-top: 10px;">
+                <label>Repeat (Day of week)</label>
+                <select id="thu">
+                    <option value="0">Daily</option>
+                    <option value="1">Sun</option>
+                    <option value="2">Mon</option>
+                    <option value="3">Tue</option>
+                    <option value="4">Wed</option>
+                    <option value="5">Thu</option>
+                    <option value="6">Fri</option>
+                    <option value="7">Sat</option>
+                </select>
+            </div>
+            <div style="margin-top: 10px;">
+                <label>Time & Date</label>
+                <div class="flex-row">
+                    <div class="flex-column"><label>Hour</label><input type="number" id='gio' min="0" max="23"></div>
+                    <div class="flex-column"><label>Min</label><input type="number" id='phut' min="0" max="59"></div>
+                    <div class="flex-column"><label>Day</label><input type="number" id='ngay' min="1" max="31"></div>
+                    <div class="flex-column"><label>Month</label><input type="number" id='thang' min="1" max="12"></div>
+                </div>
+            </div>
+            <div class="flex-column" style="margin-top: 10px;">
+                <label>Melody</label>
+                <select id="mel" class="listmelody"><option value="0">-No melody</option>
 <option value="1">HappyBirthday</option>
 <option value="2">Pokemon</option>
 <option value="3">007</option>
@@ -544,7 +545,6 @@
 <option value="160">YMCA</option>
 <option value="161">Zorba (Give it time!)</option>
 </select>
-                </div>
             </div>
         </div>
 
@@ -739,14 +739,7 @@
         btnSave.onclick = () => sendImageData(true);
         let isCanceling = false;
         document.getElementById('btn-back').onclick = () => {
-            if (connectt) {
-                isCanceling = true;
-                uploadModal.style.display = 'flex';
-                document.getElementById('modal-title').innerText = "Canceling...";
-                websocket.send("#DEL@" + currentLayer);
-            } else {
-                goBackWithReferrer();
-            }
+            goBackWithReferrer();
         };
 
         function goBackWithReferrer() {
