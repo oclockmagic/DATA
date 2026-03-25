@@ -748,23 +748,18 @@
             const tutaoEl = document.getElementById('tutao-check-value');
 
             const melVal = melEl ? melEl.value : "0";
+            // Backend đã trả về chuỗi Unicode rồi → gán thẳng, không decode lần nữa
             const txtVal = txtEl ? txtEl.value : "";
             const tutaoVal = tutaoEl ? tutaoEl.value : "0";
 
             const melSelect = document.querySelector(".listmelody");
-            if (melSelect) {
-                melSelect.value = melVal;
-            }
+            if (melSelect) melSelect.value = melVal;
             
             const txtInput = document.getElementById('text');
-            if (txtInput) {
-                txtInput.value = reverse_chuyendoid2(txtVal);
-            }
+            if (txtInput) txtInput.value = txtVal;
 
             const tutaoSec = document.getElementById('tutao-section');
-            if (tutaoSec) {
-                tutaoSec.style.display = (tutaoVal === "1") ? 'block' : 'none';
-            }
+            if (tutaoSec) tutaoSec.style.display = (tutaoVal === "1") ? 'block' : 'none';
 
             updateUI();
         };
