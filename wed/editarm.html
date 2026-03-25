@@ -11,7 +11,7 @@
             --secondary: #00f2fe;
             --accent: #BA68C8;
             --bg-dark: rgb(6, 2, 29);
-            --glass: rgba(255, 255, 255, 0.05);
+            --glass: rgba(0, 0, 0, 0.6);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -88,7 +88,7 @@
         select,
         input[type="number"],
         input[type="text"] {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid var(--glass-border);
             border-radius: 10px;
             color: white;
@@ -96,12 +96,17 @@
             font-size: 14px;
             outline: none;
             transition: all 0.3s;
-            width: 100%%;
+            width: 100%;
             box-sizing: border-box;
         }
 
+        option {
+            background: rgb(20, 20, 20);
+            color: white;
+        }
+
         .preview-area {
-            width: 100%%;
+            width: 100%;
             height: 380px;
             background: #000;
             border-radius: 15px;
