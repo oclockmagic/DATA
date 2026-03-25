@@ -85,7 +85,7 @@
         select,
         input[type="number"],
         input[type="text"] {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.2);
             border: 1px solid var(--glass-border);
             border-radius: 8px;
             color: white;
@@ -142,7 +142,7 @@
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -336,11 +336,6 @@
         </div>
 
         <div id="section-alarm" class="section-glass" style="display: none;">
-            <div
-                style="margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <label style="margin: 0; font-weight: bold; color: var(--primary);">ENABLE TIMER</label>
-                <input type="checkbox" id="chk" style="width: 22px; height: 22px; cursor: pointer;">
-            </div>
             <div class="flex-row">
                 <div class="flex-column">
                     <label>Alarm Type</label>
@@ -598,7 +593,13 @@
             return s;
         }
 
+        const triggerChange = () => {
+            if (btnPreview) btnPreview.disabled = false;
+            if (btnSave) btnSave.disabled = false;
+        };
+
         const updateUI = () => {
+            triggerChange();
             const v = document.getElementById("typ").value;
             const al = document.getElementById("am"), th = document.getElementById("thang"), ng = document.getElementById("ngay"), gi = document.getElementById("gio"), ph = document.getElementById("phut"), tn = document.getElementById("thu");
             [al, th, ng, gi, ph, tn].forEach(el => el.classList.remove("disable"));
@@ -609,6 +610,7 @@
 
         let croppr = null;
         let imgOrig = null;
+        let imageChanged = false;
         let brightness = 100, saturation = 100, inversion = 0, grayscale = 0;
         let websocket;
         let connectt = 0;
@@ -682,8 +684,12 @@
                                 minSize: [10, 10, 'px'],
                                 returnMode: 'real',
                                 onInitialize: () => {
-                                    btnPreview.disabled = false;
-                                    btnSave.disabled = false;
+                                    imageChanged = true;
+                                    triggerChange();
+                                },
+                                onCropEnd: () => {
+                                    imageChanged = true;
+                                    triggerChange();
                                 }
                             });
                         };
@@ -700,6 +706,8 @@
             btn.onclick = () => {
                 document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                imageChanged = true;
+                triggerChange();
                 filterName.innerText = btn.innerText;
                 if (btn.id === 'brightness' || btn.id === 'saturation') {
                     filterSlider.max = 200;
@@ -722,12 +730,21 @@
             else grayscale = val;
 
             if (imgOrig) {
+                imageChanged = true;
                 document.querySelector('.croppr-image').style.filter =
                     `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-                document.querySelector('.croppr-imageClipped').style.filter =
-                    `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
             }
+            triggerChange();
         };
+
+        // Auto-hook all inputs for change tracking
+        ['text', 'chk', 'typ', 'am', 'thu', 'gio', 'phut', 'ngay', 'thang', 'mel'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', triggerChange);
+                el.addEventListener('change', triggerChange);
+            }
+        });
 
         function byteToHex(b) {
             const s = (b & 0xFF).toString(16);
@@ -769,8 +786,9 @@
 
             let hexData = "";
             let crop = null;
+            let imageHasContent = (imgOrig && imageChanged);
 
-            if (croppr) {
+            if (croppr && imageChanged) {
                 crop = croppr.getValue();
                 const canvas = document.createElement('canvas');
                 canvas.width = targetW;
@@ -796,7 +814,7 @@
                     const th = parseInt(document.getElementById("thang").value) || 1;
                     const tnu = parseInt(document.getElementById("thu").value);
                     const mel = parseInt(document.getElementById("mel").value);
-                    const chk = document.getElementById('chk').checked ? 1 : 0;
+                    const chk = (params.get('chk') === '1' ? 1 : 0);
                     
                     let pkAlm = byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(chk);
                     websocket.send("#HGA$" + pkAlm);
@@ -829,6 +847,10 @@
             } else if (finalSave) {
                 // If no image but saving metadata, send #BUP$ to finalize
                 websocket.send("#BUP$");
+            }
+
+            if (finalSave || imageChanged) {
+                imageChanged = false; // reset after operation
             }
         }
 
@@ -905,8 +927,8 @@
                     if (el) el.value = v;
                 }
             });
-            let chk = params.get('chk');
-            if (chk !== null) document.getElementById('chk').checked = (chk === '1');
+            let chkValue = params.get('chk');
+            // Checkbox 'chk' was removed as requested
             
             // Show/Hide sections based on flags
             let tutaoFlag = params.get('tutao');
