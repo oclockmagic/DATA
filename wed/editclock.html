@@ -298,85 +298,90 @@
 
         <div class="section-glass">
             <!-- Removed layer-select as requested -->
-            <div class="flex-column">
-                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()"
-                    style="width: 100%;">
-                    CHOOSE IMAGE
-                </button>
+        <div id="section-image" style="display: none;">
+            <div class="section-glass">
+                <div class="flex-column">
+                    <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()"
+                        style="width: 100%;">
+                        CHOOSE IMAGE
+                    </button>
+                </div>
+                <input type="file" id="file-input" accept="image/*" hidden>
             </div>
 
-            <input type="file" id="file-input" accept="image/*" hidden>
-        </div>
+            <div class="preview-area" id="preview-container">
+                <p style="opacity: 0.3;" id="no-image-text">No Image Selected</p>
+                <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;" />
+            </div>
 
-        <div class="preview-area" id="preview-container">
-            <p style="opacity: 0.3;" id="no-image-text">No Image Selected</p>
-            <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;" />
-        </div>
-
-        <div class="section-glass filter-controls">
-            <button class="btn btn-secondary btn-filter active" id="brightness">Brightness</button>
-            <button class="btn btn-secondary btn-filter" id="saturation">Saturation</button>
-            <button class="btn btn-secondary btn-filter" id="inversion">Inversion</button>
-            <button class="btn btn-secondary btn-filter" id="grayscale">Grayscale</button>
-            <div class="slider-group" style="grid-column: span 2;">
-                <div class="flex-row" style="justify-content: space-between; margin-bottom: 5px;">
-                    <span id="filter-name" style="font-size: 12px;">Brightness</span>
-                    <span id="filter-value" style="font-size: 12px; color: var(--primary);">100%</span>
+            <div class="section-glass filter-controls">
+                <button class="btn btn-secondary btn-filter active" id="brightness">Brightness</button>
+                <button class="btn btn-secondary btn-filter" id="saturation">Saturation</button>
+                <button class="btn btn-secondary btn-filter" id="inversion">Inversion</button>
+                <button class="btn btn-secondary btn-filter" id="grayscale">Grayscale</button>
+                <div class="slider-group" style="grid-column: span 2;">
+                    <div class="flex-row" style="justify-content: space-between; margin-bottom: 5px;">
+                        <span id="filter-name" style="font-size: 12px;">Brightness</span>
+                        <span id="filter-value" style="font-size: 12px; color: var(--primary);">100%</span>
+                    </div>
+                    <input type="range" id="filter-slider" min="0" max="200" value="100">
                 </div>
-                <input type="range" id="filter-slider" min="0" max="200" value="100">
             </div>
         </div>
 
         <div class="section-glass">
-            <label>Alarm Title / Note</label>
-            <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+            <div id="section-text" style="display: none;">
+                <label>Alarm Title / Note</label>
+                <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+            </div>
             
-            <div class="flex-row" style="margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; justify-content: space-between; align-items: center;">
-                <label style="margin: 0; font-weight: bold; color: var(--primary);">ENABLE TIMER</label>
-                <input type="checkbox" id="chk" style="width: 22px; height: 22px; cursor: pointer;">
-            </div>
-            <div class="flex-row">
-                <div class="flex-column">
-                    <label>Alarm Type</label>
-                    <select id="typ" onchange="updateUI()">
-                        <option value="0">Time - Days</option>
-                        <option value="1">Date - Month</option>
-                        <option value="2">Once</option>
-                    </select>
+            <div id="section-alarm" style="display: none;">
+                <div class="flex-row" style="margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; justify-content: space-between; align-items: center;">
+                    <label style="margin: 0; font-weight: bold; color: var(--primary);">ENABLE TIMER</label>
+                    <input type="checkbox" id="chk" style="width: 22px; height: 22px; cursor: pointer;">
                 </div>
-                <div class="flex-column">
-                    <label>Calendar</label>
-                    <select id="am">
-                        <option value="0">Solar</option>
-                        <option value="1">Lunar</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex-column" style="margin-top: 10px;">
-                <label>Repeat (Day of week)</label>
-                <select id="thu">
-                    <option value="0">Daily</option>
-                    <option value="1">Sun</option>
-                    <option value="2">Mon</option>
-                    <option value="3">Tue</option>
-                    <option value="4">Wed</option>
-                    <option value="5">Thu</option>
-                    <option value="6">Fri</option>
-                    <option value="7">Sat</option>
-                </select>
-            </div>
-            <div style="margin-top: 10px;">
-                <label>Time & Date</label>
                 <div class="flex-row">
-                    <div class="flex-column"><label>Hour</label><input type="number" id='gio' min="0" max="23"></div>
-                    <div class="flex-column"><label>Min</label><input type="number" id='phut' min="0" max="59"></div>
-                    <div class="flex-column"><label>Day</label><input type="number" id='ngay' min="1" max="31"></div>
-                    <div class="flex-column"><label>Month</label><input type="number" id='thang' min="1" max="12"></div>
+                    <div class="flex-column">
+                        <label>Alarm Type</label>
+                        <select id="typ" onchange="updateUI()">
+                            <option value="0">Time - Days</option>
+                            <option value="1">Date - Month</option>
+                            <option value="2">Once</option>
+                        </select>
+                    </div>
+                    <div class="flex-column">
+                        <label>Calendar</label>
+                        <select id="am">
+                            <option value="0">Solar</option>
+                            <option value="1">Lunar</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="flex-column" style="margin-top: 10px;">
-                <label>Melody</label>
-                <select id="mel"><option value="0">-No melody</option>
+                <div class="flex-column" style="margin-top: 10px;">
+                    <label>Repeat (Day of week)</label>
+                    <select id="thu">
+                        <option value="0">Daily</option>
+                        <option value="1">Sun</option>
+                        <option value="2">Mon</option>
+                        <option value="3">Tue</option>
+                        <option value="4">Wed</option>
+                        <option value="5">Thu</option>
+                        <option value="6">Fri</option>
+                        <option value="7">Sat</option>
+                    </select>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>Time & Date</label>
+                    <div class="flex-row">
+                        <div class="flex-column"><label>Hour</label><input type="number" id='gio' min="0" max="23"></div>
+                        <div class="flex-column"><label>Min</label><input type="number" id='phut' min="0" max="59"></div>
+                        <div class="flex-column"><label>Day</label><input type="number" id='ngay' min="1" max="31"></div>
+                        <div class="flex-column"><label>Month</label><input type="number" id='thang' min="1" max="12"></div>
+                    </div>
+                </div>
+                <div class="flex-column" style="margin-top: 10px;">
+                    <label>Melody</label>
+                    <select id="mel"><option value="0">-No melody</option>
 <option value="1">HappyBirthday</option>
 <option value="2">Pokemon</option>
 <option value="3">007</option>
@@ -539,27 +544,6 @@
 <option value="160">YMCA</option>
 <option value="161">Zorba (Give it time!)</option>
 </select>
-            </div>
-        </div>
-
-        <div class="section-glass" style="display: none;">
-            <label style="display: block; margin-bottom: 10px;">POSITION & SIZE</label>
-            <div class="flex-row">
-                <div class="flex-column">
-                    <label>X</label>
-                    <input type="number" id="pos-x" value="0" min="0" max="64">
-                </div>
-                <div class="flex-column">
-                    <label>Y</label>
-                    <input type="number" id="pos-y" value="0" min="0" max="64">
-                </div>
-                <div class="flex-column">
-                    <label>W</label>
-                    <input type="number" id="pos-w" value="64" min="1" max="64">
-                </div>
-                <div class="flex-column">
-                    <label>H</label>
-                    <input type="number" id="pos-h" value="64" min="1" max="64">
                 </div>
             </div>
         </div>
@@ -625,10 +609,6 @@
 
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
-        const posX = document.getElementById('pos-x');
-        const posY = document.getElementById('pos-y');
-        const posW = document.getElementById('pos-w');
-        const posH = document.getElementById('pos-h');
         const btnPreview = document.getElementById('btn-preview');
         const btnSave = document.getElementById('btn-save');
         const filterSlider = document.getElementById('filter-slider');
@@ -799,38 +779,37 @@
             }
 
             if (finalSave) {
-                // Send metadata for alarm if this index is an alarm (usually idx >= 0 in unified edit)
-                const tv = document.getElementById('text').value;
-                const typ = parseInt(document.getElementById("typ").value);
-                const am = parseInt(document.getElementById("am").value);
-                const gi = parseInt(document.getElementById("gio").value) || 0;
-                const ph = parseInt(document.getElementById("phut").value) || 0;
-                const ng = parseInt(document.getElementById("ngay").value) || 1;
-                const th = parseInt(document.getElementById("thang").value) || 1;
-                const tnu = parseInt(document.getElementById("thu").value);
-                const mel = parseInt(document.getElementById("mel").value);
-                const px = parseInt(posX.value) || 0;
-                const py = parseInt(posY.value) || 0;
-                const pw = parseInt(posW.value) || 64;
-                const phh = parseInt(posH.value) || 64;
+                const params = new URLSearchParams(window.location.search);
+                const isAlarm = (params.get('chk') === '1');
+                const isText = (params.get('chu') === '1');
+                const isTutao = (params.get('tutao') === '1');
 
-                let pk = byteToHex(currentLayer) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) +
-                    byteToHex(croppr ? 1 : 0) + byteToHex(px) + byteToHex(py) + byteToHex(pw) + byteToHex(phh);
-
-                for (let i = 0; i < 2; i++) pk += "00"; // Bytes 14, 15
-                pk += byteToHex(document.getElementById('chk').checked ? 1 : 0); // Byte 16 (checkhengio)
-                for (let i = 0; i < 31; i++) pk += "00"; // Bytes 17 to 47
-                pk += "0101"; for (let i = 0; i < 14; i++) pk += "00";
-                pk += byteToHex(1); // Offset 64
-                for (let i = 0; i < 11; i++) pk += "00";
-                pk += byteToHex(tv.length); // Offset 76
-                pk += "000000"; // Offset 80
-                for (let i = 0; i < tv.length; i++) {
-                    let c = tv.charCodeAt(i); let hex = byteToHex(c < 256 ? c : 32);
-                    for (let k in revMap) if (revMap[k] === tv[i]) { hex = byteToHex(k); break; }
-                    pk += hex;
+                if (isAlarm) {
+                    const typ = parseInt(document.getElementById("typ").value);
+                    const am = parseInt(document.getElementById("am").value);
+                    const gi = parseInt(document.getElementById("gio").value) || 0;
+                    const ph = parseInt(document.getElementById("phut").value) || 0;
+                    const ng = parseInt(document.getElementById("ngay").value) || 1;
+                    const th = parseInt(document.getElementById("thang").value) || 1;
+                    const tnu = parseInt(document.getElementById("thu").value);
+                    const mel = parseInt(document.getElementById("mel").value);
+                    const chk = document.getElementById('chk').checked ? 1 : 0;
+                    
+                    let pkAlm = byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(chk);
+                    websocket.send("#HGA$" + pkAlm);
                 }
-                websocket.send("#HGH$" + pk);
+
+                if (isText) {
+                    const tv = document.getElementById('text').value;
+                    let pkTxt = byteToHex(1); // Chu_check is always 1 if we're saving here
+                    pkTxt += byteToHex(tv.length);
+                    for (let i = 0; i < tv.length; i++) {
+                        let c = tv.charCodeAt(i); let hex = byteToHex(c < 256 ? c : 32);
+                        for (let k in revMap) if (revMap[k] === tv[i]) { hex = byteToHex(k); break; }
+                        pkTxt += hex;
+                    }
+                    websocket.send("#HGN$" + pkTxt);
+                }
             }
 
             if (hexData) {
@@ -917,6 +896,15 @@
             let chk = params.get('chk');
             if (chk !== null) document.getElementById('chk').checked = (chk === '1');
             
+            // Show/Hide sections based on flags
+            let tutaoFlag = params.get('tutao');
+            let chuFlag = params.get('chu');
+            let chkFlag = params.get('chk');
+
+            if (tutaoFlag === '1') document.getElementById('section-image').style.display = 'block';
+            if (chuFlag === '1') document.getElementById('section-text').style.display = 'block';
+            if (chkFlag === '1') document.getElementById('section-alarm').style.display = 'block';
+
             let txt = params.get('text');
             if (txt) document.getElementById('text').value = decodeHexText(txt);
             updateUI();
