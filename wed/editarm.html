@@ -707,7 +707,7 @@
 
         function sendImageData() {
             if (!websocket || websocket.readyState !== 1 || !croppr) return;
-
+            // Lấy kích thước hằng số từ file đã nạp vào hidden input
             const targetW = parseInt(document.getElementById('pos-w').value) || 64;
             const targetH = parseInt(document.getElementById('pos-h').value) || 64;
             const crop = croppr.getValue();
@@ -717,6 +717,7 @@
 
             // Sửa bộ lọc: Dùng %% cho ESP32
             ctx.filter = `brightness(${brightness}%%) saturate(${saturation}%%) invert(${inversion}%%) grayscale(${grayscale}%%)`;
+            // Vẽ ảnh đã crop vào canvas với kích thước chuẩn
             ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
             const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
