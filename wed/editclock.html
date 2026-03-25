@@ -548,6 +548,13 @@
             </div>
         </div>
 
+        <div id="section-image-params" style="display: none;">
+            <input type="number" id="pos-x" value="0">
+            <input type="number" id="pos-y" value="0">
+            <input type="number" id="pos-w" value="64">
+            <input type="number" id="pos-h" value="64">
+        </div>
+
         <div class="flex-row">
             <button class="btn btn-secondary" id="btn-back">BACK</button>
             <button class="btn btn-primary" id="btn-preview" disabled>PREVIEW</button>
@@ -609,6 +616,10 @@
 
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
+        const posX = document.getElementById('pos-x');
+        const posY = document.getElementById('pos-y');
+        const posW = document.getElementById('pos-w');
+        const posH = document.getElementById('pos-h');
         const btnPreview = document.getElementById('btn-preview');
         const btnSave = document.getElementById('btn-save');
         const filterSlider = document.getElementById('filter-slider');
