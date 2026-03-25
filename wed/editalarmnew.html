@@ -1,52 +1,263 @@
 ﻿<!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0, user-scalable=no">
     <title>MAGIC O'CLOCK - CHỈNH SỬA HẸN GIỜ</title>
     <style>
-        :root { --primary: #4facfe; --secondary: #00f2fe; --accent: #BA68C8; --bg-dark: rgb(6, 2, 29); --glass: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); }
-        body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--bg-dark); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: white; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480' style='background-color:rgb(6,2,29)'%3E%3Cpath d='M0 0h640v480H0z'/%3E%3Cpath d='M-28 236C-22 116 38 35 85 12c23-11 88-41 126 44 22 51 11 117-18 153-12 15-40 44-62 33-30-15-15-66-5-88 21-48 85-106 142-87 73 24-32 147 5 184 56 56 79-74 124-79 35-4 37 61 115 80s150-86 128-126c-44-80-128-44-160 0-56 78 6 188-85 255-58 42-144 14-203-37-98-85-176-96-248 114' opacity='.25' fill='none' stroke='%234facfe' stroke-width='40'/%3E%3C/svg%3E"); background-size: cover; background-attachment: fixed; }
-        .container { width: 440px; max-width: 95vw; background: rgba(0, 0, 0, 0.3); border-radius: 30px; padding: 25px; backdrop-filter: blur(15px); border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.5); box-sizing: border-box; margin: 20px 0; }
-        h2 { text-align: center; font-weight: 300; font-size: 22px; letter-spacing: 3px; margin: 0 0 20px 0; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-        .section-glass { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
-        .flex-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
-        .flex-column { display: flex; flex-direction: column; flex: 1; }
-        label { font-size: 11px; opacity: 0.7; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); }
-        select, input[type="number"], input[type="text"] { background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); border-radius: 10px; color: white; padding: 12px; font-size: 14px; outline: none; transition: all 0.3s; width: 100%; box-sizing: border-box; }
-        .preview-area { width: 100%; height: 380px; background: #000; border-radius: 15px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid var(--glass-border); position: relative; }
-        .btn { padding: 10px 15px; border-radius: 12px; border: none; color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s; font-size: 11px; display: flex; align-items: center; justify-content: center; flex: 1; }
-        .btn-primary { background: linear-gradient(135deg, #4facfe, #00f2fe); box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4); }
-        .btn-secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .btn-filter.active { background: var(--primary); border-color: var(--primary); }
-        input[type="range"] { width: 100%; accent-color: var(--primary); background: transparent; }
-        .status-tag { display: block; font-size: 10px; color: rgba(255, 255, 255, 0.3); margin-top: 15px; text-align: right; }
-        .disable { opacity: 0.2; pointer-events: none; filter: blur(1px); }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--bg-dark); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center; width: 80%; max-width: 300px; }
-        .progress-bar { width: 0%; height: 6px; background: linear-gradient(to right, var(--primary), var(--secondary)); border-radius: 3px; transition: width 0.3s; }
+        :root {
+            --primary: #4facfe;
+            --secondary: #00f2fe;
+            --accent: #BA68C8;
+            --bg-dark: rgb(6, 2, 29);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-dark);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: white;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480' style='background-color:rgb(6,2,29)'%3E%3Cpath d='M0 0h640v480H0z'/%3E%3Cpath d='M-28 236C-22 116 38 35 85 12c23-11 88-41 126 44 22 51 11 117-18 153-12 15-40 44-62 33-30-15-15-66-5-88 21-48 85-106 142-87 73 24-32 147 5 184 56 56 79-74 124-79 35-4 37 61 115 80s150-86 128-126c-44-80-128-44-160 0-56 78 6 188-85 255-58 42-144 14-203-37-98-85-176-96-248 114' opacity='.25' fill='none' stroke='%234facfe' stroke-width='40'/%3E%3C/svg%3E");
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 440px;
+            max-width: 95vw;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            box-sizing: border-box;
+            margin: 20px 0;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 300;
+            font-size: 22px;
+            letter-spacing: 3px;
+            margin: 0 0 20px 0;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-glass {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .flex-column {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        label {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+        }
+
+        select,
+        input[type="number"],
+        input[type="text"] {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: white;
+            padding: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .preview-area {
+            width: 100%;
+            height: 380px;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-filter.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            background: transparent;
+        }
+
+        .status-tag {
+            display: block;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 15px;
+            text-align: right;
+        }
+
+        .disable {
+            opacity: 0.2;
+            pointer-events: none;
+            filter: blur(1px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--bg-dark);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 6px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
         /* Croppr styles */
-        .croppr-container { position: relative; width: 100%; height: 100%; user-select: none; }
-        .croppr-overlay { background: rgba(0,0,0,0.5); position: absolute; top:0; left:0; right:0; bottom:0; z-index:1; }
-        .croppr-region { border: 1px dashed white; position: absolute; z-index:3; cursor: move; }
-        .croppr-handle { border: 1px solid white; background-color: var(--primary); width: 10px; height: 10px; position: absolute; z-index: 4; }
-        .croppr-imageClipped { position: absolute; top:0; left:0; right:0; bottom:0; z-index:2; pointer-events: none; }
+        .croppr-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            user-select: none;
+        }
+
+        .croppr-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .croppr-region {
+            border: 1px dashed white;
+            position: absolute;
+            z-index: 3;
+            cursor: move;
+        }
+
+        .croppr-handle {
+            border: 1px solid white;
+            background-color: var(--primary);
+            width: 10px;
+            height: 10px;
+            position: absolute;
+            z-index: 4;
+        }
+
+        .croppr-imageClipped {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>CHỈNH SỬA HẸN GIỜ</h2>
         <div class="section-glass">
             <label>Biểu tượng hẹn giờ</label>
             <div class="flex-row">
-                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()" style="width: 100%;">CHỌN ẢNH</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()"
+                    style="width: 100%;">CHỌN ẢNH</button>
             </div>
             <input type="file" id="file-input" accept="image/*" hidden>
             <div class="preview-area" id="preview-container">
                 <p id="no-img-alert" style="opacity: 0.3; font-size: 12px;">Đang tải...</p>
                 <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;">
             </div>
-            <div class="filter-controls" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px;">
+            <div class="filter-controls"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px;">
                 <button class="btn btn-secondary btn-filter active" id="brightness">Độ sáng</button>
                 <button class="btn btn-secondary btn-filter" id="saturation">Bão hòa</button>
                 <button class="btn btn-secondary btn-filter" id="inversion">Đảo ngược</button>
@@ -65,10 +276,27 @@
             <label>Nhãn hẹn giờ</label>
             <input autocomplete="off" placeholder="Ghi chú..." type="text" id='text' maxlength="255">
             <div class="flex-row" style="margin-top:10px;">
-                <div class="flex-column"><label>Kiểu hẹn giờ</label><select id="typ" class="listarm" onchange="updateUI()"><option value="0">Giờ - Các thứ</option><option value="1">Ngày - Tháng</option><option value="2">Cố định</option></select></div>
-                <div class="flex-column"><label>Lịch</label><select id="am" class="listamlich"><option value="0">Dương lịch</option><option value="1">Âm lịch</option></select></div>
+                <div class="flex-column"><label>Kiểu hẹn giờ</label><select id="typ" class="listarm"
+                        onchange="updateUI()">
+                        <option value="0">Giờ - Các thứ</option>
+                        <option value="1">Ngày - Tháng</option>
+                        <option value="2">Cố định</option>
+                    </select></div>
+                <div class="flex-column"><label>Lịch</label><select id="am" class="listamlich">
+                        <option value="0">Dương lịch</option>
+                        <option value="1">Âm lịch</option>
+                    </select></div>
             </div>
-            <div class="flex-column"><label>Lặp lại (Thứ)</label><select id="thu" class="listthungay"><option value="0">Hàng ngày</option><option value="1">Cn</option><option value="2">Thứ 2</option><option value="3">Thứ 3</option><option value="4">Thứ 4</option><option value="5">Thứ 5</option><option value="6">Thứ 6</option><option value="7">Thứ 7</option></select></div>
+            <div class="flex-column"><label>Lặp lại (Thứ)</label><select id="thu" class="listthungay">
+                    <option value="0">Hàng ngày</option>
+                    <option value="1">Cn</option>
+                    <option value="2">Thứ 2</option>
+                    <option value="3">Thứ 3</option>
+                    <option value="4">Thứ 4</option>
+                    <option value="5">Thứ 5</option>
+                    <option value="6">Thứ 6</option>
+                    <option value="7">Thứ 7</option>
+                </select></div>
             <div class="flex-column" style="margin-top:10px;"><label>Thời gian & Ngày tháng</label>
                 <div class="flex-row">
                     <div class="flex-column"><label>Giờ</label><input type="number" id='gio' min="0" max="23"></div>
@@ -77,7 +305,8 @@
                     <div class="flex-column"><label>Tháng</label><input type="number" id='thang' min="1" max="12"></div>
                 </div>
             </div>
-            <div class="flex-column" style="margin-top:10px;"><label>Âm báo</label><select id="mel" class="listmelody"><option value="0">-No melody</option>
+            <div class="flex-column" style="margin-top:10px;"><label>Âm báo</label><select id="mel"
+                    class="listmelody"><option value="0">-No melody</option>
 <option value="1">HappyBirthday</option>
 <option value="2">Pokemon</option>
 <option value="3">007</option>
@@ -242,14 +471,11 @@
 </select></div>
         </div>
 
-        <div class="section-glass">
-            <label>Vị trí & Kích thước biểu tượng</label>
-            <div class="flex-row">
-                <div class="flex-column"><label>X</label><input type="number" id="pos-x" value="0" min="0" max="64"></div>
-                <div class="flex-column"><label>Y</label><input type="number" id="pos-y" value="0" min="0" max="64"></div>
-                <div class="flex-column"><label>Rộng (W)</label><input type="number" id="pos-w" value="64" min="1" max="64"></div>
-                <div class="flex-column"><label>Cao (H)</label><input type="number" id="pos-h" value="64" min="1" max="64"></div>
-            </div>
+        <div style="display: none;">
+            <input type="number" id="pos-x" value="0">
+            <input type="number" id="pos-y" value="0">
+            <input type="number" id="pos-w" value="64">
+            <input type="number" id="pos-h" value="64">
         </div>
 
         <div class="flex-row">
@@ -260,7 +486,13 @@
     </div>
 
     <div id="upload-modal" class="modal">
-        <div class="modal-content"><h3>ĐANG LƯU...</h3><div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;"><div id="upload-prog" class="progress-bar"></div></div><div id="upload-pct" style="font-size:12px; margin-top:10px;">0%</div></div>
+        <div class="modal-content">
+            <h3>ĐANG LƯU...</h3>
+            <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+                <div id="upload-prog" class="progress-bar"></div>
+            </div>
+            <div id="upload-pct" style="font-size:12px; margin-top:10px;">0%</div>
+        </div>
     </div>
 
     <script>
@@ -269,7 +501,7 @@
 
         let websocket, croppr = null, imgOrig = null, brightness = 100, saturation = 100, inversion = 0, grayscale = 0;
         let uploadQueue = [], totalPackets = 0;
-        const revMap = {0x7F:'à',0x80:'ả',0x81:'ã',0x82:'á',0x83:'ạ',0x84:'ă',0x85:'ằ',0x86:'ẳ',0x87:'ẵ',0x88:'ắ',0x89:'ặ',0x8A:'â',0x8B:'ầ',0x8C:'ẩ',0x8D:'ẫ',0x8E:'ấ',0x8F:'ậ',0x90:'đ',0x91:'è',0x92:'ẻ',0x93:'ẽ',0x94:'é',0x95:'ẹ',0x96:'ê',0x97:'ề',0x98:'ể',0x99:'ễ',0x9A:'ế',0x9B:'ệ',0x9C:'ì',0x9D:'ỉ',0x9E:'ĩ',0x9F:'í',0xA0:'ị',0xA1:'ò',0xA2:'ỏ',0xA3:'õ',0xA4:'ó',0xA5:'ọ',0xA6:'ô',0xA7:'ồ',0xA8:'ổ',0xA9:'ỗ',0xAA:'ố',0xAB:'ộ',0xAC:'ơ',0xAD:'ờ',0xAE:'ở',0xAF:'ỡ',0xB0:'ớ',0xB1:'ợ',0xB2:'ù',0xB3:'ủ',0xB4:'ũ',0xB5:'ú',0xB6:'ụ',0xB7:'ư',0xB8:'ừ',0xB9:'ử',0xBA:'ữ',0xBB:'ứ',0xBC:'ự',0xBD:'ỳ',0xBE:'ỷ',0xBF:'ỹ',0xC0:'ý',0xC1:'ỵ',0xC2:'À',0xC3:'Ả',0xC4:'Ã',0xC5:'Á',0xC6:'Ạ',0xC7:'Ă',0xC8:'Ằ',0xC9:'Ẳ',0xCA:'Ẵ',0xCB:'Ắ',0xCC:'Ặ',0xCD:'Â',0xCE:'Ầ',0xCF:'Ẩ',0xD0:'Ẫ',0xD1:'Ấ',0xD2:'Ậ',0xD3:'Đ',0xD4:'È',0xD5:'Ẻ',0xD6:'Ẽ',0xD7:'É',0xD8:'Ẹ',0xD9:'Ê',0xDA:'Ề',0xDB:'Ể',0xDC:'Ễ',0xDD:'Ế',0xDE:'Ệ',0xDF:'Ì',0xE0:'Ỉ',0xE1:'Ĩ',0xE2:'Í',0xE3:'Ị',0xE4:'Ò',0xE5:'Ỏ',0xE6:'Õ',0xE7:'Ó',0xE8:'Ọ',0xE9:'Ô',0xEA:'Ồ',0xEB:'Ổ',0xEC:'Ỗ',0xED:'Ố',0xEE:'Ộ',0xEF:'Ơ',0xF0:'Ờ',0xF1:'Ở',0xF2:'Ỡ',0xF3:'Ớ',0xF4:'Ợ',0xF5:'Ù',0xF6:'Ủ',0xF7:'Ũ',0xF8:'Ú',0xF9:'Ụ',0xFA:'Ư',0xFB:'Ừ',0xFC:'Ử',0xFD:'Ữ',0xFE:'Ứ',0xFF:'Ự',0x1F:'ỳ',0x1E:'ỷ',0x1D:'ỹ',0x1C:'ý',0x1B:'ỵ'};
+        const revMap = { 0x7F: 'à', 0x80: 'ả', 0x81: 'ã', 0x82: 'á', 0x83: 'ạ', 0x84: 'ă', 0x85: 'ằ', 0x86: 'ẳ', 0x87: 'ẵ', 0x88: 'ắ', 0x89: 'ặ', 0x8A: 'â', 0x8B: 'ầ', 0x8C: 'ẩ', 0x8D: 'ẫ', 0x8E: 'ấ', 0x8F: 'ậ', 0x90: 'đ', 0x91: 'è', 0x92: 'ẻ', 0x93: 'ẽ', 0x94: 'é', 0x95: 'ẹ', 0x96: 'ê', 0x97: 'ề', 0x98: 'ể', 0x99: 'ễ', 0x9A: 'ế', 0x9B: 'ệ', 0x9C: 'ì', 0x9D: 'ỉ', 0x9E: 'ĩ', 0x9F: 'í', 0xA0: 'ị', 0xA1: 'ò', 0xA2: 'ỏ', 0xA3: 'õ', 0xA4: 'ó', 0xA5: 'ọ', 0xA6: 'ô', 0xA7: 'ồ', 0xA8: 'ổ', 0xA9: 'ỗ', 0xAA: 'ố', 0xAB: 'ộ', 0xAC: 'ơ', 0xAD: 'ờ', 0xAE: 'ở', 0xAF: 'ỡ', 0xB0: 'ớ', 0xB1: 'ợ', 0xB2: 'ù', 0xB3: 'ủ', 0xB4: 'ũ', 0xB5: 'ú', 0xB6: 'ụ', 0xB7: 'ư', 0xB8: 'ừ', 0xB9: 'ử', 0xBA: 'ữ', 0xBB: 'ứ', 0xBC: 'ự', 0xBD: 'ỳ', 0xBE: 'ỷ', 0xBF: 'ỹ', 0xC0: 'ý', 0xC1: 'ỵ', 0xC2: 'À', 0xC3: 'Ả', 0xC4: 'Ã', 0xC5: 'Á', 0xC6: 'Ạ', 0xC7: 'Ă', 0xC8: 'Ằ', 0xC9: 'Ẳ', 0xCA: 'Ẵ', 0xCB: 'Ắ', 0xCC: 'Ặ', 0xCD: 'Â', 0xCE: 'Ầ', 0xCF: 'Ẩ', 0xD0: 'Ẫ', 0xD1: 'Ấ', 0xD2: 'Ậ', 0xD3: 'Đ', 0xD4: 'È', 0xD5: 'Ẻ', 0xD6: 'Ẽ', 0xD7: 'É', 0xD8: 'Ẹ', 0xD9: 'Ê', 0xDA: 'Ề', 0xDB: 'Ể', 0xDC: 'Ễ', 0xDD: 'Ế', 0xDE: 'Ệ', 0xDF: 'Ì', 0xE0: 'Ỉ', 0xE1: 'Ĩ', 0xE2: 'Í', 0xE3: 'Ị', 0xE4: 'Ò', 0xE5: 'Ỏ', 0xE6: 'Õ', 0xE7: 'Ó', 0xE8: 'Ọ', 0xE9: 'Ô', 0xEA: 'Ồ', 0xEB: 'Ổ', 0xEC: 'Ỗ', 0xED: 'Ố', 0xEE: 'Ộ', 0xEF: 'Ơ', 0xF0: 'Ờ', 0xF1: 'Ở', 0xF2: 'Ỡ', 0xF3: 'Ớ', 0xF4: 'Ợ', 0xF5: 'Ù', 0xF6: 'Ủ', 0xF7: 'Ũ', 0xF8: 'Ú', 0xF9: 'Ụ', 0xFA: 'Ư', 0xFB: 'Ừ', 0xFC: 'Ử', 0xFD: 'Ữ', 0xFE: 'Ứ', 0xFF: 'Ự', 0x1F: 'ỳ', 0x1E: 'ỷ', 0x1D: 'ỹ', 0x1C: 'ý', 0x1B: 'ỵ' };
 
         function byteToHex(b) { return (b & 0xff).toString(16).padStart(2, '0'); }
         function decodeHexText(hex) {
@@ -293,46 +525,50 @@
             const th = parseInt(document.getElementById("thang").value) || 1; const tnu = parseInt(document.getElementById("thu").value);
             const mel = parseInt(document.getElementById("mel").value);
             let pk = byteToHex(0) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(10);
-            for (let i = 0; i < 38; i++) pk += "00"; pk += "0101"; for (let i = 0; i < 6; i++) pk += "00"; pk += "00204010" + byteToHex(tv.length) + "000000";
-            for (let i = 0; i < tv.length; i++) { 
+            for (let i = 0; i < 38; i++) pk += "00"; pk += "0101"; for (let i = 0; i < 14; i++) pk += "00";
+            pk += byteToHex(1); // Offset 64 (check)
+            for (let i = 0; i < 11; i++) pk += "00";
+            pk += byteToHex(tv.length); // Offset 76
+            pk += "000000"; // Offset 80
+            for (let i = 0; i < tv.length; i++) {
                 let c = tv.charCodeAt(i); let hex = byteToHex(c < 256 ? c : 32);
-                for (let k in revMap) if(revMap[k]===tv[i]) { hex = byteToHex(k); break; }
+                for (let k in revMap) if (revMap[k] === tv[i]) { hex = byteToHex(k); break; }
                 pk += hex;
             }
             if (websocket && websocket.readyState === 1) {
                 let crop = croppr ? croppr.getValue() : null;
-                websocket.send(`#HGT$${crop?1:0}:${document.getElementById('pos-x').value}:${document.getElementById('pos-y').value}:${document.getElementById('pos-w').value}:${document.getElementById('pos-h').value}`);
+                websocket.send(`#HGT$${crop ? 1 : 0}:0:0:64:64`);
                 websocket.send("#HGH$" + pk);
-                if (crop) sendImageData(crop); else { document.getElementById('upload-modal').style.display='flex'; websocket.send("#BUP$"); }
+                if (crop) sendImageData(crop); else { document.getElementById('upload-modal').style.display = 'flex'; websocket.send("#BUP$"); }
             }
         };
 
         const sendImageData = (crop) => {
-            const tw = parseInt(document.getElementById('pos-w').value)||64, th = parseInt(document.getElementById('pos-h').value)||64;
+            const tw = parseInt(document.getElementById('pos-w').value) || 64, th = parseInt(document.getElementById('pos-h').value) || 64;
             const cv = document.createElement('canvas'); cv.width = tw; cv.height = th;
             const ctx = cv.getContext('2d');
             ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
             ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, tw, th);
-            const data = ctx.getImageData(0,0,tw,th).data; let hex = "";
-            for (let i=0; i<data.length; i+=4) { hex += byteToHex(data[i+3]>>4 | (data[i]>>4<<4)) + byteToHex(data[i+1]>>4 | (data[i+2]>>4<<4)); }
-            uploadQueue = []; for (let i=0; i<hex.length; i+=1024) uploadQueue.push("#GI1$"+hex.substr(i,1024));
-            totalPackets = uploadQueue.length; document.getElementById('upload-modal').style.display='flex'; websocket.send("#BDA$");
+            const data = ctx.getImageData(0, 0, tw, th).data; let hex = "";
+            for (let i = 0; i < data.length; i += 4) { hex += byteToHex(data[i + 3] >> 4 | (data[i] >> 4 << 4)) + byteToHex(data[i + 1] >> 4 | (data[i + 2] >> 4 << 4)); }
+            uploadQueue = []; for (let i = 0; i < hex.length; i += 1024) uploadQueue.push("#GI1$" + hex.substr(i, 1024));
+            totalPackets = uploadQueue.length; document.getElementById('upload-modal').style.display = 'flex'; websocket.send("#BDA$");
         };
 
         window.onload = () => {
             const _params = new URLSearchParams(location.search);
-            const fields = ['typ','gio','phut','ngay','thang','thu','am','mel','x','y','w','h'];
-            fields.forEach(f => { 
-                let v = _params.get(f); 
-                if(v!==null) { 
-                    let el = document.getElementById(f==='x'||f==='y'||f==='w'||f==='h'?'pos-'+f:f); 
-                    if(el) el.value = v; 
-                } 
+            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel', 'x', 'y', 'w', 'h'];
+            fields.forEach(f => {
+                let v = _params.get(f);
+                if (v !== null) {
+                    let el = document.getElementById(f === 'x' || f === 'y' || f === 'w' || f === 'h' ? 'pos-' + f : f);
+                    if (el) el.value = v;
+                }
             });
-            let txt = _params.get('text'); 
-            if(txt) document.getElementById('text').value = decodeHexText(txt);
+            let txt = _params.get('text');
+            if (txt) document.getElementById('text').value = decodeHexText(txt);
             updateUI(); initWebSocket();
-            
+
             const idx = _params.get('idx');
             const tutao = _params.get('tutao');
             if (idx && tutao === '1') {
@@ -350,19 +586,30 @@
 
         function loadInitialImage(src) {
             const img = new Image(); img.src = src; img.onload = () => {
-                const pW=380, pH=380; let uW, uH;
-                if(img.width/img.height > pW/pH) { uW=pW; uH=uW*img.height/img.width; } else { uH=pH; uW=uH*img.width/img.height; }
-                const cv = document.createElement("canvas"); cv.width=pW; cv.height=pH;
-                const ctx = cv.getContext("2d"); ctx.translate(pW/2, pH/2); ctx.drawImage(img, -uW/2, -uH/2, uW, uH);
-                if(croppr) croppr.destroy();
-                document.getElementById('no-img-alert').style.display='none';
-                const tg = document.getElementById('cropper-target'); tg.style.display='block';
-                tg.onload = () => { 
-                    imgOrig = tg; 
+                const pW = 380, pH = 380; let uW, uH;
+                if (img.width / img.height > pW / pH) { uW = pW; uH = uW * img.height / img.width; } else { uH = pH; uW = uH * img.width / img.height; }
+                const cv = document.createElement("canvas"); cv.width = pW; cv.height = pH;
+                const ctx = cv.getContext("2d"); ctx.translate(pW / 2, pH / 2); ctx.drawImage(img, -uW / 2, -uH / 2, uW, uH);
+                if (croppr) croppr.destroy();
+                document.getElementById('no-img-alert').style.display = 'none';
+                const tg = document.getElementById('cropper-target'); tg.style.display = 'block';
+                tg.onload = () => {
+                    imgOrig = tg;
                     croppr = new Croppr(tg, { 
-                        startSize: [parseInt(document.getElementById('pos-w').value)||80, parseInt(document.getElementById('pos-h').value)||80, 'px'],
+                        aspectRatio: null,
+                        startSize: [parseInt(document.getElementById('pos-w').value)||64, parseInt(document.getElementById('pos-h').value)||64, 'px'],
                         minSize: [10, 10, 'px'],
-                        returnMode: 'real'
+                        returnMode: 'real',
+                        onCropMove: (v) => {
+                            document.getElementById('pos-x').value = Math.round(v.x);
+                            document.getElementById('pos-y').value = Math.round(v.y);
+                            document.getElementById('pos-w').value = Math.round(v.width);
+                            document.getElementById('pos-h').value = Math.round(v.height);
+                        },
+                        onCropEnd: (v) => {
+                            document.getElementById('pos-w').value = Math.round(v.width);
+                            document.getElementById('pos-h').value = Math.round(v.height);
+                        }
                     }); 
                     // Move to saved position
                     const sx = parseInt(document.getElementById('pos-x').value)||0;
@@ -375,25 +622,25 @@
 
         function initWebSocket() {
             websocket = new WebSocket(`ws://${location.hostname}/ws`);
-            websocket.onopen = () => { document.getElementById('ws-status').innerText="Đã kết nối"; websocket.send("#CLK$"+new URLSearchParams(location.search).get('idx')); };
-            websocket.onclose = () => { setTimeout(initWebSocket,2000); };
+            websocket.onopen = () => { document.getElementById('ws-status').innerText = "Đã kết nối"; websocket.send("#CLK$" + new URLSearchParams(location.search).get('idx')); };
+            websocket.onclose = () => { setTimeout(initWebSocket, 2000); };
             websocket.onmessage = (e) => {
-                if (e.data==="UP") {
+                if (e.data === "UP") {
                     if (uploadQueue.length > 0) {
                         websocket.send(uploadQueue.shift());
-                        let _prog = Math.round(((totalPackets-uploadQueue.length)/totalPackets)*100);
-                        document.getElementById('upload-prog').style.width = _prog+'%'; document.getElementById('upload-pct').innerText = _prog+'%';
+                        let _prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
+                        document.getElementById('upload-prog').style.width = _prog + '%'; document.getElementById('upload-pct').innerText = _prog + '%';
                     } else {
                         websocket.send("#BUP$");
                     }
-                } else if (e.data==="SAVEOK" || e.data==="ARMOK") { location.href="/alarm.html?v="+Date.now(); }
+                } else if (e.data === "SAVEOK" || e.data === "ARMOK") { location.href = "/alarm.html?v=" + Date.now(); }
             };
         }
 
         document.getElementById('file-input').onchange = (e) => {
             if (e.target.files.length) {
-                const rd = new FileReader(); 
-                rd.onload = (ev) => loadInitialImage(ev.target.result); 
+                const rd = new FileReader();
+                rd.onload = (ev) => loadInitialImage(ev.target.result);
                 rd.readAsDataURL(e.target.files[0]);
             }
         };
@@ -403,20 +650,21 @@
                 document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active')); btn.classList.add('active');
                 document.getElementById('filter-name').innerText = btn.innerText;
                 const sl = document.getElementById('filter-slider');
-                sl.value = (btn.id==='brightness')?brightness:(btn.id==='saturation')?saturation:(btn.id==='inversion'?inversion:grayscale);
+                sl.value = (btn.id === 'brightness') ? brightness : (btn.id === 'saturation') ? saturation : (btn.id === 'inversion' ? inversion : grayscale);
                 document.getElementById('filter-value').innerText = sl.value + '%';
             };
         });
 
         document.getElementById('filter-slider').oninput = (e) => {
-            const v = e.target.value; document.getElementById('filter-value').innerText = v+'%';
+            const v = e.target.value; document.getElementById('filter-value').innerText = v + '%';
             const id = document.querySelector('.btn-filter.active').id;
-            if(id==='brightness') brightness=v; else if(id==='saturation') saturation=v; else if(id==='inversion') inversion=v; else grayscale=v;
-            if(imgOrig) {
+            if (id === 'brightness') brightness = v; else if (id === 'saturation') saturation = v; else if (id === 'inversion') inversion = v; else grayscale = v;
+            if (imgOrig) {
                 const f = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
                 document.querySelector('.croppr-imageClipped').style.filter = f;
             }
         };
     </script>
 </body>
+
 </html>
