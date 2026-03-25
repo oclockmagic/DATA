@@ -524,8 +524,8 @@
             const ph = parseInt(document.getElementById("phut").value) || 0; const ng = parseInt(document.getElementById("ngay").value) || 1;
             const th = parseInt(document.getElementById("thang").value) || 1; const tnu = parseInt(document.getElementById("thu").value);
             const mel = parseInt(document.getElementById("mel").value);
-            let pk = byteToHex(0) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(10);
-            for (let i = 0; i < 38; i++) pk += "00"; pk += "0101"; for (let i = 0; i < 14; i++) pk += "00";
+            let pk = byteToHex(0) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(croppr ? 1 : 0) + "00004040";
+            for (let i = 0; i < 34; i++) pk += "00"; pk += "0101"; for (let i = 0; i < 14; i++) pk += "00";
             pk += byteToHex(1); // Offset 64 (check)
             for (let i = 0; i < 11; i++) pk += "00";
             pk += byteToHex(tv.length); // Offset 76
@@ -536,10 +536,9 @@
                 pk += hex;
             }
             if (websocket && websocket.readyState === 1) {
-                let crop = croppr ? croppr.getValue() : null;
-                websocket.send(`#HGT$${crop ? 1 : 0}:0:0:64:64`);
+                let cropData = croppr ? croppr.getValue() : null;
                 websocket.send("#HGH$" + pk);
-                if (crop) sendImageData(crop); else { document.getElementById('upload-modal').style.display = 'flex'; websocket.send("#BUP$"); }
+                if (croppr) sendImageData(cropData); else { document.getElementById('upload-modal').style.display = 'flex'; websocket.send("#BUP$"); }
             }
         };
 
