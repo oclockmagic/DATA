@@ -519,12 +519,24 @@
         };
 
         const luuAlarm = () => {
-            const tv = document.getElementById('text').value; const typ = parseInt(document.getElementById("typ").value);
-            const am = parseInt(document.getElementById("am").value); const gi = parseInt(document.getElementById("gio").value) || 0;
-            const ph = parseInt(document.getElementById("phut").value) || 0; const ng = parseInt(document.getElementById("ngay").value) || 1;
-            const th = parseInt(document.getElementById("thang").value) || 1; const tnu = parseInt(document.getElementById("thu").value);
+            const tv = document.getElementById('text').value;
+            const typ = parseInt(document.getElementById("typ").value);
+            const am = parseInt(document.getElementById("am").value);
+            const gi = parseInt(document.getElementById("gio").value) || 0;
+            const ph = parseInt(document.getElementById("phut").value) || 0;
+            const ng = parseInt(document.getElementById("ngay").value) || 1;
+            const th = parseInt(document.getElementById("thang").value) || 1;
+            const tnu = parseInt(document.getElementById("thu").value);
             const mel = parseInt(document.getElementById("mel").value);
-            let pk = byteToHex(0) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(croppr ? 1 : 0) + "00004040";
+            
+            const px = parseInt(document.getElementById('pos-x').value) || 0;
+            const py = parseInt(document.getElementById('pos-y').value) || 0;
+            const pw = parseInt(document.getElementById('pos-w').value) || 64;
+            const ph_h = parseInt(document.getElementById('pos-h').value) || 64;
+
+            let pk = byteToHex(0) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + 
+                     byteToHex(croppr ? 1 : 0) + byteToHex(px) + byteToHex(py) + byteToHex(pw) + byteToHex(ph_h);
+            
             for (let i = 0; i < 34; i++) pk += "00"; pk += "0101"; for (let i = 0; i < 14; i++) pk += "00";
             pk += byteToHex(1); // Offset 64 (check)
             for (let i = 0; i < 11; i++) pk += "00";
@@ -536,9 +548,18 @@
                 pk += hex;
             }
             if (websocket && websocket.readyState === 1) {
-                let cropData = croppr ? croppr.getValue() : null;
+                // Lần 1: Gởi Metadata
                 websocket.send("#HGH$" + pk);
-                if (croppr) sendImageData(cropData); else { document.getElementById('upload-modal').style.display = 'flex'; websocket.send("#BUP$"); }
+                document.getElementById('upload-modal').style.display = 'flex';
+                
+                // Lần 2: Gởi Ảnh (nếu có)
+                if (croppr) {
+                    let cropData = croppr.getValue();
+                    sendImageData(cropData); 
+                } else { 
+                    // Nếu không có ảnh, vẫn gởi #BUP$ để kích hoạt kết thúc xử lý bên firmware
+                    websocket.send("#BUP$"); 
+                }
             }
         };
 
@@ -568,18 +589,27 @@
             if (txt) document.getElementById('text').value = decodeHexText(txt);
             updateUI(); initWebSocket();
 
-            const idx = _params.get('idx');
-            const tutao = _params.get('tutao');
+            /*
+            const imgParam = _params.get('img');
             if (idx && tutao === '1') {
-                const imgUrl = `/get_file?name=${idx}.raw`;
-                fetch(imgUrl).then(r => r.blob()).then(blob => {
+                const targetImgName = imgParam || (idx + ".raw");
+                const imgUrl = `/get_file?name=${targetImgName}`;
+                fetch(imgUrl).then(r => {
+                    if (!r.ok) throw new Error("404");
+                    return r.blob();
+                }).then(blob => {
                     const rd = new FileReader();
                     rd.onload = (e) => loadInitialImage(e.target.result);
                     rd.readAsDataURL(blob);
-                }).catch(e => console.log("No existing image found."));
+                }).catch(e => {
+                    console.log("No existing image found or 404. " + e.message);
+                    document.getElementById('no-img-alert').style.display = 'block';
+                });
             } else {
                 document.getElementById('no-img-alert').style.display = 'block';
             }
+            */
+            document.getElementById('no-img-alert').style.display = 'block';
             document.getElementById('btn-save').onclick = luuAlarm;
         };
 
