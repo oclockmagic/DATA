@@ -638,22 +638,18 @@
         // Tự động nạp ảnh cũ nếu có (Trì hoãn 500ms để đảm bảo các thành phần khác đã sẵn sàng)
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const checkEl = document.getElementById('tutao-check-value');
-                const checkVal = checkEl ? checkEl.value : "0";
                 const posX = document.getElementById('pos-x').value;
                 const posY = document.getElementById('pos-y').value;
                 const posW = document.getElementById('pos-w').value;
                 const posH = document.getElementById('pos-h').value;
                 const fileName = "%NAME%";
 
-                console.log("ALARM IMAGE INFO:");
-                console.log("- Check (Tutao): " + checkVal);
+                console.log("ALARM IMAGE INFO (FIXED):");
                 console.log("- Position: X=" + posX + ", Y=" + posY + ", W=" + posW + ", H=" + posH);
                 console.log("- File: " + fileName);
 
-                if (checkVal == "1" && fileName !== "" && fileName !== "%%NAME%%") {
+                if (fileName !== "" && fileName !== "%%NAME%%") {
                     const imgUrl = "/get_file?name=" + fileName + ".raw";
-                    console.log("Attempting to load: " + imgUrl);
                     initCropper(imgUrl);
                 } else {
                     console.log("No initial image to load.");
