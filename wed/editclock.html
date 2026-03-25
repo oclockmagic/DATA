@@ -930,9 +930,7 @@
                     if (el) el.value = v;
                 }
             });
-            let chkValue = params.get('chk');
-            // Checkbox 'chk' was removed as requested
-            
+
             // Show/Hide sections based on flags
             let tutaoFlag = params.get('tutao');
             let chuFlag = params.get('chu');
@@ -945,6 +943,33 @@
             let txt = params.get('text');
             if (txt) document.getElementById('text').value = decodeHexText(txt);
             updateUI();
+
+            // Load raw image if provided
+            const rawImg = params.get('rawImg');
+            if (rawImg && tutaoFlag === '1') {
+                const targetImg = document.getElementById('cropper-target');
+                targetImg.src = "/get_file?name=" + rawImg + "&v=" + Date.now();
+                targetImg.style.display = 'block';
+                document.getElementById('no-image-text').style.display = 'none';
+                targetImg.onload = () => {
+                    imgOrig = targetImg;
+                    if (croppr) { try { croppr.destroy(); } catch(e){} }
+                    croppr = new Croppr(targetImg, {
+                        startSize: [80, 80, '%'],
+                        minSize: [10, 10, 'px'],
+                        returnMode: 'real',
+                        onInitialize: () => {
+                            // Initial load doesn't count as changed unless user moves it
+                            // but triggerChange enables the buttons
+                            triggerChange(); 
+                        },
+                        onCropEnd: () => {
+                            imageChanged = true;
+                            triggerChange();
+                        }
+                    });
+                };
+            }
 
             if (typeof m_x !== 'undefined' && idx === null) {
                 posX.value = m_x[0];
