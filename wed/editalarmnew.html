@@ -322,12 +322,56 @@
         window.onload = () => {
             const _params = new URLSearchParams(location.search);
             const fields = ['typ','gio','phut','ngay','thang','thu','am','mel','x','y','w','h'];
-            fields.forEach(f => { let v = _params.get(f); if(v!==null) { let el = document.getElementById(f==='x'||f==='y'||f==='w'||f==='h'?'pos-'+f:f); if(el) el.value = v; } });
-            let txt = _params.get('text'); if(txt) document.getElementById('text').value = decodeHexText(txt);
+            fields.forEach(f => { 
+                let v = _params.get(f); 
+                if(v!==null) { 
+                    let el = document.getElementById(f==='x'||f==='y'||f==='w'||f==='h'?'pos-'+f:f); 
+                    if(el) el.value = v; 
+                } 
+            });
+            let txt = _params.get('text'); 
+            if(txt) document.getElementById('text').value = decodeHexText(txt);
             updateUI(); initWebSocket();
-            document.getElementById('no-img-alert').innerText = "Chọn ảnh để bắt đầu";
+            
+            const idx = _params.get('idx');
+            const tutao = _params.get('tutao');
+            if (idx && tutao === '1') {
+                const imgUrl = `/get_file?name=${idx}.raw`;
+                fetch(imgUrl).then(r => r.blob()).then(blob => {
+                    const rd = new FileReader();
+                    rd.onload = (e) => loadInitialImage(e.target.result);
+                    rd.readAsDataURL(blob);
+                }).catch(e => console.log("No existing image found."));
+            } else {
+                document.getElementById('no-img-alert').style.display = 'block';
+            }
             document.getElementById('btn-save').onclick = luuAlarm;
         };
+
+        function loadInitialImage(src) {
+            const img = new Image(); img.src = src; img.onload = () => {
+                const pW=380, pH=380; let uW, uH;
+                if(img.width/img.height > pW/pH) { uW=pW; uH=uW*img.height/img.width; } else { uH=pH; uW=uH*img.width/img.height; }
+                const cv = document.createElement("canvas"); cv.width=pW; cv.height=pH;
+                const ctx = cv.getContext("2d"); ctx.translate(pW/2, pH/2); ctx.drawImage(img, -uW/2, -uH/2, uW, uH);
+                if(croppr) croppr.destroy();
+                document.getElementById('no-img-alert').style.display='none';
+                const tg = document.getElementById('cropper-target'); tg.style.display='block';
+                tg.onload = () => { 
+                    imgOrig = tg; 
+                    croppr = new Croppr(tg, { 
+                        startSize: [parseInt(document.getElementById('pos-w').value)||80, parseInt(document.getElementById('pos-h').value)||80, 'px'],
+                        minSize: [10, 10, 'px'],
+                        returnMode: 'real'
+                    }); 
+                    // Move to saved position
+                    const sx = parseInt(document.getElementById('pos-x').value)||0;
+                    const sy = parseInt(document.getElementById('pos-y').value)||0;
+                    croppr.moveTo(sx, sy);
+                };
+                tg.src = cv.toDataURL();
+            };
+        }
 
         function initWebSocket() {
             websocket = new WebSocket(`ws://${location.hostname}/ws`);
@@ -348,26 +392,9 @@
 
         document.getElementById('file-input').onchange = (e) => {
             if (e.target.files.length) {
-                const rd = new FileReader(); rd.onload = (ev) => {
-                    const img = new Image(); img.src = ev.target.result; img.onload = () => {
-                        const pW=380, pH=380; let uW, uH;
-                        if(img.width/img.height > pW/pH) { uW=pW; uH=uW*img.height/img.width; } else { uH=pH; uW=uH*img.width/img.height; }
-                        const cv = document.createElement("canvas"); cv.width=pW; cv.height=pH;
-                        const ctx = cv.getContext("2d"); ctx.translate(pW/2, pH/2); ctx.drawImage(img, -uW/2, -uH/2, uW, uH);
-                        if(croppr) croppr.destroy();
-                        document.getElementById('no-img-alert').style.display='none';
-                        const tg = document.getElementById('cropper-target'); tg.style.display='block';
-                        tg.onload = () => { 
-                            imgOrig = tg; 
-                            croppr = new Croppr(tg, { 
-                                startSize: [80, 80, '%'],
-                                minSize: [10, 10, 'px'],
-                                returnMode: 'real'
-                            }); 
-                        };
-                        tg.src = cv.toDataURL();
-                    };
-                }; rd.readAsDataURL(e.target.files[0]);
+                const rd = new FileReader(); 
+                rd.onload = (ev) => loadInitialImage(ev.target.result); 
+                rd.readAsDataURL(e.target.files[0]);
             }
         };
 
