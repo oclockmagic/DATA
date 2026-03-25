@@ -329,7 +329,12 @@
 
         <div class="section-glass">
             <label>Alarm Title / Note</label>
-            <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255" style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+            <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+            
+            <div class="flex-row" style="margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; justify-content: space-between; align-items: center;">
+                <label style="margin: 0; font-weight: bold; color: var(--primary);">ENABLE TIMER</label>
+                <input type="checkbox" id="chk" style="width: 22px; height: 22px; cursor: pointer;">
+            </div>
             <div class="flex-row">
                 <div class="flex-column">
                     <label>Alarm Type</label>
@@ -812,7 +817,10 @@
                 let pk = byteToHex(currentLayer) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) +
                     byteToHex(croppr ? 1 : 0) + byteToHex(px) + byteToHex(py) + byteToHex(pw) + byteToHex(phh);
 
-                for (let i = 0; i < 34; i++) pk += "00"; pk += "0101"; for (let i = 0; i < 14; i++) pk += "00";
+                for (let i = 0; i < 2; i++) pk += "00"; // Bytes 14, 15
+                pk += byteToHex(document.getElementById('chk').checked ? 1 : 0); // Byte 16 (checkhengio)
+                for (let i = 0; i < 31; i++) pk += "00"; // Bytes 17 to 47
+                pk += "0101"; for (let i = 0; i < 14; i++) pk += "00";
                 pk += byteToHex(1); // Offset 64
                 for (let i = 0; i < 11; i++) pk += "00";
                 pk += byteToHex(tv.length); // Offset 76
@@ -879,10 +887,8 @@
                     }
                 } else if (e.data === "SAVEOK" || e.data === "ARMOK") {
                     uploadModal.style.display = 'none';
-                    if (isSaving) {
-                        window.location.href = '/alarm.html?v=' + Date.now();
-                    } else if (isCanceling) {
-                        goBackWithReferrer();
+                    if (isSaving || isCanceling) {
+                        window.location.href = '/clock.html?v=' + Date.now();
                     }
                 }
             };
@@ -893,14 +899,14 @@
             const params = new URLSearchParams(window.location.search);
             const idx = params.get('idx');
             const x = params.get('x'), y = params.get('y'), w = params.get('w'), h = params.get('h');
-            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel'];
-
+            
             if (idx !== null) currentLayer = parseInt(idx);
             if (x !== null) posX.value = x;
             if (y !== null) posY.value = y;
             if (w !== null) posW.value = w;
             if (h !== null) posH.value = h;
 
+            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel'];
             fields.forEach(f => {
                 let v = params.get(f);
                 if (v !== null) {
@@ -908,6 +914,9 @@
                     if (el) el.value = v;
                 }
             });
+            let chk = params.get('chk');
+            if (chk !== null) document.getElementById('chk').checked = (chk === '1');
+            
             let txt = params.get('text');
             if (txt) document.getElementById('text').value = decodeHexText(txt);
             updateUI();
