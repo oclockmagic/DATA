@@ -638,7 +638,8 @@
         // Tự động nạp ảnh cũ nếu có (Trì hoãn 500ms để đảm bảo các thành phần khác đã sẵn sàng)
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const checkVal = document.getElementById('tutao-check').value;
+                const checkEl = document.getElementById('tutao-check-value');
+                const checkVal = checkEl ? checkEl.value : "0";
                 const posX = document.getElementById('pos-x').value;
                 const posY = document.getElementById('pos-y').value;
                 const posW = document.getElementById('pos-w').value;
@@ -656,7 +657,8 @@
                     initCropper(imgUrl);
                 } else {
                     console.log("No initial image to load.");
-                    document.getElementById('no-img-alert').style.display = 'block';
+                    const noImg = document.getElementById('no-img-alert');
+                    if (noImg) noImg.style.display = 'block';
                 }
             }, 500);
         });
