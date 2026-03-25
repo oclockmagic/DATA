@@ -283,6 +283,12 @@
             z-index: 2;
             pointer-events: none;
         }
+
+        .disable {
+            opacity: 0.2;
+            pointer-events: none;
+            filter: blur(1px);
+        }
     </style>
 </head>
 
@@ -318,6 +324,216 @@
                     <span id="filter-value" style="font-size: 12px; color: var(--primary);">100%</span>
                 </div>
                 <input type="range" id="filter-slider" min="0" max="200" value="100">
+            </div>
+        </div>
+
+        <div class="section-glass">
+            <label>Alarm Title / Note</label>
+            <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255" style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
+            <div class="flex-row">
+                <div class="flex-column">
+                    <label>Alarm Type</label>
+                    <select id="typ" onchange="updateUI()">
+                        <option value="0">Time - Days</option>
+                        <option value="1">Date - Month</option>
+                        <option value="2">Once</option>
+                    </select>
+                </div>
+                <div class="flex-column">
+                    <label>Calendar</label>
+                    <select id="am">
+                        <option value="0">Solar</option>
+                        <option value="1">Lunar</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex-column" style="margin-top: 10px;">
+                <label>Repeat (Day of week)</label>
+                <select id="thu">
+                    <option value="0">Daily</option>
+                    <option value="1">Sun</option>
+                    <option value="2">Mon</option>
+                    <option value="3">Tue</option>
+                    <option value="4">Wed</option>
+                    <option value="5">Thu</option>
+                    <option value="6">Fri</option>
+                    <option value="7">Sat</option>
+                </select>
+            </div>
+            <div style="margin-top: 10px;">
+                <label>Time & Date</label>
+                <div class="flex-row">
+                    <div class="flex-column"><label>Hour</label><input type="number" id='gio' min="0" max="23"></div>
+                    <div class="flex-column"><label>Min</label><input type="number" id='phut' min="0" max="59"></div>
+                    <div class="flex-column"><label>Day</label><input type="number" id='ngay' min="1" max="31"></div>
+                    <div class="flex-column"><label>Month</label><input type="number" id='thang' min="1" max="12"></div>
+                </div>
+            </div>
+            <div class="flex-column" style="margin-top: 10px;">
+                <label>Melody</label>
+                <select id="mel"><option value="0">-No melody</option>
+<option value="1">HappyBirthday</option>
+<option value="2">Pokemon</option>
+<option value="3">007</option>
+<option value="4">7Days</option>
+<option value="5">Adams Family</option>
+<option value="6">Agadoo</option>
+<option value="7">Alice Cooper-Poison</option>
+<option value="8">Alvin and the Chipmonks</option>
+<option value="9">Amazing Grace</option>
+<option value="10">Axel</option>
+<option value="11">Ba Ba Black Sheep</option>
+<option value="12">Back to the Future</option>
+<option value="13">Barbie Girl</option>
+<option value="14">Batman</option>
+<option value="15">Be bopalula</option>
+<option value="16">Benny Hill</option>
+<option value="17">Bethoven</option>
+<option value="18">Birdy Song</option>
+<option value="19">Black Bear</option>
+<option value="20">Bod</option>
+<option value="21">Bolero</option>
+<option value="22">Borteus</option>
+<option value="23">BSP</option>
+<option value="24">Camberwick Green</option>
+<option value="25">Canon</option>
+<option value="26">Cantina</option>
+<option value="27">Captain Pugwash</option>
+<option value="28">Chariots of Fire</option>
+<option value="29">Coca Cola</option>
+<option value="30">Colonel Bogey</option>
+<option value="31">Dallas</option>
+<option value="32">Dangerman</option>
+<option value="33">Death March</option>
+<option value="34">Deep Purple-Lazy</option>
+<option value="35">Deep Purple-Smoke on the Water</option>
+<option value="36">Digimon</option>
+<option value="37">Don't Care</option>
+<option value="38">Dragonballz</option>
+<option value="39">Dream</option>
+<option value="40">Duelling Banjos</option>
+<option value="41">Dustman</option>
+<option value="42">Entertainer</option>
+<option value="43">Fairground</option>
+<option value="44">Fawlty Towers</option>
+<option value="45">Figaro</option>
+<option value="46">Final Countdown</option>
+<option value="47">Flintstones</option>
+<option value="48">Flute</option>
+<option value="49">Fraggle Rock</option>
+<option value="50">Friends</option>
+<option value="51">Fruit and Nut</option>
+<option value="52">Funky Town</option>
+<option value="53">Futurama</option>
+<option value="54">GB National Anthem</option>
+<option value="55">Ghost Busters</option>
+<option value="56">Greensleaves</option>
+<option value="57">Halloween</option>
+<option value="58">Have I Got News for You</option>
+<option value="59">Hawaii 5 0</option>
+<option value="60">Heman</option>
+<option value="61">Henrys Cat</option>
+<option value="62">Hitchcock</option>
+<option value="63">Hunter</option>
+<option value="64">If I Were a Rich Man</option>
+<option value="65">Itchy and Scratchy</option>
+<option value="66">Jackson</option>
+<option value="67">Jesus Christ Superstar</option>
+<option value="68">Jingle Bells</option>
+<option value="69">Kiss</option>
+<option value="70">Knight Rider</option>
+<option value="71">Led Zepelin-Stairway to Heaven</option>
+<option value="72">Let it be</option>
+<option value="73">Let it Snow</option>
+<option value="74">Light My Fire</option>
+<option value="75">Macarena</option>
+<option value="76">Magic Roundabout</option>
+<option value="77">Match of the day</option>
+<option value="78">Metsa</option>
+<option value="79">Mission Impossible</option>
+<option value="80">Monty Python</option>
+<option value="81">Mozart</option>
+<option value="82">Mr Benn</option>
+<option value="83">Mr Men</option>
+<option value="84">Munsters</option>
+<option value="85">Muppet</option>
+<option value="86">Muppets</option>
+<option value="87">Napoli</option>
+<option value="88">New Year</option>
+<option value="89">Nut cracker Suite</option>
+<option value="90">Nut march</option>
+<option value="91">Oh Little Start of Bethlehem</option>
+<option value="92">On Ilckley Moor</option>
+<option value="93">On the 12th Day of christmas</option>
+<option value="94">Oxygen</option>
+<option value="95">Pager</option>
+<option value="96">Phantom</option>
+<option value="97">Piccolo</option>
+<option value="98">Pienian</option>
+<option value="99">Pilipom</option>
+<option value="100">Pingu</option>
+<option value="101">Pinky and the Brain</option>
+<option value="102">Polka</option>
+<option value="103">Popcorn</option>
+<option value="104">Popeye</option>
+<option value="105">Porsaita</option>
+<option value="106">Postman Pat</option>
+<option value="107">Prima</option>
+<option value="108">QuoFNigt</option>
+<option value="109">Rhubarb and Custard</option>
+<option value="110">Rich Man's World</option>
+<option value="111">Ring High</option>
+<option value="112">Ring Low</option>
+<option value="113">Rudolph the Red Nosed Raindeer</option>
+<option value="114">Rugrats</option>
+<option value="115">Rule Britania</option>
+<option value="116">Santa Clause is Coming Tonight</option>
+<option value="117">Scale</option>
+<option value="118">Scatman</option>
+<option value="119">Scooby Doo</option>
+<option value="120">Sesame Street</option>
+<option value="121">Simpsons</option>
+<option value="122">Smurfs</option>
+<option value="123">Soap</option>
+<option value="124">South Park</option>
+<option value="125">Spiderman</option>
+<option value="126">Star Trek</option>
+<option value="127">Star Wars</option>
+<option value="128">Super Man</option>
+<option value="129">Sweeney</option>
+<option value="130">Take On Me</option>
+<option value="131">Tarzan</option>
+<option value="132">Teenage Dirt Bag</option>
+<option value="133">Teenage Turtles</option>
+<option value="134">Tele Tubbies</option>
+<option value="135">Thankyou</option>
+<option value="136">The A Team</option>
+<option value="137">Thomas The Tank</option>
+<option value="138">Thunder Birds</option>
+<option value="139">Tigger</option>
+<option value="140">Time to say good bye</option>
+<option value="141">Titanic</option>
+<option value="142">To The Dump</option>
+<option value="143">Toccata</option>
+<option value="144">Tones</option>
+<option value="145">Top Cat</option>
+<option value="146">Transformers</option>
+<option value="147">Trim Phone</option>
+<option value="148">Tubular Bells</option>
+<option value="149">Under the Sea</option>
+<option value="150">USA National Anthem</option>
+<option value="151">Vanessa Mae</option>
+<option value="152">Verve</option>
+<option value="153">Walk of Life</option>
+<option value="154">Wannabe</option>
+<option value="155">We Wish you a Merry Christmas</option>
+<option value="156">While Shepards Watch</option>
+<option value="157">Winne the pooh</option>
+<option value="158">Wolf Whistle</option>
+<option value="159">Wombles</option>
+<option value="160">YMCA</option>
+<option value="161">Zorba (Give it time!)</option>
+</select>
             </div>
         </div>
 
@@ -377,8 +593,23 @@
         var m_t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 
-        // Shared variables (from @@777*** usually)
-        // var m_x = [...], m_y = [...], m_w = [...], m_h = [...], m_t = [...];
+        // Logic to update inputs (Layer select was removed)
+        const layerSelect = null;
+        const revMap = { 0x7F: 'à', 0x80: 'ả', 0x81: 'ã', 0x82: 'á', 0x83: 'ạ', 0x84: 'ă', 0x85: 'ằ', 0x86: 'ẳ', 0x87: 'ẵ', 0x88: 'ắ', 0x89: 'ặ', 0x8A: 'â', 0x8B: 'ầ', 0x8C: 'ẩ', 0x8D: 'ẫ', 0x8E: 'ấ', 0x8F: 'ậ', 0x90: 'đ', 0x91: 'è', 0x92: 'ẻ', 0x93: 'ẽ', 0x94: 'é', 0x95: 'ẹ', 0x96: 'ê', 0x97: 'ề', 0x98: 'ể', 0x99: 'ễ', 0x9A: 'ế', 0x9B: 'ệ', 0x9C: 'ì', 0x9D: 'ỉ', 0x9E: 'ĩ', 0x9F: 'í', 0xA0: 'ị', 0xA1: 'ò', 0xA2: 'ỏ', 0xA3: 'õ', 0xA4: 'ó', 0xA5: 'ọ', 0xA6: 'ô', 0xA7: 'ồ', 0xA8: 'ổ', 0xA9: 'ỗ', 0xAA: 'ố', 0xAB: 'ộ', 0xAC: 'ơ', 0xAD: 'ờ', 0xAE: 'ở', 0xAF: 'ỡ', 0xB0: 'ớ', 0xB1: 'ợ', 0xB2: 'ù', 0xB3: 'ủ', 0xB4: 'ũ', 0xB5: 'ú', 0xB6: 'ụ', 0xB7: 'ư', 0xB8: 'ừ', 0xB9: 'ử', 0xBA: 'ữ', 0xBB: 'ứ', 0xBC: 'ự', 0xBD: 'ỳ', 0xBE: 'ỷ', 0xBF: 'ỹ', 0xC0: 'ý', 0xC1: 'ỵ', 0xC2: 'À', 0xC3: 'Ả', 0xC4: 'Ã', 0xC5: 'Á', 0xC6: 'Ạ', 0xC7: 'Ă', 0xC8: 'Ằ', 0xC9: 'Ẳ', 0xCA: 'Ẵ', 0xCB: 'Ắ', 0xCC: 'Ặ', 0xCD: 'Â', 0xCE: 'Ầ', 0xCF: 'Ẩ', 0xD0: 'Ẫ', 0xD1: 'Ấ', 0xD2: 'Ậ', 0xD3: 'Đ', 0xD4: 'È', 0xD5: 'Ẻ', 0xD6: 'Ẽ', 0xD7: 'É', 0xD8: 'Ẹ', 0xD9: 'Ê', 0xDA: 'Ề', 0xDB: 'Ể', 0xDC: 'Ễ', 0xDD: 'Ế', 0xDE: 'Ệ', 0xDF: 'Ì', 0xE0: 'Ỉ', 0xE1: 'Ĩ', 0xE2: 'Í', 0xE3: 'Ị', 0xE4: 'Ò', 0xE5: 'Ỏ', 0xE6: 'Õ', 0xE7: 'Ó', 0xE8: 'Ọ', 0xE9: 'Ô', 0xEA: 'Ồ', 0xEB: 'Ổ', 0xEC: 'Ỗ', 0xED: 'Ố', 0xEE: 'Ộ', 0xEF: 'Ơ', 0xF0: 'Ờ', 0xF1: 'Ở', 0xF2: 'Ỡ', 0xF3: 'Ớ', 0xF4: 'Ợ', 0xF5: 'Ù', 0xF6: 'Ủ', 0xF7: 'Ũ', 0xF8: 'Ú', 0xF9: 'Ụ', 0xFA: 'Ư', 0xFB: 'Ừ', 0xFC: 'Ử', 0xFD: 'Ữ', 0xFE: 'Ứ', 0xFF: 'Ự', 0x1F: 'ỳ', 0x1E: 'ỷ', 0x1D: 'ỹ', 0x1C: 'ý', 0x1B: 'ỵ' };
+
+        function decodeHexText(hex) {
+            let s = ""; for (let i = 0; i < hex.length; i += 2) { let b = parseInt(hex.substr(i, 2), 16); s += revMap[b] || String.fromCharCode(b); }
+            return s;
+        }
+
+        const updateUI = () => {
+            const v = document.getElementById("typ").value;
+            const al = document.getElementById("am"), th = document.getElementById("thang"), ng = document.getElementById("ngay"), gi = document.getElementById("gio"), ph = document.getElementById("phut"), tn = document.getElementById("thu");
+            [al, th, ng, gi, ph, tn].forEach(el => el.classList.remove("disable"));
+            if (v == "0") [al, th, ng].forEach(el => el.classList.add("disable"));
+            else if (v == "1") [gi, ph, tn].forEach(el => el.classList.add("disable"));
+            else if (v == "2") [tn].forEach(el => el.classList.add("disable"));
+        };
 
         let croppr = null;
         let imgOrig = null;
@@ -403,7 +634,6 @@
         const uploadModal = document.getElementById('upload-modal');
 
         // Logic to update inputs (Layer select was removed)
-        const layerSelect = null;
 
 
         fileInput.onchange = (e) => {
@@ -538,61 +768,88 @@
             }
         }
 
-        function sendImageData(isFinalSave) {
-            if (!connectt || !croppr) return;
+        function sendImageData(finalSave) {
+            if (!connectt) return;
 
             const targetW = parseInt(posW.value) || 64;
             const targetH = parseInt(posH.value) || 64;
 
-            const crop = croppr.getValue();
-            const canvas = document.createElement('canvas');
-            canvas.width = targetW;
-            canvas.height = targetH;
-            const ctx = canvas.getContext('2d');
-
-            ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-            // Resize and draw the cropped region directly to target dimensions
-            ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
-
-            const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
             let hexData = "";
-            for (let i = 0; i < imgData.length; i += 4) {
-                const r = imgData[i] >> 4;
-                const g = imgData[i + 1] >> 4;
-                const b = imgData[i + 2] >> 4;
-                const a = imgData[i + 3] >> 4;
-                // Standard ESP format: Byte 0 (A4 R4), Byte 1 (G4 B4)
-                hexData += byteToHex(a | (r << 4));
-                hexData += byteToHex(g | (b << 4));
+            let crop = null;
+
+            if (croppr) {
+                crop = croppr.getValue();
+                const canvas = document.createElement('canvas');
+                canvas.width = targetW;
+                canvas.height = targetH;
+                const ctx = canvas.getContext('2d');
+                ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+
+                const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
+                for (let i = 0; i < imgData.length; i += 4) {
+                    const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
+                    hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                }
             }
 
-            startUpload(hexData, "", isFinalSave);
+            if (finalSave) {
+                // Send metadata for alarm if this index is an alarm (usually idx >= 0 in unified edit)
+                const tv = document.getElementById('text').value;
+                const typ = parseInt(document.getElementById("typ").value);
+                const am = parseInt(document.getElementById("am").value);
+                const gi = parseInt(document.getElementById("gio").value) || 0;
+                const ph = parseInt(document.getElementById("phut").value) || 0;
+                const ng = parseInt(document.getElementById("ngay").value) || 1;
+                const th = parseInt(document.getElementById("thang").value) || 1;
+                const tnu = parseInt(document.getElementById("thu").value);
+                const mel = parseInt(document.getElementById("mel").value);
+                const px = parseInt(posX.value) || 0;
+                const py = parseInt(posY.value) || 0;
+                const pw = parseInt(posW.value) || 64;
+                const phh = parseInt(posH.value) || 64;
+
+                let pk = byteToHex(currentLayer) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) +
+                    byteToHex(croppr ? 1 : 0) + byteToHex(px) + byteToHex(py) + byteToHex(pw) + byteToHex(phh);
+
+                for (let i = 0; i < 34; i++) pk += "00"; pk += "0101"; for (let i = 0; i < 14; i++) pk += "00";
+                pk += byteToHex(1); // Offset 64
+                for (let i = 0; i < 11; i++) pk += "00";
+                pk += byteToHex(tv.length); // Offset 76
+                pk += "000000"; // Offset 80
+                for (let i = 0; i < tv.length; i++) {
+                    let c = tv.charCodeAt(i); let hex = byteToHex(c < 256 ? c : 32);
+                    for (let k in revMap) if (revMap[k] === tv[i]) { hex = byteToHex(k); break; }
+                    pk += hex;
+                }
+                websocket.send("#HGH$" + pk);
+            }
+
+            if (hexData) {
+                startUpload(hexData, "", finalSave);
+            } else if (finalSave) {
+                // If no image but saving metadata, send #BUP$ to finalize
+                websocket.send("#BUP$");
+            }
         }
 
         let uploadQueue = [];
         let totalPackets = 0;
-        let layerToSave = 0;
+        // let layerToSave = 0; // redundant with currentLayer
         let isSaving = false;
 
         function startUpload(mainData, thumbData, finalSave) {
             uploadModal.style.display = 'flex';
             document.getElementById('modal-title').innerText = finalSave ? "Saving..." : "Previewing...";
             isSaving = finalSave;
-            layerToSave = currentLayer;
+            // layerToSave = currentLayer;
 
-            // Clear queue and start sequence
             uploadQueue = [];
-            // Chunk mainData
-            for (let i = 0; i < mainData.length; i += 1024) {
-                uploadQueue.push("#GI1$" + mainData.substring(i, i + 1024));
-            }
-            // Chunk thumbData (if any)
-            for (let i = 0; i < thumbData.length; i += 1024) {
-                uploadQueue.push("#GI2$" + thumbData.substring(i, i + 1024));
-            }
+            for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#GI1$" + mainData.substring(i, i + 1024));
+            for (let i = 0; i < thumbData.length; i += 1024) uploadQueue.push("#GI2$" + thumbData.substring(i, i + 1024));
 
             totalPackets = uploadQueue.length;
-            websocket.send("#BDA$"); // Begin Data Upload
+            websocket.send("#BDA$");
         }
 
         function initWebSocket() {
@@ -620,10 +877,10 @@
                     } else {
                         websocket.send("#BUP$");
                     }
-                } else if (e.data === "SAVEOK") {
+                } else if (e.data === "SAVEOK" || e.data === "ARMOK") {
                     uploadModal.style.display = 'none';
                     if (isSaving) {
-                        window.location.href = '/clock.html?v=' + Date.now();
+                        window.location.href = '/alarm.html?v=' + Date.now();
                     } else if (isCanceling) {
                         goBackWithReferrer();
                     }
@@ -635,16 +892,25 @@
             initWebSocket();
             const params = new URLSearchParams(window.location.search);
             const idx = params.get('idx');
-            const x = params.get('x');
-            const y = params.get('y');
-            const w = params.get('w');
-            const h = params.get('h');
+            const x = params.get('x'), y = params.get('y'), w = params.get('w'), h = params.get('h');
+            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel'];
 
             if (idx !== null) currentLayer = parseInt(idx);
             if (x !== null) posX.value = x;
             if (y !== null) posY.value = y;
             if (w !== null) posW.value = w;
             if (h !== null) posH.value = h;
+
+            fields.forEach(f => {
+                let v = params.get(f);
+                if (v !== null) {
+                    let el = document.getElementById(f);
+                    if (el) el.value = v;
+                }
+            });
+            let txt = params.get('text');
+            if (txt) document.getElementById('text').value = decodeHexText(txt);
+            updateUI();
 
             if (typeof m_x !== 'undefined' && idx === null) {
                 posX.value = m_x[0];
