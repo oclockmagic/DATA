@@ -766,6 +766,10 @@
 
         function sendImageData(finalSave) {
             if (!connectt) return;
+            const params = new URLSearchParams(window.location.search);
+            const isAlarm = (params.get('chk') === '1');
+            const isText = (params.get('chu') === '1');
+            const isTutao = (params.get('tutao') === '1');
 
             const targetW = parseInt(posW.value) || 64;
             const targetH = parseInt(posH.value) || 64;
@@ -790,11 +794,6 @@
             }
 
             if (finalSave) {
-                const params = new URLSearchParams(window.location.search);
-                const isAlarm = (params.get('chk') === '1');
-                const isText = (params.get('chu') === '1');
-                const isTutao = (params.get('tutao') === '1');
-
                 if (isAlarm) {
                     const typ = parseInt(document.getElementById("typ").value);
                     const am = parseInt(document.getElementById("am").value);
@@ -821,6 +820,15 @@
                     }
                     websocket.send("#HGN$" + pkTxt);
                 }
+
+            } // end if finalSave
+
+            if (isTutao) {
+                const px = parseInt(posX.value) || 0;
+                const py = parseInt(posY.value) || 0;
+                const pw = parseInt(posW.value) || 64;
+                const phh = parseInt(posH.value) || 64;
+                websocket.send(`#HGT$1:${px}:${py}:${pw}:${phh}`);
             }
 
             if (hexData) {
