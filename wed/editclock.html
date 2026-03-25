@@ -845,6 +845,9 @@
             if (hexData) {
                 startUpload(hexData, "", finalSave);
             } else if (finalSave) {
+                isSaving = true;
+                uploadModal.style.display = 'flex';
+                document.getElementById('modal-title').innerText = "Saving Metadata...";
                 // If no image but saving metadata, send #BUP$ to finalize
                 websocket.send("#BUP$");
             }
