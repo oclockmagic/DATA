@@ -1,0 +1,411 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, user-scalable=no">
+    <title>MAGIC O'CLOCK - CHỈNH SỬA HẸN GIỜ</title>
+    <style>
+        :root { --primary: #4facfe; --secondary: #00f2fe; --accent: #BA68C8; --bg-dark: rgb(6, 2, 29); --glass: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); }
+        body { margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: var(--bg-dark); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: white; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 480' style='background-color:rgb(6,2,29)'%3E%3Cpath d='M0 0h640v480H0z'/%3E%3Cpath d='M-28 236C-22 116 38 35 85 12c23-11 88-41 126 44 22 51 11 117-18 153-12 15-40 44-62 33-30-15-15-66-5-88 21-48 85-106 142-87 73 24-32 147 5 184 56 56 79-74 124-79 35-4 37 61 115 80s150-86 128-126c-44-80-128-44-160 0-56 78 6 188-85 255-58 42-144 14-203-37-98-85-176-96-248 114' opacity='.25' fill='none' stroke='%234facfe' stroke-width='40'/%3E%3C/svg%3E"); background-size: cover; background-attachment: fixed; }
+        .container { width: 440px; max-width: 95vw; background: rgba(0, 0, 0, 0.3); border-radius: 30px; padding: 25px; backdrop-filter: blur(15px); border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.5); box-sizing: border-box; margin: 20px 0; }
+        h2 { text-align: center; font-weight: 300; font-size: 22px; letter-spacing: 3px; margin: 0 0 20px 0; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .section-glass { background: var(--glass); border: 1px solid var(--glass-border); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
+        .flex-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .flex-column { display: flex; flex-direction: column; flex: 1; }
+        label { font-size: 11px; opacity: 0.7; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); }
+        select, input[type="number"], input[type="text"] { background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); border-radius: 10px; color: white; padding: 12px; font-size: 14px; outline: none; transition: all 0.3s; width: 100%; box-sizing: border-box; }
+        .preview-area { width: 100%; height: 380px; background: #000; border-radius: 15px; overflow: hidden; display: flex; justify-content: center; align-items: center; border: 1px solid var(--glass-border); position: relative; }
+        .btn { padding: 10px 15px; border-radius: 12px; border: none; color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s; font-size: 11px; display: flex; align-items: center; justify-content: center; flex: 1; }
+        .btn-primary { background: linear-gradient(135deg, #4facfe, #00f2fe); box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn-filter.active { background: var(--primary); border-color: var(--primary); }
+        input[type="range"] { width: 100%; accent-color: var(--primary); background: transparent; }
+        .status-tag { display: block; font-size: 10px; color: rgba(255, 255, 255, 0.3); margin-top: 15px; text-align: right; }
+        .disable { opacity: 0.2; pointer-events: none; filter: blur(1px); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--bg-dark); padding: 30px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center; width: 80%; max-width: 300px; }
+        .progress-bar { width: 0%; height: 6px; background: linear-gradient(to right, var(--primary), var(--secondary)); border-radius: 3px; transition: width 0.3s; }
+        /* Croppr styles */
+        .croppr-container { position: relative; width: 100%; height: 100%; user-select: none; }
+        .croppr-overlay { background: rgba(0,0,0,0.5); position: absolute; top:0; left:0; right:0; bottom:0; z-index:1; }
+        .croppr-region { border: 1px dashed white; position: absolute; z-index:3; cursor: move; }
+        .croppr-handle { border: 1px solid white; background-color: var(--primary); width: 10px; height: 10px; position: absolute; z-index: 4; }
+        .croppr-imageClipped { position: absolute; top:0; left:0; right:0; bottom:0; z-index:2; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>CHỈNH SỬA HẸN GIỜ</h2>
+        <div class="section-glass">
+            <label>Biểu tượng hẹn giờ</label>
+            <div class="flex-row">
+                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()" style="width: 100%;">CHỌN ẢNH</button>
+            </div>
+            <input type="file" id="file-input" accept="image/*" hidden>
+            <div class="preview-area" id="preview-container">
+                <p id="no-img-alert" style="opacity: 0.3; font-size: 12px;">Đang tải...</p>
+                <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;">
+            </div>
+            <div class="filter-controls" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px;">
+                <button class="btn btn-secondary btn-filter active" id="brightness">Độ sáng</button>
+                <button class="btn btn-secondary btn-filter" id="saturation">Bão hòa</button>
+                <button class="btn btn-secondary btn-filter" id="inversion">Đảo ngược</button>
+                <button class="btn btn-secondary btn-filter" id="grayscale">Trắng đen</button>
+                <div style="grid-column: span 2; margin-top: 10px;">
+                    <div class="flex-row" style="justify-content: space-between;">
+                        <span id="filter-name" style="font-size: 10px;">Độ sáng</span>
+                        <span id="filter-value" style="font-size: 10px; color: var(--primary);">100%</span>
+                    </div>
+                    <input type="range" id="filter-slider" min="0" max="200" value="100">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-glass">
+            <label>Nhãn hẹn giờ</label>
+            <input autocomplete="off" placeholder="Ghi chú..." type="text" id='text' maxlength="255">
+            <div class="flex-row" style="margin-top:10px;">
+                <div class="flex-column"><label>Kiểu hẹn giờ</label><select id="typ" class="listarm" onchange="updateUI()"><option value="0">Giờ - Các thứ</option><option value="1">Ngày - Tháng</option><option value="2">Cố định</option></select></div>
+                <div class="flex-column"><label>Lịch</label><select id="am" class="listamlich"><option value="0">Dương lịch</option><option value="1">Âm lịch</option></select></div>
+            </div>
+            <div class="flex-column"><label>Lặp lại (Thứ)</label><select id="thu" class="listthungay"><option value="0">Hàng ngày</option><option value="1">Cn</option><option value="2">Thứ 2</option><option value="3">Thứ 3</option><option value="4">Thứ 4</option><option value="5">Thứ 5</option><option value="6">Thứ 6</option><option value="7">Thứ 7</option></select></div>
+            <div class="flex-column" style="margin-top:10px;"><label>Thời gian & Ngày tháng</label>
+                <div class="flex-row">
+                    <div class="flex-column"><label>Giờ</label><input type="number" id='gio' min="0" max="23"></div>
+                    <div class="flex-column"><label>Phút</label><input type="number" id='phut' min="0" max="59"></div>
+                    <div class="flex-column"><label>Ngày</label><input type="number" id='ngay' min="1" max="31"></div>
+                    <div class="flex-column"><label>Tháng</label><input type="number" id='thang' min="1" max="12"></div>
+                </div>
+            </div>
+            <div class="flex-column" style="margin-top:10px;"><label>Âm báo</label><select id="mel" class="listmelody"><option value="0">-No melody</option>
+<option value="1">HappyBirthday</option>
+<option value="2">Pokemon</option>
+<option value="3">007</option>
+<option value="4">7Days</option>
+<option value="5">Adams Family</option>
+<option value="6">Agadoo</option>
+<option value="7">Alice Cooper-Poison</option>
+<option value="8">Alvin and the Chipmonks</option>
+<option value="9">Amazing Grace</option>
+<option value="10">Axel</option>
+<option value="11">Ba Ba Black Sheep</option>
+<option value="12">Back to the Future</option>
+<option value="13">Barbie Girl</option>
+<option value="14">Batman</option>
+<option value="15">Be bopalula</option>
+<option value="16">Benny Hill</option>
+<option value="17">Bethoven</option>
+<option value="18">Birdy Song</option>
+<option value="19">Black Bear</option>
+<option value="20">Bod</option>
+<option value="21">Bolero</option>
+<option value="22">Borteus</option>
+<option value="23">BSP</option>
+<option value="24">Camberwick Green</option>
+<option value="25">Canon</option>
+<option value="26">Cantina</option>
+<option value="27">Captain Pugwash</option>
+<option value="28">Chariots of Fire</option>
+<option value="29">Coca Cola</option>
+<option value="30">Colonel Bogey</option>
+<option value="31">Dallas</option>
+<option value="32">Dangerman</option>
+<option value="33">Death March</option>
+<option value="34">Deep Purple-Lazy</option>
+<option value="35">Deep Purple-Smoke on the Water</option>
+<option value="36">Digimon</option>
+<option value="37">Don't Care</option>
+<option value="38">Dragonballz</option>
+<option value="39">Dream</option>
+<option value="40">Duelling Banjos</option>
+<option value="41">Dustman</option>
+<option value="42">Entertainer</option>
+<option value="43">Fairground</option>
+<option value="44">Fawlty Towers</option>
+<option value="45">Figaro</option>
+<option value="46">Final Countdown</option>
+<option value="47">Flintstones</option>
+<option value="48">Flute</option>
+<option value="49">Fraggle Rock</option>
+<option value="50">Friends</option>
+<option value="51">Fruit and Nut</option>
+<option value="52">Funky Town</option>
+<option value="53">Futurama</option>
+<option value="54">GB National Anthem</option>
+<option value="55">Ghost Busters</option>
+<option value="56">Greensleaves</option>
+<option value="57">Halloween</option>
+<option value="58">Have I Got News for You</option>
+<option value="59">Hawaii 5 0</option>
+<option value="60">Heman</option>
+<option value="61">Henrys Cat</option>
+<option value="62">Hitchcock</option>
+<option value="63">Hunter</option>
+<option value="64">If I Were a Rich Man</option>
+<option value="65">Itchy and Scratchy</option>
+<option value="66">Jackson</option>
+<option value="67">Jesus Christ Superstar</option>
+<option value="68">Jingle Bells</option>
+<option value="69">Kiss</option>
+<option value="70">Knight Rider</option>
+<option value="71">Led Zepelin-Stairway to Heaven</option>
+<option value="72">Let it be</option>
+<option value="73">Let it Snow</option>
+<option value="74">Light My Fire</option>
+<option value="75">Macarena</option>
+<option value="76">Magic Roundabout</option>
+<option value="77">Match of the day</option>
+<option value="78">Metsa</option>
+<option value="79">Mission Impossible</option>
+<option value="80">Monty Python</option>
+<option value="81">Mozart</option>
+<option value="82">Mr Benn</option>
+<option value="83">Mr Men</option>
+<option value="84">Munsters</option>
+<option value="85">Muppet</option>
+<option value="86">Muppets</option>
+<option value="87">Napoli</option>
+<option value="88">New Year</option>
+<option value="89">Nut cracker Suite</option>
+<option value="90">Nut march</option>
+<option value="91">Oh Little Start of Bethlehem</option>
+<option value="92">On Ilckley Moor</option>
+<option value="93">On the 12th Day of christmas</option>
+<option value="94">Oxygen</option>
+<option value="95">Pager</option>
+<option value="96">Phantom</option>
+<option value="97">Piccolo</option>
+<option value="98">Pienian</option>
+<option value="99">Pilipom</option>
+<option value="100">Pingu</option>
+<option value="101">Pinky and the Brain</option>
+<option value="102">Polka</option>
+<option value="103">Popcorn</option>
+<option value="104">Popeye</option>
+<option value="105">Porsaita</option>
+<option value="106">Postman Pat</option>
+<option value="107">Prima</option>
+<option value="108">QuoFNigt</option>
+<option value="109">Rhubarb and Custard</option>
+<option value="110">Rich Man's World</option>
+<option value="111">Ring High</option>
+<option value="112">Ring Low</option>
+<option value="113">Rudolph the Red Nosed Raindeer</option>
+<option value="114">Rugrats</option>
+<option value="115">Rule Britania</option>
+<option value="116">Santa Clause is Coming Tonight</option>
+<option value="117">Scale</option>
+<option value="118">Scatman</option>
+<option value="119">Scooby Doo</option>
+<option value="120">Sesame Street</option>
+<option value="121">Simpsons</option>
+<option value="122">Smurfs</option>
+<option value="123">Soap</option>
+<option value="124">South Park</option>
+<option value="125">Spiderman</option>
+<option value="126">Star Trek</option>
+<option value="127">Star Wars</option>
+<option value="128">Super Man</option>
+<option value="129">Sweeney</option>
+<option value="130">Take On Me</option>
+<option value="131">Tarzan</option>
+<option value="132">Teenage Dirt Bag</option>
+<option value="133">Teenage Turtles</option>
+<option value="134">Tele Tubbies</option>
+<option value="135">Thankyou</option>
+<option value="136">The A Team</option>
+<option value="137">Thomas The Tank</option>
+<option value="138">Thunder Birds</option>
+<option value="139">Tigger</option>
+<option value="140">Time to say good bye</option>
+<option value="141">Titanic</option>
+<option value="142">To The Dump</option>
+<option value="143">Toccata</option>
+<option value="144">Tones</option>
+<option value="145">Top Cat</option>
+<option value="146">Transformers</option>
+<option value="147">Trim Phone</option>
+<option value="148">Tubular Bells</option>
+<option value="149">Under the Sea</option>
+<option value="150">USA National Anthem</option>
+<option value="151">Vanessa Mae</option>
+<option value="152">Verve</option>
+<option value="153">Walk of Life</option>
+<option value="154">Wannabe</option>
+<option value="155">We Wish you a Merry Christmas</option>
+<option value="156">While Shepards Watch</option>
+<option value="157">Winne the pooh</option>
+<option value="158">Wolf Whistle</option>
+<option value="159">Wombles</option>
+<option value="160">YMCA</option>
+<option value="161">Zorba (Give it time!)</option>
+</select></div>
+        </div>
+
+        <div style="display: none;">
+            <input type="number" id="pos-x"><input type="number" id="pos-y"><input type="number" id="pos-w"><input type="number" id="pos-h">
+        </div>
+
+        <div class="flex-row">
+            <button class="btn btn-secondary" onclick="window.history.back()">QUAY LẠI</button>
+            <button class="btn btn-primary" id="btn-save">LƯU HẸN GIỜ</button>
+        </div>
+        <div class="status-tag" id="ws-status">Đã mất kết nối</div>
+    </div>
+
+    <div id="upload-modal" class="modal">
+        <div class="modal-content"><h3>ĐANG LƯU...</h3><div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;"><div id="upload-prog" class="progress-bar"></div></div><div id="upload-pct" style="font-size:12px; margin-top:10px;">0%</div></div>
+    </div>
+
+    <script>
+        // Croppr simplified
+        function Croppr(img, options) {
+            this.img = img;
+            this.options = options;
+            this.container = img.parentNode;
+            this.overlay = document.createElement('div'); this.overlay.className = 'croppr-overlay';
+            this.region = document.createElement('div'); this.region.className = 'croppr-region';
+            this.imageClipped = img.cloneNode(); this.imageClipped.className = 'croppr-imageClipped';
+            this.handleContainer = document.createElement('div');
+            this.handles = [];
+            const hPos = [[0,0],[0.5,0],[1,0],[1,0.5],[1,1],[0.5,1],[0,1],[0,0.5]];
+            hPos.forEach(p => {
+                let h = document.createElement('div'); h.className = 'croppr-handle';
+                h.style.left = (p[0]*100)+'%'; h.style.top = (p[1]*100)+'%';
+                this.handleContainer.appendChild(h); this.handles.push(h);
+            });
+            this.container.appendChild(this.overlay); this.container.appendChild(this.region);
+            this.region.appendChild(this.imageClipped); this.container.appendChild(this.handleContainer);
+            this.box = { x1: 10, y1: 10, x2: img.width - 10, y2: img.height - 10 };
+            this.updateRect = () => {
+                let w = this.box.x2 - this.box.x1, h = this.box.y2 - this.box.y1;
+                this.region.style.left = this.box.x1 + 'px'; this.region.style.top = this.box.y1 + 'px';
+                this.region.style.width = w + 'px'; this.region.style.height = h + 'px';
+                this.imageClipped.style.left = -this.box.x1 + 'px'; this.imageClipped.style.top = -this.box.y1 + 'px';
+                this.imageClipped.style.width = this.img.width + 'px'; this.imageClipped.style.height = this.img.height + 'px';
+            };
+            this.updateRect();
+            this.getValue = () => {
+                let r = this.img.naturalWidth / this.img.width;
+                return { x: this.box.x1*r, y: this.box.y1*r, width: (this.box.x2-this.box.x1)*r, height: (this.box.y2-this.box.y1)*r };
+            };
+            this.destroy = () => { this.overlay.remove(); this.region.remove(); this.handleContainer.remove(); };
+        }
+    </script>
+    <script>
+        let websocket, croppr = null, imgOrig = null, brightness = 100, saturation = 100, inversion = 0, grayscale = 0;
+        let uploadQueue = [], totalPackets = 0;
+        const revMap = {0x7F:'à',0x80:'ả',0x81:'ã',0x82:'á',0x83:'ạ',0x84:'ă',0x85:'ằ',0x86:'ẳ',0x87:'ẵ',0x88:'ắ',0x89:'ặ',0x8A:'â',0x8B:'ầ',0x8C:'ẩ',0x8D:'ẫ',0x8E:'ấ',0x8F:'ậ',0x90:'đ',0x91:'è',0x92:'ẻ',0x93:'ẽ',0x94:'é',0x95:'ẹ',0x96:'ê',0x97:'ề',0x98:'ể',0x99:'ễ',0x9A:'ế',0x9B:'ệ',0x9C:'ì',0x9D:'ỉ',0x9E:'ĩ',0x9F:'í',0xA0:'ị',0xA1:'ò',0xA2:'ỏ',0xA3:'õ',0xA4:'ó',0xA5:'ọ',0xA6:'ô',0xA7:'ồ',0xA8:'ổ',0xA9:'ỗ',0xAA:'ố',0xAB:'ộ',0xAC:'ơ',0xAD:'ờ',0xAE:'ở',0xAF:'ỡ',0xB0:'ớ',0xB1:'ợ',0xB2:'ù',0xB3:'ủ',0xB4:'ũ',0xB5:'ú',0xB6:'ụ',0xB7:'ư',0xB8:'ừ',0xB9:'ử',0xBA:'ữ',0xBB:'ứ',0xBC:'ự',0xBD:'ỳ',0xBE:'ỷ',0xBF:'ỹ',0xC0:'ý',0xC1:'ỵ',0xC2:'À',0xC3:'Ả',0xC4:'Ã',0xC5:'Á',0xC6:'Ạ',0xC7:'Ă',0xC8:'Ằ',0xC9:'Ẳ',0xCA:'Ẵ',0xCB:'Ắ',0xCC:'Ặ',0xCD:'Â',0xCE:'Ầ',0xCF:'Ẩ',0xD0:'Ẫ',0xD1:'Ấ',0xD2:'Ậ',0xD3:'Đ',0xD4:'È',0xD5:'Ẻ',0xD6:'Ẽ',0xD7:'É',0xD8:'Ẹ',0xD9:'Ê',0xDA:'Ề',0xDB:'Ể',0xDC:'Ễ',0xDD:'Ế',0xDE:'Ệ',0xDF:'Ì',0xE0:'Ỉ',0xE1:'Ĩ',0xE2:'Í',0xE3:'Ị',0xE4:'Ò',0xE5:'Ỏ',0xE6:'Õ',0xE7:'Ó',0xE8:'Ọ',0xE9:'Ô',0xEA:'Ồ',0xEB:'Ổ',0xEC:'Ỗ',0xED:'Ố',0xEE:'Ộ',0xEF:'Ơ',0xF0:'Ờ',0xF1:'Ở',0xF2:'Ỡ',0xF3:'Ớ',0xF4:'Ợ',0xF5:'Ù',0xF6:'Ủ',0xF7:'Ũ',0xF8:'Ú',0xF9:'Ụ',0xFA:'Ư',0xFB:'Ừ',0xFC:'Ử',0xFD:'Ữ',0xFE:'Ứ',0xFF:'Ự',0x1F:'ỳ',0x1E:'ỷ',0x1D:'ỹ',0x1C:'ý',0x1B:'ỵ'};
+
+        function byteToHex(b) { return (b & 0xff).toString(16).padStart(2, '0'); }
+        function decodeHexText(hex) {
+            let s = "";
+            for (let i = 0; i < hex.length; i += 2) {
+                let b = parseInt(hex.substr(i, 2), 16);
+                s += revMap[b] || String.fromCharCode(b);
+            }
+            return s;
+        }
+
+        const updateUI = () => {
+            const v = document.getElementById("typ").value;
+            const al = document.getElementById("am"), th = document.getElementById("thang"), ng = document.getElementById("ngay"), gi = document.getElementById("gio"), ph = document.getElementById("phut"), tn = document.getElementById("thu");
+            [al, th, ng, gi, ph, tn].forEach(el => el.classList.remove("disable"));
+            if (v == "0") [al, th, ng].forEach(el => el.classList.add("disable"));
+            else if (v == "1") [gi, ph, tn].forEach(el => el.classList.add("disable"));
+            else if (v == "2") [tn].forEach(el => el.classList.add("disable"));
+        };
+
+        const luuAlarm = () => {
+            const tv = document.getElementById('text').value; const typ = parseInt(document.getElementById("typ").value);
+            const am = parseInt(document.getElementById("am").value); const gi = parseInt(document.getElementById("gio").value) || 0;
+            const ph = parseInt(document.getElementById("phut").value) || 0; const ng = parseInt(document.getElementById("ngay").value) || 1;
+            const th = parseInt(document.getElementById("thang").value) || 1; const tnu = parseInt(document.getElementById("thu").value);
+            const mel = parseInt(document.getElementById("mel").value);
+            let pk = byteToHex(0) + byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(10);
+            for (let i = 0; i < 38; i++) pk += "00"; pk += "0101"; for (let i = 0; i < 6; i++) pk += "00"; pk += "00204010" + byteToHex(tv.length) + "000000";
+            // Map text (approximate)
+            for (let i = 0; i < tv.length; i++) { let c = tv.charCodeAt(i); pk += byteToHex(c < 256 ? c : 32); }
+            if (websocket && websocket.readyState === 1) {
+                let crop = croppr ? croppr.getValue() : null;
+                websocket.send(`#HGT$${crop?1:0}:${document.getElementById('pos-x').value}:${document.getElementById('pos-y').value}:${document.getElementById('pos-w').value}:${document.getElementById('pos-h').value}`);
+                websocket.send("#HGH$" + pk);
+                if (crop) sendImageData(crop); else { document.getElementById('upload-modal').style.display='flex'; websocket.send("#BUP$"); }
+            }
+        };
+
+        function sendImageData(crop) {
+            const tw = parseInt(document.getElementById('pos-w').value)||64, th = parseInt(document.getElementById('pos-h').value)||64;
+            const cv = document.createElement('canvas'); cv.width = tw; cv.height = th;
+            const ctx = cv.getContext('2d');
+            ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+            ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, tw, th);
+            const data = ctx.getImageData(0,0,tw,th).data; let hex = "";
+            for (let i=0; i<data.length; i+=4) { hex += byteToHex(data[i+3]>>4 | (data[i]>>4<<4)) + byteToHex(data[i+1]>>4 | (data[i+2]>>4<<4)); }
+            uploadQueue = []; for (let i=0; i<hex.length; i+=1024) uploadQueue.push("#GI1$"+hex.substr(i,1024));
+            totalPackets = uploadQueue.length; document.getElementById('upload-modal').style.display='flex'; websocket.send("#BDA$");
+        }
+
+        window.onload = () => {
+            const p = new URLSearchParams(location.search);
+            const fields = ['typ','gio','phut','ngay','thang','thu','am','mel','x','y','w','h'];
+            fields.forEach(f => { let v = p.get(f); if(v!==null) { let el = document.getElementById(f==='x'||f==='y'||f==='w'||f==='h'?'pos-'+f:f); if(el) el.value = v; } });
+            let txt = p.get('text'); if(txt) document.getElementById('text').value = decodeHexText(txt);
+            updateUI(); initWebSocket();
+            document.getElementById('no-img-alert').innerText = "Chọn ảnh để bắt đầu";
+            document.getElementById('btn-save').onclick = luuAlarm;
+        };
+
+        function initWebSocket() {
+            websocket = new WebSocket(`ws://${location.hostname}/ws`);
+            websocket.onopen = () => { document.getElementById('ws-status').innerText="Đã kết nối"; websocket.send("#CLK$"+new URLSearchParams(location.search).get('idx')); };
+            websocket.onclose = () => { setTimeout(initWebSocket,2000); };
+            websocket.onmessage = (e) => {
+                if (e.data==="UP" && uploadQueue.length>0) {
+                    websocket.send(uploadQueue.shift());
+                    let p = Math.round(((totalPackets-uploadQueue.length)/totalPackets)*100);
+                    document.getElementById('upload-prog').style.width = p+'%'; document.getElementById('upload-pct').innerText = p+'%';
+                } else if (e.data==="SAVEOK" || e.data==="ARMOK") { location.href="/alarm.html?v="+Date.now(); }
+            };
+        }
+
+        document.getElementById('file-input').onchange = (e) => {
+            if (e.target.files.length) {
+                const rd = new FileReader(); rd.onload = (ev) => {
+                    const img = new Image(); img.src = ev.target.result; img.onload = () => {
+                        const pW=380, pH=380; let uW, uH;
+                        if(img.width/img.height > pW/pH) { uW=pW; uH=uW*img.height/img.width; } else { uH=pH; uW=uH*img.width/img.height; }
+                        const cv = document.createElement("canvas"); cv.width=pW; cv.height=pH;
+                        const ctx = cv.getContext("2d"); ctx.translate(pW/2, pH/2); ctx.drawImage(img, -uW/2, -uH/2, uW, uH);
+                        if(croppr) croppr.destroy();
+                        document.getElementById('no-img-alert').style.display='none';
+                        const tg = document.getElementById('cropper-target'); tg.style.display='block';
+                        tg.onload = () => { imgOrig = tg; croppr = new Croppr(tg, {}); };
+                        tg.src = cv.toDataURL();
+                    };
+                }; rd.readAsDataURL(e.target.files[0]);
+            }
+        };
+
+        document.querySelectorAll('.btn-filter').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+                document.getElementById('filter-name').innerText = btn.innerText;
+                const sl = document.getElementById('filter-slider');
+                sl.value = (btn.id==='brightness')?brightness:(btn.id==='saturation')?saturation:(btn.id==='inversion'?inversion:grayscale);
+                document.getElementById('filter-value').innerText = sl.value + '%';
+            };
+        });
+
+        document.getElementById('filter-slider').oninput = (e) => {
+            const v = e.target.value; document.getElementById('filter-value').innerText = v+'%';
+            const id = document.querySelector('.btn-filter.active').id;
+            if(id==='brightness') brightness=v; else if(id==='saturation') saturation=v; else if(id==='inversion') inversion=v; else grayscale=v;
+            if(imgOrig) {
+                const f = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                document.querySelector('.croppr-imageClipped').style.filter = f;
+            }
+        };
+    </script>
+</body>
+</html>
