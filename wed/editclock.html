@@ -736,8 +736,10 @@
 
             if (imgOrig) {
                 imageChanged = true;
-                document.querySelector('.croppr-image').style.filter =
-                    `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                const filterStr = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                // Áp dụng cho cả ảnh nền và ảnh trong khung crop của Croppr
+                const previewImgs = document.querySelectorAll('.croppr-image, .croppr-imageClipped');
+                previewImgs.forEach(img => img.style.filter = filterStr);
             }
             triggerChange();
         };
