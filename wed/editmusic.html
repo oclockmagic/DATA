@@ -238,13 +238,11 @@
             </div>
             
             <!-- Custom Image Upload -->
-            <div style="margin-top: 10px; display: flex; align-items: center; gap: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
-                <canvas id="bg-canvas" width="72" height="72" style="width: 64px; height: 64px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);"></canvas>
-                <div style="flex: 1;">
-                    <button class="btn-save" style="margin-top: 0; padding: 6px 12px; font-size: 10px;" onclick="document.getElementById('file-bg').click()">Upload Image</button>
-                    <input type="file" id="file-bg" accept="image/*" style="display: none;">
-                    <div style="font-size: 9px; color: rgba(255,255,255,0.4); margin-top: 4px;">Custom BG (72x72)</div>
-                </div>
+            <div style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <canvas id="bg-canvas" width="72" height="72" style="width: 72px; height: 72px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); cursor: pointer; box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);" onclick="document.getElementById('file-bg').click()"></canvas>
+                <input type="file" id="file-bg" accept="image/*" style="display: none;">
+                <div style="font-size: 10px; color: var(--primary); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Click to change Background</div>
+                <div style="font-size: 9px; color: rgba(255,255,255,0.4);">Suggest 72x72 px</div>
             </div>
         </div>
 
@@ -522,29 +520,35 @@
         async function sendImageChunks(hex, callback) {
             const CHUNK_SIZE = 1024;
             let pos = 0;
-            const sendNext = () => {
-                if (pos < hex.length) {
-                    const chunk = hex.substring(pos, pos + CHUNK_SIZE);
-                    websocket.send("#GIMUS$" + chunk);
-                    pos += CHUNK_SIZE;
+            const oldOnMessage = websocket.onmessage;
+            
+            websocket.onmessage = (e) => {
+                if (e.data === "UP") {
+                    if (pos < hex.length) {
+                        const chunk = hex.substring(pos, pos + CHUNK_SIZE);
+                        websocket.send("#GIMUS$" + chunk);
+                        pos += CHUNK_SIZE;
+                        const percent = Math.round((pos / hex.length) * 100);
+                        document.querySelector('.btn-save').innerText = `Uploading ${percent}%...`;
+                    } else {
+                        websocket.onmessage = oldOnMessage; // Restore
+                        callback();
+                    }
                 } else {
-                    websocket.onmessage = oldOnMessage; // Restore
-                    callback();
+                    oldOnMessage(e);
                 }
             };
-            const oldOnMessage = websocket.onmessage;
-            websocket.onmessage = (e) => {
-                if (e.data === "UP") sendNext();
-                else oldOnMessage(e);
-            };
+
             websocket.send("#BDA$"); // Start upload session
         }
 
         // Apply settings
         document.querySelector('.btn-save').onclick = async () => {
             const btn = document.querySelector('.btn-save');
+            if (btn.disabled) return;
+            
             btn.disabled = true;
-            btn.innerText = "Applying...";
+            btn.innerText = "Processing...";
 
             const idx = params.get('idx') || '0';
             const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
@@ -559,6 +563,7 @@
             const finalSave = () => {
                 const msg = `#HGS$${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
                 if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    btn.innerText = "Saving Metadata...";
                     websocket.send(msg);
                 } else {
                     alert("WebSocket not connected!");
