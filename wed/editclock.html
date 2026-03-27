@@ -899,7 +899,8 @@
                 document.getElementById('ws-status').innerText = "Disconnected";
             };
             websocket.onmessage = (e) => {
-                if (e.data === "UP") {
+                const data = e.data;
+                if (data === "READY" || data === "UP") {
                     if (uploadQueue.length > 0) {
                         websocket.send(uploadQueue.shift());
                         const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
@@ -908,7 +909,10 @@
                     } else {
                         websocket.send("#BUP$");
                     }
-                } else if (e.data === "SAVEOK" || e.data === "ARMOK") {
+                } else if (data === "WAIT") {
+                    document.getElementById('modal-title').innerText = "Device Busy... Retrying";
+                    setTimeout(() => websocket.send("#BDA$"), 2000);
+                } else if (data === "SAVEOK" || data === "ARMOK") {
                     uploadModal.style.display = 'none';
                     if (isSaving || isCanceling) {
                         window.location.href = '/clock.html?v=' + Date.now();
