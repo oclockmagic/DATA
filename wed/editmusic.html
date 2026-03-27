@@ -354,7 +354,15 @@
             { id: 'sel-eq-peak', path: 'equalizer/peak', label: 'Peak' }
         ];
 
-        let state = {};
+        const params = new URLSearchParams(window.location.search);
+        const PARAM_MAP = {
+            'sel-background': 'background',
+            'sel-bass': 'bass',
+            'sel-eq-type': 'eqtype',
+            'sel-eq-color': 'eqcolor',
+            'sel-eq-effect': 'eqeffect',
+            'sel-eq-peak': 'eqpeak'
+        };
 
         async function initCombobox(config) {
             const el = document.getElementById(config.id);
@@ -376,9 +384,16 @@
             const images = DATA[config.path] || [];
             state[config.id] = images;
 
+            // Kiểm tra tham số URL để chọn mục ban đầu
+            let selectedIndex = 0;
+            const paramKey = PARAM_MAP[config.id];
+            if (paramKey && params.has(paramKey)) {
+                selectedIndex = parseInt(params.get(paramKey)) || 0;
+            }
+
             const render = (items) => {
                 optionsBox.innerHTML = '';
-                items.forEach(name => {
+                items.forEach((name, idx) => {
                     const imgUrl = RAW_BASE + config.path + "/" + name;
                     const displayName = name.replace(/\.[^/.]+$/, ""); 
                     const opt = document.createElement('div');
@@ -389,6 +404,7 @@
                         selectedImg.style.display = 'block';
                         selectedText.innerText = displayName;
                         el.classList.remove('open');
+                        el.setAttribute('data-index', idx);
                     };
                     optionsBox.appendChild(opt);
                 });
@@ -396,12 +412,14 @@
 
             render(images);
 
-            // Auto select first
+            // Tự động chọn mục (mặc định hoặc từ URL)
             if (images.length > 0) {
-                const firstImgName = images[0];
-                selectedImg.src = RAW_BASE + config.path + "/" + firstImgName;
+                if (selectedIndex >= images.length) selectedIndex = 0;
+                const activeName = images[selectedIndex];
+                selectedImg.src = RAW_BASE + config.path + "/" + activeName;
                 selectedImg.style.display = 'block';
-                selectedText.innerText = firstImgName.replace(/\.[^/.]+$/, "");
+                selectedText.innerText = activeName.replace(/\.[^/.]+$/, "");
+                el.setAttribute('data-index', selectedIndex);
             } else {
                 selectedText.innerText = "No files found";
             }
@@ -414,22 +432,46 @@
             };
         }
 
+        let websocket;
         function initWebSocket() {
             const statusEl = document.getElementById('ws-status');
-            const ws = new WebSocket(`ws://${window.location.hostname}/ws`);
-            ws.onopen = () => statusEl.innerText = "Connected";
-            ws.onclose = () => {
+            websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
+            websocket.onopen = () => statusEl.innerText = "Connected";
+            websocket.onclose = () => {
                 statusEl.innerText = "Disconnected";
                 setTimeout(initWebSocket, 2000);
             };
-            ws.onmessage = (e) => {
-                // Handle optional live feedback if needed
+            websocket.onmessage = (e) => {
+                if (e.data === "SAVEOK") {
+                    alert("Settings saved successfully!");
+                }
             };
         }
 
         // Initialize all
         CONFIG.forEach(c => initCombobox(c));
         initWebSocket();
+
+        // Apply settings
+        document.querySelector('.btn-save').onclick = () => {
+            const idx = params.get('idx') || '0';
+            // Lấy index đã chọn từ data-index (được set trong initCombobox/render)
+            const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
+            
+            const bg = getIdx('sel-background');
+            const bass = getIdx('sel-bass');
+            const type = getIdx('sel-eq-type');
+            const color = getIdx('sel-eq-color');
+            const effect = getIdx('sel-eq-effect');
+            const peak = getIdx('sel-eq-peak');
+            
+            const msg = `#HGS@${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send(msg);
+            } else {
+                alert("WebSocket not connected!");
+            }
+        };
 
         // Global click close
         window.onclick = (e) => {
