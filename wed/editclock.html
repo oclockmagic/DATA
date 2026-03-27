@@ -822,7 +822,7 @@
                     const tnu = parseInt(document.getElementById("thu").value);
                     const mel = parseInt(document.getElementById("mel").value);
                     const chk = (params.get('chk') === '1' ? 1 : 0);
-                    
+
                     let pkAlm = byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(chk);
                     websocket.send("#HGA$" + pkAlm);
                 }
@@ -922,7 +922,7 @@
             const params = new URLSearchParams(window.location.search);
             const idx = params.get('idx');
             const x = params.get('x'), y = params.get('y'), w = params.get('w'), h = params.get('h');
-            
+
             if (idx !== null) currentLayer = parseInt(idx);
             if (x !== null) posX.value = x;
             if (y !== null) posY.value = y;
@@ -960,7 +960,7 @@
                 document.getElementById('no-image-text').style.display = 'none';
                 targetImg.onload = () => {
                     imgOrig = targetImg;
-                    if (croppr) { try { croppr.destroy(); } catch(e){} }
+                    if (croppr) { try { croppr.destroy(); } catch (e) { } }
                     croppr = new Croppr(targetImg, {
                         startSize: [80, 80, '%'],
                         minSize: [10, 10, 'px'],
@@ -968,7 +968,7 @@
                         onInitialize: () => {
                             // Initial load doesn't count as changed unless user moves it
                             // but triggerChange enables the buttons
-                            triggerChange(); 
+                            triggerChange();
                         },
                         onCropEnd: () => {
                             imageChanged = true;
