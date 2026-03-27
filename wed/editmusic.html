@@ -241,8 +241,6 @@
             <div style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
                 <canvas id="bg-canvas" width="72" height="72" style="width: 72px; height: 72px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); cursor: pointer; box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);" onclick="document.getElementById('file-bg').click()"></canvas>
                 <input type="file" id="file-bg" accept="image/*" style="display: none;">
-                <div style="font-size: 10px; color: var(--primary); font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">Click to change Background</div>
-                <div style="font-size: 9px; color: rgba(255,255,255,0.4);">Suggest 72x72 px</div>
             </div>
         </div>
 
@@ -482,6 +480,25 @@
         const bgCanvas = document.getElementById('bg-canvas');
         const bgCtx = bgCanvas.getContext('2d');
         const fileInput = document.getElementById('file-bg');
+
+        function drawPlaceholder() {
+            bgCtx.clearRect(0,0,72,72);
+            bgCtx.strokeStyle = "rgba(79, 172, 254, 0.4)";
+            bgCtx.lineWidth = 2;
+            bgCtx.setLineDash([5, 5]);
+            bgCtx.strokeRect(10, 10, 52, 52);
+            bgCtx.setLineDash([]);
+            
+            // Camera/Photo Icon
+            bgCtx.strokeStyle = "#4facfe";
+            bgCtx.beginPath();
+            bgCtx.arc(36, 36, 8, 0, Math.PI*2);
+            bgCtx.moveTo(25, 45); bgCtx.lineTo(47, 45);
+            bgCtx.moveTo(25, 27); bgCtx.lineTo(32, 27); bgCtx.lineTo(34, 24); bgCtx.lineTo(38, 24); bgCtx.lineTo(40, 27); bgCtx.lineTo(47, 27);
+            bgCtx.stroke();
+        }
+
+        drawPlaceholder();
 
         fileInput.onchange = (e) => {
             const file = e.target.files[0];
