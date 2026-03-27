@@ -326,7 +326,10 @@
             </div>
         </div>
 
-        <button class="btn-save" style="margin-top: 15px;">Apply Settings</button>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="btn-save" style="margin-top: 0; flex: 2;">Apply Settings</button>
+            <button class="btn-save" style="margin-top: 0; flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="window.location.href='music.html'">Back</button>
+        </div>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
 
@@ -457,7 +460,7 @@
             };
             websocket.onmessage = (e) => {
                 if (e.data === "SAVEOK") {
-                    alert("Settings saved successfully!");
+                    window.location.href = "music.html";
                 }
             };
         }
@@ -479,7 +482,7 @@
             const effect = getIdx('sel-eq-effect');
             const peak = getIdx('sel-eq-peak');
             
-            const msg = `#HGS@${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
+            const msg = `#HGS$${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
             if (websocket && websocket.readyState === WebSocket.OPEN) {
                 websocket.send(msg);
             } else {
