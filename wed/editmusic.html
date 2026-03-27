@@ -331,7 +331,7 @@
     </div>
 
     <script>
-        const RAW_BASE = "https://raw.githubusercontent.com/oclockmagic/DATA/main/fft/";
+        const RAW_BASE = "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/fft/";
 
         // ------------------------------------------------------------------
         // Dữ liệu sẽ được tiêm từ Form1.cs
@@ -364,6 +364,8 @@
             'sel-eq-peak': 'eqpeak'
         };
 
+        const state = {};
+
         async function initCombobox(config) {
             const el = document.getElementById(config.id);
             if (!el) return;
@@ -373,16 +375,20 @@
             const selectedText = el.querySelector('.selected-text');
             const searchInput = el.querySelector('.search-box');
 
+            // Set initial state
+            selectedText.innerText = "Loading " + config.label + "...";
+
+            // Dữ liệu đã có sẵn trong đối tượng DATA
+            const images = DATA[config.path] || [];
+            state[config.id] = images;
+
             // Toggle Open
             trigger.onclick = (e) => {
                 document.querySelectorAll('.custom-select').forEach(s => { if(s !== el) s.classList.remove('open'); });
                 el.classList.toggle('open');
                 if (el.classList.contains('open')) searchInput.focus();
+                e.stopPropagation();
             };
-
-            // Dữ liệu đã có sẵn trong đối tượng DATA
-            const images = DATA[config.path] || [];
-            state[config.id] = images;
 
             // Kiểm tra tham số URL để chọn mục ban đầu
             let selectedIndex = 0;
@@ -393,6 +399,10 @@
 
             const render = (items) => {
                 optionsBox.innerHTML = '';
+                if (items.length === 0) {
+                    optionsBox.innerHTML = '<div class="custom-option">No results</div>';
+                    return;
+                }
                 items.forEach((name, idx) => {
                     const imgUrl = RAW_BASE + config.path + "/" + name;
                     const displayName = name.replace(/\.[^/.]+$/, ""); 
@@ -414,22 +424,26 @@
 
             // Tự động chọn mục (mặc định hoặc từ URL)
             if (images.length > 0) {
-                if (selectedIndex >= images.length) selectedIndex = 0;
+                if (selectedIndex < 0 || selectedIndex >= images.length) selectedIndex = 0;
                 const activeName = images[selectedIndex];
                 selectedImg.src = RAW_BASE + config.path + "/" + activeName;
                 selectedImg.style.display = 'block';
                 selectedText.innerText = activeName.replace(/\.[^/.]+$/, "");
                 el.setAttribute('data-index', selectedIndex);
             } else {
-                selectedText.innerText = "No files found";
+                selectedText.innerText = "No " + config.label + " files";
+                selectedImg.style.display = 'none';
             }
 
-            // Search
-            searchInput.oninput = (e) => {
-                const term = e.target.value.toLowerCase();
-                const filtered = images.filter(name => name.toLowerCase().includes(term));
-                render(filtered);
-            };
+            // Search box handling
+            if (searchInput) {
+                searchInput.onclick = (e) => e.stopPropagation();
+                searchInput.oninput = (e) => {
+                    const term = e.target.value.toLowerCase();
+                    const filtered = images.filter(name => name.toLowerCase().includes(term));
+                    render(filtered);
+                };
+            }
         }
 
         let websocket;
