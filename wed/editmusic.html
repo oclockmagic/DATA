@@ -460,7 +460,7 @@
             };
             websocket.onmessage = (e) => {
                 if (e.data === "SAVEOK") {
-                    window.location.href = "music.html";
+                    window.location.href = "music.html?v=" + Date.now();
                 }
             };
         }
