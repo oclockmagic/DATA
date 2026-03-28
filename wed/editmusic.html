@@ -515,13 +515,17 @@
             websocket.onopen = () => document.getElementById('ws-status').innerText = "Connected";
             websocket.onmessage = (e) => {
                 const d = e.data;
+                console.log("WS Received:", d);
                 const btn = document.querySelector('.btn-save');
                 if (d === "M_READY") sendMetadata();
                 else if (d === "M_META_OK") { if(globalPhotoHex) startStream(); else finalize(); }
                 else if (d === "M_UP_OK") streamNext();
                 else if (d === "M_SAVEOK") { 
                     btn.innerText = "SUCCESS!"; 
+                    console.log("Save Success. Redirecting to music.html...");
                     setTimeout(() => { window.location.href = "music.html"; }, 500); 
+                } else {
+                    btn.innerText = "WS: " + d;
                 }
             };
         }
