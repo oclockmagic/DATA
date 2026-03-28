@@ -230,7 +230,6 @@
     <div class="container">
         <h2>SPECTRUM CONFIG</h2>
 
-        <!-- Background Section -->
         <div
             style="margin-top: 12px; padding: 10px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--glass-border);">
             <span
@@ -252,7 +251,6 @@
                 </div>
             </div>
 
-            <!-- Custom Image Upload -->
             <div
                 style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
                 <canvas id="bg-canvas" width="72" height="72"
@@ -263,7 +261,6 @@
             </div>
         </div>
 
-        <!-- Bass Section -->
         <div
             style="margin-top: 12px; padding: 10px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--glass-border);">
             <span
@@ -286,7 +283,6 @@
             </div>
         </div>
 
-        <!-- Equalizer Group -->
         <div
             style="margin-top: 12px; padding: 10px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--glass-border);">
             <span
@@ -505,7 +501,6 @@
             const imgData = ctx.getImageData(0, 0, 72, 72).data;
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                // Chuẩn 4-4-4-4: A4 R4 G4 B4
                 const r = imgData[i] >> 4;
                 const g = imgData[i+1] >> 4;
                 const b = imgData[i+2] >> 4;
