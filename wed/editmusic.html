@@ -541,14 +541,19 @@
 
         const startStream = () => { hexPos = 0; streamNext(); };
         const streamNext = () => {
+            const CHUNK = 144; // 72 pixels = 144 HEX chars
             if (hexPos < globalPhotoHex.length) {
-                const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK_SIZE * 2);
+                const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK);
                 websocket.send("#MGM1$" + chunk);
-                hexPos += CHUNK_SIZE * 2;
-                document.querySelector('.btn-save').innerText = `Uploading...`;
+                hexPos += CHUNK;
+                const progress = Math.round((hexPos / globalPhotoHex.length) * 100);
+                document.querySelector('.btn-save').innerText = `Uploading ${progress}%`;
             } else finalize();
         };
-        const finalize = () => websocket.send("#MBUM$");
+        const finalize = () => {
+            websocket.send("#MBUM$");
+            document.querySelector('.btn-save').innerText = "Vẽ lại ảnh...";
+        };
 
         document.querySelector('.btn-save').onclick = () => {
             if (websocket.readyState !== 1) return alert("Disconnected");
