@@ -575,7 +575,9 @@
                 const progress = Math.round((hexPos / (hex72.length + hex64.length)) * 100);
                 document.querySelector('.btn-save').innerText = `Sync ${streamMode}/2: ${progress}%`;
             } else if (streamMode === 1) {
-                streamMode = 2; hexPos = 0; streamNext();
+                streamMode = 2; hexPos = 0; 
+                websocket.send("#MRE1$"); // Reset pos before MGM2
+                streamNext();
             } else finalize();
         };
 
