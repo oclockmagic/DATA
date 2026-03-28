@@ -600,8 +600,12 @@
                         websocket.onmessage = null; 
 
                         if (hasUploadedImg) {
-                            const hex = getRGB565Hex();
-                            sendImageChunks(hex);
+                            btn.innerText = "Metadata OK. Preparing image...";
+                            // Nghỉ 300ms để ESP32 dọn dẹp hàng chờ WebSocket
+                            setTimeout(() => {
+                                const hex = getRGB565Hex();
+                                sendImageChunks(hex);
+                            }, 300);
                         } else {
                             btn.innerText = "SAVE SUCCESS!";
                             setTimeout(() => {
