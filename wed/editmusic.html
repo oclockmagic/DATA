@@ -582,6 +582,11 @@
             }
         };
 
+        // --- KHỞI CHẠY ---
+        CONFIG.forEach(c => initCombobox(c));
+        initWebSocket();
+        setTimeout(drawPlaceholder, 500);
+
     </script>
 </body>
 
