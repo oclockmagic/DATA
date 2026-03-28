@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,10 @@
     <style>
         :root {
             --primary: #4facfe;
-            --accent: #00f2fe;
-            --bg-dark: #06021d;
-            --glass: rgba(255, 255, 255, 0.05);
+            --secondary: #00f2fe;
+            --accent: #BA68C8;
+            --bg-dark: rgb(6, 2, 29);
+            --glass: rgba(0, 0, 0, 0.6);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -20,214 +22,614 @@
             align-items: center;
             min-height: 100vh;
             background-color: var(--bg-dark);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' id='eAMJOgF4ve61' viewBox='0 0 640 480' shape-rendering='geometricPrecision' text-rendering='geometricPrecision' style='background-color:rgb(6,2,29)'%3E%3Cstyle%3E%3C!%5BCDATA%5B%23eAMJOgF4ve62 %7Banimation: eAMJOgF4ve62_s_do 12000ms linear infinite normal forwards%7D@keyframes eAMJOgF4ve62_s_do %7B 0%25 %7Bstroke-dashoffset: 0%7D 100%25 %7Bstroke-dashoffset: 300%7D%7D %23eAMJOgF4ve63 %7Banimation: eAMJOgF4ve63_s_do 12000ms linear infinite normal forwards%7D@keyframes eAMJOgF4ve63_s_do %7B 0%25 %7Bstroke-dashoffset: 0%7D 100%25 %7Bstroke-dashoffset: 360%7D%7D %23eAMJOgF4ve64 %7Banimation: eAMJOgF4ve64_s_do 12000ms linear infinite normal forwards%7D@keyframes eAMJOgF4ve64_s_do %7B 0%25 %7Bstroke-dashoffset: 0%7D 100%25 %7Bstroke-dashoffset: 500%7D%7D %23eAMJOgF4ve65 %7Banimation: eAMJOgF4ve65_s_do 12000ms linear infinite normal forwards%7D@keyframes eAMJOgF4ve65_s_do %7B 0%25 %7Bstroke-dashoffset: 0%7D 100%25 %7Bstroke-dashoffset: 360%7D%7D%5D%5D%3E%3C/style%3E%3Cdefs%3E%3ClinearGradient id='eAMJOgF4ve62-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%3E%3Cstop id='eAMJOgF4ve62-stroke-0' offset='0%25' stop-color='rgb(0,54,164)'/%3E%3Cstop id='eAMJOgF4ve62-stroke-1' offset='49%25' stop-color='rgb(106,35,100)'/%3E%3Cstop id='eAMJOgF4ve62-stroke-2' offset='100%25' stop-color='rgb(76,206,255)'/%3E%3C/linearGradient%3E%3ClinearGradient id='eAMJOgF4ve63-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%3E%3Cstop id='eAMJOgF4ve63-stroke-0' offset='0%25' stop-color='rgb(255,255,255)'/%3E%3Cstop id='eAMJOgF4ve63-stroke-1' offset='48%25' stop-color='rgb(53,159,173)'/%3E%3Cstop id='eAMJOgF4ve63-stroke-2' offset='100%25' stop-color='rgb(175,172,122)'/%3E%3C/linearGradient%3E%3ClinearGradient id='eAMJOgF4ve64-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%3E%3Cstop id='eAMJOgF4ve64-stroke-0' offset='0%25' stop-color='rgb(174,59,212)'/%3E%3Cstop id='eAMJOgF4ve64-stroke-1' offset='48%25' stop-color='rgb(43,196,195)'/%3E%3Cstop id='eAMJOgF4ve64-stroke-2' offset='100%25' stop-color='rgb(255,0,246)'/%3E%3C/linearGradient%3E%3ClinearGradient id='eAMJOgF4ve65-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%3E%3Cstop id='eAMJOgF4ve65-stroke-0' offset='0%25' stop-color='rgb(255,255,255)'/%3E%3Cstop id='eAMJOgF4ve65-stroke-1' offset='48%25' stop-color='rgba(255,176,195,0.77)'/%3E%3Cstop id='eAMJOgF4ve65-stroke-2' offset='100%25' stop-color='rgba(255,255,255,0.52)'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='eAMJOgF4ve62' d='M-28.184069,236.782402C-22.416319,115.994587,38.36794,34.85463,85.69268,12.37538C108.26693,1.65261,173.97045,-28.611139,211.0966,56.92678C233.149683,107.736648,222.30834,173.14729,192.94603,209.55655C180.87628,224.52304,153.37119,253.70863,131.0691,242.55758C101.64318,227.84462,116.11517,176.6412,126.11895,154.27982C147.51903,106.44435,210.91994,48.61763,268.02338,67.65211C341.23469,92.05588,235.732082,215.216436,272.97353,252.45789C329.075282,308.559651,352.0863,178.50731,396.72739,173.25542C431.40946,169.17518,433.482921,234.616969,512.23102,253.28292C599.246683,273.908562,661.790667,187.658672,640,147.67962C596.380836,67.65211,512.53453,103.63856,480.88002,147.67962C424.67957,225.87155,486.667172,336.323752,395.07734,403.4376C337.65606,445.51392,251.977514,417.583961,192.94603,366.31145C94.894284,281.147418,16.936504,270.279162,-54.962907,480' opacity='0.25' fill='none' stroke='url(%23eAMJOgF4ve62-stroke)' stroke-width='40' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,300'/%3E%3Cpath id='eAMJOgF4ve63' d='M396.72739,-4.304194C420.88375,-42.954374,585.244446,-26.551229,584.00825,77.55242C583.56083,115.230987,523.444062,140.787676,524.60639,187.28085C526.25644,253.282922,571.59109,279.36741,561.73255,315.98488C556.17101,336.64202,498.41773,385.89287,483.3551,366.31145C468.45238,346.93792,495.81252,341.05431,508.9309,344.03575C548.39828,353.00561,543.77554,402.23247,518.83121,423.23822C502.06494,437.35718,482.69094,444.53157,461.07941,445.51392C449.73791,446.02944,435.51289,445.52413,427.25335,436.43864C414.28693,422.17557,417.2577,394.76786,413.22791,377.03678C405.27593,342.04805,363.11233,316.78273,329.07528,326.71021C284.5875,339.68581,282.76889,421.48323,310.92471,449.63905C324.58467,463.29901,350.01171,460.68992,356.30113,440.56377C358.10767,434.78283,353.59627,428.00948,351.35098,423.23823C337.9788,394.82234,321.36838,372.83261,287.82399,370.43658C258.37375,368.33299,224.53122,374.89214,196.24613,382.81197C155.3483,394.26336,90.98727,441.7813,50.21657,405.08767C22.95809,380.55504,61.55718,322.53284,85.69268,308.55965C114.32654,291.98215,149.71689,304.32619,180.57064,301.13442C226.99826,296.33156,317.86146,243.80578,322.47507,193.05604C324.95336,165.79479,298.66113,148.92717,274.62358,144.37952C215.32272,133.16044,151.16094,142.17429,93.11791,121.2788C58.91504,108.96577,75.205588,61.180899,103.410878,47.861739C186.880648,8.445459,279.13896,62.98071,353.82606,92.4029C382.8255,103.82692,475.92988,92.4029,422.936361,-15.839694' fill='none' stroke='url(%23eAMJOgF4ve63-stroke)' stroke-width='4' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,72'/%3E%3Cpath id='eAMJOgF4ve64' d='M-28.184069,160.488657C-19.493039,108.342477,109.34716,30.07385,136.84428,75.90237C162.16007,118.09535,66.12632,202.7843,93.94294,236.7824C102.8133,247.62395,182.09019,231.25226,197.07116,230.18219C279.99924,224.25875,360.83785,241.38077,428.07838,292.88415C451.91037,311.13844,493.12496,347.59677,475.92988,381.98693C469.25479,395.33711,451.77057,401.96044,438.80372,406.7377C374.56781,430.40356,264.68068,427.71352,240.79753,346.51082C232.99567,319.9845,234.38033,295.92804,250.69784,273.08353C283.5518,227.08799,347.80165,219.41818,378.57684,173.25541C419.06886,112.51739,369.59554,47.24183,301.02442,52.80165C263.08117,55.87813,229.93217,127.44909,273.79857,145.20454C335.04087,169.99309,400.1067,133.91001,463.5545,182.3307C502.27689,211.882,475.01255,274.09139,512.23102,303.60949C532.68594,319.83236,594.83376,317.46556,584.00826,358.06119C565.54615,427.29409,488.39249,392.0697,442.10383,382.81196C385.73167,371.53753,363.89654,350.9891,321.65007,315.98487C306.66535,303.56896,290.10766,293.51774,276.27365,279.68374C263.80244,267.21253,254.15425,251.23953,238.32246,242.55758C209.06388,226.51255,165.91535,237.61377,138.49434,253.28292C43.29108,307.68478,89.63333,370.55854,173.97045,390.2372C220.75228,401.15296,301.024421,431.984879,356.30113,524.680857' opacity='0.2' fill='none' stroke='url(%23eAMJOgF4ve64-stroke)' stroke-width='20' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,500'/%3E%3Cpath id='eAMJOgF4ve65' d='M-48.371193,173.25542C24.64077,173.25542,32.53264,115.77056,35.3661,97.35304C38.63356,76.11456,34.22546,34.69538,49.39154,18.15056C55.84046,11.11538,58.44735,12.7887,68.36713,12.37538C107.56341,10.7422,135.30024,60.89528,139.31935,94.05293C140.8168,106.40691,133.486233,160.05502,160.915728,171.60537C205.012625,190.174235,287.05645,119.52971,305.14953,199.65623C320.05156,265.65094,183.921725,292.33601,136.01925,301.13442C95.59298,308.55965,72.363341,354.983711,95.59298,396.01236C118.481569,436.43864,180.57064,429.512986,217.357279,405.08767C246.525743,385.720612,280.12909,356.71284,280.39876,358.06118C282.61014,369.11807,220.01651,448.28793,251.52286,454.5892C275.67397,459.41942,315.18558,400.30219,323.3001,386.93709C359.95609,326.56252,368.47449,258.32159,395.07734,194.70608C403.55438,174.43489,420.73201,129.72802,446.22894,122.92884C481.08247,113.63457,487.90668,155.77563,490.78033,180.68064C492.96727,199.63411,493.89428,220.22682,492.43038,239.25747C489.86596,272.59496,456.51134,371.52049,486.6552,396.01237C497.79271,405.06159,512.73269,405.42639,526.25644,403.4376C584.52411,394.86883,561.9366,319.61191,589.78342,283.80886C599.31738,271.55091,653.452698,246.102803,652.822387,308.55965' fill='none' stroke='url(%23eAMJOgF4ve65-stroke)' stroke-width='2: ' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,72'/%3E%3C/svg%3E%0A");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             color: white;
-            padding: 20px;
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
-            padding: 25px;
+            max-width: 380px;
+            padding: 15px 20px;
             background: var(--glass);
             backdrop-filter: blur(20px);
-            border-radius: 24px;
+            border-radius: 20px;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             box-sizing: border-box;
         }
 
         h2 {
             text-align: center;
-            font-size: 20px;
-            letter-spacing: 2px;
+            font-weight: 300;
+            font-size: 22px;
+            letter-spacing: 3px;
             margin: 0 0 20px 0;
-            background: linear-gradient(135deg, #fff, var(--primary));
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             text-transform: uppercase;
         }
 
-        .section {
-            margin-bottom: 15px;
-            padding: 15px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.05);
+        .status-tag {
+            display: block;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 15px;
+            text-align: right;
         }
 
-        label {
+        .section-label {
             font-size: 11px;
-            font-weight: 600;
-            color: var(--primary);
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 8px;
+            color: var(--primary);
+            margin: 15px 0 8px 5px;
+            opacity: 0.8;
             display: block;
         }
 
-        select {
-            width: 100%;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.5);
+        .custom-select {
+            position: relative;
+            display: flex;
+            flex-direction: column;
             border: 1px solid var(--glass-border);
-            border-radius: 10px;
-            color: white;
-            font-size: 14px;
-            outline: none;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.4);
             transition: all 0.3s;
         }
 
-        select:focus { border-color: var(--primary); }
+        .custom-select-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 15px;
+            font-size: 13px;
+            color: #fff;
+            cursor: pointer;
+            min-height: 38px;
+            box-sizing: border-box;
+        }
+
+        .custom-select-trigger img {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            margin-right: 12px;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: rgba(10, 10, 30, 0.98);
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+            margin-top: 5px;
+        }
+
+        .custom-select.open .custom-options {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .custom-option {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .custom-option:hover {
+            background: rgba(79, 172, 254, 0.2);
+            color: #fff;
+        }
+
+        .custom-option img {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            margin-right: 12px;
+            object-fit: contain;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .arrow {
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid rgba(255, 255, 255, 0.5);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            transform: rotate(45deg);
+            margin-bottom: 4px;
+        }
+
+        .custom-select.open .arrow {
+            transform: rotate(-135deg);
+            margin-bottom: -2px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 15px;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.03);
+            border: none;
+            border-bottom: 1px solid var(--glass-border);
+            color: white;
+            outline: none;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
         .btn-save {
             width: 100%;
-            padding: 14px;
+            margin-top: 30px;
+            padding: 12px;
             border-radius: 12px;
             border: none;
             background: linear-gradient(135deg, #4facfe, #00f2fe);
             color: white;
             font-weight: bold;
+            text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(79, 172, 254, 0.4); }
-        .btn-save:disabled { opacity: 0.5; transform: none; }
-
-        .btn-back {
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.6);
-            border-radius: 10px;
-            cursor: pointer;
+            letter-spacing: 1px;
             font-size: 12px;
         }
 
-        canvas {
-            width: 72px; height: 72px;
-            background: #000;
-            border-radius: 8px;
-            border: 1px solid var(--primary);
-            display: block;
-            margin: 10px auto;
-            cursor: pointer;
+        .btn-save:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
         }
 
-        .status { text-align: right; font-size: 11px; opacity: 0.4; margin-top: 15px; }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
     </style>
 </head>
+
 <body>
+
     <div class="container">
-        <h2>MUSIC CONFIG</h2>
+        <h2>SPECTRUM CONFIG</h2>
 
-        <div class="section">
-            <label>Spectrum Background</label>
-            <select id="sel-bg">@@BACKGROUND_OPTIONS@@</select>
-            <canvas id="bg-canvas" onclick="document.getElementById('file-bg').click()"></canvas>
-            <input type="file" id="file-bg" accept="image/*" style="display: none;">
-        </div>
+        <!-- Background Section -->
+        <div
+            style="margin-top: 12px; padding: 10px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--glass-border);">
+            <span
+                style="font-size: 11px; font-weight: bold; color: var(--accent); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Background
+                settings</span>
+            <div class="custom-select-wrapper" id="wrap-background">
+                <div class="custom-select" id="sel-background">
+                    <span class="custom-select-trigger">
+                        <div style="display: flex; align-items: center;">
+                            <img class="selected-img" src="" style="display: none;">
+                            <span class="selected-text">Loading...</span>
+                        </div>
+                    </span>
+                    <div class="custom-options">
+                        <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
+                        <div class="options-container"></div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="section">
-            <label>Equalizer Style</label>
-            <div style="display: flex; gap: 10px;">
-                <select id="sel-type">@@TYPE_OPTIONS@@</select>
-                <select id="sel-color">@@COLOR_OPTIONS@@</select>
+            <!-- Custom Image Upload -->
+            <div
+                style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <canvas id="bg-canvas" width="72" height="72"
+                    style="width: 72px; height: 72px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); cursor: pointer; box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);"
+                    onclick="document.getElementById('file-bg').click()"></canvas>
+                <input type="file" id="file-bg" accept="image/*" style="display: none;">
             </div>
         </div>
 
-        <button class="btn-save" id="btn-save">Apply Setup</button>
-        <button class="btn-back" onclick="window.location.href='music.html'">Back</button>
+        <!-- Bass Section -->
+        <div
+            style="margin-top: 12px; padding: 10px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--glass-border);">
+            <span
+                style="font-size: 11px; font-weight: bold; color: var(--accent); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Bass
+                Overlay</span>
+            <div class="custom-select-wrapper" id="wrap-bass">
+                <div class="custom-select" id="sel-bass">
+                    <span class="custom-select-trigger">
+                        <div style="display: flex; align-items: center;">
+                            <img class="selected-img" src="" style="display: none;">
+                            <span class="selected-text">Loading...</span>
+                        </div>
+                    </span>
+                    <div class="custom-options">
+                        <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
+                        <div class="options-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="status" id="ws-status">Disconnected</div>
+        <!-- Equalizer Group -->
+        <div
+            style="margin-top: 12px; padding: 10px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--glass-border);">
+            <span
+                style="font-size: 11px; font-weight: bold; color: var(--accent); display: block; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Equalizer
+                Settings</span>
+
+            <span class="section-label" style="margin-top: 0; font-size: 10px; margin-bottom: 5px;">Bar Type</span>
+            <div class="custom-select-wrapper" id="wrap-eq-type">
+                <div class="custom-select" id="sel-eq-type">
+                    <span class="custom-select-trigger">
+                        <div style="display: flex; align-items: center;">
+                            <img class="selected-img" src="" style="display: none;">
+                            <span class="selected-text">Loading Types...</span>
+                        </div>
+                    </span>
+                    <div class="custom-options">
+                        <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
+                        <div class="options-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <span class="section-label" style="font-size: 10px; margin-bottom: 5px;">Color Theme</span>
+            <div class="custom-select-wrapper" id="wrap-eq-color">
+                <div class="custom-select" id="sel-eq-color">
+                    <span class="custom-select-trigger">
+                        <div style="display: flex; align-items: center;">
+                            <img class="selected-img" src="" style="display: none;">
+                            <span class="selected-text">Loading Colors...</span>
+                        </div>
+                    </span>
+                    <div class="custom-options">
+                        <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
+                        <div class="options-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <span class="section-label" style="font-size: 10px; margin-bottom: 5px;">Effect</span>
+            <div class="custom-select-wrapper" id="wrap-eq-effect">
+                <div class="custom-select" id="sel-eq-effect">
+                    <span class="custom-select-trigger">
+                        <div style="display: flex; align-items: center;">
+                            <img class="selected-img" src="" style="display: none;">
+                            <span class="selected-text">Loading Effects...</span>
+                        </div>
+                    </span>
+                    <div class="custom-options">
+                        <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
+                        <div class="options-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <span class="section-label" style="font-size: 10px; margin-bottom: 5px;">Peak Style</span>
+            <div class="custom-select-wrapper" id="wrap-eq-peak">
+                <div class="custom-select" id="sel-eq-peak">
+                    <span class="custom-select-trigger">
+                        <div style="display: flex; align-items: center;">
+                            <img class="selected-img" src="" style="display: none;">
+                            <span class="selected-text">Loading Peaks...</span>
+                        </div>
+                    </span>
+                    <div class="custom-options">
+                        <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
+                        <div class="options-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="btn-save" style="margin-top: 0; flex: 2;">Apply Settings</button>
+            <button class="btn-save"
+                style="margin-top: 0; flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);"
+                onclick="window.location.href='music.html'">Back</button>
+        </div>
+        <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
 
     <script>
-        let websocket;
-        let isSaving = false;
-        let hasUploadedImg = false;
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
+        const RAW_BASE = "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/fft/";
 
-        function initWS() {
-            websocket = new WebSocket(`ws://${location.hostname}/ws`);
-            websocket.onopen = () => document.getElementById('ws-status').innerText = "Connected";
-            websocket.onclose = () => setTimeout(initWS, 2000);
+        // ------------------------------------------------------------------
+        // Dữ liệu sẽ được tiêm từ Form1.cs
+        // ------------------------------------------------------------------
+        const DATA = {
+            "background": @@BACKGROUND_DATA @@,
+            "bass": @@BASS_DATA @@,
+            "equalizer/type": @@EQ_TYPE_DATA @@,
+            "equalizer/color": @@EQ_COLOR_DATA @@,
+            "equalizer/effect": @@EFFECT_DATA @@,
+            "equalizer/peak": @@EQ_PEAK_DATA @@
+        };
+
+        const CONFIG = [
+            { id: 'sel-background', path: 'background', label: 'Background' },
+            { id: 'sel-bass', path: 'bass', label: 'Bass' },
+            { id: 'sel-eq-type', path: 'equalizer/type', label: 'Type' },
+            { id: 'sel-eq-color', path: 'equalizer/color', label: 'Color' },
+            { id: 'sel-eq-effect', path: 'equalizer/effect', label: 'Effect' },
+            { id: 'sel-eq-peak', path: 'equalizer/peak', label: 'Peak' }
+        ];
+
+        const params = new URLSearchParams(window.location.search);
+        const PARAM_MAP = {
+            'sel-background': 'background',
+            'sel-bass': 'bass',
+            'sel-eq-type': 'eqtype',
+            'sel-eq-color': 'eqcolor',
+            'sel-eq-effect': 'eqeffect',
+            'sel-eq-peak': 'eqpeak'
+        };
+
+        const state = {};
+
+        async function initCombobox(config) {
+            const el = document.getElementById(config.id);
+            if (!el) return;
+            const trigger = el.querySelector('.custom-select-trigger');
+            const optionsBox = el.querySelector('.options-container');
+            const selectedImg = el.querySelector('.selected-img');
+            const selectedText = el.querySelector('.selected-text');
+            const searchInput = el.querySelector('.search-box');
+
+            // Set initial state
+            selectedText.innerText = "Loading " + config.label + "...";
+
+            // Dữ liệu đã có sẵn trong đối tượng DATA
+            const images = DATA[config.path] || [];
+            state[config.id] = images;
+
+            // Toggle Open
+            trigger.onclick = (e) => {
+                document.querySelectorAll('.custom-select').forEach(s => { if (s !== el) s.classList.remove('open'); });
+                el.classList.toggle('open');
+                if (el.classList.contains('open')) searchInput.focus();
+                e.stopPropagation();
+            };
+
+            // Kiểm tra tham số URL để chọn mục ban đầu
+            let selectedIndex = 0;
+            const paramKey = PARAM_MAP[config.id];
+            if (paramKey && params.has(paramKey)) {
+                selectedIndex = parseInt(params.get(paramKey)) || 0;
+            }
+
+            const render = (items) => {
+                optionsBox.innerHTML = '';
+                if (items.length === 0) {
+                    optionsBox.innerHTML = '<div class="custom-option">No results</div>';
+                    return;
+                }
+                items.forEach((name, idx) => {
+                    const imgUrl = RAW_BASE + config.path + "/" + name;
+                    const displayName = name.replace(/\.[^/.]+$/, "");
+                    const opt = document.createElement('div');
+                    opt.className = 'custom-option';
+                    opt.innerHTML = `<img src="${imgUrl}"><span>${displayName}</span>`;
+                    opt.onclick = () => {
+                        selectedImg.src = imgUrl;
+                        selectedImg.style.display = 'block';
+                        selectedText.innerText = displayName;
+                        el.classList.remove('open');
+                        el.setAttribute('data-index', idx);
+                    };
+                    optionsBox.appendChild(opt);
+                });
+            };
+
+            render(images);
+
+            // Tự động chọn mục (mặc định hoặc từ URL)
+            if (images.length > 0) {
+                if (selectedIndex < 0 || selectedIndex >= images.length) selectedIndex = 0;
+                const activeName = images[selectedIndex];
+                selectedImg.src = RAW_BASE + config.path + "/" + activeName;
+                selectedImg.style.display = 'block';
+                selectedText.innerText = activeName.replace(/\.[^/.]+$/, "");
+                el.setAttribute('data-index', selectedIndex);
+            } else {
+                selectedText.innerText = "No " + config.label + " files";
+                selectedImg.style.display = 'none';
+            }
+
+            // Search box handling
+            if (searchInput) {
+                searchInput.onclick = (e) => e.stopPropagation();
+                searchInput.oninput = (e) => {
+                    const term = e.target.value.toLowerCase();
+                    const filtered = images.filter(name => name.toLowerCase().includes(term));
+                    render(filtered);
+                };
+            }
+        }
+
+        let websocket;
+        function initWebSocket() {
+            const statusEl = document.getElementById('ws-status');
+            websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
+            websocket.onopen = () => statusEl.innerText = "Connected";
+            websocket.onclose = () => {
+                statusEl.innerText = "Disconnected";
+                setTimeout(initWebSocket, 2000);
+            };
             websocket.onmessage = (e) => {
-                if (e.data === "SAVEOK" && !hasUploadedImg) {
-                    location.href = "music.html?v=" + Date.now();
+                if (e.data === "SAVEOK") {
+                    window.location.href = "music.html?v=" + Date.now();
                 }
             };
         }
-        initWS();
 
-        document.getElementById('file-bg').onchange = (e) => {
+        // Initialize all
+        CONFIG.forEach(c => initCombobox(c));
+        initWebSocket();
+
+        // Image Upload Handling
+        let hasUploadedImg = false;
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        const fileInput = document.getElementById('file-bg');
+
+        function drawPlaceholder() {
+            if (hasUploadedImg) return;
+            const img = new Image();
+            img.onload = () => {
+                if (hasUploadedImg) return;
+                bgCtx.clearRect(0, 0, 72, 72);
+                bgCtx.drawImage(img, 12, 12, 48, 48);
+                bgCtx.strokeStyle = "rgba(79, 172, 254, 0.4)";
+                bgCtx.setLineDash([4, 4]);
+                bgCtx.strokeRect(4, 4, 64, 64);
+                bgCtx.setLineDash([]);
+            };
+            img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234facfe'%3E%3Cpath d='M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z'/%3E%3C/svg%3E";
+        }
+
+        setTimeout(drawPlaceholder, 500);
+
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
             const reader = new FileReader();
-            reader.onload = (ev) => {
+            reader.onload = (event) => {
                 const img = new Image();
                 img.onload = () => {
-                    ctx.clearRect(0,0,72,72);
-                    ctx.drawImage(img, 0, 0, 72, 72);
+                    const size = Math.min(img.width, img.height);
+                    const offsetX = (img.width - size) / 2;
+                    const offsetY = (img.height - size) / 2;
+                    bgCtx.clearRect(0, 0, 72, 72);
+                    bgCtx.drawImage(img, offsetX, offsetY, size, size, 0, 0, 72, 72);
                     hasUploadedImg = true;
                 };
-                img.src = ev.target.result;
+                img.src = event.target.result;
             };
-            reader.readAsDataURL(e.target.files[0]);
+            reader.readAsDataURL(file);
         };
 
-        function getRGB565() {
-            const data = ctx.getImageData(0, 0, 72, 72).data;
+        function getRGB565Hex() {
+            const imgData = bgCtx.getImageData(0, 0, 72, 72).data;
             let hex = "";
-            for (let i = 0; i < data.length; i += 4) {
-                let r = data[i] >> 3, g = data[i+1] >> 2, b = data[i+2] >> 3;
-                let rgb = (r << 11) | (g << 5) | b;
-                hex += (rgb & 0xFF).toString(16).padStart(2, '0') + ((rgb >> 8) & 0xFF).toString(16).padStart(2, '0');
+            for (let i = 0; i < imgData.length; i += 4) {
+                const r = imgData[i] >> 3;
+                const g = imgData[i + 1] >> 2;
+                const b = imgData[i + 2] >> 3;
+                const rgb = (r << 11) | (g << 5) | b;
+                hex += (rgb & 0xFF).toString(16).padStart(2, '0');
+                hex += ((rgb >> 8) & 0xFF).toString(16).padStart(2, '0');
             }
             return hex.toUpperCase();
         }
 
-        async function sendImage(hex) {
-            const CHUNK = 1024; let pos = 0;
-            const btn = document.getElementById('btn-save');
+        async function sendImageChunks(hex, callback) {
+            const CHUNK_SIZE = 1024;
+            let pos = 0;
+            const oldOnMessage = websocket.onmessage;
+
             websocket.onmessage = (e) => {
-                if (e.data === "READY" || e.data === "UP") {
+                const data = e.data;
+                if (data === "READY" || data === "UP") {
                     if (pos < hex.length) {
-                        websocket.send("#GM1$" + hex.substring(pos, pos + CHUNK));
-                        pos += CHUNK;
-                        btn.innerText = `Up ${Math.round((pos/hex.length)*100)}%`;
+                        const chunk = hex.substring(pos, pos + CHUNK_SIZE);
+                        websocket.send("#GIMUS$" + chunk);
+                        pos += CHUNK_SIZE;
+                        const percent = Math.round((pos / hex.length) * 100);
+                        document.querySelector('.btn-save').innerText = `Uploading ${percent}%...`;
                     } else {
-                        btn.innerText = "Chốt lưu...";
-                        websocket.onmessage = (ev) => { if(ev.data === "SAVEOK") location.href="music.html?v="+Date.now(); };
-                        websocket.send("#BUM$");
+                        websocket.onmessage = oldOnMessage;
+                        callback();
                     }
+                } else if (data === "WAIT") {
+                    document.querySelector('.btn-save').innerText = "Device Busy... (Retrying)";
+                    setTimeout(() => websocket.send("#BDA$"), 2000);
+                } else {
+                    oldOnMessage(e);
                 }
             };
-            websocket.send("#BDM$");
+
+            websocket.send("#BDA$");
         }
 
-        document.getElementById('btn-save').onclick = () => {
-            if (isSaving) return;
-            isSaving = true;
-            document.getElementById('btn-save').disabled = true;
-            
-            const idx = new URLSearchParams(location.search).get('idx') || '0';
-            const bg = document.getElementById('sel-bg').value || '0';
-            const type = document.getElementById('sel-type').value || '0';
-            const clr = document.getElementById('sel-color').value || '0';
+        // Apply settings
+        document.querySelector('.btn-save').onclick = async () => {
+            const btn = document.querySelector('.btn-save');
+            if (btn.disabled) return;
 
-            websocket.onmessage = (e) => {
-                if (e.data === "SAVEOK") {
-                    if (hasUploadedImg) setTimeout(() => sendImage(getRGB565()), 200);
-                    else location.href = "music.html?v=" + Date.now();
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+
+            const idx = params.get('idx') || '0';
+            const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
+
+            const bg = getIdx('sel-background');
+            const bass = getIdx('sel-bass');
+            const type = getIdx('sel-eq-type');
+            const color = getIdx('sel-eq-color');
+            const effect = getIdx('sel-eq-effect');
+            const peak = getIdx('sel-eq-peak');
+
+            const finalSave = () => {
+                const msg = `#HGS$${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
+                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    btn.innerText = "Saving Metadata...";
+                    websocket.send(msg);
+                } else {
+                    alert("WebSocket not connected!");
+                    btn.disabled = false;
+                    btn.innerText = "Apply Settings";
                 }
             };
-            websocket.send(`#HGM$${idx}:${bg}:0:${type}:${clr}:0:0`);
+
+            if (hasUploadedImg) {
+                const hex = getRGB565Hex();
+                sendImageChunks(hex, finalSave);
+            } else {
+                finalSave();
+            }
         };
+
+        window.onclick = (e) => {
+            if (!e.target.closest('.custom-select')) {
+                document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
+            }
+        };
+
     </script>
 </body>
+
 </html>
