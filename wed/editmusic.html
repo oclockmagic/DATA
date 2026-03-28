@@ -363,7 +363,7 @@
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-save" style="margin-top: 0; flex: 2;">Apply Settings</button>
+            <button class="btn-save" style="margin-top: 0; flex: 2;">SAVE</button>
             <button class="btn-save"
                 style="margin-top: 0; flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);"
                 onclick="window.location.href='music.html'">Back</button>
@@ -524,7 +524,10 @@
                 if (d === "M_READY") sendMetadata();
                 else if (d === "M_META_OK") { if(globalPhotoHex) startStream(); else finalize(); }
                 else if (d === "M_UP_OK") streamNext();
-                else if (d === "M_SAVEOK") { btn.innerText = "SUCCESS!"; setTimeout(() => location.href="music.html", 800); }
+                else if (d === "M_SAVEOK") { 
+                    btn.innerText = "SUCCESS!"; 
+                    setTimeout(() => { window.location.href = "music.html"; }, 500); 
+                }
             };
         }
 
@@ -547,7 +550,9 @@
 
         document.querySelector('.btn-save').onclick = () => {
             if (websocket.readyState !== 1) return alert("Disconnected");
-            document.querySelector('.btn-save').disabled = true;
+            const btn = document.querySelector('.btn-save');
+            btn.disabled = true;
+            btn.innerText = "Saving...";
             globalPhotoHex = hasUploadedImg ? getRAW16Hex() : "";
             websocket.send("#MSTB$" + (params.get('idx') || '0'));
         };
