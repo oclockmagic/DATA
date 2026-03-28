@@ -39,7 +39,7 @@
 
         h2 { text-align: center; font-size: 18px; letter-spacing: 2px; margin: 0 0 15px 0; background: linear-gradient(135deg, #fff, var(--primary)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
 
-        .section { margin-bottom: 15px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .section { margin-bottom: 12px; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
 
         label { font-size: 10px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: block; }
 
@@ -58,7 +58,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>FFT SETUP</h2>
+        <h2>MUSIC CONFIG</h2>
 
         <div class="section">
             <label>Spectrum Background</label>
@@ -96,24 +96,32 @@
         // Logic tự động điền thông số từ URL
         function syncFromURL() {
             const params = new URLSearchParams(window.location.search);
-            const map = {
-                'sel-bg': 'bg',
-                'sel-type': 'eqtype',
-                'sel-color': 'eqcolor',
-                'sel-bass': 'bass'
-            };
-            for (let id in map) {
-                const val = params.get(map[id]);
+            
+            // Hàm trợ giúp gán index (cách an toàn nhất vì tool C# không sinh thuộc tính value)
+            const setIdx = (id, paramKey) => {
+                const val = params.get(paramKey);
                 const el = document.getElementById(id);
-                if (val !== null && el) el.value = val;
-            }
+                if (val !== null && el) {
+                    const idx = parseInt(val);
+                    if (!isNaN(idx) && idx < el.options.length) {
+                        el.selectedIndex = idx;
+                        console.log(`Synced ${id} to index ${idx}`);
+                    }
+                }
+            };
+
+            setIdx('sel-bg', 'bg');
+            setIdx('sel-type', 'eqtype');
+            setIdx('sel-color', 'eqcolor');
+            setIdx('sel-bass', 'bass');
         }
 
         function initWS() {
             websocket = new WebSocket(`ws://${location.hostname}/ws`);
             websocket.onopen = () => {
                 document.getElementById('ws-status').innerText = "Connected";
-                syncFromURL(); // Chờ kết nối mới Sync để dữ liệu chuẩn nhất
+                // Delay 100ms để trình duyệt render xong các thẻ <option> rồi mới Sync
+                setTimeout(syncFromURL, 100);
             };
             websocket.onclose = () => setTimeout(initWS, 2000);
             websocket.onmessage = (e) => {
@@ -122,6 +130,9 @@
                 }
             };
         }
+        
+        // Luôn gọi Sync ngay cả khi chưa có WS
+        window.addEventListener('load', () => { setTimeout(syncFromURL, 200); });
         initWS();
 
         document.getElementById('file-bg').onchange = (e) => {
@@ -186,7 +197,6 @@
                     else location.href = "music.html?v=" + Date.now();
                 }
             };
-            // Format: idx:bg:bass:type:color:effect:peak (tạm thời effect:peak = 0)
             websocket.send(`#HGM$${idx}:${bg}:${bass}:${type}:${clr}:0:0`);
         };
     </script>
