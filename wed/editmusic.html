@@ -495,14 +495,22 @@
             img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234facfe'%3E%3Cpath d='M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z'/%3E%3C/svg%3E";
         }
 
-        function getRGB565Hex() {
+        function byteToHex(b) {
+            const s = (b & 0xFF).toString(16);
+            return s.length === 1 ? '0' + s : s;
+        }
+
+        function getRAW16Hex() {
             const ctx = bgCanvas.getContext('2d');
-            const data = ctx.getImageData(0, 0, 72, 72).data;
+            const imgData = ctx.getImageData(0, 0, 72, 72).data;
             let hex = "";
-            for (let i = 0; i < data.length; i += 4) {
-                const r = data[i] >> 3, g = data[i+1] >> 2, b = data[i+2] >> 3;
-                const rgb = (r << 11) | (g << 5) | b;
-                hex += (rgb & 0xFF).toString(16).padStart(2, '0') + ((rgb >> 8) & 0xFF).toString(16).padStart(2, '0');
+            for (let i = 0; i < imgData.length; i += 4) {
+                // Chuẩn 4-4-4-4: A4 R4 G4 B4
+                const r = imgData[i] >> 4;
+                const g = imgData[i+1] >> 4;
+                const b = imgData[i+2] >> 4;
+                const a = imgData[i+3] >> 4;
+                hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
             }
             return hex.toUpperCase();
         }
@@ -540,7 +548,7 @@
         document.querySelector('.btn-save').onclick = () => {
             if (websocket.readyState !== 1) return alert("Disconnected");
             document.querySelector('.btn-save').disabled = true;
-            globalPhotoHex = hasUploadedImg ? getRGB565Hex() : "";
+            globalPhotoHex = hasUploadedImg ? getRAW16Hex() : "";
             websocket.send("#MSTB$" + (params.get('idx') || '0'));
         };
 
