@@ -520,10 +520,10 @@
                 if (d === "M_READY") sendMetadata();
                 else if (d === "M_META_OK") { if(globalPhotoHex) startStream(); else finalize(); }
                 else if (d === "M_UP_OK") streamNext();
-                else if (d === "M_SAVEOK" || d === "SAVEOK") { 
+                else if (d.includes("SAVEOK")) { 
                     btn.innerText = "SUCCESS!"; 
-                    console.log("Save Success. Redirecting to music.html...");
-                    setTimeout(() => { window.location.href = "music.html"; }, 500); 
+                    console.log("FORCE REDIRECT to music.html");
+                    setTimeout(() => { window.location.replace("music.html"); }, 100); 
                 } else {
                     btn.innerText = "WS: " + d;
                 }
