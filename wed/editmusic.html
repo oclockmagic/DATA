@@ -539,9 +539,7 @@
             websocket.send(msg);
         }
 
-        let hex72 = "", hex64 = "";
-        let streamMode = 1; // 1: 72x72, 2: 64x64
-        let hexPos = 0;
+        streamMode = 1; // 1: 72x72, 2: 64x64
 
         function getRAW16Hex64() {
             const canvas = document.createElement('canvas'); canvas.width = 64; canvas.height = 64;
@@ -558,10 +556,11 @@
         }
 
         const startStream = () => { 
+            hexPos = 0; 
             hex72 = getRAW16Hex(); 
             hex64 = getRAW16Hex64();
-            hexPos = 0; streamMode = 1; 
-            websocket.send("#MRE1$"); // Reset pos 72
+            streamMode = 1; 
+            websocket.send("#MRE1$"); 
             streamNext(); 
         };
 
