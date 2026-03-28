@@ -539,17 +539,47 @@
             websocket.send(msg);
         }
 
-        const startStream = () => { hexPos = 0; streamNext(); };
+        let hex72 = "", hex64 = "";
+        let streamMode = 1; // 1: 72x72, 2: 64x64
+        let hexPos = 0;
+
+        function getRAW16Hex64() {
+            const canvas = document.createElement('canvas'); canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            // Cắt trung tâm 64x64 từ bg-canvas (72x72)
+            ctx.drawImage(document.getElementById('bg-canvas'), 4, 4, 64, 64, 0, 0, 64, 64);
+            const data = ctx.getImageData(0, 0, 64, 64).data;
+            let hex = "";
+            for (let i = 0; i < data.length; i += 4) {
+                let r = data[i]>>4, g = data[i+1]>>4, b = data[i+2]>>4, a = data[i+3]>>4;
+                hex += a.toString(16) + r.toString(16) + g.toString(16) + b.toString(16);
+            }
+            return hex.toUpperCase();
+        }
+
+        const startStream = () => { 
+            hex72 = getRAW16Hex(); 
+            hex64 = getRAW16Hex64();
+            hexPos = 0; streamMode = 1; 
+            websocket.send("#MRE1$"); // Reset pos 72
+            streamNext(); 
+        };
+
         const streamNext = () => {
-            const CHUNK = 144; // 72 pixels = 144 HEX chars
-            if (hexPos < globalPhotoHex.length) {
-                const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK);
-                websocket.send("#MGM1$" + chunk);
+            const CHUNK = 144; 
+            let currentHex = (streamMode === 1) ? hex72 : hex64;
+            let cmd = (streamMode === 1) ? "#MGM1$" : "#MGM2$";
+
+            if (hexPos < currentHex.length) {
+                websocket.send(cmd + currentHex.substring(hexPos, hexPos + CHUNK));
                 hexPos += CHUNK;
-                const progress = Math.round((hexPos / globalPhotoHex.length) * 100);
-                document.querySelector('.btn-save').innerText = `Uploading ${progress}%`;
+                const progress = Math.round((hexPos / (hex72.length + hex64.length)) * 100);
+                document.querySelector('.btn-save').innerText = `Sync ${streamMode}/2: ${progress}%`;
+            } else if (streamMode === 1) {
+                streamMode = 2; hexPos = 0; streamNext();
             } else finalize();
         };
+
         const finalize = () => {
             websocket.send("#MBUM$");
             document.querySelector('.btn-save').innerText = "Vẽ lại ảnh...";
@@ -557,14 +587,9 @@
 
         document.querySelector('.btn-save').onclick = () => {
             if (websocket.readyState !== 1) return alert("Disconnected");
-            const btn = document.querySelector('.btn-save');
-            btn.disabled = true;
-            btn.innerText = "Saving...";
-            globalPhotoHex = hasUploadedImg ? getRAW16Hex() : "";
+            const btn = document.querySelector('.btn-save'); btn.disabled = true; btn.innerText = "Processing...";
             websocket.send("#MSTB$" + (params.get('idx') || '0'));
         };
-
-        window.onclick = (e) => { if (!e.target.closest('.custom-select')) document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open')); };
 
         CONFIG.forEach(c => initCombobox(c));
         initWebSocket();
