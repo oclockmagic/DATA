@@ -531,9 +531,10 @@
             return hex.toUpperCase();
         }
 
-        async function sendImageChunks(hex, callback) {
+        async function sendImageChunks(hex) {
             const CHUNK_SIZE = 1024;
             let pos = 0;
+            const btn = document.querySelector('.btn-save');
             const oldOnMessage = websocket.onmessage;
             
             websocket.onmessage = (e) => {
@@ -541,22 +542,22 @@
                 if (data === "READY" || data === "UP") {
                     if (pos < hex.length) {
                         const chunk = hex.substring(pos, pos + CHUNK_SIZE);
-                        websocket.send("#GIMUS$" + chunk);
+                        websocket.send("#GI1$" + chunk); // ĐỒNG BỘ VỚI CLOCK (#GI1)
                         pos += CHUNK_SIZE;
                         const percent = Math.round((pos / hex.length) * 100);
-                        document.querySelector('.btn-save').innerText = `Uploading ${percent}%...`;
+                        btn.innerText = `Uploading ${percent}%...`;
                     } else {
+                        btn.innerText = "Finalizing Image Save...";
                         websocket.onmessage = oldOnMessage; 
-                        callback();
+                        websocket.send("#BUP$"); // GỬI LỆNH CHỐT GHI FLASH
                     }
                 } else if (data === "WAIT") {
-                    document.querySelector('.btn-save').innerText = "Device Busy... (Retrying)";
-                    setTimeout(() => websocket.send("#BDA$"), 2000);
-                } else {
+                    btn.innerText = "Device Busy... (Retrying)";
+                    setTimeout(() => websocket.send("#BDA$"), 1000);
+                } else if (oldOnMessage) {
                     oldOnMessage(e);
                 }
             };
-
             websocket.send("#BDA$"); 
         }
 
@@ -566,7 +567,7 @@
             if (btn.disabled) return;
             
             btn.disabled = true;
-            btn.innerText = "Processing...";
+            btn.innerText = "Saving Metadata...";
 
             const idx = params.get('idx') || '0';
             const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
@@ -577,24 +578,36 @@
             const color = getIdx('sel-eq-color');
             const effect = getIdx('sel-eq-effect');
             const peak = getIdx('sel-eq-peak');
-            
-            const finalSave = () => {
-                const msg = `#HGS$${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
-                if (websocket && websocket.readyState === WebSocket.OPEN) {
-                    btn.innerText = "Saving Metadata...";
-                    websocket.send(msg);
-                } else {
-                    alert("WebSocket not connected!");
-                    btn.disabled = false;
-                    btn.innerText = "Apply Settings";
-                }
-            };
 
-            if (hasUploadedImg) {
-                const hex = getRGB565Hex();
-                sendImageChunks(hex, finalSave);
+            // GIAI ĐOẠN 1: GỬI METADATA
+            const metadataMsg = `#HGS$${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
+            
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                const startUploadProcess = (e) => {
+                    if (e.data === "SAVEOK") {
+                        // Nếu có ảnh mới thì chuyển sang GIAI ĐOẠN 2
+                        if (hasUploadedImg) {
+                            const hex = getRGB565Hex();
+                            sendImageChunks(hex);
+                        } else {
+                             window.location.href = "music.html?v=" + Date.now();
+                        }
+                    }
+                };
+                
+                // Gán tạm handler để chờ metadata lưu xong
+                const originalOnMessage = websocket.onmessage;
+                websocket.onmessage = (e) => {
+                    startUploadProcess(e);
+                    // Sau khi xử lý xong SAVEOK đầu tiên, nếu không upload ảnh thì trả lại handler cũ
+                    if (!hasUploadedImg && e.data === "SAVEOK") websocket.onmessage = originalOnMessage;
+                };
+
+                websocket.send(metadataMsg);
             } else {
-                finalSave();
+                alert("WebSocket not connected!");
+                btn.disabled = false;
+                btn.innerText = "Apply Settings";
             }
         };
 
