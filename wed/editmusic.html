@@ -611,7 +611,7 @@
                     }
                 };
 
-                const metadataMsg = `#HGS$${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
+                const metadataMsg = `#HGM$${idx}:${bg}:${bass}:${type}:${color}:${effect}:${peak}`;
                 websocket.send(metadataMsg);
             } else {
                 alert("WebSocket not connected!");
