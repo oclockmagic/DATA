@@ -532,7 +532,10 @@
 
         function sendMetadata() {
             const get = (id) => document.getElementById(id).getAttribute('data-index') || '0';
-            const msg = `#MHGM$${get('sel-background')}:${get('sel-bass')}:${get('sel-eq-type')}:${get('sel-eq-color')}:${get('sel-eq-effect')}:${get('sel-eq-peak')}`;
+            const idx = params.get('idx') || '0';
+            // Dùng dấu phẩy ',' để khớp với Substring/IndexOf của Firmware
+            const msg = `#MHGM$${idx},0,${get('sel-background')},${get('sel-bass')},${get('sel-eq-type')},${get('sel-eq-color')},${get('sel-eq-effect')},${get('sel-eq-peak')}`;
+            console.log("Sending Metadata:", msg);
             websocket.send(msg);
         }
 
