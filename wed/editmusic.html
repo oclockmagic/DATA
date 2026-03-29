@@ -578,12 +578,12 @@
         };
 
         const streamNext = () => {
-            const CHUNK = 144; // 72 pixel * 2 bytes
+            const CHUNK = 4096; // Gửi 4096 ký tự HEX = 2048 bytes dữ liệu thô (1 Sector Flash)
             if (hexPos < hex72.length) {
                 const chunkData = hex72.substring(hexPos, hexPos + CHUNK);
                 const msg = "#MGM1$" + chunkData;
                 websocket.send(msg);
-                console.log(`M-SERIES: [LOG] Sent CHUNK at ${hexPos}, size: ${chunkData.length}`);
+                console.log(`M-SERIES: [LOG] Sent SECTOR CHUNK at ${hexPos}, raw_bytes: ${chunkData.length / 2}`);
                 
                 hexPos += CHUNK;
                 const progress = Math.round((hexPos / hex72.length) * 100);
