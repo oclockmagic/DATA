@@ -441,6 +441,7 @@
                         selectedText.innerText = name.split('.')[0];
                         el.classList.remove('open');
                         el.setAttribute('data-index', idx);
+                        if (config.id === 'sel-background') bg_changed = true; // Đánh dấu đã đổi ảnh nền
                     };
                     optionsBox.appendChild(opt);
                 });
@@ -477,6 +478,7 @@
                     ctx.clearRect(0, 0, 72, 72);
                     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 72, 72);
                     hasUploadedImg = true;
+                    bg_changed = true; // Đánh dấu đã đổi ảnh nền
                 };
                 img.src = event.target.result;
             };
@@ -516,31 +518,43 @@
                 console.log("WS: Connected");
                 document.getElementById('ws-status').innerText = "Connected";
             };
-            websocket.onmessage = (e) => {
-                const d = e.data;
-                console.log("WS Received:", d);
-                const btn = document.querySelector('.btn-save');
-                if (d === "M_READY") sendMetadata();
-                else if (d === "M_META_OK") { 
-                    console.log("Metadata OK, starting stream...");
+        let bg_changed = false; // Theo dõi đổi ảnh
+
+        function handleSocketMessage(e) {
+            const d = e.data;
+            console.log("WS Received:", d);
+            const btn = document.querySelector('.btn-save');
+            if (d === "M_READY") sendMetadata();
+            else if (d === "M_META_OK") { 
+                console.log("Metadata OK");
+                if (bg_changed) {
+                    console.log("Background changed, starting stream...");
                     startStream(); 
-                }
-                else if (d === "M_UP_OK") {
-                    console.log("Chunk OK, next...");
-                    streamNext();
-                }
-                else if (d === "M_RE_OK") {
-                    console.log("Reset OK, starting...");
-                    streamNext();
-                }
-                else if (d.includes("SAVEOK")) { 
-                    btn.innerText = "SAVEOK - STAY LOG"; 
-                    console.log("M-SERIES: [LOG] SUCCESS! STAY HERE TO SEE ESP32 LOGS.");
-                    // Chặn chuyển trang để coi LOG
                 } else {
-                    btn.innerText = "WS: " + d;
+                    console.log("No background change, Skip Stream.");
+                    btn.innerText = "SAVEOK - (META ONLY)";
+                    showStatus("Save OK (Metadata Only)", "success");
+                    bg_changed = false; // Reset
                 }
-            };
+            }
+            else if (d === "M_UP_OK") {
+                console.log("Chunk OK, next...");
+                streamNext();
+            }
+            else if (d === "M_RE_OK") {
+                console.log("Reset OK, starting...");
+                streamNext();
+            }
+            else if (d.includes("SAVEOK")) { 
+                btn.innerText = "SAVEOK - SUCCESS"; 
+                bg_changed = false; // Reset
+                console.log("M-SERIES: [LOG] SUCCESS!");
+                showStatus("Save COMPLETED!", "success");
+                setTimeout(() => window.location.href = "index.html", 500);
+            } else {
+                btn.innerText = "WS: " + d;
+            }
+        }
         }
 
         function sendMetadata() {
