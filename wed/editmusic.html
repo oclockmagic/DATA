@@ -570,11 +570,7 @@
             }
             else if (d === "M_RE_OK" || d === "M_UP_OK") streamNext();
             else if (d.indexOf("SAVEOK") !== -1) {
-                document.getElementById('save-overlay').style.display = 'block';
-                document.getElementById('overlay-text').innerText = "SAVE SUCCESS! Redirecting...";
-                setTimeout(() => {
-                    window.location.href = 'music.html';
-                }, 1000);
+                window.location.replace("music.html");
             }
         }
 
