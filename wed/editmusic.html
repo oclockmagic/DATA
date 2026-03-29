@@ -412,8 +412,10 @@
             let initialIdx = 0;
             const pKey = PARAM_MAP[config.id];
             if (pKey && params.has(pKey)) {
-                initialIdx = parseInt(params.get(pKey)) || 0;
-                console.log(`[URL PARSE] Found ${pKey} = ${initialIdx} for ${config.id}`);
+                const urlVal = parseInt(params.get(pKey)) || 0;
+                el.setAttribute('data-index', urlVal); 
+                initialIdx = urlVal;
+                console.log(`[URL PARSE] Applied ${pKey}: ${urlVal}`);
             }
 
             const render = (items) => {
@@ -428,7 +430,7 @@
                         selectedImg.style.display = 'block';
                         selectedText.innerText = name.split('.')[0];
                         el.classList.remove('open');
-                        el.setAttribute('data-index', idx);
+                        el.setAttribute('data-index', idx); 
                         if (config.id === 'sel-background') bg_changed = true; 
                     };
                     optionsBox.appendChild(opt);
@@ -437,12 +439,15 @@
 
             render(images);
             if (images.length > 0) {
-                if (initialIdx < 0 || initialIdx >= images.length) initialIdx = 0;
-                const name = images[initialIdx];
-                selectedImg.src = RAW_BASE + config.path + "/" + name;
-                selectedImg.style.display = 'block';
-                selectedText.innerText = name.split('.')[0];
-                el.setAttribute('data-index', initialIdx);
+                if (initialIdx >= 0 && initialIdx < images.length) {
+                    const name = images[initialIdx];
+                    selectedImg.src = RAW_BASE + config.path + "/" + name;
+                    selectedImg.style.display = 'block';
+                    selectedText.innerText = name.split('.')[0];
+                } else {
+                    selectedImg.style.display = 'none';
+                    selectedText.innerText = "Value: " + initialIdx;
+                }
             }
 
             searchInput.oninput = (e) => {
@@ -520,13 +525,24 @@
                 if (d.includes(":")) {
                     const vals = d.split(":")[1].split(",");
                     if (vals.length >= 6) {
-                        document.getElementById('bg_effect').value = vals[0];
-                        document.getElementById('bass_val').value = vals[1];
-                        document.getElementById('eq_type').value = vals[2];
-                        document.getElementById('eq_color').value = vals[3];
-                        document.getElementById('eq_effect').value = vals[4];
-                        document.getElementById('eq_peak').value = vals[5];
-                        console.log("OLD DATA RESTORED: ", vals);
+                        // Phục hồi dữ liệu vào các custom-select bằng cách set data-index và cập nhật UI
+                        const configKeys = ['sel-background', 'sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'];
+                        vals.forEach((val, i) => {
+                            const el = document.getElementById(configKeys[i]);
+                            if (el) {
+                                el.setAttribute('data-index', val);
+                                // Cập nhật hiển thị ảnh và text cho ComboBox
+                                const images = DATA[CONFIG[i].path] || [];
+                                const idx = parseInt(val);
+                                if (idx >= 0 && idx < images.length) {
+                                    const name = images[idx];
+                                    el.querySelector('.selected-img').src = RAW_BASE + CONFIG[i].path + "/" + name;
+                                    el.querySelector('.selected-img').style.display = 'block';
+                                    el.querySelector('.selected-text').innerText = name.split('.')[0];
+                                }
+                            }
+                        });
+                        console.log("RESTORED METADATA FROM CHIP: ", vals);
                     }
                 }
                 sendMetadata();
