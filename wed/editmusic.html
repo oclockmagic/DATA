@@ -512,18 +512,31 @@
 
         function initWebSocket() {
             websocket = new WebSocket(`ws://${location.hostname}/ws`);
-            websocket.onopen = () => document.getElementById('ws-status').innerText = "Connected";
+            websocket.onopen = () => {
+                console.log("WS: Connected");
+                document.getElementById('ws-status').innerText = "Connected";
+            };
             websocket.onmessage = (e) => {
                 const d = e.data;
                 console.log("WS Received:", d);
                 const btn = document.querySelector('.btn-save');
                 if (d === "M_READY") sendMetadata();
-                else if (d === "M_META_OK") { if(globalPhotoHex) startStream(); else finalize(); }
-                else if (d === "M_UP_OK") streamNext();
+                else if (d === "M_META_OK") { 
+                    console.log("Metadata OK, starting stream...");
+                    startStream(); 
+                }
+                else if (d === "M_UP_OK") {
+                    console.log("Chunk OK, next...");
+                    streamNext();
+                }
+                else if (d === "M_RE_OK") {
+                    console.log("Reset OK, starting...");
+                    streamNext();
+                }
                 else if (d.includes("SAVEOK")) { 
-                    btn.innerText = "SUCCESS!"; 
-                    console.log("FORCE REDIRECT to music.html");
-                    setTimeout(() => { window.location.replace("music.html"); }, 100); 
+                    btn.innerText = "SAVEOK - STAY LOG"; 
+                    console.log("M-SERIES: [LOG] SUCCESS! STAY HERE TO SEE ESP32 LOGS.");
+                    // Chặn chuyển trang để coi LOG
                 } else {
                     btn.innerText = "WS: " + d;
                 }
