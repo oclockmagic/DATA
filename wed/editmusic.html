@@ -523,7 +523,8 @@
             else if (d === "M_RE_OK" || d === "M_UP_OK") streamNext();
             else if (d.includes("SAVEOK")) {
                 btn.innerText = "SUCCESS !";
-                setTimeout(() => window.location.href = "music.html", 1000);
+                console.log("M-SERIES: [SAVEOK] Metadata and Image Synced to Flash.");
+                // setTimeout(() => window.location.href = "music.html", 1000); // Dừng chuyển trang để SOI LOG
             }
         }
 
