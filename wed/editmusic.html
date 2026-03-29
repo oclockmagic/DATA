@@ -578,15 +578,15 @@
         };
 
         const streamNext = () => {
-            const CHUNK = 4096; // 4096 HEX = 2048 Bytes (Fixed Sector Size)
+            const CHUNK = 1024; // 1024 HEX = 512 Bytes (Super Safe Sync)
             if (hexPos < hex72.length) {
                 let chunkData = hex72.substring(hexPos, hexPos + CHUNK);
-                // BÙ THÊM 'F' CHO ĐỦ 2048 BYTES NẾU LÀ MẢNH CUỐI (Để khớp Sector)
+                // BÙ THÊM 'F' CHO ĐỦ 512 BYTES NẾU LÀ MẢNH CUỐI
                 while (chunkData.length < CHUNK) chunkData += "F"; 
                 
                 const msg = "#MGM1$" + chunkData;
                 websocket.send(msg);
-                console.log(`M-SERIES: [LOG] Sent Bulk Sector: Pos=${hexPos}, Len=${chunkData.length/2}`);
+                console.log(`M-SERIES: [LOG] Sent Bulk 512: Pos=${hexPos}, Len=${chunkData.length/2}`);
                 
                 hexPos += CHUNK;
                 const progress = Math.round((hexPos / hex72.length) * 100);
