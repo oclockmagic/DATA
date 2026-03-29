@@ -508,11 +508,14 @@
             const imgData = ctx.getImageData(0, 0, 72, 72).data;
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                const r = imgData[i] >> 4;
-                const g = imgData[i + 1] >> 4;
-                const b = imgData[i + 2] >> 4;
-                const a = imgData[i + 3] >> 4;
-                hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                // Định dạng 2-byte cho mỗi pixel (4-bit mỗi kênh: A R G B)
+                const r = Math.floor(imgData[i] / 16);
+                const g = Math.floor(imgData[i + 1] / 16);
+                const b = Math.floor(imgData[i + 2] / 16);
+                const a = Math.floor(imgData[i + 3] / 16);
+                
+                // Byte 0: A(high) | R(low), Byte 1: G(high) | B(low)
+                hex += byteToHex((a << 4) | r) + byteToHex((g << 4) | b);
             }
             return hex.toUpperCase();
         }
