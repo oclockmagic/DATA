@@ -512,7 +512,22 @@
         function handleSocketMessage(e) {
             const d = e.data;
             const btn = document.querySelector('.btn-save');
-            if (d === "M_READY") sendMetadata();
+            
+            if (d.startsWith("M_READY")) {
+                if (d.includes(":")) {
+                    const vals = d.split(":")[1].split(",");
+                    if (vals.length >= 6) {
+                        document.getElementById('bg_effect').value = vals[0];
+                        document.getElementById('bass_val').value = vals[1];
+                        document.getElementById('eq_type').value = vals[2];
+                        document.getElementById('eq_color').value = vals[3];
+                        document.getElementById('eq_effect').value = vals[4];
+                        document.getElementById('eq_peak').value = vals[5];
+                        console.log("OLD DATA RESTORED: ", vals);
+                    }
+                }
+                sendMetadata();
+            }
             else if (d === "M_META_OK") {
                 if (bg_changed || hasUploadedImg) {
                     hex72 = getRAW16Hex();
