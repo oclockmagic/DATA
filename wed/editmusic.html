@@ -558,26 +558,23 @@
         const startStream = () => { 
             hexPos = 0; 
             hex72 = getRAW16Hex(); 
-            hex64 = getRAW16Hex64();
             streamMode = 1; 
             websocket.send("#MRE1$"); 
+            console.log("M-SERIES: [LOG] Start streaming 72x72...");
             streamNext(); 
         };
 
         const streamNext = () => {
-            const CHUNK = 144; 
-            let currentHex = (streamMode === 1) ? hex72 : hex64;
-            let cmd = (streamMode === 1) ? "#MGM1$" : "#MGM2$";
-
-            if (hexPos < currentHex.length) {
-                websocket.send(cmd + currentHex.substring(hexPos, hexPos + CHUNK));
+            const CHUNK = 144; // 72 pixel * 2 bytes
+            if (hexPos < hex72.length) {
+                const chunkData = hex72.substring(hexPos, hexPos + CHUNK);
+                const msg = "#MGM1$" + chunkData;
+                websocket.send(msg);
+                console.log(`M-SERIES: [LOG] Sent CHUNK at ${hexPos}, size: ${chunkData.length}`);
+                
                 hexPos += CHUNK;
-                const progress = Math.round((hexPos / (hex72.length + hex64.length)) * 100);
-                document.querySelector('.btn-save').innerText = `Sync ${streamMode}/2: ${progress}%`;
-            } else if (streamMode === 1) {
-                streamMode = 2; hexPos = 0; 
-                websocket.send("#MRE1$"); // Reset pos before MGM2
-                streamNext();
+                const progress = Math.round((hexPos / hex72.length) * 100);
+                document.querySelector('.btn-save').innerText = `Sync: ${progress}%`;
             } else finalize();
         };
 
