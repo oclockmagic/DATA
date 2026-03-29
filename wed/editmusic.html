@@ -569,10 +569,12 @@
                 } else websocket.send("#MBUM$");
             }
             else if (d === "M_RE_OK" || d === "M_UP_OK") streamNext();
-            else if (d.includes("SAVEOK")) {
-                document.getElementById('overlay').style.display = 'none';
-                btn.innerText = "SUCCESS !";
-                console.log("M-SERIES: [SAVEOK] Metadata and Image Synced to Flash.");
+            else if (d.indexOf("SAVEOK") !== -1) {
+                document.getElementById('save-overlay').style.display = 'block';
+                document.getElementById('overlay-text').innerText = "SAVE SUCCESS! Redirecting...";
+                setTimeout(() => {
+                    window.location.href = 'music.html';
+                }, 1000);
             }
         }
 
