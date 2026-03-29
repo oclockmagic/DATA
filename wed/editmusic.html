@@ -411,7 +411,10 @@
 
             let initialIdx = 0;
             const pKey = PARAM_MAP[config.id];
-            if (pKey && params.has(pKey)) initialIdx = parseInt(params.get(pKey)) || 0;
+            if (pKey && params.has(pKey)) {
+                initialIdx = parseInt(params.get(pKey)) || 0;
+                console.log(`[URL PARSE] Found ${pKey} = ${initialIdx} for ${config.id}`);
+            }
 
             const render = (items) => {
                 optionsBox.innerHTML = '';
@@ -544,9 +547,10 @@
         }
 
         function sendMetadata() {
-            const get = (id) => document.getElementById(id).getAttribute('data-index') || '0';
-            const idx = params.get('idx') || '0';
-            const msg = `#MHGM$${idx},0,${get('sel-background')},${get('sel-bass')},${get('sel-eq-type')},${get('sel-eq-color')},${get('sel-eq-effect')},${get('sel-eq-peak')}`;
+            const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
+            const fileIdx = params.get('idx') || '0';
+            const msg = `#MHGM$${fileIdx},${getIdx('sel-background')},${getIdx('sel-bass')},${getIdx('sel-eq-type')},${getIdx('sel-eq-color')},${getIdx('sel-eq-effect')},${getIdx('sel-eq-peak')}`;
+            console.log("SENDING METADATA: ", msg);
             websocket.send(msg);
         }
 
