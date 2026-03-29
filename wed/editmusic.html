@@ -376,6 +376,143 @@
         let bg_changed = false;
         let hex72 = "";
 
+        const DATA = {
+            "background": ["00_none.bmp","01_zoom.bmp","02_move0.bmp","03_move1.bmp","04_none.bmp","05_zoom.bmp","06_move0.bmp","07_move1.bmp"],
+            "bass": ["01.bmp","02.bmp","10.bmp","13.bmp","14.bmp","15.bmp","20.bmp","21.bmp","22.bmp","23.bmp","24.bmp","25.bmp","26.bmp","27.bmp","28.bmp","29.bmp","3.bmp","30.bmp","31.bmp","32.bmp","33.bmp","34.bmp","35.bmp","36.bmp","37.bmp","38.bmp","39.bmp","4.bmp","40.bmp","41.bmp","42.bmp","43.bmp","44.bmp","45.bmp","46.bmp","47.bmp","48.bmp","49.bmp","5.bmp","50.bmp","51.bmp","52.bmp","53.bmp","55.bmp","56.bmp","57.bmp","58.bmp","59.bmp","6.bmp","60.bmp","61.bmp","63.bmp","64.bmp","66.bmp","68.bmp","69.bmp","7.bmp","70.bmp","71.bmp","72.bmp","73.bmp","74.bmp","75.bmp","76.bmp","77.bmp","8.bmp","9.bmp","kk.bmp","ll.bmp"],
+            "equalizer/type": ["000.png","001.png","01-cot.png","02-cot_peak_down.png","03-cot_peak_up.png","04-nhay.png","05-nhay_dac.png","06-nhay_tim.png","07-nhay_vuong.png","08-nhay_tron.png","09-chay.png","10-chay_peak_down.png","11-chay_peak_up.png","12-giua.png","13-giua_peak_down.png","14-giua_peak_up.png","15-xuong.png","16-xuong_peak_down.png","17-xuong_peak_up.png","18-vacham_cong.png","19-vacham_vuong.png","20-vacham_tron.png","21-vacham_tim.png","22-vacham_dac.png","23-vacham_ran1.png","23-vacham_random.png","24-cotdoi.png","25-cotdoi_peak_1.png","25-cotdoi_peak_2.png","25-cotdoi_peak_3.png"],
+            "equalizer/color": ["000.bmp","011.bmp","012.bmp","013.bmp","014.bmp","016.bmp","017.bmp","018.bmp","019.bmp","020.bmp","021.bmp","022.bmp","023.bmp","024.bmp","025.bmp","026.bmp","027.bmp","028.bmp"],
+            "equalizer/effect": ["c1.png","c2.png","c3.png"],
+            "equalizer/peak": ["00.png","01.png","02.png","03.png","04.png"]
+        };
+
+        const CONFIG = [
+            { id: 'sel-background', path: 'background', label: 'Background' },
+            { id: 'sel-bass', path: 'bass', label: 'Bass' },
+            { id: 'sel-eq-type', path: 'equalizer/type', label: 'Type' },
+            { id: 'sel-eq-color', path: 'equalizer/color', label: 'Color' },
+            { id: 'sel-eq-effect', path: 'equalizer/effect', label: 'Effect' },
+            { id: 'sel-eq-peak', path: 'equalizer/peak', label: 'Peak' }
+        ];
+
+        const params = new URLSearchParams(window.location.search);
+        const PARAM_MAP = {
+            'sel-background': 'background',
+            'sel-bass': 'bass',
+            'sel-eq-type': 'eqtype',
+            'sel-eq-color': 'eqcolor',
+            'sel-eq-effect': 'eqeffect',
+            'sel-eq-peak': 'eqpeak'
+        };
+
+        const state = {};
+
+        async function initCombobox(config) {
+            const el = document.getElementById(config.id);
+            if (!el) return;
+            const trigger = el.querySelector('.custom-select-trigger');
+            const optionsBox = el.querySelector('.options-container');
+            const selectedImg = el.querySelector('.selected-img');
+            const selectedText = el.querySelector('.selected-text');
+            const searchInput = el.querySelector('.search-box');
+
+            const images = DATA[config.path] || [];
+            state[config.id] = images;
+
+            trigger.onclick = (e) => {
+                document.querySelectorAll('.custom-select').forEach(s => { if (s !== el) s.classList.remove('open'); });
+                el.classList.toggle('open');
+                if (el.classList.contains('open')) searchInput.focus();
+                e.stopPropagation();
+            };
+
+            let initialIdx = 0;
+            const pKey = PARAM_MAP[config.id];
+            if (pKey && params.has(pKey)) initialIdx = parseInt(params.get(pKey)) || 0;
+
+            const render = (items) => {
+                optionsBox.innerHTML = '';
+                items.forEach((name, idx) => {
+                    const imgUrl = RAW_BASE + config.path + "/" + name;
+                    const opt = document.createElement('div');
+                    opt.className = 'custom-option';
+                    opt.innerHTML = `<img src="${imgUrl}"><span>${name.split('.')[0]}</span>`;
+                    opt.onclick = () => {
+                        selectedImg.src = imgUrl;
+                        selectedImg.style.display = 'block';
+                        selectedText.innerText = name.split('.')[0];
+                        el.classList.remove('open');
+                        el.setAttribute('data-index', idx);
+                        if (config.id === 'sel-background') bg_changed = true; 
+                    };
+                    optionsBox.appendChild(opt);
+                });
+            };
+
+            render(images);
+
+            if (images.length > 0) {
+                if (initialIdx < 0 || initialIdx >= images.length) initialIdx = 0;
+                const name = images[initialIdx];
+                selectedImg.src = RAW_BASE + config.path + "/" + name;
+                selectedImg.style.display = 'block';
+                selectedText.innerText = name.split('.')[0];
+                el.setAttribute('data-index', initialIdx);
+            }
+
+            searchInput.oninput = (e) => {
+                const term = e.target.value.toLowerCase();
+                render(images.filter(n => n.toLowerCase().includes(term)));
+            };
+        }
+
+        const bgCanvas = document.getElementById('bg-canvas');
+        const fileInput = document.getElementById('file-bg');
+
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const ctx = bgCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, 72, 72);
+                    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 72, 72);
+                    hasUploadedImg = true;
+                    bg_changed = true; 
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        function drawPlaceholder() {
+            if (hasUploadedImg) return;
+            const ctx = bgCanvas.getContext('2d');
+            const img = new Image();
+            img.onload = () => ctx.drawImage(img, 12, 12, 48, 48);
+            img.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234facfe'%3E%3Cpath d='M19 7v2.99s-1.99.01-2 0V7h-3s.01-1.99 0-2h3V2h2v3h3v2h-3zm-3 4V8h-3V5H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-8h-3zM5 19l3-4 2 3 3-4 4 5H5z'/%3E%3C/svg%3E";
+        }
+
+        function byteToHex(b) {
+            const s = (b & 0xFF).toString(16);
+            return s.length === 1 ? '0' + s : s;
+        }
+
+        function getRAW16Hex() {
+            const ctx = bgCanvas.getContext('2d');
+            const imgData = ctx.getImageData(0, 0, 72, 72).data;
+            let hex = "";
+            for (let i = 0; i < imgData.length; i += 4) {
+                const r = imgData[i] >> 4;
+                const g = imgData[i+1] >> 4;
+                const b = imgData[i+2] >> 4;
+                const a = imgData[i+3] >> 4;
+                hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+            }
+            return hex.toUpperCase();
+        }
+
         // CHUYỂN DỊCH: Tinh chỉnh cơ chế WebSocket
         function initWebSocket() {
             websocket = new WebSocket(`ws://${location.hostname}/ws`);
