@@ -569,6 +569,9 @@
                 else if (d === "M_META_OK") {
                     if (bg_changed || hasUploadedImg) {
                         hex72 = getRAW16Hex();
+                        const imgHex = getRAW16Hex();
+                        console.log("[START-UPLOAD] File: " + currentEditFile + " Total Hex Len: " + imgHex.length);
+                        
                         hexPos = 0;
                         websocket.send("#MRE1$");
                     } else websocket.send("#MBUM$");
