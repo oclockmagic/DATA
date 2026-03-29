@@ -532,45 +532,51 @@
         }
 
         function handleSocketMessage(e) {
-            const d = e.data;
-            const btn = document.querySelector('.btn-save');
+            try {
+                const d = e.data;
+                const btn = document.querySelector('.btn-save');
 
-            if (d.startsWith("M_READY")) {
-                if (d.includes(":")) {
-                    const vals = d.split(":")[1].split(",");
-                    if (vals.length >= 6) {
-                        // Phục hồi dữ liệu vào các custom-select bằng cách set data-index và cập nhật UI
-                        const configKeys = ['sel-background', 'sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'];
-                        vals.forEach((val, i) => {
-                            const el = document.getElementById(configKeys[i]);
-                            if (el) {
-                                el.setAttribute('data-index', val);
-                                // Cập nhật hiển thị ảnh và text cho ComboBox
-                                const images = DATA[CONFIG[i].path] || [];
-                                const idx = parseInt(val);
-                                if (idx >= 0 && idx < images.length) {
-                                    const name = images[idx];
-                                    el.querySelector('.selected-img').src = RAW_BASE + CONFIG[i].path + "/" + name;
-                                    el.querySelector('.selected-img').style.display = 'block';
-                                    el.querySelector('.selected-text').innerText = name.split('.')[0];
+                if (d.startsWith("M_READY")) {
+                    if (d.includes(":")) {
+                        const vals = d.split(":")[1].split(",");
+                        if (vals.length >= 6) {
+                            const configKeys = ['sel-background', 'sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'];
+                            vals.forEach((val, i) => {
+                                const el = document.getElementById(configKeys[i]);
+                                if (el) {
+                                    el.setAttribute('data-index', val);
+                                    const images = DATA[CONFIG[i].path] || [];
+                                    const idx = parseInt(val);
+                                    if (!isNaN(idx) && idx >= 0 && idx < images.length) {
+                                        const name = images[idx];
+                                        const imgEl = el.querySelector('.selected-img');
+                                        const txtEl = el.querySelector('.selected-text');
+                                        if (imgEl) {
+                                            imgEl.src = RAW_BASE + CONFIG[i].path + "/" + name;
+                                            imgEl.style.display = 'block';
+                                        }
+                                        if (txtEl) txtEl.innerText = name.split('.')[0];
+                                    }
                                 }
-                            }
-                        });
-                        console.log("RESTORED METADATA FROM CHIP: ", vals);
+                            });
+                        }
                     }
+                    sendMetadata();
                 }
-                sendMetadata();
-            }
-            else if (d === "M_META_OK") {
-                if (bg_changed || hasUploadedImg) {
-                    hex72 = getRAW16Hex();
-                    hexPos = 0;
-                    websocket.send("#MRE1$");
-                } else websocket.send("#MBUM$");
-            }
-            else if (d === "M_RE_OK" || d === "M_UP_OK") streamNext();
-            else if (d.indexOf("SAVEOK") !== -1) {
-                window.location.replace("music.html");
+                else if (d === "M_META_OK") {
+                    if (bg_changed || hasUploadedImg) {
+                        hex72 = getRAW16Hex();
+                        hexPos = 0;
+                        websocket.send("#MRE1$");
+                    } else websocket.send("#MBUM$");
+                }
+                else if (d === "M_RE_OK" || d === "M_UP_OK") streamNext();
+                else if (d.indexOf("SAVEOK") !== -1) {
+                    window.location.replace("music.html");
+                }
+            } catch (err) {
+                console.error("SOCKET ERROR: ", err);
+                if (e.data.indexOf("SAVEOK") !== -1) window.location.replace("music.html");
             }
         }
 
