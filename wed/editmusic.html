@@ -567,23 +567,30 @@
                         }
                     }
                     sendMetadata();
+        websocket.onmessage = (e) => {
+            const d = e.data.trim();
+            console.log("RECV FROM CHIP:", d);
+
+            if (d === "M_META_OK") {
+                // Đã lưu xong Meta -> Kiểm tra xem có cần nạp ảnh không
+                if (bg_changed || hasUploadedImg) {
+                    hex72 = getRAW16Hex();
+                    hexPos = 0;
+                    websocket.send("#MRE1$");
+                } else {
+                    websocket.send("#MBUM$");
                 }
-                else if (d === "M_META_OK") {
-                    if (bg_changed || hasUploadedImg) {
-                        hex72 = getRAW16Hex();
-                        hexPos = 0;
-                        websocket.send("#MRE1$");
-                    } else websocket.send("#MBUM$");
-                }
-                else if (d === "M_RE_OK" || d === "M_UP_OK") streamNext();
-                else if (d.indexOf("SAVEOK") !== -1) {
-                    window.location.replace("music.html");
-                }
-            } catch (err) {
-                console.error("SOCKET ERROR: ", err);
-                if (e.data.indexOf("SAVEOK") !== -1) window.location.replace("music.html");
             }
-        }
+            else if (d === "M_RE_OK" || d === "M_UP_OK") {
+                // Chip đã sẵn sàng hoặc đã nhận xong 1 gói -> Gửi gói tiếp theo
+                streamNext();
+            }
+            else if (d.indexOf("SAVEOK") !== -1) {
+                // Toàn bộ quy trình hoàn tất -> Quay về danh sách
+                window.location.replace("music.html");
+            }
+        };
+    }
 
         function sendMetadata() {
             const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
