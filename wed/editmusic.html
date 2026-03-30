@@ -566,7 +566,7 @@
                 } else if (data === "M_SAVEOK") {
                     btn.innerText = "SUCCESS!";
                     btn.disabled = false;
-                    setTimeout(() => window.location.href = "music.html", 800);
+                    window.location.href = '/music.html?v=' + Date.now();
                 }
             };
         }
