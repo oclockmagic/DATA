@@ -560,8 +560,9 @@
                         }
                     });
                 } catch (err) { console.error("JSON DATA ERROR", err); }
+            } 
             else if (d.includes("Session Start")) {
-                // CHIP ĐÃ SẴN SÀNG PHIÊN MỚI -> GỬI METADATA
+                // CHIP ĐÃ PHẢN HỒI KHỞI ĐỘNG XONG -> GỬI METADATA
                 sendMetadata();
             }
             else if (d === "M_META_OK") {
@@ -576,7 +577,7 @@
             else if (d === "M_RE_OK" || d === "M_UP_OK") {
                 streamNext();
             }
-            else if (d.indexOf("SAVEOK") !== -1) {
+            else if (d.indexOf("SAVEOK") !== -1 || d.indexOf("COMPLETED") !== -1) {
                 window.location.replace("music.html");
             }
         }
