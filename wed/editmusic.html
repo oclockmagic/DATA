@@ -495,8 +495,7 @@
                     const img = new Image();
                     img.src = ev.target.result;
                     img.onload = () => {
-                        bgCtx.fillStyle = "#000";
-                        bgCtx.fillRect(0, 0, 72, 72);
+                        bgCtx.clearRect(0, 0, 72, 72);
                         let s, dx, dy, dw, dh;
                         if (img.width > img.height) {
                             s = 72 / img.height;
@@ -531,8 +530,7 @@
                     const img = new Image();
                     img.src = ev.target.result;
                     img.onload = () => {
-                        bassCtx.fillStyle = "#000";
-                        bassCtx.fillRect(0, 0, 44, 44);
+                        bassCtx.clearRect(0, 0, 44, 44);
                         let s, dx, dy, dw, dh;
                         if (img.width > img.height) {
                             s = 44 / img.height;
