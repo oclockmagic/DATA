@@ -595,14 +595,13 @@
         }
 
         function streamNext() {
-            const HEX_CHUNK = 1024; // 512 bytes
+            const chunkSize = 1024; // 1024 ký tự Hex = 512 Byte
             const btn = document.querySelector('.btn-save');
             if (hexPos < hex72.length) {
-                let chunk = hex72.substring(hexPos, hexPos + HEX_CHUNK);
-                while (chunk.length < HEX_CHUNK) chunk += "F";
+                let chunk = hex72.substring(hexPos, hexPos + chunkSize);
                 console.log(`>>> WEB SENDING CHUNK [${hexPos}/${hex72.length}]:`, chunk.substring(0, 16) + "...");
                 websocket.send("#MGM1$" + chunk);
-                hexPos += HEX_CHUNK;
+                hexPos += chunkSize;
                 btn.innerText = `SYNC: ${Math.min(100, Math.round((hexPos / hex72.length) * 100))}%`;
             } else {
                 console.log(">>> ẢNH ĐÃ GỬI HẾT -> GỬI LỆNH CHỐT SAVE");
