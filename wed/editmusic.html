@@ -534,44 +534,46 @@
                 document.getElementById('ws-status').style.color = "red";
                 setTimeout(initWebSocket, 2000);
             };
+        websocket.onmessage = handleSocketMessage;
+    }
 
-            websocket.onmessage = (e) => {
-                const d = e.data.trim();
-                if(d.startsWith("{")) {
-                    try {
-                        const json = JSON.parse(d);
-                        CONFIG.forEach((c, i) => {
-                            const val = json[c.key];
-                            const el = document.getElementById(c.id);
-                            if (el && val !== undefined) {
-                                el.setAttribute('data-index', val);
-                                const images = DATA[c.path] || [];
-                                const idx = parseInt(val);
-                                if (!isNaN(idx) && idx >= 0 && idx < images.length) {
-                                    const name = images[idx];
-                                    const imgEl = el.querySelector('.selected-img');
-                                    const txtEl = el.querySelector('.selected-text');
-                                    if (imgEl) { imgEl.src = RAW_BASE + c.path + "/" + name; imgEl.style.display = 'block'; }
-                                    if (txtEl) txtEl.innerText = name.split('.')[0];
-                                }
-                            }
-                        });
-                    } catch (err) { console.error("JSON ERROR", err); }
-                } else if(d === "M_META_OK") {
-                    if (bg_changed || hasUploadedImg) {
-                        hex72 = getRAW16Hex();
-                        hexPos = 0;
-                        websocket.send("#MRE1$");
-                    } else {
-                        websocket.send("#MBUM$");
+    function handleSocketMessage(e) {
+        const d = e.data.trim();
+        console.log("RECV FROM CHIP:", d);
+
+        if (d.startsWith("{")) {
+            try {
+                const json = JSON.parse(d);
+                CONFIG.forEach((c) => {
+                    const val = json[c.key];
+                    const el = document.getElementById(c.id);
+                    if (el && val !== undefined) {
+                        el.setAttribute('data-index', val);
+                        const images = DATA[c.path] || [];
+                        const idx = parseInt(val);
+                        if (!isNaN(idx) && idx >= 0 && idx < images.length) {
+                            const name = images[idx];
+                            const imgEl = el.querySelector('.selected-img');
+                            const txtEl = el.querySelector('.selected-text');
+                            if (imgEl) { imgEl.src = RAW_BASE + c.path + "/" + name; imgEl.style.display = 'block'; }
+                            if (txtEl) txtEl.innerText = name.split('.')[0];
+                        }
                     }
-                } else if(d === "M_RE_OK" || d === "M_UP_OK") {
-                    streamNext();
-                } else if(d.includes("SAVEOK")) {
-                    window.location.replace("music.html");
-                }
-            };
+                });
+            } catch (err) { console.error("JSON DATA ERROR", err); }
+        } 
+        else if (d === "M_META_OK") {
+            if (bg_changed || hasUploadedImg) {
+                hex72 = getRAW16Hex(); hexPos = 0; websocket.send("#MRE1$");
+            } else { websocket.send("#MBUM$"); }
         }
+        else if (d === "M_RE_OK" || d === "M_UP_OK") {
+            streamNext();
+        }
+        else if (d.indexOf("SAVEOK") !== -1) {
+            window.location.replace("music.html");
+        }
+    }
 
         function sendMetadata() {
             const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
