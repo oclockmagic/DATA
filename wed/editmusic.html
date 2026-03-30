@@ -529,12 +529,13 @@
             const imgData = ctx.getImageData(0, 0, 72, 72).data;
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                // R5 G6 B5 conversion logic (as used in other files)
-                // However, let's stick to the project's custom 16-bit format if needed.
-                // In editclock.html it was: hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
-                // This seems to be 4 bits per channel including alpha.
                 const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
                 hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+            }
+            // Byte lẻ fix: Padding to 12288 bytes (24576 hex chars)
+            const targetSize = 12288 * 2;
+            while (hex.length < targetSize) {
+                hex += "00";
             }
             return hex;
         }
