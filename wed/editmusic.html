@@ -538,9 +538,10 @@
 
         function handleSocketMessage(e) {
             const d = e.data.trim();
-            console.log("RECV FROM CHIP:", d);
+            console.log(">>> CHIP ALO:", d); // LOG CẬN KẼ
 
             if (d.startsWith("{")) {
+                console.log(">>> NHẬN JSON CONFIG BAN ĐẦU");
                 try {
                     const json = JSON.parse(d);
                     CONFIG.forEach((c) => {
@@ -562,10 +563,11 @@
                 } catch (err) { console.error("JSON DATA ERROR", err); }
             } 
             else if (d.includes("Session Start")) {
-                // CHIP ĐÃ PHẢN HỒI KHỞI ĐỘNG XONG -> GỬI METADATA
+                console.log(">>> CHIP BÁO SESSION START -> CHUẨN BỊ GỬI META");
                 sendMetadata();
             }
             else if (d === "M_META_OK") {
+                console.log(">>> CHIP BÁO META OK -> CHUẨN BỊ NẠP ẢNH");
                 if (bg_changed || hasUploadedImg) {
                     hex72 = getRAW16Hex();
                     hexPos = 0;
@@ -575,9 +577,11 @@
                 }
             }
             else if (d === "M_RE_OK" || d === "M_UP_OK") {
+                console.log(">>> CHIP BÁO SẴN SÀNG/NHẬN XONG MẢNH -> GỬI TIẾP");
                 streamNext();
             }
-            else if (d.indexOf("SAVEOK") !== -1 || d.indexOf("COMPLETED") !== -1) {
+            else if (d.indexOf("SAVEOK") !== -1 || d.indexOf("COMPLETED") !== -1 || d.indexOf("Website Update") !== -1) {
+                console.log(">>> QUY TRÌNH HOÀN TẤT -> NHẢY TRANG");
                 window.location.replace("music.html");
             }
         }
@@ -586,20 +590,22 @@
             const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
             const fileIdx = params.get('idx') || '0';
             const msg = `#MHGM$${fileIdx},${getIdx('sel-background')},${getIdx('sel-bass')},${getIdx('sel-eq-type')},${getIdx('sel-eq-color')},${getIdx('sel-eq-effect')},${getIdx('sel-eq-peak')}`;
-            console.log("SENDING METADATA: ", msg);
+            console.log(">>> WEB SENDING META:", msg);
             websocket.send(msg);
         }
 
         function streamNext() {
-            const HEX_CHUNK = 1024;
+            const HEX_CHUNK = 1024; // 512 bytes
             const btn = document.querySelector('.btn-save');
             if (hexPos < hex72.length) {
                 let chunk = hex72.substring(hexPos, hexPos + HEX_CHUNK);
                 while (chunk.length < HEX_CHUNK) chunk += "F";
+                console.log(`>>> WEB SENDING CHUNK [${hexPos}/${hex72.length}]:`, chunk.substring(0, 16) + "...");
                 websocket.send("#MGM1$" + chunk);
                 hexPos += HEX_CHUNK;
                 btn.innerText = `SYNC: ${Math.min(100, Math.round((hexPos / hex72.length) * 100))}%`;
             } else {
+                console.log(">>> ẢNH ĐÃ GỬI HẾT -> GỬI LỆNH CHỐT SAVE");
                 websocket.send("#MBUM$");
                 btn.innerText = "FINALIZING...";
             }
