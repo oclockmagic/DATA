@@ -562,8 +562,16 @@
             const imgData = canv.getContext('2d').getImageData(0, 0, w, h).data;
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
-                hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                let r = imgData[i], g = imgData[i + 1], b = imgData[i + 2], a = imgData[i + 3];
+                
+                // Alpha threshold: Nếu quá mờ ( < 32/255) thì coi như trong suốt hoàn toàn
+                // Tránh lỗi nhiễu biên gây nền đen khi nội suy scaling
+                if (a < 32) {
+                    a = 0; r = 0; g = 0; b = 0;
+                }
+
+                const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
+                hex += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
             }
             return hex;
         }
