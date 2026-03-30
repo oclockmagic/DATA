@@ -356,10 +356,10 @@
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-save" style="margin-top: 0; flex: 2;">LƯU</button>
+            <button class="btn-save" style="margin-top: 0; flex: 2;">Apply Settings</button>
             <button class="btn-save"
                 style="margin-top: 0; flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);"
-                onclick="window.location.href='music.html?t='+Date.now()">QUAY LẠI</button>
+                onclick="window.location.href='music.html'">Back</button>
         </div>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
@@ -526,13 +526,14 @@
         }
 
         function getRGB565Hex() {
-            // Chuyển về 64x64 để test độ toàn vẹn
-            const imgData = ctx.getImageData(0, 0, 64, 64).data;
+            const imgData = ctx.getImageData(0, 0, 72, 72).data;
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                // R, G, B, A (0-255) -> 4-bit (0-15)
+                // R5 G6 B5 conversion logic (as used in other files)
+                // However, let's stick to the project's custom 16-bit format if needed.
+                // In editclock.html it was: hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                // This seems to be 4 bits per channel including alpha.
                 const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
-                // Byte 0: RRRR AAAA, Byte 1: BBBB GGGG
                 hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
             }
             return hex;
@@ -562,10 +563,9 @@
                 } else if (data === "M_UP_OK") {
                     streamNextChunk();
                 } else if (data === "M_SAVEOK") {
-                    btn.innerText = "THÀNH CÔNG!";
+                    btn.innerText = "SUCCESS!";
                     btn.disabled = false;
-                    // Increase delay to ensure LittleFS has finished writing and closing the file
-                    setTimeout(() => window.location.href = "music.html?t=" + Date.now(), 1500);
+                    setTimeout(() => window.location.href = "music.html", 800);
                 }
             };
         }
@@ -584,7 +584,7 @@
 
             // M-Series Format: #MHGM$idx,bg,bass,type,color,effect,peak
             websocket.send(`#MHGM$${idx},${bg},${bass},${type},${color},${effect},${peak}`);
-            btn.innerText = "Đang gửi...";
+            btn.innerText = "Metadata sent...";
         }
 
         function startPhotoStream() {
@@ -611,8 +611,8 @@
             websocket.send("#MBUM$");
         }
 
-        // Lưu cài đặt
-        document.querySelector('.btn-save').onclick = () => {
+        // Apply settings
+        document.querySelector('.btn-save').onclick = async () => {
             const btn = document.querySelector('.btn-save');
             if (btn.disabled) return;
 
