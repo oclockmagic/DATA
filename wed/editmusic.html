@@ -563,9 +563,10 @@
                 } else if (data === "M_UP_OK") {
                     streamNextChunk();
                 } else if (data === "M_SAVEOK") {
-                    btn.innerText = "LƯU";
+                    btn.innerText = "THÀNH CÔNG!";
                     btn.disabled = false;
-                    setTimeout(() => window.location.href = "music.html?t=" + Date.now(), 800);
+                    // Increase delay to ensure LittleFS has finished writing and closing the file
+                    setTimeout(() => window.location.href = "music.html?t=" + Date.now(), 1500);
                 }
             };
         }
