@@ -440,9 +440,20 @@
 
         <div style="display: flex; gap: 10px; margin-top: 25px;">
             <button class="btn btn-secondary" style="flex: 1;" onclick="window.location.href='music.html'">CANCEL</button>
-            <button class="btn btn-primary btn-save" style="flex: 2;">APPLY SETTINGS</button>
+            <button id="btn-save-main" class="btn btn-primary" style="flex: 2;">APPLY SETTINGS</button>
         </div>
         <div class="status-tag" id="ws-status">Disconnected</div>
+    </div>
+
+    <!-- Modal HTML moved before script for better accessibility -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="margin: 0; font-weight: 300; letter-spacing: 1px;">Saving...</h3>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div id="progress-percent" style="font-size: 14px; color: var(--primary);">0%</div>
+        </div>
     </div>
 
     <script>
@@ -665,7 +676,7 @@
             };
             websocket.onmessage = (e) => {
                 const data = e.data;
-                const btn = document.querySelector('.btn-save');
+                const saveBtn = document.getElementById('btn-save-main');
 
                 if (data === "M_READY") {
                     sendMetadata();
@@ -688,8 +699,10 @@
                     handleStepBG_Done();
                 } else if (data === "M_SAVEOK") {
                     document.getElementById('upload-modal').style.display = 'none';
-                    btn.disabled = false;
-                    btn.innerText = "Apply Settings";
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                        saveBtn.innerText = "APPLY SETTINGS";
+                    }
                     window.location.href = '/music.html?v=' + Date.now();
                 }
             };
@@ -707,7 +720,7 @@
         }
 
         function streamNextChunk() {
-            const btn = document.querySelector('.btn-save');
+            const saveBtn = document.getElementById('btn-save-main');
             if (hexPos < globalPhotoHex.length) {
                 const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK_SIZE * 2);
                 const tag = (currentStep === "BASS") ? "#MGM2$" : "#MGM1$";
@@ -744,8 +757,8 @@
             websocket.send("#MBUM$");
         }
 
-        document.querySelector('.btn-save').onclick = async () => {
-            const btn = document.querySelector('.btn-save');
+        document.getElementById('btn-save-main').onclick = async () => {
+            const btn = document.getElementById('btn-save-main');
             if (btn.disabled) return;
             btn.disabled = true;
             
@@ -773,15 +786,6 @@
         initWebSocket();
         CONFIG.forEach(c => initCombobox(c));
     </script>
-    <div id="upload-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title" style="margin: 0; font-weight: 300; letter-spacing: 1px;">Saving...</h3>
-            <div class="progress-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-            <div id="progress-percent" style="font-size: 14px; color: var(--primary);">0%</div>
-        </div>
-    </div>
 </body>
 
 </html>
