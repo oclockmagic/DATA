@@ -254,9 +254,11 @@
             <!-- Custom Image Upload -->
             <div
                 style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
-                <canvas id="bg-canvas" width="72" height="72"
-                    style="width: 72px; height: 72px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); cursor: pointer; box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);"
-                    onclick="document.getElementById('file-bg').click()"></canvas>
+                <div class="canvas-wrapper">
+                    <canvas id="bg-canvas" width="64" height="64"
+                        style="image-rendering: pixelated; width: 72px; height: 72px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); cursor: pointer; box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);"
+                        onclick="document.getElementById('file-bg').click()"></canvas>
+                </div>
                 <input type="file" id="file-bg" accept="image/*" style="display: none;">
             </div>
         </div>
@@ -496,14 +498,18 @@
                     img.src = ev.target.result;
                     img.onload = () => {
                         ctx.fillStyle = "#000";
-                        ctx.fillRect(0, 0, 72, 72);
-                        // Center and scale image to 72x72
+                        ctx.fillRect(0, 0, 64, 64);
+                        // Vẽ khung 64x64 màu đỏ
+                        ctx.strokeStyle = "#ff0000";
+                        ctx.lineWidth = 1;
+                        ctx.strokeRect(0, 0, 64, 64);
+                        // Center and scale image to 64x64
                         let s, dx, dy, dw, dh;
                         if (img.width > img.height) {
-                            s = 72 / img.height;
+                            s = 64 / img.height;
                             dw = img.width * s;
-                            dh = 72;
-                            dx = (72 - dw) / 2;
+                            dh = 64;
+                            dx = (64 - dw) / 2;
                             dy = 0;
                         } else {
                             s = 72 / img.width;
@@ -526,14 +532,13 @@
         }
 
         function getRGB565Hex() {
-            const imgData = ctx.getImageData(0, 0, 72, 72).data;
+            // Chuyển về 64x64 để test độ toàn vẹn
+            const imgData = ctx.getImageData(0, 0, 64, 64).data;
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                // R5 G6 B5 conversion logic (as used in other files)
-                // However, let's stick to the project's custom 16-bit format if needed.
-                // In editclock.html it was: hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
-                // This seems to be 4 bits per channel including alpha.
+                // R, G, B, A (0-255) -> 4-bit (0-15)
                 const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
+                // Byte 0: RRRR AAAA, Byte 1: BBBB GGGG
                 hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
             }
             return hex;
