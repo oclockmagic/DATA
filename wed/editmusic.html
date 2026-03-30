@@ -406,9 +406,7 @@
 
         async function initCombobox(config) {
             const el = document.getElementById(config.id);
-            if (!el) return;
-            const trigger = el.querySelector('.custom-select-trigger');
-            const optionsBox = el.querySelector('.options-container');
+      const optionsBox = el.querySelector('.options-container');
             const selectedImg = el.querySelector('.selected-img');
             const selectedText = el.querySelector('.selected-text');
             const searchInput = el.querySelector('.search-box');
@@ -508,14 +506,11 @@
             const imgData = ctx.getImageData(0, 0, 72, 72).data;
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
-                // Định dạng 2-byte cho mỗi pixel (4-bit mỗi kênh: A R G B)
-                const r = Math.floor(imgData[i] / 16);
-                const g = Math.floor(imgData[i + 1] / 16);
-                const b = Math.floor(imgData[i + 2] / 16);
-                const a = Math.floor(imgData[i + 3] / 16);
-                
-                // Byte 0: A(high) | R(low), Byte 1: G(high) | B(low)
-                hex += byteToHex((a << 4) | r) + byteToHex((g << 4) | b);
+                const r = imgData[i] >> 4;
+                const g = imgData[i + 1] >> 4;
+                const b = imgData[i + 2] >> 4;
+                const a = imgData[i + 3] >> 4;
+                hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
             }
             return hex.toUpperCase();
         }
@@ -535,54 +530,47 @@
         }
 
         function handleSocketMessage(e) {
-            try {
-                const d = e.data;
-                const btn = document.querySelector('.btn-save');
+            const d = e.data;
+            const btn = document.querySelector('.btn-save');
 
-                if (d.startsWith("M_READY")) {
-                    if (d.includes(":")) {
-                        const vals = d.split(":")[1].split(",");
-                        if (vals.length >= 6) {
-                            const configKeys = ['sel-background', 'sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'];
-                            vals.forEach((val, i) => {
-                                const el = document.getElementById(configKeys[i]);
-                                if (el) {
-                                    el.setAttribute('data-index', val);
-                                    const images = DATA[CONFIG[i].path] || [];
-                                    const idx = parseInt(val);
-                                    if (!isNaN(idx) && idx >= 0 && idx < images.length) {
-                                        const name = images[idx];
-                                        const imgEl = el.querySelector('.selected-img');
-                                        const txtEl = el.querySelector('.selected-text');
-                                        if (imgEl) {
-                                            imgEl.src = RAW_BASE + CONFIG[i].path + "/" + name;
-                                            imgEl.style.display = 'block';
-                                        }
-                                        if (txtEl) txtEl.innerText = name.split('.')[0];
-                                    }
+            if (d.startsWith("M_READY")) {
+                if (d.includes(":")) {
+                    const vals = d.split(":")[1].split(",");
+                    if (vals.length >= 6) {
+                        // Phục hồi dữ liệu vào các custom-select bằng cách set data-index và cập nhật UI
+                        const configKeys = ['sel-background', 'sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'];
+                        vals.forEach((val, i) => {
+                            const el = document.getElementById(configKeys[i]);
+                            if (el) {
+                                el.setAttribute('data-index', val);
+                                // Cập nhật hiển thị ảnh và text cho ComboBox
+                                const images = DATA[CONFIG[i].path] || [];
+                                const idx = parseInt(val);
+                                if (idx >= 0 && idx < images.length) {
+                                    const name = images[idx];
+                                    el.querySelector('.selected-img').src = RAW_BASE + CONFIG[i].path + "/" + name;
+                                    el.querySelector('.selected-img').style.display = 'block';
+                                    el.querySelector('.selected-text').innerText = name.split('.')[0];
                                 }
-                            });
-                        }
+                            }
+                        });
+                        console.log("RESTORED METADATA FROM CHIP: ", vals);
                     }
-                    sendMetadata();
                 }
-                else if (d === "M_META_OK") {
-                    if (bg_changed || hasUploadedImg) {
-                        hex72 = getRAW16Hex();
-                        const imgHex = getRAW16Hex();
-                        console.log("[START-UPLOAD] File: " + currentEditFile + " Total Hex Len: " + imgHex.length);
-                        
-                        hexPos = 0;
-                        websocket.send("#MRE1$");
-                    } else websocket.send("#MBUM$");
-                }
-                else if (d === "M_RE_OK" || d === "M_UP_OK") streamNext();
-                else if (d.indexOf("SAVEOK") !== -1) {
-                    window.location.replace("music.html");
-                }
-            } catch (err) {
-                console.error("SOCKET ERROR: ", err);
-                if (e.data.indexOf("SAVEOK") !== -1) window.location.replace("music.html");
+                sendMetadata();
+            }
+            else if (d === "M_META_OK") {
+                if (bg_changed || hasUploadedImg) {
+                    hex72 = getRAW16Hex();
+                    hexPos = 0;
+                    websocket.send("#MRE1$");
+                } else websocket.send("#MBUM$");
+            }
+            else if (d === "M_RE_OK" || d === "M_UP_OK") streamNext();
+            else if (d.includes("SAVEOK")) {
+                btn.innerText = "SUCCESS !";
+                console.log("M-SERIES: [SAVEOK] Metadata and Image Synced to Flash.");
+                // setTimeout(() => window.location.href = "music.html", 1000); // Dừng chuyển trang để SOI LOG
             }
         }
 
