@@ -599,6 +599,7 @@
             const btn = document.querySelector('.btn-save');
             if (hexPos < hex72.length) {
                 let chunk = hex72.substring(hexPos, hexPos + chunkSize);
+                while (chunk.length < chunkSize) chunk += "F";
                 console.log(`>>> WEB SENDING CHUNK [${hexPos}/${hex72.length}]:`, chunk.substring(0, 16) + "...");
                 websocket.send("#MGM1$" + chunk);
                 hexPos += chunkSize;
