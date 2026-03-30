@@ -356,10 +356,10 @@
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-save" style="margin-top: 0; flex: 2;">Apply Settings</button>
+            <button class="btn-save" style="margin-top: 0; flex: 2;">LƯU</button>
             <button class="btn-save"
                 style="margin-top: 0; flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);"
-                onclick="window.location.href='music.html'">Back</button>
+                onclick="window.location.href='music.html?t='+Date.now()">QUAY LẠI</button>
         </div>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
@@ -563,9 +563,9 @@
                 } else if (data === "M_UP_OK") {
                     streamNextChunk();
                 } else if (data === "M_SAVEOK") {
-                    btn.innerText = "SUCCESS!";
+                    btn.innerText = "LƯU";
                     btn.disabled = false;
-                    setTimeout(() => window.location.href = "music.html", 800);
+                    setTimeout(() => window.location.href = "music.html?t=" + Date.now(), 800);
                 }
             };
         }
@@ -584,7 +584,7 @@
 
             // M-Series Format: #MHGM$idx,bg,bass,type,color,effect,peak
             websocket.send(`#MHGM$${idx},${bg},${bass},${type},${color},${effect},${peak}`);
-            btn.innerText = "Metadata sent...";
+            btn.innerText = "Đang gửi...";
         }
 
         function startPhotoStream() {
@@ -611,8 +611,8 @@
             websocket.send("#MBUM$");
         }
 
-        // Apply settings
-        document.querySelector('.btn-save').onclick = async () => {
+        // Lưu cài đặt
+        document.querySelector('.btn-save').onclick = () => {
             const btn = document.querySelector('.btn-save');
             if (btn.disabled) return;
 
