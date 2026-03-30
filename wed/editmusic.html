@@ -235,29 +235,33 @@
             style="margin-top: 12px; padding: 10px 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid var(--glass-border);">
             <span
                 style="font-size: 11px; font-weight: bold; color: var(--accent); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Background
-                settings</span>
-            <div class="custom-select-wrapper" id="wrap-background">
-                <div class="custom-select" id="sel-background">
-                    <span class="custom-select-trigger">
-                        <div style="display: flex; align-items: center;">
-                            <img class="selected-img" src="" style="display: none;">
-                            <span class="selected-text">Loading...</span>
+            <div style="display: flex; align-items: flex-end; gap: 10px; margin-top: 4px;">
+                <div class="custom-select-wrapper" id="wrap-background" style="flex: 1;">
+                    <div class="custom-select" id="sel-background">
+                        <span class="custom-select-trigger" style="min-height: 40px; padding: 6px 12px;">
+                            <div style="display: flex; align-items: center;">
+                                <img class="selected-img" src="" style="display: none;">
+                                <span class="selected-text">Loading...</span>
+                            </div>
+                        </span>
+                        <div class="custom-options">
+                            <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
+                            <div class="options-container"></div>
                         </div>
-                    </span>
-                    <div class="custom-options">
-                        <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
-                        <div class="options-container"></div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Custom Image Upload -->
-            <div
-                style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
-                <canvas id="bg-canvas" width="72" height="72"
-                    style="width: 72px; height: 72px; border-radius: 8px; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 10px 10px; background-position: 0 0, 0 5px, 5px -5px, -5px 0px; background-color: #333; border: 1px solid var(--primary); cursor: pointer; box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);"
-                    onclick="document.getElementById('file-bg').click()"></canvas>
-                <input type="file" id="file-bg" accept="image/*" style="display: none;">
+                <!-- Custom Image Upload -->
+                <div style="display: flex; flex-direction: column; align-items: center; position: relative;">
+                    <canvas id="bg-canvas" width="72" height="72"
+                        style="width: 40px; height: 40px; border-radius: 8px; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 8px 8px; background-position: 0 0, 0 4px, 4px -4px, -4px 0px; background-color: #333; border: 1px solid var(--primary); cursor: pointer; box-shadow: 0 0 10px rgba(79, 172, 254, 0.2);"
+                        onclick="document.getElementById('file-bg').click()"></canvas>
+                    <svg id="bg-hint" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 11px; left: 11px; pointer-events: none; filter: drop-shadow(0 0 5px var(--primary));">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                        <line x1="16" y1="5" x2="16" y2="11"/><line x1="13" y1="8" x2="19" y2="8"/>
+                    </svg>
+                    <input type="file" id="file-bg" accept="image/*" style="display: none;">
+                </div>
             </div>
         </div>
 
@@ -267,28 +271,33 @@
             <span
                 style="font-size: 11px; font-weight: bold; color: var(--accent); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; text-align: center;">Bass
                 Overlay</span>
-            <div class="custom-select-wrapper" id="wrap-bass">
-                <div class="custom-select" id="sel-bass">
-                    <span class="custom-select-trigger">
-                        <div style="display: flex; align-items: center;">
-                            <img class="selected-img" src="" style="display: none;">
-                            <span class="selected-text">Loading...</span>
+            <div style="display: flex; align-items: flex-end; gap: 10px;">
+                <div class="custom-select-wrapper" id="wrap-bass" style="flex: 1;">
+                    <div class="custom-select" id="sel-bass">
+                        <span class="custom-select-trigger" style="min-height: 40px; padding: 6px 12px;">
+                            <div style="display: flex; align-items: center;">
+                                <img class="selected-img" src="" style="display: none;">
+                                <span class="selected-text">Loading...</span>
+                            </div>
+                        </span>
+                        <div class="custom-options">
+                            <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
+                            <div class="options-container"></div>
                         </div>
-                    </span>
-                    <div class="custom-options">
-                        <input type="text" class="search-box" placeholder="Search..." onclick="event.stopPropagation()">
-                        <div class="options-container"></div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Custom Bass Image Upload -->
-            <div
-                style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
-                <canvas id="bass-canvas" width="44" height="44"
-                    style="width: 44px; height: 44px; border-radius: 8px; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 8px 8px; background-position: 0 0, 0 4px, 4px -4px, -4px 0px; background-color: #333; border: 1px solid var(--accent); cursor: pointer; box-shadow: 0 0 10px rgba(186, 104, 200, 0.2);"
-                    onclick="document.getElementById('file-bass').click()"></canvas>
-                <input type="file" id="file-bass" accept="image/*" style="display: none;">
+                
+                <!-- Custom Bass Image Upload -->
+                <div style="display: flex; flex-direction: column; align-items: center; position: relative;">
+                    <canvas id="bass-canvas" width="44" height="44"
+                        style="width: 40px; height: 40px; border-radius: 8px; background-image: linear-gradient(45deg, #222 25%, transparent 25%), linear-gradient(-45deg, #222 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #222 75%), linear-gradient(-45deg, transparent 75%, #222 75%); background-size: 8px 8px; background-position: 0 0, 0 4px, 4px -4px, -4px 0px; background-color: #333; border: 1px solid var(--accent); cursor: pointer; box-shadow: 0 0 10px rgba(186, 104, 200, 0.2);"
+                        onclick="document.getElementById('file-bass').click()"></canvas>
+                    <svg id="bass-hint" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position: absolute; top: 11px; left: 11px; pointer-events: none; filter: drop-shadow(0 0 5px var(--accent));">
+                        <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                        <line x1="14" y1="8" x2="14" y2="14"/><line x1="11" y1="11" x2="17" y2="11"/>
+                    </svg>
+                    <input type="file" id="file-bass" accept="image/*" style="display: none;">
+                </div>
             </div>
         </div>
 
@@ -512,6 +521,7 @@
                         }
                         bgCtx.drawImage(img, dx, dy, dw, dh);
                         hasUploadedBG = true;
+                        document.getElementById('bg-hint').style.display = 'none';
                     }
                 }
                 reader.readAsDataURL(e.target.files[0]);
@@ -547,6 +557,7 @@
                         }
                         bassCtx.drawImage(img, dx, dy, dw, dh);
                         hasUploadedBass = true;
+                        document.getElementById('bass-hint').style.display = 'none';
                     }
                 }
                 reader.readAsDataURL(e.target.files[0]);
