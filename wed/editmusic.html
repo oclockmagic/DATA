@@ -281,6 +281,15 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Custom Bass Image Upload -->
+            <div
+                style="margin-top: 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <canvas id="bass-canvas" width="44" height="44"
+                    style="width: 44px; height: 44px; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--accent); cursor: pointer; box-shadow: 0 0 10px rgba(186, 104, 200, 0.2);"
+                    onclick="document.getElementById('file-bass').click()"></canvas>
+                <input type="file" id="file-bass" accept="image/*" style="display: none;">
+            </div>
         </div>
 
         <!-- Equalizer Group -->
@@ -367,9 +376,6 @@
     <script>
         const RAW_BASE = "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/fft/";
 
-        // ------------------------------------------------------------------
-        // Dữ liệu sẽ được tiêm từ Form1.cs
-        // ------------------------------------------------------------------
         const DATA = {
             "background": ["00_none.bmp","01_zoom.bmp","02_move0.bmp","03_move1.bmp","04_none.bmp","05_zoom.bmp","06_move0.bmp","07_move1.bmp"],
             "bass": ["01.bmp","02.bmp","10.bmp","13.bmp","14.bmp","15.bmp","20.bmp","21.bmp","22.bmp","23.bmp","24.bmp","25.bmp","26.bmp","27.bmp","28.bmp","29.bmp","3.bmp","30.bmp","31.bmp","32.bmp","33.bmp","34.bmp","35.bmp","36.bmp","37.bmp","38.bmp","39.bmp","4.bmp","40.bmp","41.bmp","42.bmp","43.bmp","44.bmp","45.bmp","46.bmp","47.bmp","48.bmp","49.bmp","5.bmp","50.bmp","51.bmp","52.bmp","53.bmp","55.bmp","56.bmp","57.bmp","58.bmp","59.bmp","6.bmp","60.bmp","61.bmp","63.bmp","64.bmp","66.bmp","68.bmp","69.bmp","7.bmp","70.bmp","71.bmp","72.bmp","73.bmp","74.bmp","75.bmp","76.bmp","77.bmp","8.bmp","9.bmp","kk.bmp","ll.bmp"],
@@ -401,7 +407,8 @@
         const state = {};
 
         let websocket = null;
-        let hasUploadedImg = false;
+        let hasUploadedBG = false;
+        let hasUploadedBass = false;
 
         async function initCombobox(config) {
             const el = document.getElementById(config.id);
@@ -412,14 +419,10 @@
             const selectedText = el.querySelector('.selected-text');
             const searchInput = el.querySelector('.search-box');
 
-            // Set initial state
             selectedText.innerText = "Loading " + config.label + "...";
-
-            // Dữ liệu đã có sẵn trong đối tượng DATA
             const images = DATA[config.path] || [];
             state[config.id] = images;
 
-            // Toggle Open
             trigger.onclick = (e) => {
                 document.querySelectorAll('.custom-select').forEach(s => { if (s !== el) s.classList.remove('open'); });
                 el.classList.toggle('open');
@@ -427,7 +430,6 @@
                 e.stopPropagation();
             };
 
-            // Kiểm tra tham số URL để chọn mục ban đầu
             let selectedIndex = 0;
             const paramKey = PARAM_MAP[config.id];
             if (paramKey && params.has(paramKey)) {
@@ -459,7 +461,6 @@
 
             render(images);
 
-            // Tự động chọn mục (mặc định hoặc từ URL)
             if (images.length > 0) {
                 if (selectedIndex < 0 || selectedIndex >= images.length) selectedIndex = 0;
                 const activeName = images[selectedIndex];
@@ -472,7 +473,6 @@
                 selectedImg.style.display = 'none';
             }
 
-            // Search box handling
             if (searchInput) {
                 searchInput.onclick = (e) => e.stopPropagation();
                 searchInput.oninput = (e) => {
@@ -483,21 +483,20 @@
             }
         }
 
-        // Image Handling
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        const fileInput = document.getElementById('file-bg');
+        // --- BG Image Handling ---
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d', { willReadFrequently: true });
+        const fileBG = document.getElementById('file-bg');
 
-        fileInput.onchange = (e) => {
+        fileBG.onchange = (e) => {
             if (e.target.files.length) {
                 const reader = new FileReader();
                 reader.onload = (ev) => {
                     const img = new Image();
                     img.src = ev.target.result;
                     img.onload = () => {
-                        ctx.fillStyle = "#000";
-                        ctx.fillRect(0, 0, 72, 72);
-                        // Center and scale image to 72x72
+                        bgCtx.fillStyle = "#000";
+                        bgCtx.fillRect(0, 0, 72, 72);
                         let s, dx, dy, dw, dh;
                         if (img.width > img.height) {
                             s = 72 / img.height;
@@ -512,8 +511,44 @@
                             dx = 0;
                             dy = (72 - dh) / 2;
                         }
-                        ctx.drawImage(img, dx, dy, dw, dh);
-                        hasUploadedImg = true;
+                        bgCtx.drawImage(img, dx, dy, dw, dh);
+                        hasUploadedBG = true;
+                    }
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        };
+
+        // --- Bass Image Handling ---
+        const bassCanvas = document.getElementById('bass-canvas');
+        const bassCtx = bassCanvas.getContext('2d', { willReadFrequently: true });
+        const fileBass = document.getElementById('file-bass');
+
+        fileBass.onchange = (e) => {
+            if (e.target.files.length) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.src = ev.target.result;
+                    img.onload = () => {
+                        bassCtx.fillStyle = "#000";
+                        bassCtx.fillRect(0, 0, 44, 44);
+                        let s, dx, dy, dw, dh;
+                        if (img.width > img.height) {
+                            s = 44 / img.height;
+                            dw = img.width * s;
+                            dh = 44;
+                            dx = (44 - dw) / 2;
+                            dy = 0;
+                        } else {
+                            s = 44 / img.width;
+                            dw = 44;
+                            dh = img.height * s;
+                            dx = 0;
+                            dy = (44 - dh) / 2;
+                        }
+                        bassCtx.drawImage(img, dx, dy, dw, dh);
+                        hasUploadedBass = true;
                     }
                 }
                 reader.readAsDataURL(e.target.files[0]);
@@ -525,24 +560,20 @@
             return s.length === 1 ? '0' + s : s;
         }
 
-        function getRGB565Hex() {
-            const imgData = ctx.getImageData(0, 0, 72, 72).data;
+        function getRGB565Hex(canv, w, h) {
+            const imgData = canv.getContext('2d').getImageData(0, 0, w, h).data;
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
                 const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
                 hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
-            }
-            // Byte lẻ fix: Padding to 12288 bytes (24576 hex chars)
-            const targetSize = 12288 * 2;
-            while (hex.length < targetSize) {
-                hex += "00";
             }
             return hex;
         }
 
         let globalPhotoHex = "";
         let hexPos = 0;
-        const CHUNK_SIZE = 512; // Send 512 binary bytes (1024 hex chars) at a time
+        let currentStep = ""; // "BG", "BASS"
+        const CHUNK_SIZE = 512;
 
         function initWebSocket() {
             const statusEl = document.getElementById('ws-status');
@@ -559,10 +590,22 @@
                 if (data === "M_READY") {
                     sendMetadata();
                 } else if (data === "M_META_OK") {
-                    if (globalPhotoHex) startPhotoStream();
-                    else finalizeSave();
+                    // Bước 1: Upload Background (72x72)
+                    if (hasUploadedBG) {
+                        currentStep = "BG";
+                        globalPhotoHex = getRGB565Hex(bgCanvas, 72, 72);
+                        hexPos = 0;
+                        websocket.send("#MRE1$"); // Reset pos
+                    } else {
+                        // Nhảy sang bước 2 if no BG
+                        handleStepBG_Done();
+                    }
+                } else if (data === "M_RE_OK") {
+                    streamNextChunk();
                 } else if (data === "M_UP_OK") {
                     streamNextChunk();
+                } else if (data === "M_BG_OK") {
+                    handleStepBG_Done();
                 } else if (data === "M_SAVEOK") {
                     btn.innerText = "SUCCESS!";
                     btn.disabled = false;
@@ -571,39 +614,45 @@
             };
         }
 
-        function sendMetadata() {
-            const btn = document.querySelector('.btn-save');
-            const idx = params.get('idx') || '0';
-            const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
-
-            const bg = getIdx('sel-background');
-            const bass = getIdx('sel-bass');
-            const type = getIdx('sel-eq-type');
-            const color = getIdx('sel-eq-color');
-            const effect = getIdx('sel-eq-effect');
-            const peak = getIdx('sel-eq-peak');
-
-            // M-Series Format: #MHGM$idx,bg,bass,type,color,effect,peak
-            websocket.send(`#MHGM$${idx},${bg},${bass},${type},${color},${effect},${peak}`);
-            btn.innerText = "Metadata sent...";
-        }
-
-        function startPhotoStream() {
-            hexPos = 0;
-            streamNextChunk();
+        function handleStepBG_Done() {
+            if (hasUploadedBass) {
+                currentStep = "BASS";
+                globalPhotoHex = getRGB565Hex(bassCanvas, 44, 44);
+                hexPos = 0;
+                websocket.send("#MRE1$"); // Reset pos
+            } else {
+                finalizeSave();
+            }
         }
 
         function streamNextChunk() {
             const btn = document.querySelector('.btn-save');
             if (hexPos < globalPhotoHex.length) {
                 const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK_SIZE * 2);
-                websocket.send("#MGM1$" + chunk);
+                const tag = (currentStep === "BASS") ? "#MGM2$" : "#MGM1$";
+                websocket.send(tag + chunk);
                 hexPos += CHUNK_SIZE * 2;
                 const prg = Math.round((hexPos / globalPhotoHex.length) * 100);
-                btn.innerText = `Photo: ${prg > 100 ? 100 : prg}%`;
+                btn.innerText = `${currentStep}: ${prg > 100 ? 100 : prg}%`;
             } else {
-                finalizeSave();
+                if (currentStep === "BG") {
+                    websocket.send("#MFB1$"); // Finalize BG
+                } else {
+                    finalizeSave();
+                }
             }
+        }
+
+        function sendMetadata() {
+            const idx = params.get('idx') || '0';
+            const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
+            const bg = getIdx('sel-background');
+            const bass = getIdx('sel-bass');
+            const type = getIdx('sel-eq-type');
+            const color = getIdx('sel-eq-color');
+            const effect = getIdx('sel-eq-effect');
+            const peak = getIdx('sel-eq-peak');
+            websocket.send(`#MHGM$${idx},${bg},${bass},${type},${color},${effect},${peak}`);
         }
 
         function finalizeSave() {
@@ -612,24 +661,14 @@
             websocket.send("#MBUM$");
         }
 
-        // Apply settings
         document.querySelector('.btn-save').onclick = async () => {
             const btn = document.querySelector('.btn-save');
             if (btn.disabled) return;
-
             btn.disabled = true;
             btn.innerText = "Connecting...";
-
             const idx = params.get('idx') || '0';
-
-            if (hasUploadedImg) {
-                globalPhotoHex = getRGB565Hex();
-            } else {
-                globalPhotoHex = "";
-            }
-
             if (websocket && websocket.readyState === WebSocket.OPEN) {
-                websocket.send("#MSTB$" + idx); // Start M-Series Handshake
+                websocket.send("#MSTB$" + idx);
             } else {
                 alert("WebSocket not connected!");
                 btn.disabled = false;
@@ -643,10 +682,8 @@
             }
         };
 
-        // Initialize all components
         initWebSocket();
         CONFIG.forEach(c => initCombobox(c));
-
     </script>
 </body>
 
