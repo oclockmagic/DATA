@@ -566,8 +566,8 @@
                 console.log(">>> CHIP BÁO SESSION START -> CHUẨN BỊ GỬI META");
                 sendMetadata();
             }
-            else if (d === "M_META_OK") {
-                console.log(">>> CHIP BÁO META OK -> CHUẨN BỊ NẠP ẢNH");
+            else if (d === "M_META_OK" || d === "M_READY") {
+                console.log(">>> CHIP BÁO SẴN SÀNG (META OK) -> CHUẨN BỊ NẠP ẢNH");
                 if (bg_changed || hasUploadedImg) {
                     hex72 = getRAW16Hex();
                     hexPos = 0;
