@@ -371,12 +371,12 @@
         // Dữ liệu sẽ được tiêm từ Form1.cs
         // ------------------------------------------------------------------
         const DATA = {
-            "background": @@BACKGROUND_DATA @@,
-            "bass": @@BASS_DATA @@,
-            "equalizer/type": @@EQ_TYPE_DATA @@,
-            "equalizer/color": @@EQ_COLOR_DATA @@,
-            "equalizer/effect": @@EFFECT_DATA @@,
-            "equalizer/peak": @@EQ_PEAK_DATA @@
+            "background": ["00_none.bmp","01_zoom.bmp","02_move0.bmp","03_move1.bmp","04_none.bmp","05_zoom.bmp","06_move0.bmp","07_move1.bmp"],
+            "bass": ["01.bmp","02.bmp","10.bmp","13.bmp","14.bmp","15.bmp","20.bmp","21.bmp","22.bmp","23.bmp","24.bmp","25.bmp","26.bmp","27.bmp","28.bmp","29.bmp","3.bmp","30.bmp","31.bmp","32.bmp","33.bmp","34.bmp","35.bmp","36.bmp","37.bmp","38.bmp","39.bmp","4.bmp","40.bmp","41.bmp","42.bmp","43.bmp","44.bmp","45.bmp","46.bmp","47.bmp","48.bmp","49.bmp","5.bmp","50.bmp","51.bmp","52.bmp","53.bmp","55.bmp","56.bmp","57.bmp","58.bmp","59.bmp","6.bmp","60.bmp","61.bmp","63.bmp","64.bmp","66.bmp","68.bmp","69.bmp","7.bmp","70.bmp","71.bmp","72.bmp","73.bmp","74.bmp","75.bmp","76.bmp","77.bmp","8.bmp","9.bmp","kk.bmp","ll.bmp"],
+            "equalizer/type": ["000.png","001.png","01-cot.png","02-cot_peak_down.png","03-cot_peak_up.png","04-nhay.png","05-nhay_dac.png","06-nhay_tim.png","07-nhay_vuong.png","08-nhay_tron.png","09-chay.png","10-chay_peak_down.png","11-chay_peak_up.png","12-giua.png","13-giua_peak_down.png","14-giua_peak_up.png","15-xuong.png","16-xuong_peak_down.png","17-xuong_peak_up.png","18-vacham_cong.png","19-vacham_vuong.png","20-vacham_tron.png","21-vacham_tim.png","22-vacham_dac.png","23-vacham_ran1.png","23-vacham_random.png","24-cotdoi.png","25-cotdoi_peak_1.png","25-cotdoi_peak_2.png","25-cotdoi_peak_3.png"],
+            "equalizer/color": ["000.bmp","011.bmp","012.bmp","013.bmp","014.bmp","016.bmp","017.bmp","018.bmp","019.bmp","020.bmp","021.bmp","022.bmp","023.bmp","024.bmp","025.bmp","026.bmp","027.bmp","028.bmp"],
+            "equalizer/effect": ["c1.png","c2.png","c3.png"],
+            "equalizer/peak": ["00.png","01.png","02.png","03.png","04.png"]
         };
 
         const CONFIG = [
@@ -399,6 +399,9 @@
         };
 
         const state = {};
+
+        let websocket = null;
+        let hasUploadedImg = false;
 
         async function initCombobox(config) {
             const el = document.getElementById(config.id);
@@ -480,9 +483,65 @@
             }
         }
 
+        // Image Handling
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const fileInput = document.getElementById('file-bg');
+
+        fileInput.onchange = (e) => {
+            if (e.target.files.length) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.src = ev.target.result;
+                    img.onload = () => {
+                        ctx.fillStyle = "#000";
+                        ctx.fillRect(0, 0, 72, 72);
+                        // Center and scale image to 72x72
+                        let s, dx, dy, dw, dh;
+                        if (img.width > img.height) {
+                            s = 72 / img.height;
+                            dw = img.width * s;
+                            dh = 72;
+                            dx = (72 - dw) / 2;
+                            dy = 0;
+                        } else {
+                            s = 72 / img.width;
+                            dw = 72;
+                            dh = img.height * s;
+                            dx = 0;
+                            dy = (72 - dh) / 2;
+                        }
+                        ctx.drawImage(img, dx, dy, dw, dh);
+                        hasUploadedImg = true;
+                    }
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        };
+
+        function byteToHex(b) {
+            const s = (b & 0xFF).toString(16);
+            return s.length === 1 ? '0' + s : s;
+        }
+
+        function getRGB565Hex() {
+            const imgData = ctx.getImageData(0, 0, 72, 72).data;
+            let hex = "";
+            for (let i = 0; i < imgData.length; i += 4) {
+                // R5 G6 B5 conversion logic (as used in other files)
+                // However, let's stick to the project's custom 16-bit format if needed.
+                // In editclock.html it was: hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                // This seems to be 4 bits per channel including alpha.
+                const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
+                hex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+            }
+            return hex;
+        }
+
         let globalPhotoHex = "";
         let hexPos = 0;
-        const CHUNK_SIZE = 2048; // Gói 2048 bytes (hex là 4096 ký tự)
+        const CHUNK_SIZE = 1024; // Align with typical ESP32 packet size
 
         function initWebSocket() {
             const statusEl = document.getElementById('ws-status');
@@ -505,6 +564,7 @@
                     streamNextChunk();
                 } else if (data === "M_SAVEOK") {
                     btn.innerText = "SUCCESS!";
+                    btn.disabled = false;
                     setTimeout(() => window.location.href = "music.html", 800);
                 }
             };
@@ -522,8 +582,8 @@
             const effect = getIdx('sel-eq-effect');
             const peak = getIdx('sel-eq-peak');
 
-            // M-Series Format: #MHGM$bg:bass:type:color:effect:peak
-            websocket.send(`#MHGM$${bg}:${bass}:${type}:${color}:${effect}:${peak}`);
+            // M-Series Format: #MHGM$idx,bg,bass,type,color,effect,peak
+            websocket.send(`#MHGM$${idx},${bg},${bass},${type},${color},${effect},${peak}`);
             btn.innerText = "Metadata sent...";
         }
 
@@ -581,6 +641,10 @@
                 document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
             }
         };
+
+        // Initialize all components
+        initWebSocket();
+        CONFIG.forEach(c => initCombobox(c));
 
     </script>
 </body>
