@@ -541,7 +541,7 @@
 
         let globalPhotoHex = "";
         let hexPos = 0;
-        const CHUNK_SIZE = 1024; // Align with typical ESP32 packet size
+        const CHUNK_SIZE = 512; // Send 512 binary bytes (1024 hex chars) at a time
 
         function initWebSocket() {
             const statusEl = document.getElementById('ws-status');
