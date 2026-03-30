@@ -576,9 +576,17 @@
                     websocket.send("#MBUM$");
                 }
             }
-            else if (d === "M_RE_OK" || d === "M_UP_OK") {
-                console.log(">>> CHIP BÁO SẴN SÀNG/NHẬN XONG MẢNH -> GỬI TIẾP");
-                streamNext();
+            else if (d === "M_RE_OK") {
+                console.log(">>> CHIP BÁO M_RE_OK -> GỬI TOÀN BỘ ẢNH (SINGLE PUSH)");
+                const btn = document.querySelector('.btn-save');
+                btn.innerText = "UPLOADING...";
+                websocket.send("#MIMG$" + hex72);
+            }
+            else if (d === "SAVEOK") {
+                console.log(">>> CHIP BÁO LƯU THÀNH CÔNG!");
+                const btn = document.querySelector('.btn-save');
+                btn.innerText = "SAVE OK!";
+                setTimeout(() => { location.href = "listmusic.html"; }, 1500);
             }
             else if (d.indexOf("SAVEOK") !== -1 || d.indexOf("COMPLETED") !== -1 || d.indexOf("Website Update") !== -1 || d.indexOf("Persistent OK") !== -1) {
                 console.log(">>> QUY TRÌNH HOÀN TẤT -> NHẢY TRANG");
