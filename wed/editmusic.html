@@ -407,16 +407,18 @@
         async function initCombobox(config) {
             const el = document.getElementById(config.id);
             if (!el) return;
-            const trigger = el.querySelector('.custom-select-trigger');
+            const triggerEl = el.querySelector('.custom-select-trigger');
             const optionsBox = el.querySelector('.options-container');
             const selectedImg = el.querySelector('.selected-img');
             const selectedText = el.querySelector('.selected-text');
             const searchInput = el.querySelector('.search-box');
 
+            if (!triggerEl || !optionsBox) return;
+
             const images = DATA[config.path] || [];
             state[config.id] = images;
 
-            trigger.onclick = (e) => {
+            triggerEl.onclick = (e) => {
                 document.querySelectorAll('.custom-select').forEach(s => { if (s !== el) s.classList.remove('open'); });
                 el.classList.toggle('open');
                 if (el.classList.contains('open')) searchInput.focus();
