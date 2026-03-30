@@ -560,7 +560,10 @@
                         }
                     });
                 } catch (err) { console.error("JSON DATA ERROR", err); }
-            } 
+            else if (d.includes("Session Start")) {
+                // CHIP ĐÃ SẴN SÀNG PHIÊN MỚI -> GỬI METADATA
+                sendMetadata();
+            }
             else if (d === "M_META_OK") {
                 if (bg_changed || hasUploadedImg) {
                     hex72 = getRAW16Hex();
