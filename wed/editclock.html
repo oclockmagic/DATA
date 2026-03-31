@@ -891,51 +891,46 @@
             }
 
             if (finalSave) {
-                if (isAlarm) {
-                    const typ = parseInt(document.getElementById("typ").value);
-                    const am = parseInt(document.getElementById("am").value);
-                    const gi = parseInt(document.getElementById("gio").value) || 0;
-                    const ph = parseInt(document.getElementById("phut").value) || 0;
-                    const ng = parseInt(document.getElementById("ngay").value) || 1;
-                    const th = parseInt(document.getElementById("thang").value) || 1;
-                    const tnu = parseInt(document.getElementById("thu").value);
-                    const mel = parseInt(document.getElementById("mel").value);
-                    const chk = (params.get('chk') === '1' ? 1 : 0);
-
-                    let pkAlm = byteToHex(typ) + byteToHex(gi) + byteToHex(ph) + byteToHex(ng) + byteToHex(th) + byteToHex(tnu) + byteToHex(am) + byteToHex(mel) + byteToHex(chk);
-                    websocket.send("#HGA$" + pkAlm);
-                }
-
-                if (isText) {
-                    const tv = document.getElementById('text').value;
-                    let pkTxt = byteToHex(1); // Chu_check is always 1 if we're saving here
-                    pkTxt += byteToHex(tv.length);
-                    for (let i = 0; i < tv.length; i++) {
-                        let c = tv.charCodeAt(i); let hex = byteToHex(c < 256 ? c : 32);
-                        for (let k in revMap) if (revMap[k] === tv[i]) { hex = byteToHex(k); break; }
-                        pkTxt += hex;
-                    }
-                    websocket.send("#HGN$" + pkTxt);
-                }
-
-            } // end if finalSave
-
-            if (isTutao) {
+                const params = new URLSearchParams(window.location.search);
+                const idx = params.get('idx') || 0;
+                const tutao = (params.get('tutao') === '1' ? 1 : 0);
                 const px = parseInt(posX.value) || 0;
                 const py = parseInt(posY.value) || 0;
                 const pw = parseInt(posW.value) || 64;
                 const phh = parseInt(posH.value) || 64;
-                websocket.send(`#HGT$1:${px}:${py}:${pw}:${phh}`);
+                const typ = parseInt(document.getElementById("typ").value) || 0;
+                const gi = parseInt(document.getElementById("gio").value) || 0;
+                const ph = parseInt(document.getElementById("phut").value) || 0;
+                const ng = parseInt(document.getElementById("ngay").value) || 1;
+                const th = parseInt(document.getElementById("thang").value) || 1;
+                const tnu = parseInt(document.getElementById("thu").value) || 0;
+                const am = parseInt(document.getElementById("am").value) || 0;
+                const mel = parseInt(document.getElementById("mel").value) || 0;
+                const chk = (params.get('chk') === '1' ? 1 : 0);
+                const nchk = (params.get('chu') === '1' ? 1 : 0);
+                
+                const tv = document.getElementById('text').value;
+                let nhex = "";
+                for (let i = 0; i < tv.length; i++) {
+                    let c = tv.charCodeAt(i); let h = byteToHex(c < 256 ? c : 32);
+                    for (let k in revMap) if (revMap[k] === tv[i]) { h = byteToHex(k); break; }
+                    nhex += h;
+                }
+
+                // Tiêu chuẩn hóa: #CHGM$idx,tutao,x,y,w,h,typ,gio,phut,ngay,thang,thu,am,mel,nchk,chk,nlen,nhex
+                const metaMsg = `#CHGM$${idx},${tutao},${px},${py},${pw},${phh},${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel},${nchk},${chk},${tv.length},${nhex}`;
+                websocket.send(metaMsg);
             }
 
+            // #HGT logic removed; handled in #CHGM now.
+
             if (hexData) {
-                startUpload(hexData, "", finalSave);
+                startUpload(hexData, finalSave);
             } else if (finalSave) {
                 isSaving = true;
                 uploadModal.style.display = 'flex';
-                document.getElementById('modal-title').innerText = "Saving Metadata...";
-                // If no image but saving metadata, send #BUP$ to finalize
-                websocket.send("#BUP$");
+                document.getElementById('modal-title').innerText = "Finishing...";
+                websocket.send("#CSAV$");
             }
 
             if (finalSave || imageChanged) {
@@ -948,18 +943,18 @@
         // let layerToSave = 0; // redundant with currentLayer
         let isSaving = false;
 
-        function startUpload(mainData, thumbData, finalSave) {
+        function startUpload(mainData, finalSave) {
             uploadModal.style.display = 'flex';
             document.getElementById('modal-title').innerText = finalSave ? "Saving..." : "Previewing...";
             isSaving = finalSave;
-            // layerToSave = currentLayer;
 
             uploadQueue = [];
-            for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#GI1$" + mainData.substring(i, i + 1024));
-            for (let i = 0; i < thumbData.length; i += 1024) uploadQueue.push("#GI2$" + thumbData.substring(i, i + 1024));
+            for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CIMG$" + mainData.substring(i, i + 1024));
 
             totalPackets = uploadQueue.length;
-            websocket.send("#BDA$");
+            const params = new URLSearchParams(window.location.search);
+            const idx = params.get('idx') || 0;
+            websocket.send("#CSTB$" + idx); // Start clock session
         }
 
         function initWebSocket() {
@@ -978,18 +973,19 @@
                 document.getElementById('ws-status').innerText = "Disconnected";
             };
             websocket.onmessage = (e) => {
-                if (e.data === "UP") {
+                const data = e.data;
+                if (data === "C_READY" || data === "C_UP_OK") {
                     if (uploadQueue.length > 0) {
                         websocket.send(uploadQueue.shift());
                         const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
                         progressBar.style.width = prog + '%';
                         progressPercent.innerText = prog + '%';
                     } else {
-                        websocket.send("#BUP$");
+                        websocket.send(isSaving ? "#CSAV$" : "#CFIN$");
                     }
-                } else if (e.data === "SAVEOK" || e.data === "ARMOK") {
+                } else if (data === "C_SAVEOK" || data === "SAVEOK") {
                     uploadModal.style.display = 'none';
-                    if (isSaving || isCanceling) {
+                    if (isSaving) {
                         window.location.href = '/clock.html?v=' + Date.now();
                     }
                 }
