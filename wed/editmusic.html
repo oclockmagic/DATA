@@ -287,6 +287,12 @@
             transition: width 0.3s;
             box-shadow: 0 0 10px rgba(79, 172, 254, 0.6);
         }
+
+        .disabled-upload {
+            opacity: 0.3;
+            pointer-events: none;
+            filter: grayscale(0.8);
+        }
     </style>
 </head>
 
@@ -537,6 +543,7 @@
                         selectedText.innerText = displayName;
                         el.classList.remove('open');
                         el.setAttribute('data-index', idx);
+                        if (config.id === 'sel-bass') updateBassUploadState(idx);
                     };
                     optionsBox.appendChild(opt);
                 });
@@ -563,6 +570,20 @@
                     const filtered = images.filter(name => name.toLowerCase().includes(term));
                     render(filtered);
                 };
+            }
+            if (config.id === 'sel-bass') updateBassUploadState(selectedIndex);
+        }
+
+        function updateBassUploadState(idx) {
+            const canvas = document.getElementById('bass-canvas');
+            const hint = document.getElementById('bass-hint');
+            if (canvas && hint) {
+                // Chỉ kích hoạt khi chọn giá trị 1 (thường là image.png / Custom Image)
+                if (parseInt(idx) === 1) {
+                    canvas.parentElement.classList.remove('disabled-upload');
+                } else {
+                    canvas.parentElement.classList.add('disabled-upload');
+                }
             }
         }
 
