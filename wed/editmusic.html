@@ -483,6 +483,11 @@
             { id: 'sel-eq-peak', path: 'equalizer/peak', label: 'Peak' }
         ];
 
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas ? bgCanvas.getContext('2d', { willReadFrequently: true }) : null;
+        const bassCanvas = document.getElementById('bass-canvas');
+        const bassCtx = bassCanvas ? bassCanvas.getContext('2d', { willReadFrequently: true }) : null;
+
         const params = new URLSearchParams(window.location.search);
         const PARAM_MAP = {
             'sel-background': 'background',
@@ -577,6 +582,7 @@
         function updateBassUploadState(idx) {
             const canvas = document.getElementById('bass-canvas');
             const hint = document.getElementById('bass-hint');
+            console.log("Updating Bass Upload State Index:", idx);
             if (canvas && hint) {
                 if (parseInt(idx) === 1) {
                     canvas.parentElement.classList.remove('disabled-upload');
@@ -586,11 +592,13 @@
                         const images = state['sel-bass'] || [];
                         if (images[idx]) {
                             const imgUrl = RAW_BASE + "bass/" + images[idx];
+                            console.log("Auto-drawing Bass Image:", imgUrl);
                             const img = new Image();
                             img.crossOrigin = "anonymous";
                             img.src = imgUrl;
                             img.onload = () => {
-                                if (typeof bassCtx !== 'undefined') {
+                                if (bassCtx) {
+                                    console.log("Drawing Bass to Canvas...");
                                     bassCtx.clearRect(0, 0, 44, 44);
                                     let s, dx, dy, dw, dh;
                                     if (img.width > img.height) {
@@ -602,8 +610,10 @@
                                     }
                                     bassCtx.drawImage(img, dx, dy, dw, dh);
                                     hint.style.display = 'none';
+                                    hasUploadedBass = true;
                                 }
                             };
+                            img.onerror = (e) => console.error("Error loading image for auto-draw:", imgUrl, e);
                         }
                     }
                 }
@@ -611,8 +621,6 @@
         }
 
         // --- BG Image Handling ---
-        const bgCanvas = document.getElementById('bg-canvas');
-        const bgCtx = bgCanvas.getContext('2d', { willReadFrequently: true });
         const fileBG = document.getElementById('file-bg');
 
         fileBG.onchange = (e) => {
@@ -647,8 +655,6 @@
         };
 
         // --- Bass Image Handling ---
-        const bassCanvas = document.getElementById('bass-canvas');
-        const bassCtx = bassCanvas.getContext('2d', { willReadFrequently: true });
         const fileBass = document.getElementById('file-bass');
 
         fileBass.onchange = (e) => {
