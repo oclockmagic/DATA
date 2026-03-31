@@ -956,7 +956,8 @@
 
         function initWebSocket() {
             if (websocket && (websocket.readyState === WebSocket.CONNECTING || websocket.readyState === WebSocket.OPEN)) return;
-            websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
+            var host = (window.location.hostname === 'raw.githubusercontent.com' || window.location.hostname === 'oclockmagic.github.io') ? '192.168.4.1' : window.location.hostname;
+            websocket = new WebSocket(`ws://${host}/ws`);
             websocket.onopen = () => {
                 connectt = 1;
                 document.getElementById('ws-status').innerText = "Connected";
@@ -966,7 +967,7 @@
             };
             websocket.onclose = () => {
                 setTimeout(initWebSocket, 2000);
-                connectt
+                connectt = 0;
                 document.getElementById('ws-status').innerText = "Disconnected";
             };
             websocket.onmessage = (e) => {

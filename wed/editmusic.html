@@ -780,7 +780,8 @@
 
         function initWebSocket() {
             const statusEl = document.getElementById('ws-status');
-            websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
+            const host = (window.location.hostname === 'raw.githubusercontent.com' || window.location.hostname === 'oclockmagic.github.io') ? '192.168.4.1' : window.location.hostname;
+            websocket = new WebSocket(`ws://${host}/ws`);
             websocket.onopen = () => statusEl.innerText = "Connected";
             websocket.onclose = () => {
                 statusEl.innerText = "Disconnected";
