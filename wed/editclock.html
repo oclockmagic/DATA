@@ -42,7 +42,8 @@
             border: 1px solid var(--glass-border);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
             box-sizing: border-box;
-            position: relative; z-index: 1;
+            position: relative;
+            z-index: 1;
         }
 
         h2 {
@@ -235,7 +236,14 @@
             box-shadow: 0 0 10px rgba(79, 172, 254, 0.6);
         }
 
-        .status-tag { display: block; font-size: 10px; color: rgba(255, 255, 255, 0.3); margin-top: 20px; text-align: center; font-family: monospace; }
+        .status-tag {
+            display: block;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 20px;
+            text-align: center;
+            font-family: monospace;
+        }
 
         hr {
             border: none;
@@ -956,8 +964,7 @@
 
         function initWebSocket() {
             if (websocket && (websocket.readyState === WebSocket.CONNECTING || websocket.readyState === WebSocket.OPEN)) return;
-            var host = (window.location.hostname === 'raw.githubusercontent.com' || window.location.hostname === 'oclockmagic.github.io') ? '192.168.4.1' : window.location.hostname;
-            websocket = new WebSocket(`ws://${host}/ws`);
+            websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
             websocket.onopen = () => {
                 connectt = 1;
                 document.getElementById('ws-status').innerText = "Connected";

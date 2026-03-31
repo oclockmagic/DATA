@@ -260,7 +260,14 @@
             filter: brightness(1.1);
         }
 
-        .status-tag { display: block; font-size: 10px; color: rgba(255, 255, 255, 0.3); margin-top: 20px; text-align: center; font-family: monospace; }
+        .status-tag {
+            display: block;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 20px;
+            text-align: center;
+            font-family: monospace;
+        }
 
         /* Modern Scrollbar Styling */
         ::-webkit-scrollbar {
@@ -780,8 +787,7 @@
 
         function initWebSocket() {
             const statusEl = document.getElementById('ws-status');
-            const host = (window.location.hostname === 'raw.githubusercontent.com' || window.location.hostname === 'oclockmagic.github.io') ? '192.168.4.1' : window.location.hostname;
-            websocket = new WebSocket(`ws://${host}/ws`);
+            websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
             websocket.onopen = () => statusEl.innerText = "Connected";
             websocket.onclose = () => {
                 statusEl.innerText = "Disconnected";
