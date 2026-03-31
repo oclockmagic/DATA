@@ -582,16 +582,22 @@
         function updateBassUploadState(idx) {
             const canvas = document.getElementById('bass-canvas');
             const hint = document.getElementById('bass-hint');
-            console.log("Updating Bass Upload State Index:", idx);
+            const index = parseInt(idx);
+            console.log("Updating Bass Upload State Index:", index);
+            
             if (canvas && hint) {
-                if (parseInt(idx) === 1) {
+                if (index === 1) {
+                    // Custom Upload mode
                     canvas.parentElement.classList.remove('disabled-upload');
+                    // We don't reset hasUploadedBass here in case they already uploaded one
                 } else {
                     canvas.parentElement.classList.add('disabled-upload');
-                    if (parseInt(idx) >= 2) {
+                    hasUploadedBass = false; // Reset for None (0) or until Auto-draw (>=2) finishes
+
+                    if (index >= 2) {
                         const images = state['sel-bass'] || [];
-                        if (images[idx]) {
-                            const imgUrl = RAW_BASE + "bass/" + images[idx];
+                        if (images[index]) {
+                            const imgUrl = RAW_BASE + "bass/" + images[index];
                             console.log("Auto-drawing Bass Image:", imgUrl);
                             const img = new Image();
                             img.crossOrigin = "anonymous";
@@ -610,11 +616,21 @@
                                     }
                                     bassCtx.drawImage(img, dx, dy, dw, dh);
                                     hint.style.display = 'none';
-                                    hasUploadedBass = true;
+                                    hasUploadedBass = true; // Set flag ONLY after successful draw
+                                    console.log("hasUploadedBass set to TRUE");
                                 }
                             };
-                            img.onerror = (e) => console.error("Error loading image for auto-draw:", imgUrl, e);
+                            img.onerror = (e) => {
+                                console.error("Error loading image for auto-draw:", imgUrl, e);
+                                hasUploadedBass = false;
+                            };
                         }
+                    } else if (index === 0) {
+                        // None selected - clear canvas and hide hint
+                        if (bassCtx) bassCtx.clearRect(0, 0, 44, 44);
+                        hint.style.display = 'block';
+                        hasUploadedBass = false;
+                        console.log("hasUploadedBass set to FALSE (None)");
                     }
                 }
             }
