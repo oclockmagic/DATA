@@ -583,7 +583,7 @@
                 } else {
                     canvas.parentElement.classList.add('disabled-upload');
                     if (parseInt(idx) >= 2) {
-                        const images = state['bass'] || [];
+                        const images = state['sel-bass'] || [];
                         if (images[idx]) {
                             const imgUrl = RAW_BASE + "bass/" + images[idx];
                             const img = new Image();
