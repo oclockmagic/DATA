@@ -1006,7 +1006,7 @@
                     } else {
                         websocket.send(isSaving ? "#CSAV$" : "#CFIN$");
                     }
-                } else if (data === "C_SAVEOK" || data === "SAVEOK") {
+                } else if (data === "C_SAVEOK") {
                     uploadModal.style.display = 'none';
                     if (isSaving) {
                         window.location.href = '/clock.html?v=' + Date.now();
