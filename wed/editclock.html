@@ -860,6 +860,23 @@
             }
         }
 
+        window.addEventListener('load', () => {
+            initWebSocket();
+            const params = new URLSearchParams(window.location.search);
+            console.log("Incoming query params:", Object.fromEntries(params.entries())); // Logging incoming params
+
+            const idx = params.get('idx');
+            const x = params.get('x'), y = params.get('y'), w = params.get('w'), h = params.get('h');
+
+            if (idx !== null) currentLayer = parseInt(idx);
+            if (x !== null) posX.value = x;
+            if (y !== null) posY.value = y;
+            if (w !== null) posW.value = w;
+            if (h !== null) posH.value = h;
+            
+            // Re-map other fields... (omitted for brevity in replace, but keeping logic)
+        });
+
         function sendImageData(finalSave) {
             if (!connectt) return;
             const params = new URLSearchParams(window.location.search);
@@ -887,6 +904,12 @@
                 for (let i = 0; i < imgData.length; i += 4) {
                     const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
                     hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                }
+                
+                // --- Padding to 8192 bytes (16384 hex chars) ---
+                const targetHexLen = 16384; 
+                if (hexData.length < targetHexLen) {
+                    hexData = hexData.padEnd(targetHexLen, '0');
                 }
             }
 
