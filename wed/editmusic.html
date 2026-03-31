@@ -74,6 +74,13 @@
             text-transform: uppercase;
         }
 
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin: 15px 0;
+        }
+
         .section-card {
             margin-top: 16px;
             padding: 16px;
@@ -331,7 +338,7 @@
 
     <div class="container">
         <h2>SPECTRUM CONFIG</h2>
-
+        <hr>
         <!-- Background Section -->
         <div class="section-card">
             <span class="section-label">Background Image</span>
@@ -478,7 +485,7 @@
                 </div>
             </div>
         </div>
-
+        <hr>
         <div style="display: flex; gap: 12px; margin-top: 24px;">
             <button class="btn btn-secondary" onclick="window.location.href='music.html'">BACK</button>
             <button id="btn-save-main" class="btn btn-primary" style="flex: 1.5;">SAVE</button>
