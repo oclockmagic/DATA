@@ -578,11 +578,34 @@
             const canvas = document.getElementById('bass-canvas');
             const hint = document.getElementById('bass-hint');
             if (canvas && hint) {
-                // Chỉ kích hoạt khi chọn giá trị 1 (thường là image.png / Custom Image)
                 if (parseInt(idx) === 1) {
                     canvas.parentElement.classList.remove('disabled-upload');
                 } else {
                     canvas.parentElement.classList.add('disabled-upload');
+                    if (parseInt(idx) >= 2) {
+                        const images = state['bass'] || [];
+                        if (images[idx]) {
+                            const imgUrl = RAW_BASE + "bass/" + images[idx];
+                            const img = new Image();
+                            img.crossOrigin = "anonymous";
+                            img.src = imgUrl;
+                            img.onload = () => {
+                                if (typeof bassCtx !== 'undefined') {
+                                    bassCtx.clearRect(0, 0, 44, 44);
+                                    let s, dx, dy, dw, dh;
+                                    if (img.width > img.height) {
+                                        s = 44 / img.height; dw = img.width * s; dh = 44;
+                                        dx = (44 - dw) / 2; dy = 0;
+                                    } else {
+                                        s = 44 / img.width; dw = 44; dh = img.height * s;
+                                        dx = 0; dy = (44 - dh) / 2;
+                                    }
+                                    bassCtx.drawImage(img, dx, dy, dw, dh);
+                                    hint.style.display = 'none';
+                                }
+                            };
+                        }
+                    }
                 }
             }
         }
