@@ -898,6 +898,9 @@
                     }
                 } else if (data === "C_SAVEOK") {
                     document.getElementById('modal-title').innerText = "Success!";
+                    document.getElementById('progress-bar').style.width = '100%';
+                    document.getElementById('progress-percent').innerText = '100%';
+                    
                     setTimeout(() => {
                         window.location.href = '/clock.html?v=' + Date.now();
                     }, 1500);
