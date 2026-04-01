@@ -305,7 +305,7 @@
 <body>
     <div class="container">
         <h2>CUSTOM EDITOR</h2>
-
+        <hr>
         <div id="section-image" style="display: none;">
             <div class="section-glass">
                 <div class="flex-column">
@@ -559,7 +559,7 @@
             <input type="number" id="pos-w" value="64">
             <input type="number" id="pos-h" value="64">
         </div>
-
+        <hr>
         <div class="flex-row">
             <button class="btn btn-secondary" id="btn-back">BACK</button>
             <button class="btn btn-primary" id="btn-preview" disabled>PREVIEW</button>
@@ -799,7 +799,7 @@
             if (y !== null) posY.value = y;
             if (w !== null) posW.value = w;
             if (h !== null) posH.value = h;
-            
+
             // Re-map other fields... (omitted for brevity in replace, but keeping logic)
         });
 
@@ -831,9 +831,9 @@
                     const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
                     hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
                 }
-                
+
                 // --- Padding to 8192 bytes (16384 hex chars) ---
-                const targetHexLen = 16384; 
+                const targetHexLen = 16384;
                 if (hexData.length < targetHexLen) {
                     hexData = hexData.padEnd(targetHexLen, '0');
                 }
@@ -857,7 +857,7 @@
                 const mel = parseInt(document.getElementById("mel").value) || 0;
                 const chk = (params.get('chk') === '1' ? 1 : 0);
                 const nchk = (params.get('chu') === '1' ? 1 : 0);
-                
+
                 const tv = document.getElementById('text').value;
                 let nhex = "";
                 for (let i = 0; i < tv.length; i++) {
@@ -1008,6 +1008,10 @@
                 posW.value = m_w[0];
                 posH.value = m_h[0];
             }
+
+            document.getElementById('btn-back').onclick = () => {
+                window.location.href = '/clock.html?v=' + Date.now();
+            };
         });
     </script>
 </body>
