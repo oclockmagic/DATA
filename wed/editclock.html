@@ -933,10 +933,10 @@
                         websocket.send(isSaving ? "#CSAV$" : "#CFIN$");
                     }
                 } else if (data === "C_SAVEOK") {
-                    uploadModal.style.display = 'none';
-                    if (isSaving) {
+                    document.getElementById('modal-title').innerText = "Success!";
+                    setTimeout(() => {
                         window.location.href = '/clock.html?v=' + Date.now();
-                    }
+                    }, 1500);
                 }
             };
         }
