@@ -968,7 +968,53 @@
             totalPackets = uploadQueue.length;
             const params = new URLSearchParams(window.location.search);
             const idx = params.get('idx') || 0;
-            websocket.send("#CSTB$" + idx); // Start clock session
+            websocket.send("#CSTB$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
+        }
+
+        let animQueue = [];
+        let animPackets = 0;
+        function startAnimationUpload() {
+            if (!isGifAnimation || gifFramesData.length === 0) return;
+            
+            document.getElementById('modal-title').innerText = "Uploading Animation...";
+            progressBar.style.width = '0%';
+            progressPercent.innerText = '0%';
+
+            const targetW = parseInt(posW.value) || 64;
+            const targetH = parseInt(posH.value) || 64;
+            const crop = croppr.getValue();
+            let allFramesHex = "";
+
+            gifFramesData.forEach(fr => {
+                const offCanvas = document.createElement('canvas');
+                offCanvas.width = fr.width; offCanvas.height = fr.height;
+                const offCtx = offCanvas.getContext('2d');
+                const imgDataObj = offCtx.createImageData(fr.width, fr.height);
+                imgDataObj.data.set(fr.data);
+                offCtx.putImageData(imgDataObj, 0, 0);
+
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = targetW; finalCanvas.height = targetH;
+                const finalCtx = finalCanvas.getContext('2d');
+                finalCtx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                finalCtx.drawImage(offCanvas, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+
+                const pixels = finalCtx.getImageData(0, 0, targetW, targetH).data;
+                for (let i = 0; i < pixels.length; i += 4) {
+                    const r = pixels[i] >> 4, g = pixels[i + 1] >> 4, b = pixels[i + 2] >> 4, a = pixels[i + 3] >> 4;
+                    allFramesHex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                }
+            });
+
+            // Padding mỗi frame được coi là 8192 bytes nhị phân (16384 hex), ESP32 ghi theo sector 2048
+            // Thực tế binary trọn gói gộp lại sẽ được ESP32 ghi tuần tự.
+            animQueue = [];
+            for (let i = 0; i < allFramesHex.length; i += 1024) {
+                animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
+            }
+            animPackets = animQueue.length;
+            const idx = new URLSearchParams(window.location.search).get('idx') || 0;
+            websocket.send("#ASTB$" + idx); // Lệnh bắt đầu Animation
         }
 
         function initWebSocket() {
@@ -998,10 +1044,24 @@
                         websocket.send(isSaving ? "#CSAV$" : "#CFIN$");
                     }
                 } else if (data === "C_SAVEOK") {
-                    document.getElementById('modal-title').innerText = "Success!";
-                    setTimeout(() => {
-                        window.location.href = '/clock.html?v=' + Date.now();
-                    }, 1500);
+                    if (isGifAnimation && isSaving) {
+                        startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
+                    } else {
+                        document.getElementById('modal-title').innerText = "Success!";
+                        setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                    }
+                } else if (data === "A_READY" || data === "A_UP_OK") {
+                    if (animQueue.length > 0) {
+                        websocket.send(animQueue.shift());
+                        const prog = Math.round(((animPackets - animQueue.length) / animPackets) * 100);
+                        progressBar.style.width = prog + '%';
+                        progressPercent.innerText = prog + '%';
+                    } else {
+                        websocket.send("#ASAV$"); // Kết thúc Animation
+                    }
+                } else if (data === "A_SAVEOK") {
+                    document.getElementById('modal-title').innerText = "Animation Saved!";
+                    setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
                 }
             };
         }
