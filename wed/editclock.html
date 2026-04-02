@@ -838,8 +838,8 @@
 
                 // 2. Gửi Hẹn giờ (#CALM$)
                 if (params.get('chk') === '1') {
-                    // Định dạng: typ,gio,phut,ngay,thang,extra,amly,melody,chk,nchk
-                    const calm = `#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel},${chk},${nchk}`;
+                    // Định dạng: typ,gio,phut,ngay,thang,extra,amly,melody
+                    const calm = `#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`;
                     websocket.send(calm);
                 }
             }
