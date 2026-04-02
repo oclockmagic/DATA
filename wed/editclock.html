@@ -926,6 +926,9 @@
                 const am = parseInt(document.getElementById("am").value) || 0;
                 const mel = parseInt(document.getElementById("mel").value) || 0;
 
+                // 0. Gửi Header (X, Y, W, H, Tutao)
+                websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
+
                 const tv = document.getElementById('text').value;
                 let nhex = "";
                 for (let i = 0; i < tv.length; i++) {
