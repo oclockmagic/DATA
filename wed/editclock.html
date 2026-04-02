@@ -808,9 +808,9 @@
         function sendImageData(finalSave) {
             if (!connectt) return;
             const params = new URLSearchParams(window.location.search);
-            const isAlarm = (params.get('chk') === '1');
-            const isText = (params.get('chu') === '1');
-            const isTutao = (params.get('tutao') === '1');
+            const isAlarm = (params.get('chk') && params.get('chk') !== '0');
+            const isText = (params.get('chu') && params.get('chu') !== '0');
+            const isTutao = (params.get('tutao') && params.get('tutao') !== '0');
 
             const targetW = parseInt(posW.value) || 64;
             const targetH = parseInt(posH.value) || 64;
@@ -864,18 +864,18 @@
                 let nhex = "";
                 for (let i = 0; i < tv.length; i++) {
                     let c = tv.charCodeAt(i); let h = byteToHex(c < 256 ? c : 32);
-                    for (let k in revMap) if (revMap[k] === tv[i]) { h = byteToHex(k); break; }
+                    for (let k in revMap) if (revMap[k] === tv[i]) { h = byteToHex(parseInt(k)); break; }
                     nhex += h;
                 }
 
                 // 1. Gửi Text Note (#CNOT$)
-                if (params.get('chu') === '1') {
+                if (isText) {
                     const cnot = `#CNOT$${tv.length},${nhex}`;
                     websocket.send(cnot);
                 }
 
                 // 2. Gửi Hẹn giờ (#CALM$)
-                if (params.get('chk') === '1') {
+                if (isAlarm) {
                     // Định dạng: typ,gio,phut,ngay,thang,extra,amly,melody
                     const calm = `#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`;
                     websocket.send(calm);
@@ -978,9 +978,9 @@
             let chuFlag = params.get('chu');
             let chkFlag = params.get('chk');
 
-            if (tutaoFlag === '1') document.getElementById('section-image').style.display = 'block';
-            if (chuFlag === '1') document.getElementById('section-text').style.display = 'block';
-            if (chkFlag === '1') document.getElementById('section-alarm').style.display = 'block';
+            if (tutaoFlag && tutaoFlag !== '0') document.getElementById('section-image').style.display = 'block';
+            if (chuFlag && chuFlag !== '0') document.getElementById('section-text').style.display = 'block';
+            if (chkFlag && chkFlag !== '0') document.getElementById('section-alarm').style.display = 'block';
 
             let txt = params.get('text');
             if (txt) document.getElementById('text').value = decodeHexText(txt);
