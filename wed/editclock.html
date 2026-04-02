@@ -666,6 +666,8 @@
             if (e.target.files.length) {
                 const file = e.target.files[0];
                 const isGif = file.type === 'image/gif';
+                const fileUrl = URL.createObjectURL(file);
+                
                 const reader = new FileReader();
                 reader.onload = async (ev) => {
                     if (isGif) {
@@ -682,30 +684,8 @@
                     }
 
                     const img = new Image();
-                    img.src = isGif ? URL.createObjectURL(file) : ev.target.result;
+                    img.src = fileUrl;
                     img.onload = () => {
-                        // Kích thước khu vực hiển thị (preview container)
-                        const pW = 368;
-                        const pH = 380;
-
-                        // Tính toán kích thước ảnh thu nhỏ (cogiax) để vừa khung
-                        let uiW, uiH;
-                        if (img.width / img.height > pW / pH) {
-                            uiW = pW; uiH = uiW * img.height / img.width;
-                        } else {
-                            uiH = pH; uiW = uiH * img.width / img.height;
-                        }
-
-                        const canvasUI = document.createElement("canvas");
-                        const ctxUI = canvasUI.getContext("2d");
-                        canvasUI.width = pW;
-                        canvasUI.height = pH;
-                        ctxUI.translate(pW / 2, pH / 2);
-                        // Vẽ ảnh nguyên bản đã scale để vừa khung nhìn
-                        ctxUI.drawImage(img, -uiW / 2, -uiH / 2, uiW, uiH);
-
-                        const scaledImgSrc = canvasUI.toDataURL();
-
                         if (croppr) {
                             try { croppr.destroy(); } catch (e) { console.log(e); }
                             croppr = null;
@@ -718,12 +698,14 @@
                         if (!targetImg) return;
                         targetImg.style.display = 'block';
 
-                        targetImg.onload = () => {
-                            imgOrig = targetImg; // Lấy ảnh này làm gốc để crop
+                        // Nếu là GIF, dùng trực tiếp URL để giữ animation
+                        // Nếu là ảnh thường, có thể dùng DataURL từ reader
+                        const finalSrc = isGif ? fileUrl : ev.target.result;
 
+                        targetImg.onload = () => {
+                            imgOrig = targetImg;
                             croppr = new Croppr(targetImg, {
-                                // Khai báo rõ kích thước mặc định để không bị mất vòng bao (Handle Bug)
-                                startSize: [80, 80, '%'],
+                                startSize: [100, 100, '%'],
                                 minSize: [10, 10, 'px'],
                                 returnMode: 'real',
                                 onInitialize: () => {
@@ -736,8 +718,7 @@
                                 }
                             });
                         };
-
-                        targetImg.src = scaledImgSrc;
+                        targetImg.src = finalSrc;
                     };
                 };
                 if (isGif) reader.readAsArrayBuffer(file);
