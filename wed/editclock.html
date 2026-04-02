@@ -586,6 +586,11 @@
 
 
     </script>
+    <script type="module">
+        import { parseGIF, decompressFrames } from 'https://cdn.jsdelivr.net/npm/gifuct-js@2.1.2/+esm';
+        window.parseGIF = parseGIF;
+        window.decompressFrames = decompressFrames;
+    </script>
     <script>
 
         // Initialize default variables (formerly @@777***)
@@ -637,6 +642,7 @@
         let websocket;
         let connectt = 0;
         let currentLayer = 0;
+        let gifFrames = []; // Store decoded frames
 
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
@@ -658,10 +664,25 @@
 
         fileInput.onchange = (e) => {
             if (e.target.files.length) {
+                const file = e.target.files[0];
+                const isGif = file.type === 'image/gif';
                 const reader = new FileReader();
-                reader.onload = (ev) => {
+                reader.onload = async (ev) => {
+                    if (isGif) {
+                        try {
+                            const gif = window.parseGIF(ev.target.result);
+                            gifFrames = window.decompressFrames(gif, true);
+                            console.log("GIF Decoded:", gifFrames.length, "frames");
+                        } catch (err) {
+                            console.error("GIF Decode Error:", err);
+                            gifFrames = [];
+                        }
+                    } else {
+                        gifFrames = [];
+                    }
+
                     const img = new Image();
-                    img.src = ev.target.result;
+                    img.src = isGif ? URL.createObjectURL(file) : ev.target.result;
                     img.onload = () => {
                         // Kích thước khu vực hiển thị (preview container)
                         const pW = 368;
@@ -719,7 +740,8 @@
                         targetImg.src = scaledImgSrc;
                     };
                 };
-                reader.readAsDataURL(e.target.files[0]);
+                if (isGif) reader.readAsArrayBuffer(file);
+                else reader.readAsDataURL(file);
             }
         };
 
@@ -835,19 +857,45 @@
                 canvas.width = targetW;
                 canvas.height = targetH;
                 const ctx = canvas.getContext('2d');
-                ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-                ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
-                const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
-                for (let i = 0; i < imgData.length; i += 4) {
-                    const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
-                    hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
-                }
+                if (gifFrames && gifFrames.length > 0) {
+                    // Xử lý nhiều frame cho GIF
+                    console.log("Processing GIF frames...");
+                    const tempCanvas = document.createElement('canvas');
+                    for (let f = 0; f < gifFrames.length; f++) {
+                        const frame = gifFrames[f];
+                        tempCanvas.width = frame.dims.width;
+                        tempCanvas.height = frame.dims.height;
+                        const tempCtx = tempCanvas.getContext('2d');
+                        const imgData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
+                        tempCtx.putImageData(imgData, 0, 0);
 
-                // --- Padding to 8192 bytes (16384 hex chars) ---
-                const targetHexLen = 16384;
-                if (hexData.length < targetHexLen) {
-                    hexData = hexData.padEnd(targetHexLen, '0');
+                        ctx.clearRect(0, 0, targetW, targetH);
+                        ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                        ctx.drawImage(tempCanvas, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+
+                        const frameData = ctx.getImageData(0, 0, targetW, targetH).data;
+                        for (let i = 0; i < frameData.length; i += 4) {
+                            const r = frameData[i] >> 4, g = frameData[i + 1] >> 4, b = frameData[i + 2] >> 4, a = frameData[i + 3] >> 4;
+                            hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                        }
+                    }
+                } else {
+                    // Xử lý 1 ảnh tĩnh như cũ
+                    ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                    ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+
+                    const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
+                    for (let i = 0; i < imgData.length; i += 4) {
+                        const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
+                        hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                    }
+
+                    // --- Padding to 8192 bytes (16384 hex chars) if only 1 frame ---
+                    const targetHexLen = 16384;
+                    if (hexData.length < targetHexLen) {
+                        hexData = hexData.padEnd(targetHexLen, '0');
+                    }
                 }
             }
 
