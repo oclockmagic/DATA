@@ -903,8 +903,13 @@
             const isText = (params.get('chu') && params.get('chu') !== '0');
             const isTutao = (params.get('tutao') && params.get('tutao') !== '0');
 
-            const targetW = parseInt(posW.value) || 64;
-            const targetH = parseInt(posH.value) || 64;
+            const px = parseInt(posX.value) || 0;
+            const py = parseInt(posY.value) || 0;
+            const pw = parseInt(posW.value) || 64;
+            const phh = parseInt(posH.value) || 64;
+
+            const targetW = pw;
+            const targetH = phh;
 
             let hexData = "";
             let imageHasContent = (imgOrig && imageChanged);
@@ -932,14 +937,7 @@
             }
 
             if (finalSave) {
-                const params = new URLSearchParams(window.location.search);
-                const idx = params.get('idx') || 0;
                 const tutao = (params.get('tutao') === '1' ? 1 : 0);
-                const px = parseInt(posX.value) || 0;
-                const py = parseInt(posY.value) || 0;
-                const pw = parseInt(posW.value) || 64;
-                const phh = parseInt(posH.value) || 64;
-
                 const typ = parseInt(document.getElementById("typ").value) || 0;
                 const gi = parseInt(document.getElementById("gio").value) || 0;
                 const ph = parseInt(document.getElementById("phut").value) || 0;
@@ -960,8 +958,8 @@
                     nhex += h;
                 }
 
-                if (isText) websocket.send(`#CNOT$\${tv.length},${nhex}`);
-                if (isAlarm) websocket.send(`#CALM$\${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+                if (isText) websocket.send(`#CNOT$${tv.length},${nhex}`);
+                if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
             }
 
             if (hexData) {
