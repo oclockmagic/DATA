@@ -830,9 +830,18 @@
                     nhex += h;
                 }
 
-                // Tiêu chuẩn hóa: #CHGM$idx,tutao,x,y,w,h,typ,gio,phut,ngay,thang,thu,am,mel,nchk,chk,nlen,nhex
-                const metaMsg = `#CHGM$${idx},${tutao},${px},${py},${pw},${phh},${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel},${nchk},${chk},${tv.length},${nhex}`;
-                websocket.send(metaMsg);
+                // 1. Gửi Text Note (#CNOT$)
+                if (params.get('chu') === '1') {
+                    const cnot = `#CNOT$${tv.length},${nhex}`;
+                    websocket.send(cnot);
+                }
+
+                // 2. Gửi Hẹn giờ (#CALM$)
+                if (params.get('chk') === '1') {
+                    // Định dạng: typ,gio,phut,ngay,thang,extra,amly,melody,chk,nchk
+                    const calm = `#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel},${chk},${nchk}`;
+                    websocket.send(calm);
+                }
             }
 
             // #HGT logic removed; handled in #CHGM now.
