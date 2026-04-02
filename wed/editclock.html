@@ -982,6 +982,10 @@
         let isSaving = false;
 
         function startUpload(mainData, finalSave) {
+            if (windowGifInterval) {
+                clearInterval(windowGifInterval);
+                windowGifInterval = null;
+            }
             uploadModal.style.display = 'flex';
             document.getElementById('modal-title').innerText = finalSave ? "Saving..." : "Previewing...";
             isSaving = finalSave;
