@@ -586,11 +586,7 @@
 
 
     </script>
-    <script type="module">
-        import { parseGIF, decompressFrames } from 'https://cdn.jsdelivr.net/npm/gifuct-js@2.1.2/+esm';
-        window.parseGIF = parseGIF;
-        window.decompressFrames = decompressFrames;
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/omggif@1.0.10/omggif.min.js"></script>
     <script>
 
         // Initialize default variables (formerly @@777***)
@@ -600,6 +596,10 @@
         var m_h = [64, 64, 64, 64, 64, 64, 64, 64, 64, 64];
         var m_t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
+        // Animation state
+        let isAnimation = false;
+        let animFrames = [];
+        let animInterval = null;
 
         // Logic to update inputs (Layer select was removed)
         const layerSelect = null;
@@ -642,7 +642,6 @@
         let websocket;
         let connectt = 0;
         let currentLayer = 0;
-        let gifFrames = []; // Store decoded frames
 
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
@@ -659,65 +658,113 @@
         const progressPercent = document.getElementById('progress-percent');
         const uploadModal = document.getElementById('upload-modal');
 
-        // Logic to update inputs (Layer select was removed)
-
-
         fileInput.onchange = (e) => {
             if (e.target.files.length) {
                 const file = e.target.files[0];
-                const isGif = file.type === 'image/gif';
                 const reader = new FileReader();
 
-                reader.onload = async (ev) => {
-                    const noImageText = document.getElementById('no-image-text');
-                    if (noImageText) noImageText.style.display = 'none';
+                if (animInterval) clearInterval(animInterval);
+                isAnimation = false;
+                animFrames = [];
 
-                    const targetImg = document.getElementById('cropper-target');
-                    if (!targetImg) return;
-
-                    if (isGif) {
+                if (file.type === 'image/gif') {
+                    const readerBuf = new FileReader();
+                    readerBuf.onload = (eb) => {
                         try {
-                            const gif = window.parseGIF(ev.target.result);
-                            gifFrames = window.decompressFrames(gif, true);
-                            console.log("GIF Decoded:", gifFrames.length, "frames");
-                        } catch (err) {
-                            console.error("GIF Decode Error:", err);
-                            gifFrames = [];
-                        }
-                    } else {
-                        gifFrames = [];
-                    }
+                            const buffer = new Uint8Array(eb.target.result);
+                            const gif = new omggif.GifReader(buffer);
+                            const numFrames = gif.numFrames();
 
-                    if (croppr) {
-                        try { croppr.destroy(); } catch (e) { console.log(e); }
-                        croppr = null;
-                    }
+                            if (numFrames > 1) {
+                                isAnimation = true;
+                                const maxFrames = 16;
+                                const sampleIndices = [];
+                                if (numFrames <= maxFrames) {
+                                    for (let i = 0; i < numFrames; i++) sampleIndices.push(i);
+                                } else {
+                                    for (let i = 0; i < maxFrames; i++) sampleIndices.push(Math.floor(i * numFrames / maxFrames));
+                                }
 
-                    targetImg.style.display = 'block';
-                    targetImg.onload = () => {
-                        imgOrig = targetImg;
-                        croppr = new Croppr(targetImg, {
-                            startSize: [80, 80, '%'],
-                            minSize: [10, 10, 'px'],
-                            returnMode: 'real',
-                            onInitialize: () => {
-                                imageChanged = true;
-                                triggerChange();
-                            },
-                            onCropEnd: () => {
-                                imageChanged = true;
-                                triggerChange();
+                                const canvas = document.createElement('canvas');
+                                canvas.width = gif.width;
+                                canvas.height = gif.height;
+                                const ctx = canvas.getContext('2d');
+                                const frameImageData = ctx.createImageData(gif.width, gif.height);
+
+                                sampleIndices.forEach(idx => {
+                                    gif.decodeAndBlitFrameRGBA(idx, frameImageData.data);
+                                    ctx.putImageData(frameImageData, 0, 0);
+                                    animFrames.push(canvas.toDataURL());
+                                });
+
+                                const targetImg = document.getElementById('cropper-target');
+                                targetImg.style.display = 'block';
+                                document.getElementById('no-image-text').style.display = 'none';
+
+                                let currentF = 0;
+                                animInterval = setInterval(() => {
+                                    targetImg.src = animFrames[currentF];
+                                    currentF = (currentF + 1) % animFrames.length;
+                                }, 150);
+
+                                targetImg.onload = () => {
+                                    imgOrig = targetImg;
+                                    if (croppr) { try { croppr.destroy(); } catch (err) {} }
+                                    croppr = new Croppr(targetImg, {
+                                        startSize: [80, 80, '%'],
+                                        minSize: [10, 10, 'px'],
+                                        returnMode: 'real',
+                                        onInitialize: () => { imageChanged = true; triggerChange(); },
+                                        onCropEnd: () => { imageChanged = true; triggerChange(); }
+                                    });
+                                    targetImg.onload = null;
+                                };
+                                targetImg.src = animFrames[0];
+                                return;
                             }
-                        });
+                        } catch (err) {
+                            console.log("GIF load error:", err);
+                        }
                     };
+                    readerBuf.readAsArrayBuffer(file);
+                }
 
-                    // Nếu là GIF, dùng trực tiếp Blob URL để hiển thị động
-                    // Nếu không phải GIF, dùng DataURL (hoặc Blob URL cũng ok)
-                    targetImg.src = isGif ? URL.createObjectURL(file) : ev.target.result;
+                reader.onload = (ev) => {
+                    const img = new Image();
+                    img.src = ev.target.result;
+                    img.onload = () => {
+                        const pW = 368, pH = 380;
+                        let uiW, uiH;
+                        if (img.width / img.height > pW / pH) {
+                            uiW = pW; uiH = uiW * img.height / img.width;
+                        } else {
+                            uiH = pH; uiW = uiH * img.width / img.height;
+                        }
+                        const canvasUI = document.createElement("canvas");
+                        const ctxUI = canvasUI.getContext("2d");
+                        canvasUI.width = pW; canvasUI.height = pH;
+                        ctxUI.translate(pW / 2, pH / 2);
+                        ctxUI.drawImage(img, -uiW / 2, -uiH / 2, uiW, uiH);
+                        const scaledImgSrc = canvasUI.toDataURL();
+
+                        if (croppr) { try { croppr.destroy(); } catch (err) {} croppr = null; }
+                        document.getElementById('no-image-text').style.display = 'none';
+                        const targetImg = document.getElementById('cropper-target');
+                        targetImg.style.display = 'block';
+                        targetImg.onload = () => {
+                            imgOrig = targetImg;
+                            croppr = new Croppr(targetImg, {
+                                startSize: [80, 80, '%'],
+                                minSize: [10, 10, 'px'],
+                                returnMode: 'real',
+                                onInitialize: () => { imageChanged = true; triggerChange(); },
+                                onCropEnd: () => { imageChanged = true; triggerChange(); }
+                            });
+                        };
+                        targetImg.src = scaledImgSrc;
+                    };
                 };
-
-                if (isGif) reader.readAsArrayBuffer(file);
-                else reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
             }
         };
 
@@ -726,8 +773,7 @@
             btn.onclick = () => {
                 document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                imageChanged = true;
-                triggerChange();
+                imageChanged = true; triggerChange();
                 filterName.innerText = btn.innerText;
                 if (btn.id === 'brightness' || btn.id === 'saturation') {
                     filterSlider.max = 200;
@@ -752,7 +798,6 @@
             if (imgOrig) {
                 imageChanged = true;
                 const filterStr = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-                // Áp dụng cho cả ảnh nền và ảnh trong khung crop của Croppr
                 const previewImgs = document.querySelectorAll('.croppr-image, .croppr-imageClipped');
                 previewImgs.forEach(img => img.style.filter = filterStr);
             }
@@ -813,116 +858,102 @@
             // Re-map other fields... (omitted for brevity in replace, but keeping logic)
         });
 
+        async function sendAnimationData(finalSave, isAlarm, isText) {
+            const targetW = 64, targetH = 64;
+            const crop = croppr.getValue();
+            const canvas = document.createElement('canvas');
+            canvas.width = targetW; canvas.height = targetH;
+            const ctx = canvas.getContext('2d');
+            
+            const frameBins = [];
+            for (let src of animFrames) {
+                const img = await new Promise(res => {
+                    const i = new Image(); i.onload = () => res(i); i.src = src;
+                });
+                ctx.clearRect(0,0,targetW,targetH);
+                ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                ctx.drawImage(img, crop.x, crop.y, crop.width, crop.height, 0,0, targetW, targetH);
+                const data = ctx.getImageData(0,0,targetW,targetH).data;
+                const bin = new Uint8Array(8192);
+                for(let i=0; i<data.length; i+=4) {
+                    const r=data[i]>>4, g=data[i+1]>>4, b=data[i+2]>>4, a=data[i+3]>>4;
+                    const idx = (i/4)*2;
+                    bin[idx] = a | (r<<4); bin[idx+1] = g | (b<<4);
+                }
+                frameBins.push(bin);
+            }
+            
+            const totalLen = frameBins.length * 8192;
+            const paddedLen = Math.ceil(totalLen / 2048) * 2048;
+            const finalBlob = new Uint8Array(paddedLen);
+            frameBins.forEach((b, i) => finalBlob.set(b, i*8192));
+            
+            let hex = "";
+            for(let b of finalBlob) hex += byteToHex(b);
+
+            if (finalSave) sendMeta();
+            
+            startAnimUpload(hex, finalSave);
+        }
+
+        function sendMeta() {
+            const params = new URLSearchParams(window.location.search);
+            const isAlarm = (params.get('chk') && params.get('chk') !== '0');
+            const isText = (params.get('chu') && params.get('chu') !== '0');
+            const typ = parseInt(document.getElementById("typ").value) || 0;
+            const gi = parseInt(document.getElementById("gio").value) || 0;
+            const ph = parseInt(document.getElementById("phut").value) || 0;
+            const ng = parseInt(document.getElementById("ngay").value) || 1;
+            const th = parseInt(document.getElementById("thang").value) || 1;
+            const tnu = parseInt(document.getElementById("thu").value) || 0;
+            const am = parseInt(document.getElementById("am").value) || 0;
+            const mel = parseInt(document.getElementById("mel").value) || 0;
+            const tv = document.getElementById('text').value;
+            let nhex = "";
+            for (let i = 0; i < tv.length; i++) {
+                let c = tv.charCodeAt(i); let h = byteToHex(c < 256 ? c : 32);
+                for (let k in revMap) if (revMap[k] === tv[i]) { h = byteToHex(parseInt(k)); break; }
+                nhex += h;
+            }
+            if (isText) websocket.send(`#CNOT$${tv.length},${nhex}`);
+            if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+        }
+
         function sendImageData(finalSave) {
             if (!connectt) return;
             const params = new URLSearchParams(window.location.search);
             const isAlarm = (params.get('chk') && params.get('chk') !== '0');
             const isText = (params.get('chu') && params.get('chu') !== '0');
-            const isTutao = (params.get('tutao') && params.get('tutao') !== '0');
+
+            if (isAnimation && animFrames.length > 1) {
+                sendAnimationData(finalSave, isAlarm, isText);
+                return;
+            }
 
             const targetW = parseInt(posW.value) || 64;
             const targetH = parseInt(posH.value) || 64;
 
             let hexData = "";
-            let crop = null;
             let imageHasContent = (imgOrig && imageChanged);
 
             if (croppr && imageChanged) {
-                crop = croppr.getValue();
+                const crop = croppr.getValue();
                 const canvas = document.createElement('canvas');
-                canvas.width = targetW;
-                canvas.height = targetH;
+                canvas.width = targetW; canvas.height = targetH;
                 const ctx = canvas.getContext('2d');
+                ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
-                if (gifFrames && gifFrames.length > 0) {
-                    let framesToProcess = gifFrames;
-                    if (gifFrames.length > 16) {
-                        const sampled = [];
-                        const step = gifFrames.length / 16;
-                        for (let i = 0; i < 16; i++) {
-                            sampled.push(gifFrames[Math.floor(i * step)]);
-                        }
-                        framesToProcess = sampled;
-                    }
-
-                    console.log("Processing frames:", framesToProcess.length);
-                    const tempCanvas = document.createElement('canvas');
-                    for (let f = 0; f < framesToProcess.length; f++) {
-                        const frame = framesToProcess[f];
-                        tempCanvas.width = frame.dims.width;
-                        tempCanvas.height = frame.dims.height;
-                        const tempCtx = tempCanvas.getContext('2d');
-                        const imgData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
-                        tempCtx.putImageData(imgData, 0, 0);
-
-                        ctx.clearRect(0, 0, targetW, targetH);
-                        ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-                        ctx.drawImage(tempCanvas, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
-
-                        const frameData = ctx.getImageData(0, 0, targetW, targetH).data;
-                        for (let i = 0; i < frameData.length; i += 4) {
-                            const r = frameData[i] >> 4, g = frameData[i + 1] >> 4, b = frameData[i + 2] >> 4, a = frameData[i + 3] >> 4;
-                            hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
-                        }
-                    }
-                } else {
-                    ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-                    ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
-
-                    const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
-                    for (let i = 0; i < imgData.length; i += 4) {
-                        const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
-                        hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
-                    }
-                    const targetHexLen = 16384;
-                    if (hexData.length < targetHexLen) {
-                        hexData = hexData.padEnd(targetHexLen, '0');
-                    }
+                const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
+                for (let i = 0; i < imgData.length; i += 4) {
+                    const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
+                    hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
                 }
+                const targetHexLen = 16384;
+                if (hexData.length < targetHexLen) hexData = hexData.padEnd(targetHexLen, '0');
             }
 
-            if (finalSave) {
-                const params = new URLSearchParams(window.location.search);
-                const idx = params.get('idx') || 0;
-                const tutao = (params.get('tutao') === '1' ? 1 : 0);
-                const px = parseInt(posX.value) || 0;
-                const py = parseInt(posY.value) || 0;
-                const pw = parseInt(posW.value) || 64;
-                const phh = parseInt(posH.value) || 64;
-                const typ = parseInt(document.getElementById("typ").value) || 0;
-                const gi = parseInt(document.getElementById("gio").value) || 0;
-                const ph = parseInt(document.getElementById("phut").value) || 0;
-                const ng = parseInt(document.getElementById("ngay").value) || 1;
-                const th = parseInt(document.getElementById("thang").value) || 1;
-                const tnu = parseInt(document.getElementById("thu").value) || 0;
-                const am = parseInt(document.getElementById("am").value) || 0;
-                const mel = parseInt(document.getElementById("mel").value) || 0;
-                const chk = (params.get('chk') === '1' ? 1 : 0);
-                const nchk = (params.get('chu') === '1' ? 1 : 0);
-
-                const tv = document.getElementById('text').value;
-                let nhex = "";
-                for (let i = 0; i < tv.length; i++) {
-                    let c = tv.charCodeAt(i); let h = byteToHex(c < 256 ? c : 32);
-                    for (let k in revMap) if (revMap[k] === tv[i]) { h = byteToHex(parseInt(k)); break; }
-                    nhex += h;
-                }
-
-                // 1. Gửi Text Note (#CNOT$)
-                if (isText) {
-                    const cnot = `#CNOT$${tv.length},${nhex}`;
-                    websocket.send(cnot);
-                }
-
-                // 2. Gửi Hẹn giờ (#CALM$)
-                if (isAlarm) {
-                    // Định dạng: typ,gio,phut,ngay,thang,extra,amly,melody
-                    const calm = `#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`;
-                    websocket.send(calm);
-                }
-            }
-
-            // #HGT logic removed; handled in #CHGM now.
+            if (finalSave) sendMeta();
 
             if (hexData) {
                 startUpload(hexData, finalSave);
@@ -932,29 +963,36 @@
                 document.getElementById('modal-title').innerText = "Finishing...";
                 websocket.send("#CSAV$");
             }
-
-            if (finalSave || imageChanged) {
-                imageChanged = false; // reset after operation
-            }
+            if (finalSave || imageChanged) imageChanged = false;
         }
 
         let uploadQueue = [];
         let totalPackets = 0;
-        // let layerToSave = 0; // redundant with currentLayer
         let isSaving = false;
+        let isAnimSession = false;
 
         function startUpload(mainData, finalSave) {
             uploadModal.style.display = 'flex';
             document.getElementById('modal-title').innerText = finalSave ? "Saving..." : "Previewing...";
             isSaving = finalSave;
-
+            isAnimSession = false;
             uploadQueue = [];
             for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CIMG$" + mainData.substring(i, i + 1024));
-
             totalPackets = uploadQueue.length;
-            const params = new URLSearchParams(window.location.search);
-            const idx = params.get('idx') || 0;
-            websocket.send("#CSTB$" + idx); // Start clock session
+            const idx = new URLSearchParams(window.location.search).get('idx') || 0;
+            websocket.send("#CSTB$" + idx);
+        }
+
+        function startAnimUpload(mainData, finalSave) {
+            uploadModal.style.display = 'flex';
+            document.getElementById('modal-title').innerText = finalSave ? "Saving Animation..." : "Previewing...";
+            isSaving = finalSave;
+            isAnimSession = true;
+            uploadQueue = [];
+            for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#AIMG$" + mainData.substring(i, i + 1024));
+            totalPackets = uploadQueue.length;
+            const idx = new URLSearchParams(window.location.search).get('idx') || 0;
+            websocket.send("#ASTB$" + idx);
         }
 
         function initWebSocket() {
@@ -963,8 +1001,7 @@
             websocket.onopen = () => {
                 connectt = 1;
                 document.getElementById('ws-status').innerText = "Connected";
-                const params = new URLSearchParams(window.location.search);
-                const idx = params.get('idx');
+                const idx = new URLSearchParams(window.location.search).get('idx');
                 if (idx !== null) websocket.send("#CLK$" + idx);
             };
             websocket.onclose = () => {
@@ -974,16 +1011,17 @@
             };
             websocket.onmessage = (e) => {
                 const data = e.data;
-                if (data === "C_READY" || data === "C_UP_OK") {
+                if (data === "C_READY" || data === "C_UP_OK" || data === "A_READY" || data === "A_UP_OK") {
                     if (uploadQueue.length > 0) {
                         websocket.send(uploadQueue.shift());
                         const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
                         progressBar.style.width = prog + '%';
                         progressPercent.innerText = prog + '%';
                     } else {
-                        websocket.send(isSaving ? "#CSAV$" : "#CFIN$");
+                        if (isAnimSession) websocket.send("#ASAV$");
+                        else websocket.send(isSaving ? "#CSAV$" : "#CFIN$");
                     }
-                } else if (data === "C_SAVEOK") {
+                } else if (data === "C_SAVEOK" || data === "A_SAVEOK") {
                     document.getElementById('modal-title').innerText = "Success!";
                     setTimeout(() => {
                         window.location.href = '/clock.html?v=' + Date.now();
