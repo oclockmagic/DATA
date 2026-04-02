@@ -878,7 +878,22 @@
             if (w !== null) posW.value = w;
             if (h !== null) posH.value = h;
 
-            // Re-map other fields... (omitted for brevity in replace, but keeping logic)
+            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel'];
+            fields.forEach(f => {
+                let v = params.get(f);
+                if (v !== null) {
+                    let el = document.getElementById(f);
+                    if (el) el.value = v;
+                }
+            });
+
+            if (params.get('tutao') === '1') document.getElementById('section-image').style.display = 'block';
+            if (params.get('chu') === '1') document.getElementById('section-text').style.display = 'block';
+            if (params.get('chk') === '1') document.getElementById('section-alarm').style.display = 'block';
+
+            let txt = params.get('text');
+            if (txt) document.getElementById('text').value = decodeHexText(txt);
+            updateUI();
         });
 
         function sendImageData(finalSave) {
@@ -917,6 +932,14 @@
             }
 
             if (finalSave) {
+                const params = new URLSearchParams(window.location.search);
+                const idx = params.get('idx') || 0;
+                const tutao = (params.get('tutao') === '1' ? 1 : 0);
+                const px = parseInt(posX.value) || 0;
+                const py = parseInt(posY.value) || 0;
+                const pw = parseInt(posW.value) || 64;
+                const phh = parseInt(posH.value) || 64;
+
                 const typ = parseInt(document.getElementById("typ").value) || 0;
                 const gi = parseInt(document.getElementById("gio").value) || 0;
                 const ph = parseInt(document.getElementById("phut").value) || 0;
