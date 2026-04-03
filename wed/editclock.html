@@ -347,8 +347,11 @@
 
             <div class="section-glass" style="margin-top: 10px;">
                 <div class="flex-column" style="width: 100%;">
-                    <label>Animation Speed (1 - 16)</label>
-                    <input type="number" id="speed" min="1" max="16" value="1" onchange="sendSpeed()" style="width: 100%; box-sizing: border-box;">
+                    <div class="flex-row" style="justify-content: space-between; margin-bottom: 5px;">
+                        <label>Animation Speed (1 - 32)</label>
+                        <span id="speed-val" style="color: var(--primary); font-weight: bold;">1</span>
+                    </div>
+                    <input type="range" id="speed" min="1" max="32" value="1" oninput="document.getElementById('speed-val').innerText = this.value" onchange="sendSpeed()" style="width: 100%;">
                 </div>
             </div>
         </div>
@@ -922,7 +925,7 @@
         function sendSpeed() {
             if (!connectt) return;
             const spd = parseInt(document.getElementById('speed').value);
-            if (spd >= 1 && spd <= 16) {
+            if (spd >= 1 && spd <= 32) {
                 websocket.send("#CSPD$" + spd);
             }
         }
@@ -1153,6 +1156,7 @@
                     document.getElementById('pos-w').value = p[7];
                     document.getElementById('pos-h').value = p[8];
                     document.getElementById('speed').value = p[9];
+                    document.getElementById('speed-val').innerText = p[9];
                     document.getElementById('typ').value = p[10];
                     document.getElementById('gio').value = p[11];
                     document.getElementById('phut').value = p[12];
@@ -1179,12 +1183,14 @@
             if (w !== null) posW.value = w;
             if (h !== null) posH.value = h;
 
-            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel', 'speed'];
             fields.forEach(f => {
                 let v = params.get(f);
                 if (v !== null) {
                     let el = document.getElementById(f);
-                    if (el) el.value = v;
+                    if (el) {
+                        el.value = v;
+                        if (f === 'speed') document.getElementById('speed-val').innerText = v;
+                    }
                 }
             });
 
