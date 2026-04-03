@@ -769,16 +769,10 @@
                         startSize: [80, 80, '%'],
                         minSize: [10, 10, 'px'],
                         returnMode: 'real',
-                        onInitialize: (instance) => { 
-                            imageChanged = true; 
-                            triggerChange();
-                            // Force redraw to ensure correct positioning
-                            instance.redraw(); 
-                        },
+                        onInitialize: () => { imageChanged = true; triggerChange(); },
                         onCropEnd: () => { imageChanged = true; triggerChange(); }
                     });
                 };
-                if (targetImg.complete) targetImg.onload();
                 targetImg.src = canvasUI.toDataURL();
             };
         }
