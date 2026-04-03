@@ -882,8 +882,8 @@
         }
 
         // Action Logic
-        btnPreview.onclick = () => sendImageData(false);
-        btnSave.onclick = () => sendImageData(true);
+        btnPreview.onclick = () => sendImageData(true, false);
+        btnSave.onclick = () => sendImageData(true, true);
         let isCanceling = false;
         document.getElementById('btn-back').onclick = () => {
             goBackWithReferrer();
@@ -922,7 +922,7 @@
             }
         }
 
-        function sendImageData(finalSave) {
+        function sendImageData(finalSave, doRedirect) {
             if (!connectt) return;
             const params = new URLSearchParams(window.location.search);
             const isAlarm = (params.get('chk') && params.get('chk') !== '0');
@@ -989,9 +989,9 @@
             }
 
             if (hexData) {
-                startUpload(hexData, finalSave);
+                startUpload(hexData, finalSave, doRedirect);
             } else if (finalSave) {
-                isSaving = true;
+                isSaving = doRedirect;
                 uploadModal.style.display = 'flex';
                 document.getElementById('modal-title').innerText = "Finishing...";
                 websocket.send("#CRES$");
@@ -1008,14 +1008,14 @@
         // let layerToSave = 0; // redundant with currentLayer
         let isSaving = false;
 
-        function startUpload(mainData, finalSave) {
+        function startUpload(mainData, finalSave, doRedirect) {
             if (windowGifInterval) {
                 clearInterval(windowGifInterval);
                 windowGifInterval = null;
             }
             uploadModal.style.display = 'flex';
-            document.getElementById('modal-title').innerText = finalSave ? "Saving..." : "Previewing...";
-            isSaving = finalSave;
+            document.getElementById('modal-title').innerText = doRedirect ? "Saving..." : "Previewing...";
+            isSaving = doRedirect;
 
             uploadQueue = [];
             for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CIMG$" + mainData.substring(i, i + 1024));
@@ -1121,11 +1121,15 @@
                         }
                     }
                 } else if (data === "C_SAVEOK") {
-                    if (isGifAnimation && isSaving) {
+                    if (isGifAnimation) {
                         startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
                     } else {
-                        document.getElementById('modal-title').innerText = "Success!";
-                        setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                        if (isSaving) {
+                            document.getElementById('modal-title').innerText = "Success!";
+                            setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                        } else {
+                            uploadModal.style.display = 'none';
+                        }
                     }
                 } else if (data === "A_READY" || data === "A_UP_OK") {
                     if (animQueue.length > 0) {
@@ -1137,8 +1141,12 @@
                         websocket.send("#ASAV$"); // Kết thúc Animation
                     }
                 } else if (data === "A_SAVEOK") {
-                    document.getElementById('modal-title').innerText = "Animation Saved!";
-                    setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                    if (isSaving) {
+                        document.getElementById('modal-title').innerText = "Animation Saved!";
+                        setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                    } else {
+                        uploadModal.style.display = 'none';
+                    }
                 } else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
                     const p = data.split(':');
                     // p: idx:1, tutao:2, hen:3, chu:4, x:5, y:6, w:7, h:8, speed:9, typ:10, gio:11, phut:12, ngay:13, thang:14, extra:15, am:16, mel:17, text:18, qot:19
