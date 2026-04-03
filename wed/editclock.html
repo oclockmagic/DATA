@@ -278,29 +278,36 @@
         }
 
         .croppr-region {
-            border: 2px dashed white !important;
-            outline: 2px solid black !important;
+            border: 2px dashed #fff !important;
+            box-shadow: 0 0 0 2px #ff0000, 0 0 10px rgba(255, 0, 0, 0.5) !important;
             position: absolute;
-            z-index: 3;
+            z-index: 10 !important;
             cursor: move;
-            animation: croppr-blink 0.6s infinite alternate !important;
+            animation: croppr-red-white 0.4s infinite alternate !important;
             box-sizing: border-box;
+            background: rgba(255, 0, 0, 0.1) !important;
         }
 
-        @keyframes croppr-blink {
-            from { border-color: white; outline-color: black; }
-            to { border-color: black; outline-color: white; }
+        @keyframes croppr-red-white {
+            from { border-color: #fff; box-shadow: 0 0 0 2px #ff0000, 0 0 10px rgba(255, 0, 0, 0.8) !important; }
+            to { border-color: #ff0000; box-shadow: 0 0 0 2px #fff, 0 0 10px rgba(255, 255, 255, 0.8) !important; }
         }
 
         .croppr-handle {
-            border: 1px solid white;
-            outline: 1px solid black;
-            background-color: var(--primary);
-            width: 12px;
-            height: 12px;
+            border: 2px solid #fff !important;
+            background-color: #ff0000 !important;
+            box-shadow: 0 0 5px rgba(0,0,0,0.8) !important;
+            width: 14px !important;
+            height: 14px !important;
             position: absolute;
-            z-index: 4;
-            border-radius: 2px;
+            z-index: 20 !important;
+            border-radius: 4px !important;
+            animation: croppr-handle-blink 0.4s infinite alternate !important;
+        }
+
+        @keyframes croppr-handle-blink {
+            from { background-color: #ff0000; border-color: #fff; }
+            to { background-color: #fff; border-color: #ff0000; }
         }
 
         .croppr-imageClipped {
