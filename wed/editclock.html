@@ -349,9 +349,11 @@
                 <div class="flex-column" style="width: 100%;">
                     <div class="flex-row" style="justify-content: space-between; margin-bottom: 5px;">
                         <label>Animation Speed (1 - 32)</label>
-                        <span id="speed-val" style="color: var(--primary); font-weight: bold;">1</span>
+                        <span id="speed-val" style="font-size: 12px; color: var(--primary);">1</span>
                     </div>
-                    <input type="range" id="speed" min="1" max="32" value="1" oninput="document.getElementById('speed-val').innerText = this.value" onchange="sendSpeed()" style="width: 100%;">
+                    <input type="range" id="speed" min="1" max="32" value="1"
+                        oninput="document.getElementById('speed-val').innerText = this.value" onchange="sendSpeed()"
+                        style="width: 100%;">
                 </div>
             </div>
         </div>
@@ -1002,7 +1004,7 @@
                 isSaving = true;
                 uploadModal.style.display = 'flex';
                 document.getElementById('modal-title').innerText = "Finishing...";
-                websocket.send("#CRES$"); 
+                websocket.send("#CRES$");
                 websocket.send("#CSAV$" + (isGifAnimation ? ":1" : ":0"));
             }
 
