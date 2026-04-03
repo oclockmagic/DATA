@@ -984,7 +984,8 @@
                 isSaving = true;
                 uploadModal.style.display = 'flex';
                 document.getElementById('modal-title').innerText = "Finishing...";
-                websocket.send("#CSAV$");
+                websocket.send("#CRES$"); 
+                websocket.send("#CSAV$" + (isGifAnimation ? ":1" : ":0"));
             }
 
             if (finalSave || imageChanged) {
