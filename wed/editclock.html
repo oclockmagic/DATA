@@ -364,12 +364,14 @@
             <label>Alarm Title / Note</label>
             <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255"
                 style="width: 100%; box-sizing: border-box;">
-            <div class='flex-column' id='ten_list' style='margin-top: 10px; max-height: 150px; overflow-y: auto; gap: 5px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display: flex; flex-direction: column;'>
-<button class='btn btn-secondary' onclick="document.getElementById('text').value = this.innerText; triggerChange();" style='font-size: 10px; padding: 6px; border-radius: 8px; text-transform: none; text-align: left; margin-bottom: 2px;'>Dang ngon</button>
-<button class='btn btn-secondary' onclick="document.getElementById('text').value = this.innerText; triggerChange();" style='font-size: 10px; padding: 6px; border-radius: 8px; text-transform: none; text-align: left; margin-bottom: 2px;'>Danh ngon TA</button>
-<button class='btn btn-secondary' onclick="document.getElementById('text').value = this.innerText; triggerChange();" style='font-size: 10px; padding: 6px; border-radius: 8px; text-transform: none; text-align: left; margin-bottom: 2px;'>English</button>
-<button class='btn btn-secondary' onclick="document.getElementById('text').value = this.innerText; triggerChange();" style='font-size: 10px; padding: 6px; border-radius: 8px; text-transform: none; text-align: left; margin-bottom: 2px;'>Thien chua</button>
-</div>
+            <label style='margin-top: 10px; font-size: 11px; opacity: 0.8; display: block;'>Danh ngôn / Tên nhanh</label>
+<select onchange="if(this.value){ document.getElementById('text').value = this.value; triggerChange(); }" style='width: 100%; margin-top: 5px; outline: none;'>
+<option value=''>-- Chọn nội dung --</option>
+<option value='Dang ngon'>Dang ngon</option>
+<option value='Danh ngon TA'>Danh ngon TA</option>
+<option value='English'>English</option>
+<option value='Thien chua'>Thien chua</option>
+</select>
 
         </div>
 
@@ -899,37 +901,7 @@
             }
         }
 
-        window.addEventListener('load', () => {
-            initWebSocket();
-            const params = new URLSearchParams(window.location.search);
-            console.log("Incoming query params:", Object.fromEntries(params.entries())); // Logging incoming params
 
-            const idx = params.get('idx');
-            const x = params.get('x'), y = params.get('y'), w = params.get('w'), h = params.get('h');
-
-            if (idx !== null) currentLayer = parseInt(idx);
-            if (x !== null) posX.value = x;
-            if (y !== null) posY.value = y;
-            if (w !== null) posW.value = w;
-            if (h !== null) posH.value = h;
-
-            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel'];
-            fields.forEach(f => {
-                let v = params.get(f);
-                if (v !== null) {
-                    let el = document.getElementById(f);
-                    if (el) el.value = v;
-                }
-            });
-
-            if (params.get('tutao') === '1') document.getElementById('section-image').style.display = 'block';
-            if (params.get('chu') === '1') document.getElementById('section-text').style.display = 'block';
-            if (params.get('chk') === '1') document.getElementById('section-alarm').style.display = 'block';
-
-            let txt = params.get('text');
-            if (txt) document.getElementById('text').value = decodeHexText(txt);
-            updateUI();
-        });
 
         function sendSpeed() {
             if (!connectt) return;
@@ -1174,7 +1146,7 @@
                     document.getElementById('thu').value = p[15];
                     document.getElementById('am').value = p[16];
                     document.getElementById('mel').value = p[17];
-                    if (p[18]) document.getElementById('text').value = hexToUtf8(p[18]);
+                    if (p[18]) document.getElementById('text').value = decodeHexText(p[18]);
                     updateUI();
                 }
             };
@@ -1192,6 +1164,7 @@
             if (w !== null) posW.value = w;
             if (h !== null) posH.value = h;
 
+            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel', 'speed'];
             fields.forEach(f => {
                 let v = params.get(f);
                 if (v !== null) {
@@ -1231,8 +1204,6 @@
                         minSize: [10, 10, 'px'],
                         returnMode: 'real',
                         onInitialize: () => {
-                            // Initial load doesn't count as changed unless user moves it
-                            // but triggerChange enables the buttons
                             triggerChange();
                         },
                         onCropEnd: () => {
@@ -1251,7 +1222,7 @@
             }
 
             document.getElementById('btn-back').onclick = () => {
-                window.location.href = '/clock.html?v=' + Date.now();
+                goBackWithReferrer();
             };
         });
     </script>
