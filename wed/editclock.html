@@ -278,15 +278,16 @@
         }
 
         .croppr-region {
-            border: 1px dashed white;
-            outline: 1px solid black;
+            border: 2px dashed white !important;
+            outline: 2px solid black !important;
             position: absolute;
             z-index: 3;
             cursor: move;
-            animation: croppr-border-anim 1s infinite alternate;
+            animation: croppr-blink 0.6s infinite alternate !important;
+            box-sizing: border-box;
         }
 
-        @keyframes croppr-border-anim {
+        @keyframes croppr-blink {
             from { border-color: white; outline-color: black; }
             to { border-color: black; outline-color: white; }
         }
