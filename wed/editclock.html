@@ -1029,6 +1029,8 @@
             const crop = croppr.getValue();
             let allFramesHex = "";
 
+            const pW = 368, pH = 380; // Kích thước giao diện preview chuẩn
+
             gifFramesData.forEach(fr => {
                 const offCanvas = document.createElement('canvas');
                 offCanvas.width = fr.width; offCanvas.height = fr.height;
@@ -1037,11 +1039,27 @@
                 imgDataObj.data.set(fr.data);
                 offCtx.putImageData(imgDataObj, 0, 0);
 
+                // BƯỚC THIẾU: Phải padding frame về chuẩn 368x380 giống hệt lúc tạo preview imgOrig
+                // Nếu không, tọa độ crop.x, crop.y (được đo trên imgOrig 368x380) sẽ bị áp sai lệch hoàn toàn vào khung gốc
+                let uiW, uiH;
+                if (fr.width / fr.height > pW / pH) {
+                    uiW = pW; uiH = uiW * fr.height / fr.width;
+                } else {
+                    uiH = pH; uiW = uiH * fr.width / fr.height;
+                }
+                const paddedCanvas = document.createElement("canvas");
+                const paddedCtx = paddedCanvas.getContext("2d");
+                paddedCanvas.width = pW; paddedCanvas.height = pH;
+                paddedCtx.translate(pW / 2, pH / 2);
+                paddedCtx.drawImage(offCanvas, -uiW / 2, -uiH / 2, uiW, uiH);
+
                 const finalCanvas = document.createElement('canvas');
                 finalCanvas.width = targetW; finalCanvas.height = targetH;
                 const finalCtx = finalCanvas.getContext('2d');
                 finalCtx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-                finalCtx.drawImage(offCanvas, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+                
+                // Bây giờ sử dụng paddedCanvas để cắt, tỷ lệ sẽ trùng khớp hoàn toàn
+                finalCtx.drawImage(paddedCanvas, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
                 const pixels = finalCtx.getImageData(0, 0, targetW, targetH).data;
                 for (let i = 0; i < pixels.length; i += 4) {
