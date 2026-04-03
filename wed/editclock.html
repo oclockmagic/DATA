@@ -273,14 +273,14 @@
         /* ===== Custom visibility overrides ===== */
         .croppr-container { position: relative; }
         .croppr-region {
-            border: 3px dashed #fff !important;
+            border: 1px dashed #fff !important;
             z-index: 99 !important;
-            animation: croppr-glow 0.5s infinite alternate !important;
+            animation: croppr-glow 0.2s infinite alternate !important;
             background: rgba(255, 0, 0, 0.1) !important;
         }
         @keyframes croppr-glow {
-            from { box-shadow: inset 0 0 0 1px rgba(255,0,0,0.9), 0 0 0 2px rgba(255,0,0,0.9); }
-            to   { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.9), 0 0 0 2px rgba(255,255,255,0.9); }
+            from { box-shadow: inset 0 0 0 1px rgba(255,0,0,0.9), 0 0 0 1px rgba(255,0,0,0.9); }
+            to   { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.9), 0 0 0 1px rgba(255,255,255,0.9); }
         }
         .croppr-handle {
             border: 2px solid #fff !important;
