@@ -1103,7 +1103,11 @@
                         progressBar.style.width = prog + '%';
                         progressPercent.innerText = prog + '%';
                     } else {
-                        websocket.send(isSaving ? "#CSAV$" : "#CFIN$");
+                        if (isSaving) {
+                            websocket.send("#CSAV$" + (isGifAnimation ? ":1" : ":0"));
+                        } else {
+                            websocket.send("#CFIN$");
+                        }
                     }
                 } else if (data === "C_SAVEOK") {
                     if (isGifAnimation && isSaving) {
