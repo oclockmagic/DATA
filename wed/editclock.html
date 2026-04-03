@@ -344,6 +344,13 @@
                     <input type="range" id="filter-slider" min="0" max="200" value="100">
                 </div>
             </div>
+
+            <div class="section-glass" style="margin-top: 10px;">
+                <div class="flex-column" style="width: 100%;">
+                    <label>Animation Speed (1 - 16)</label>
+                    <input type="number" id="speed" min="1" max="16" value="1" onchange="sendSpeed()" style="width: 100%; box-sizing: border-box;">
+                </div>
+            </div>
         </div>
 
         <div style="height: 10px;"></div>
@@ -912,6 +919,14 @@
             updateUI();
         });
 
+        function sendSpeed() {
+            if (!connectt) return;
+            const spd = parseInt(document.getElementById('speed').value);
+            if (spd >= 1 && spd <= 16) {
+                websocket.send("#CSPD$" + spd);
+            }
+        }
+
         function sendImageData(finalSave) {
             if (!connectt) return;
             const params = new URLSearchParams(window.location.search);
@@ -1129,6 +1144,25 @@
                 } else if (data === "A_SAVEOK") {
                     document.getElementById('modal-title').innerText = "Animation Saved!";
                     setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                } else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
+                    const p = data.split(':');
+                    // p: idx:1, tutao:2, hen:3, chu:4, x:5, y:6, w:7, h:8, speed:9, typ:10, gio:11, phut:12, ngay:13, thang:14, extra:15, am:16, mel:17, text:18
+                    // NOTE: Indices in JS are 0-based, so p[0] is DOWNLOAD_EDIT_CLOCK, p[1] is idx, p[8] is h, p[9] is speed, p[10] is typ...
+                    document.getElementById('pos-x').value = p[5];
+                    document.getElementById('pos-y').value = p[6];
+                    document.getElementById('pos-w').value = p[7];
+                    document.getElementById('pos-h').value = p[8];
+                    document.getElementById('speed').value = p[9];
+                    document.getElementById('typ').value = p[10];
+                    document.getElementById('gio').value = p[11];
+                    document.getElementById('phut').value = p[12];
+                    document.getElementById('ngay').value = p[13];
+                    document.getElementById('thang').value = p[14];
+                    document.getElementById('thu').value = p[15];
+                    document.getElementById('am').value = p[16];
+                    document.getElementById('mel').value = p[17];
+                    if (p[18]) document.getElementById('text').value = hexToUtf8(p[18]);
+                    updateUI();
                 }
             };
         }
@@ -1145,7 +1179,7 @@
             if (w !== null) posW.value = w;
             if (h !== null) posH.value = h;
 
-            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel'];
+            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel', 'speed'];
             fields.forEach(f => {
                 let v = params.get(f);
                 if (v !== null) {
