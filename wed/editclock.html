@@ -330,6 +330,7 @@
                 <p style="opacity: 0.3;" id="no-image-text">No Image Selected</p>
                 <img id="cropper-target" style="max-width: 100%; max-height: 100%; display: none;" />
             </div>
+
             <div class="section-glass filter-controls" style="margin-top: 20px;">
                 <button class="btn btn-secondary btn-filter active" id="brightness">Brightness</button>
                 <button class="btn btn-secondary btn-filter" id="saturation">Saturation</button>
@@ -340,12 +341,7 @@
                         <span id="filter-name" style="font-size: 12px;">Brightness</span>
                         <span id="filter-value" style="font-size: 12px; color: var(--primary);">100%</span>
                     </div>
-                    <input type="range" id="filter-slider" min="0" max="250" value="100">
-                </div>
-                <!-- Thêm SPEED tối giản nhất có thể -->
-                <div style="grid-column: span 2; display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-                    <label style="font-size: 12px; opacity: 0.8;">Speed:</label>
-                    <input type="number" id="speed" min="1" max="16" value="10" style="width: 50px; background: rgba(0,0,0,0.2); color: #fff; border: 1px solid var(--primary); border-radius: 4px; padding: 2px 5px;">
+                    <input type="range" id="filter-slider" min="0" max="200" value="100">
                 </div>
             </div>
         </div>
@@ -375,16 +371,6 @@
                         <option value="1">Lunar</option>
                     </select>
                 </div>
-            </div>
-            <div id="filter-sliders" style="margin-top: 10px;">
-                <label>BRIGHTNESS: <span id="bright-val">100</span>%</label>
-                <input type="range" class="slider" id="brightness" min="0" max="250" value="100">
-                <label>SATURATION: <span id="sat-val">100</span>%</label>
-                <input type="range" class="slider" id="saturation" min="0" max="250" value="100">
-                <label>INVERSION: <span id="inv-val">0</span>%</label>
-                <input type="range" class="slider" id="inversion" min="0" max="100" value="0">
-                <label>GRAYSCALE: <span id="gray-val">0</span>%</label>
-                <input type="range" class="slider" id="grayscale" min="0" max="100" value="0">
             </div>
             <div class="flex-column" style="margin-top: 10px;">
                 <label>Repeat (Day of week)</label>
@@ -674,7 +660,6 @@
         const posY = document.getElementById('pos-y');
         const posW = document.getElementById('pos-w');
         const posH = document.getElementById('pos-h');
-        const speedInput = document.getElementById('speed');
         const btnPreview = document.getElementById('btn-preview');
         const btnSave = document.getElementById('btn-save');
         const filterSlider = document.getElementById('filter-slider');
@@ -859,7 +844,7 @@
         };
 
         // Auto-hook all inputs for change tracking
-        ['text', 'chk', 'typ', 'am', 'thu', 'gio', 'phut', 'ngay', 'thang', 'mel', 'speed'].forEach(id => {
+        ['text', 'chk', 'typ', 'am', 'thu', 'gio', 'phut', 'ngay', 'thang', 'mel'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('input', triggerChange);
@@ -901,18 +886,13 @@
             console.log("Incoming query params:", Object.fromEntries(params.entries())); // Logging incoming params
 
             const idx = params.get('idx');
-            const x = params.get('x'), y = params.get('y'), w = params.get('w'), h = params.get('h'), sp = params.get('sp');
+            const x = params.get('x'), y = params.get('y'), w = params.get('w'), h = params.get('h');
 
             if (idx !== null) currentLayer = parseInt(idx);
             if (x !== null) posX.value = x;
             if (y !== null) posY.value = y;
             if (w !== null) posW.value = w;
             if (h !== null) posH.value = h;
-            if (sp !== null) {
-                speedInput.value = sp;
-                const speedVal = document.getElementById('speed-val');
-                if (speedVal) speedVal.innerText = sp;
-            }
 
             const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel'];
             fields.forEach(f => {
@@ -943,7 +923,6 @@
             const py = parseInt(posY.value) || 0;
             const pw = parseInt(posW.value) || 64;
             const phh = parseInt(posH.value) || 64;
-            const speed = parseInt(speedInput.value) || 10;
 
             const targetW = pw;
             const targetH = phh;
@@ -984,8 +963,8 @@
                 const am = parseInt(document.getElementById("am").value) || 0;
                 const mel = parseInt(document.getElementById("mel").value) || 0;
 
-                // 0. Gửi Header (X, Y, W, H, Tutao, Speed)
-                websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao},${speed}`);
+                // 0. Gửi Header (X, Y, W, H, Tutao)
+                websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
 
                 const tv = document.getElementById('text').value;
                 let nhex = "";
