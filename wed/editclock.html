@@ -364,6 +364,13 @@
             <label>Alarm Title / Note</label>
             <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255"
                 style="width: 100%; box-sizing: border-box;">
+            <div class='flex-column' id='ten_list' style='margin-top: 10px; max-height: 150px; overflow-y: auto; gap: 5px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display: flex; flex-direction: column;'>
+<button class='btn btn-secondary' onclick="document.getElementById('text').value = this.innerText; triggerChange();" style='font-size: 10px; padding: 6px; border-radius: 8px; text-transform: none; text-align: left; margin-bottom: 2px;'>Dang ngon</button>
+<button class='btn btn-secondary' onclick="document.getElementById('text').value = this.innerText; triggerChange();" style='font-size: 10px; padding: 6px; border-radius: 8px; text-transform: none; text-align: left; margin-bottom: 2px;'>Danh ngon TA</button>
+<button class='btn btn-secondary' onclick="document.getElementById('text').value = this.innerText; triggerChange();" style='font-size: 10px; padding: 6px; border-radius: 8px; text-transform: none; text-align: left; margin-bottom: 2px;'>English</button>
+<button class='btn btn-secondary' onclick="document.getElementById('text').value = this.innerText; triggerChange();" style='font-size: 10px; padding: 6px; border-radius: 8px; text-transform: none; text-align: left; margin-bottom: 2px;'>Thien chua</button>
+</div>
+
         </div>
 
         <div id="section-alarm" class="section-glass" style="display: none;">
