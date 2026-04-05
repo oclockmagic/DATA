@@ -1151,8 +1151,8 @@
                     bassEditorChanged = false;
                     bgGifFrames = [];
                     bassGifFrames = [];
-                    hideModal('modal-progress');
                     console.log("Music Metadata Loaded for IDX: " + parts[1]);
+                } else if (data === "M_READY") {
                     sendMetadata();
                 } else if (data === "M_META_OK") {
                     // Bước 1: Upload Background (72x72)
