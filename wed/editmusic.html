@@ -900,19 +900,25 @@
                     opt.innerHTML = `${imgTag}<span>${displayName}</span>`;
 
                     opt.onclick = () => {
+                        // Tìm lại index gốc trong mảng DATA để tránh lỗi khi đang search (filtered)
+                        const originalImages = DATA[config.path] || [];
+                        const originalIdx = originalImages.indexOf(name);
+                        const finalIdx = originalIdx !== -1 ? originalIdx : idx;
+
                         if (selectedImg) {
                             selectedImg.src = imgUrl;
                             selectedImg.style.display = 'block';
                         }
                         if (selectedText) selectedText.innerText = displayName;
                         el.classList.remove('open');
-                        el.setAttribute('data-index', idx);
-                        if (config.id === 'sel-bg-ini') updateBgUploadState(idx);
-                        if (config.id === 'sel-bass') updateBassUploadState(idx);
+                        el.setAttribute('data-index', finalIdx);
 
-                        // Auto-save changes for dropdowns
+                        if (config.id === 'sel-bg-ini') updateBgUploadState(finalIdx);
+                        if (config.id === 'sel-bass') updateBassUploadState(finalIdx);
+
+                        // Auto-save changes for dropdowns using specific independent commands
                         if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
-                            triggerAutoSave();
+                            triggerAutoSave(config.id);
                         }
                     };
                     optionsBox.appendChild(opt);
@@ -1222,14 +1228,33 @@
             websocket.send("#MBUM$");
         }
 
-        function triggerAutoSave() {
+        function triggerAutoSave(sourceId) {
             if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
-            // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
+            
+            // Reset flags for atomic operation
             hasUploadedBG = false;
             hasUploadedBass = false;
             bgEditorChanged = false;
             bassEditorChanged = false;
-            lastEditorTarget = ""; // Reset target
+            lastEditorTarget = "";
+
+            if (sourceId) {
+                const val = getIdx(sourceId);
+                let cmd = "";
+                switch(sourceId) {
+                    case 'sel-bg-ini': cmd = "#MBGMOD$"; break;
+                    case 'sel-background': cmd = "#MBGSEL$"; break;
+                    case 'sel-bass': cmd = "#MBSSEL$"; break;
+                    case 'sel-eq-type': cmd = "#MEQTYP$"; break;
+                    case 'sel-eq-color': cmd = "#MEQCOL$"; break;
+                    case 'sel-eq-effect': cmd = "#MEQEFF$"; break;
+                    case 'sel-eq-peak': cmd = "#MEQPEA$"; break;
+                }
+                if (cmd) {
+                    websocket.send(cmd + val);
+                    return;
+                }
+            }
 
             const idx = params.get('idx') || '0';
             websocket.send("#MSTB$" + idx);
