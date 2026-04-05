@@ -1121,10 +1121,12 @@
 
                 // Xử lý gói tin Metadata đầy đủ từ ESP32
                 if (data.startsWith("M_DATA:")) {
+                    console.log("RAW M_DATA received:", data);
                     const parts = data.split(':');
                     // Gói tin: M_DATA:idx:bg_sel:bass_sel:eq_type:eq_color:eq_effect:eq_peak:bg_mode:bg_spd:bass_spd
                     if (parts.length >= 11) {
                         currentMusicIdx = parts[1];
+                        console.log("Updating UI with values:", parts);
                         updateUIComponent('sel-background', parts[2]);
                         updateUIComponent('sel-bass', parts[3]);
                         updateUIComponent('sel-eq-type', parts[4]);
@@ -1132,13 +1134,18 @@
                         updateUIComponent('sel-eq-effect', parts[6]);
                         updateUIComponent('sel-eq-peak', parts[7]);
                         updateUIComponent('sel-bg-ini', parts[8]);
-                        document.getElementById('bg-gif-speed').value = parts[9];
-                        document.getElementById('bg-gif-speed-val').innerText = parts[9];
-                        document.getElementById('bass-gif-speed').value = parts[10];
-                        document.getElementById('bass-gif-speed-val').innerText = parts[10];
+                        
+                        const bgSpd = document.getElementById('bg-gif-speed');
+                        if (bgSpd) { bgSpd.value = parts[9]; document.getElementById('bg-gif-speed-val').innerText = parts[9]; }
+                        
+                        const bassSpd = document.getElementById('bass-gif-speed');
+                        if (bassSpd) { bassSpd.value = parts[10]; document.getElementById('bass-gif-speed-val').innerText = parts[10]; }
+                        
+                        console.log("UI Update finished for Music Metadata.");
+                    } else {
+                        console.error("M_DATA packet too short:", parts.length);
                     }
                     isDataLoaded = true;
-                    console.log("Music Metadata Loaded for IDX:", currentMusicIdx);
                     return;
                 }
 
@@ -1258,7 +1265,7 @@
 
         function updateUIComponent(id, val) {
             const el = document.getElementById(id);
-            if (!el) return;
+            if (!el) { console.warn("Component not found:", id); return; }
             el.setAttribute('data-index', val);
             const item = Array.from(el.querySelectorAll('.custom-option')).find(i => i.getAttribute('data-index') == val);
             if (item) {
@@ -1268,16 +1275,18 @@
                     if (selText) selText.innerText = textSpan.innerText;
                 }
                 const imgTag = item.querySelector('img');
-                if (imgTag) {
-                    const selImg = el.querySelector('.selected-img');
-                    if (selImg) {
-                        selImg.src = imgTag.src;
-                        selImg.style.display = 'block';
-                    }
+                const selImg = el.querySelector('.selected-img');
+                if (imgTag && selImg) {
+                    selImg.src = imgTag.src;
+                    selImg.style.display = 'block';
+                } else if (selImg) {
+                    selImg.style.display = 'none';
                 }
-                // Đặc biệt cho các trạng thái cần xử lý thêm
                 if (id === 'sel-bg-ini') updateBgUploadState(val);
                 if (id === 'sel-bass') updateBassUploadState(val);
+                console.log(`Updated ${id} to index ${val} (${textSpan ? textSpan.innerText : 'no text'})`);
+            } else {
+                console.warn(`Item with index ${val} NOT FOUND in ${id}`);
             }
         }
 
