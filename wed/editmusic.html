@@ -748,8 +748,9 @@
             </div>
         </div>
         <hr>
-        <div class="control-bar">
-            <button id="btn-save-main" class="btn btn-primary" style="flex: 2;">✓ OK — DONE</button>
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button class="btn btn-secondary" onclick="window.location.href='music.html?v=' + Date.now()">BACK</button>
+            <button id="btn-save-main" class="btn btn-primary" style="flex: 1.5;">SAVE</button>
         </div>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
@@ -909,9 +910,9 @@
                         if (config.id === 'sel-bg-ini') updateBgUploadState(idx);
                         if (config.id === 'sel-bass') updateBassUploadState(idx);
 
-                        // Auto-save changes for dropdowns - atomic update
+                        // Auto-save changes for dropdowns
                         if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
-                            triggerAutoSave(config.id);
+                            triggerAutoSave();
                         }
                     };
                     optionsBox.appendChild(opt);
@@ -1220,32 +1221,21 @@
             websocket.send("#MBUM$");
         }
 
-        function triggerAutoSave(field) {
+        function triggerAutoSave() {
             if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
+            // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
             hasUploadedBG = false;
             hasUploadedBass = false;
             bgEditorChanged = false;
             bassEditorChanged = false;
-            lastEditorTarget = ""; 
+            lastEditorTarget = ""; // Reset target
 
-            const val = getIdx(field);
-            const CMD_MAP = {
-                'sel-bg-ini': '#MBGM$',
-                'sel-background': '#MBGE$',
-                'sel-bass': '#MBSM$',
-                'sel-eq-type': '#MEQT$',
-                'sel-eq-color': '#MEQC$',
-                'sel-eq-effect': '#MEQE$',
-                'sel-eq-peak': '#MEQP$'
-            };
-
-            if (CMD_MAP[field]) {
-                websocket.send(CMD_MAP[field] + val);
-            }
+            const idx = params.get('idx') || '0';
+            websocket.send("#MSTB$" + idx);
         }
 
-        document.getElementById('btn-save-main').onclick = () => {
-            window.location.href = 'music.html?v=' + Date.now();
+        document.getElementById('btn-save-main').onclick = async () => {
+            triggerAutoSave();
         };
 
         CONFIG.forEach(initCombobox);
@@ -1300,7 +1290,7 @@
             const sl = document.getElementById('editor-filter-slider');
             sl.value = 100;
             sl.max = 200;
-            document.getElementById('editor-filter-value').innerText = '100%';
+            document.getElementById('editor-filter-value').inne r Text = ' 100%';
             document.getElementById('editor-filter-name').innerText = 'Brightness';
 
             document.querySelectorAll('.editor-filter-btn').forEach(b => b.classList.remove('active'));
@@ -1357,7 +1347,7 @@
                         const uint8Arr = new Uint8Array(ev.target.result);
                         const gifReader = new GifReader(uint8Arr);
                         const numFrames = gifReader.numFrames();
-                        const maxFrames = 16;
+                        co nst maxFrames = 16;
                         const step = Math.max(1, Math.ceil(numFrames / maxFrames));
                         const cumBuf = new Uint8ClampedArray(gifReader.width * gifReader.height * 4);
                         editorGifFrames = [];
@@ -1394,7 +1384,7 @@
                             const uc = document.createElement('canvas');
                             const ucx = uc.getContext('2d');
                             uc.width = pW; uc.height = pH;
-                            ucx.translate(pW / 2, pH / 2);
+                            ucx.t ranslate(pW / 2, pH / 2);
                             ucx.drawImage(tc, -uiW / 2, -uiH / 2, uiW, uiH);
                             document.querySelectorAll('.croppr-image, .croppr-imageClipped').forEach(img => img.src = uc.toDataURL());
                             fIdx++;
@@ -1422,8 +1412,8 @@
                 document.querySelectorAll('.editor-filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 const f = btn.dataset.filter;
-                document.getElementById('editor-filter-name').innerText = btn.innerText;
-                const sl = document.getElementById('editor-filter-slider');
+                document.getElementById('editor-filter-name').innerTex t = btn.innerText;
+                const sl = d ocument.getElementBy I d('editor-filter-slider');
                 if (f === 'brightness') { sl.max = 200; sl.value = eBright; }
                 else if (f === 'saturation') { sl.max = 200; sl.value = eSat; }
                 else if (f === 'inversion') { sl.max = 100; sl.value = eInv; }
@@ -1515,11 +1505,11 @@
                     bgEditorChanged = true;
                     bassEditorChanged = false; // Khóa chặt: Reset bên kia
                     lastEditorTarget = "BG";
-                    bgCtx.clearRect(0, 0, 72, 72);
+                    bgCtx.clearR ect(0, 0, 72, 72);
                     bgCtx.drawImage(previewC, 0, 0, 72, 72);
-                    document.getElementById('bg-hint').style.display = 'none';
+                    document ElementById('bg-hint').style.display = 'none';
                     hasUploadedBG = true;
-                    hasUploadedBass = false; // Khóa chặt: Reset bên kia
+                    hasUploadedBass = false; // Khóa chặt: Reset bê a
                 } else {
                     bassGifFrames = croppedFrames;
                     bassEditorChanged = true;
@@ -1537,7 +1527,7 @@
                 out2.width = targetW; out2.height = targetH;
                 const octx2 = out2.getContext('2d');
                 octx2.filter = filterStr;
-                octx2.drawImage(editorImgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+                octx2.drawImage(editorImgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targ etW, targetH);
 
                 if (editorTarget === 'BG') {
                     bgGifFrames = [];
@@ -1551,7 +1541,7 @@
                     hasUploadedBass = false; // Khóa chặt
                 } else {
                     bassGifFrames = [];
-                    bassEditorChanged = true;
+                    barChanged = true;
                     bgEditorChanged = false; // Khóa chặt
                     lastEditorTarget = "BASS";
                     bassCtx.clearRect(0, 0, 44, 44);
