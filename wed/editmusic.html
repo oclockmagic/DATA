@@ -911,8 +911,10 @@
                         if (config.id === 'sel-bass') updateBassUploadState(idx);
 
                         // Auto-save changes for dropdowns
-                        if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
+                        if (['sel-bg-ini', 'sel-background'].includes(config.id)) {
                             triggerAutoSave(config.id);
+                        } else if (['sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
+                            triggerAutoSave();
                         }
                     };
                     optionsBox.appendChild(opt);
@@ -962,34 +964,25 @@
                     hasUploadedBG = false;
                 }
             }
-        }
-
-        function updateBassUploadState(idx) {
+               function updateBassUploadState(idx) {
             const canvas = document.getElementById('bass-canvas');
             const hint = document.getElementById('bass-hint');
             const index = parseInt(idx);
-            console.log("Updating Bass Upload State Index:", index);
-
             if (canvas && hint) {
-                if (index === 1) {
-                    // Custom Upload mode
+                if (index === 1) { // Custom Upload mode
                     canvas.parentElement.classList.remove('disabled-upload');
-                    // We don't reset hasUploadedBass here in case they already uploaded one
                 } else {
                     canvas.parentElement.classList.add('disabled-upload');
-                    hasUploadedBass = false; // Reset for None (0) or until Auto-draw (>=2) finishes
-
+                    hasUploadedBass = false; 
                     if (index >= 2) {
-                        const images = state['sel-bass'] || [];
+                        const images = DATA['bass'] || [];
                         if (images[index]) {
                             const imgUrl = RAW_BASE + "bass/" + images[index];
-                            console.log("Auto-drawing Bass Image:", imgUrl);
                             const img = new Image();
                             img.crossOrigin = "anonymous";
                             img.src = imgUrl;
                             img.onload = () => {
                                 if (bassCtx) {
-                                    console.log("Drawing Bass to Canvas...");
                                     bassCtx.clearRect(0, 0, 44, 44);
                                     let s, dx, dy, dw, dh;
                                     if (img.width > img.height) {
@@ -1001,21 +994,15 @@
                                     }
                                     bassCtx.drawImage(img, dx, dy, dw, dh);
                                     hint.style.display = 'none';
-                                    hasUploadedBass = true; // Set flag ONLY after successful draw
-                                    console.log("hasUploadedBass set to TRUE");
+                                    hasUploadedBass = true;
                                 }
                             };
-                            img.onerror = (e) => {
-                                console.error("Error loading image for auto-draw:", imgUrl, e);
-                                hasUploadedBass = false;
-                            };
+                            img.onerror = () => { hasUploadedBass = false; };
                         }
                     } else if (index === 0) {
-                        // None selected - clear canvas and hide hint
                         if (bassCtx) bassCtx.clearRect(0, 0, 44, 44);
                         hint.style.display = 'block';
                         hasUploadedBass = false;
-                        console.log("hasUploadedBass set to FALSE (None)");
                     }
                 }
             }
@@ -1049,7 +1036,7 @@
             if (id === 'sel-bass') updateBassUploadState(parseInt(idx));
         }
 
-        // --- Background Image Handling ---
+        // --- BG Image Handling ---
         const fileBG = document.getElementById('file-bg');
 
         fileBG.onchange = (e) => {
@@ -1161,23 +1148,17 @@
                     if (data.includes(":")) {
                         const meta = data.split(":")[1].split(",");
                         if (meta.length >= 7) {
-                            // meta order: bg_effect, bass_val, eq_type, eq_color, eq_effect, eq_peak, bg_mode
-                            const bg_effect = meta[0], bass_val = meta[1], eq_type = meta[2];
-                            const eq_color = meta[3], eq_effect = meta[4], eq_peak = meta[5], bg_mode = meta[6];
-
-                            setDropdownIndex('sel-background', bg_effect);
-                            setDropdownIndex('sel-bass', bass_val);
-                            setDropdownIndex('sel-eq-type', eq_type);
-                            setDropdownIndex('sel-eq-color', eq_color);
-                            setDropdownIndex('sel-eq-effect', eq_effect);
-                            setDropdownIndex('sel-eq-peak', eq_peak);
-                            setDropdownIndex('sel-bg-ini', bg_mode);
-
-                            if (bg_mode !== undefined) updateBgUploadState(parseInt(bg_mode));
-                            if (bass_val !== undefined) updateBassUploadState(parseInt(bass_val));
+                            setDropdownIndex('sel-background', meta[0]);
+                            setDropdownIndex('sel-bass', meta[1]);
+                            setDropdownIndex('sel-eq-type', meta[2]);
+                            setDropdownIndex('sel-eq-color', meta[3]);
+                            setDropdownIndex('sel-eq-effect', meta[4]);
+                            setDropdownIndex('sel-eq-peak', meta[5]);
+                            setDropdownIndex('sel-bg-ini', meta[6]);
                         }
+                    } else {
+                        sendMetadata();
                     }
-                    // KHÔNG gọi sendMetadata() ở đây để tránh ghi đè ngược lại flash ngay khi vừa nạp
                 } else if (data === "M_META_OK") {
                     // Bước 1: Upload Background (72x72)
                     if (hasUploadedBG) {
@@ -1271,26 +1252,17 @@
 
         function triggerAutoSave(sourceId) {
             if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
-            
-            if (sourceId) {
-                const val = getIdx(sourceId);
-                let cmd = "";
-                switch (sourceId) {
-                    case 'sel-bg-ini': cmd = "#MBGMOD$"; break;
-                    case 'sel-background': cmd = "#MBGSEL$"; break;
-                    case 'sel-bass': cmd = "#MBSSEL$"; break;
-                    case 'sel-eq-type': cmd = "#MEQTYP$"; break;
-                    case 'sel-eq-color': cmd = "#MEQCOL$"; break;
-                    case 'sel-eq-effect': cmd = "#MEQEFF$"; break;
-                    case 'sel-eq-peak': cmd = "#MEQPEA$"; break;
-                }
-                if (cmd) {
-                    websocket.send(cmd + val);
-                    return;
-                }
+
+            if (sourceId === 'sel-background') {
+                websocket.send("#MBGSEL$" + getIdx('sel-background'));
+                return;
+            }
+            if (sourceId === 'sel-bg-ini') {
+                websocket.send("#MBGMOD$" + getIdx('sel-bg-ini'));
+                return;
             }
 
-            // Chỉ lưu metadata thô khi nhấn nút SAVE tổng hoặc trường hợp khác
+            // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
             hasUploadedBG = false;
             hasUploadedBass = false;
             bgEditorChanged = false;
