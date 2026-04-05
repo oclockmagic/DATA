@@ -1252,8 +1252,8 @@
         }
 
         function finalizeSave() {
-            document.getElementById('modal-title').innerText = "Finalizing...";
-            websocket.send("#MBUM$");
+            const suffix = (currentStep === "BASS") ? ":1" : "";
+            websocket.send("#MBUM$" + currentMusicIdx + suffix);
         }
 
         function triggerAutoSave() {
