@@ -909,6 +909,11 @@
                         el.setAttribute('data-index', idx);
                         if (config.id === 'sel-bg-ini') updateBgUploadState(idx);
                         if (config.id === 'sel-bass') updateBassUploadState(idx);
+
+                        // Auto-save changes for dropdowns
+                        if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
+                            triggerAutoSave();
+                        }
                     };
                     optionsBox.appendChild(opt);
                 });
@@ -1144,7 +1149,7 @@
                 } else if (data === "M_BG_OK") {
                     handleStepBG_Done();
                 } else if (data === "M_SAVEOK") {
-                    // Sau khi save ảnh tĩnh xong → kiểm tra có GIF anim không
+                    // Sau khi save ảnh tĩnh/metadata xong -> kiểm tra có GIF không
                     afterMSaveOK();
                 } else if (data === "M_AB_READY" || data === "M_AB_UP_OK") {
                     // Gửi chunk anim tiếp theo
@@ -1165,7 +1170,7 @@
         }
 
         function handleStepBG_Done() {
-            if (hasUploadedBass) {
+            if (hasUploadedBass || bassEditorChanged) {
                 currentStep = "BASS";
                 globalPhotoHex = getRGB565Hex(bassCanvas, 44, 44);
                 hexPos = 0;
@@ -1217,24 +1222,24 @@
             websocket.send("#MBUM$");
         }
 
-        document.getElementById('btn-save-main').onclick = async () => {
-            const btn = document.getElementById('btn-save-main');
-            if (btn.disabled) return;
-            btn.disabled = true;
-
-            document.getElementById('upload-modal').style.display = 'flex';
-            document.getElementById('modal-title').innerText = "Connecting...";
-            document.getElementById('progress-bar').style.width = '0%';
-            document.getElementById('progress-percent').innerText = '0%';
+        function triggerAutoSave() {
+            if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
+            // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
+            hasUploadedBG = false;
+            hasUploadedBass = false;
+            bgEditorChanged = false;
+            bassEditorChanged = false;
 
             const idx = params.get('idx') || '0';
-            if (websocket && websocket.readyState === WebSocket.OPEN) {
-                websocket.send("#MSTB$" + idx);
-            } else {
-                document.getElementById('upload-modal').style.display = 'none';
-                alert("WebSocket not connected!");
-                btn.disabled = false;
-            }
+            websocket.send("#MSTB$" + idx);
+
+            // Sau khi send xong sẽ nhảy vào luồng M_READY -> sendMetadata -> M_META_OK
+            // Tại M_META_OK nó sẽ check hasUploadedBG...
+            // Tuy nhiên triggerAutoSave này là dành cho dropdown nên để false là đúng.
+        }
+
+        document.getElementById('btn-save-main').onclick = async () => {
+            triggerAutoSave();
         };
 
         CONFIG.forEach(initCombobox);
@@ -1537,6 +1542,17 @@
                 }
             }
             closeEditorModal();
+
+            // Auto save image data immediately
+            document.getElementById('upload-modal').style.display = 'flex';
+            document.getElementById('modal-title').innerText = "Saving Change...";
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-percent').innerText = '0%';
+
+            const idx = params.get('idx') || '0';
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send("#MSTB$" + idx);
+            }
         }
 
         // =============================================
@@ -1579,7 +1595,10 @@
         function finishSession() {
             websocket.send("#M_FIN$");
             document.getElementById('modal-title').innerText = 'Success!';
-            setTimeout(() => { window.location.href = '/music.html?v=' + Date.now(); }, 1200);
+            setTimeout(() => {
+                document.getElementById('upload-modal').style.display = 'none';
+                // Không cần reload trang, chỉ cần ẩn modal đi vì nạp file đã do firmware lo
+            }, 800);
         }
 
         function afterMSaveOK() {
