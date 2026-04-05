@@ -1602,21 +1602,26 @@
         }
 
         function afterMSaveOK() {
+            // Chỉ xóa .bak nếu đang xử lý Background và là ảnh tĩnh
             if (bgEditorChanged) {
                 bgEditorChanged = false;
                 if (bgGifFrames.length > 0) {
                     startBgAnimUpload();
                 } else {
                     const idx = params.get('idx') || '0';
-                    websocket.send('#MABDEL$' + idx);
+                    websocket.send('#MABDEL$' + idx); // Chỉ xóa .bak khi edit BG
+                    finishSession(); // Xong việc của BG thì nghỉ
                 }
-            } else if (bassEditorChanged) {
+            } 
+            // Chỉ xóa .bas nếu đang xử lý Bass và là ảnh tĩnh
+            else if (bassEditorChanged) {
                 bassEditorChanged = false;
                 if (bassGifFrames.length > 0) {
                     startBassAnimUpload();
                 } else {
                     const idx = params.get('idx') || '0';
-                    websocket.send('#MASSDEL$' + idx);
+                    websocket.send('#MASSDEL$' + idx); // Chỉ xóa .bas khi edit Bass
+                    finishSession(); // Xong việc của Bass thì nghỉ
                 }
             } else {
                 finishSession();
