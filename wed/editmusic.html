@@ -1229,13 +1229,10 @@
             hasUploadedBass = false;
             bgEditorChanged = false;
             bassEditorChanged = false;
+            lastEditorTarget = ""; // Reset target
 
             const idx = params.get('idx') || '0';
             websocket.send("#MSTB$" + idx);
-
-            // Sau khi send xong sẽ nhảy vào luồng M_READY -> sendMetadata -> M_META_OK
-            // Tại M_META_OK nó sẽ check hasUploadedBG...
-            // Tuy nhiên triggerAutoSave này là dành cho dropdown nên để false là đúng.
         }
 
         document.getElementById('btn-save-main').onclick = async () => {
@@ -1259,6 +1256,8 @@
         // Kết quả sau OK
         let bgGifFrames = [];       // frames đã crop 72×72 (ARGB4444 hex)
         let bassGifFrames = [];     // frames đã crop 44×44 (ARGB4444 hex)
+        let isMetadataOnly = false; // Cờ để biết là lưu dropdown hay lưu từ Editor
+        let lastEditorTarget = ""; // Ghi nhớ là vừa sửa BG hay BASS
         let bgEditorChanged = false;    // đã bấm OK từ Editor BG lần này
         let bassEditorChanged = false;  // đã bấm OK từ Editor Bass lần này
         let editorGifSpeed = 4;
@@ -1505,6 +1504,7 @@
                 if (editorTarget === 'BG') {
                     bgGifFrames = croppedFrames;
                     bgEditorChanged = true;
+                    lastEditorTarget = "BG";
                     bgCtx.clearRect(0, 0, 72, 72);
                     bgCtx.drawImage(previewC, 0, 0, 72, 72);
                     document.getElementById('bg-hint').style.display = 'none';
@@ -1512,6 +1512,7 @@
                 } else {
                     bassGifFrames = croppedFrames;
                     bassEditorChanged = true;
+                    lastEditorTarget = "BASS";
                     bassCtx.clearRect(0, 0, 44, 44);
                     bassCtx.drawImage(previewC, 0, 0, 44, 44);
                     document.getElementById('bass-hint').style.display = 'none';
@@ -1528,6 +1529,7 @@
                 if (editorTarget === 'BG') {
                     bgGifFrames = [];  // không có GIF → xóa file .bak khi save
                     bgEditorChanged = true;
+                    lastEditorTarget = "BG";
                     bgCtx.clearRect(0, 0, 72, 72);
                     bgCtx.drawImage(out2, 0, 0, 72, 72);
                     document.getElementById('bg-hint').style.display = 'none';
@@ -1535,6 +1537,7 @@
                 } else {
                     bassGifFrames = [];  // không có GIF → xóa .bas khi save
                     bassEditorChanged = true;
+                    lastEditorTarget = "BASS";
                     bassCtx.clearRect(0, 0, 44, 44);
                     bassCtx.drawImage(out2, 0, 0, 44, 44);
                     document.getElementById('bass-hint').style.display = 'none';
@@ -1602,26 +1605,26 @@
         }
 
         function afterMSaveOK() {
-            // Chỉ xóa .bak nếu đang xử lý Background và là ảnh tĩnh
-            if (bgEditorChanged) {
-                bgEditorChanged = false;
+            // Chỉ xử lý BG nếu vừa nhấn OK từ bộ Edit 72x72
+            if (lastEditorTarget === "BG") {
+                bgEditorChanged = false; // Reset ngay
                 if (bgGifFrames.length > 0) {
                     startBgAnimUpload();
                 } else {
                     const idx = params.get('idx') || '0';
-                    websocket.send('#MABDEL$' + idx); // Chỉ xóa .bak khi edit BG
-                    finishSession(); // Xong việc của BG thì nghỉ
+                    websocket.send('#MABDEL$' + idx); 
+                    finishSession();
                 }
             } 
-            // Chỉ xóa .bas nếu đang xử lý Bass và là ảnh tĩnh
-            else if (bassEditorChanged) {
-                bassEditorChanged = false;
+            // Chỉ xử lý BASS nếu vừa nhấn OK từ bộ Edit 44x44
+            else if (lastEditorTarget === "BASS") {
+                bassEditorChanged = false; // Reset ngay
                 if (bassGifFrames.length > 0) {
                     startBassAnimUpload();
                 } else {
                     const idx = params.get('idx') || '0';
-                    websocket.send('#MASSDEL$' + idx); // Chỉ xóa .bas khi edit Bass
-                    finishSession(); // Xong việc của Bass thì nghỉ
+                    websocket.send('#MASSDEL$' + idx); 
+                    finishSession();
                 }
             } else {
                 finishSession();
@@ -1629,17 +1632,9 @@
         }
 
         function afterABSaveOK() {
-            if (bassEditorChanged) {
-                bassEditorChanged = false;
-                if (bassGifFrames.length > 0) {
-                    startBassAnimUpload();
-                } else {
-                    const idx = params.get('idx') || '0';
-                    websocket.send('#MASSDEL$' + idx);
-                }
-            } else {
-                finishSession();
-            }
+            // Sau khi upload xong Anim (GIF), kết thúc luôn session
+            // Vì mỗi lần Apply chỉ thực hiện cho 1 đối tượng duy nhất
+            finishSession();
         }
 
         // --- GIF Speed Sliders (BG 72x72 / Bass 44x44) ---
