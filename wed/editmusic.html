@@ -912,7 +912,7 @@
 
                         // Auto-save changes for dropdowns
                         if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
-                            triggerAutoSave();
+                            triggerAutoSave(config.id);
                         }
                     };
                     optionsBox.appendChild(opt);
@@ -1222,9 +1222,28 @@
             websocket.send("#MBUM$");
         }
 
-        function triggerAutoSave() {
+        function triggerAutoSave(sourceId) {
             if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
-            // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
+            
+            if (sourceId) {
+                const val = getIdx(sourceId);
+                let cmd = "";
+                switch (sourceId) {
+                    case 'sel-bg-ini': cmd = "#MBGMOD$"; break;
+                    case 'sel-background': cmd = "#MBGSEL$"; break;
+                    case 'sel-bass': cmd = "#MBSSEL$"; break;
+                    case 'sel-eq-type': cmd = "#MEQTYP$"; break;
+                    case 'sel-eq-color': cmd = "#MEQCOL$"; break;
+                    case 'sel-eq-effect': cmd = "#MEQEFF$"; break;
+                    case 'sel-eq-peak': cmd = "#MEQPEA$"; break;
+                }
+                if (cmd) {
+                    websocket.send(cmd + val);
+                    return;
+                }
+            }
+
+            // Chỉ lưu metadata thô khi nhấn nút SAVE tổng hoặc trường hợp khác
             hasUploadedBG = false;
             hasUploadedBass = false;
             bgEditorChanged = false;
