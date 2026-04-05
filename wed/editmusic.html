@@ -838,20 +838,9 @@
         const bassCanvas = document.getElementById('bass-canvas');
         const bassCtx = bassCanvas ? bassCanvas.getContext('2d', { willReadFrequently: true }) : null;
 
-        const params = new URLSearchParams(window.location.search);
-        const PARAM_MAP = {
-            'sel-background': 'background',
-            'sel-bg-ini': 'bgcheck',
-            'sel-bass': 'bass',
-            'sel-eq-type': 'eqtype',
-            'sel-eq-color': 'eqcolor',
-            'sel-eq-effect': 'eqeffect',
-            'sel-eq-peak': 'eqpeak'
-        };
-
-        const state = {};
-
         let websocket = null;
+        let currentMusicIdx = "0";
+        let isDataLoaded = false;
         let hasUploadedBG = false;
         let hasUploadedBass = false;
 
@@ -1117,14 +1106,42 @@
         function initWebSocket() {
             const statusEl = document.getElementById('ws-status');
             websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
-            websocket.onopen = () => statusEl.innerText = "Connected";
+            websocket.onopen = () => {
+                statusEl.innerText = "Connected";
+                // Khi vừa kết nối, gởi lệnh lấy định dạng dữ liệu thực tế từ ESP32
+                websocket.send("#MGET$");
+            };
             websocket.onclose = () => {
                 statusEl.innerText = "Disconnected";
+                isDataLoaded = false;
                 setTimeout(initWebSocket, 2000);
             };
             websocket.onmessage = (e) => {
                 const data = e.data;
                 const saveBtn = document.getElementById('btn-save-main');
+
+                // Xử lý gói tin Metadata đầy đủ từ ESP32
+                if (data.startsWith("M_DATA:")) {
+                    const parts = data.split(':');
+                    // Gói tin: M_DATA:idx:bg_sel:bass_sel:eq_type:eq_color:eq_effect:eq_peak:bg_mode:bg_spd:bass_spd
+                    if (parts.length >= 11) {
+                        currentMusicIdx = parts[1];
+                        updateUIComponent('sel-background', parts[2]);
+                        updateUIComponent('sel-bass', parts[3]);
+                        updateUIComponent('sel-eq-type', parts[4]);
+                        updateUIComponent('sel-eq-color', parts[5]);
+                        updateUIComponent('sel-eq-effect', parts[6]);
+                        updateUIComponent('sel-eq-peak', parts[7]);
+                        updateUIComponent('sel-bg-ini', parts[8]);
+                        document.getElementById('bg-gif-speed').value = parts[9];
+                        document.getElementById('bg-gif-speed-val').innerText = parts[9];
+                        document.getElementById('bass-gif-speed').value = parts[10];
+                        document.getElementById('bass-gif-speed-val').innerText = parts[10];
+                    }
+                    isDataLoaded = true;
+                    console.log("Music Metadata Loaded for IDX:", currentMusicIdx);
+                    return;
+                }
 
                 if (data === "M_READY") {
                     sendMetadata();
@@ -1203,6 +1220,7 @@
         }
 
         function sendMetadata() {
+            if (!isDataLoaded) return;
             const bg_sel = getIdx('sel-background');
             const bg_mode = getIdx('sel-bg-ini');
             const bass = getIdx('sel-bass');
@@ -1210,7 +1228,7 @@
             const eq_color = getIdx('sel-eq-color');
             const eq_effect = getIdx('sel-eq-effect');
             const eq_peak = getIdx('sel-eq-peak');
-            const idx = params.get('idx') || '0';
+            const idx = currentMusicIdx;
             const bg_spd = document.getElementById('bg-gif-speed').value;
             const bass_spd = document.getElementById('bass-gif-speed').value;
 
@@ -1223,7 +1241,7 @@
         }
 
         function triggerAutoSave() {
-            if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
+            if (!websocket || websocket.readyState !== WebSocket.OPEN || !isDataLoaded) return;
             // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
             hasUploadedBG = false;
             hasUploadedBass = false;
@@ -1231,13 +1249,23 @@
             bassEditorChanged = false;
             lastEditorTarget = ""; // Reset target
 
-            const idx = params.get('idx') || '0';
+            const idx = currentMusicIdx;
             websocket.send("#MSTB$" + idx);
         }
 
         document.getElementById('btn-save-main').onclick = () => {
             window.location.href = 'music.html?v=' + Date.now();
         };
+
+        function updateUIComponent(id, val) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.setAttribute('data-index', val);
+            const item = Array.from(el.querySelectorAll('.combobox-item')).find(i => i.getAttribute('data-index') == val);
+            if (item) {
+                el.querySelector('.combobox-selected').innerText = item.innerText;
+            }
+        }
 
         CONFIG.forEach(initCombobox);
         initWebSocket();
