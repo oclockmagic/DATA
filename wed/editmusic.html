@@ -748,7 +748,7 @@
             </div>
         </div>
         <hr>
-            <button id="btn-save-main" class="btn btn-primary" style="flex: 1; width: 100%;">SAVE</button>
+        <button id="btn-save-main" class="btn btn-primary" style="flex: 1; width: 100%;">SAVE</button>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
 
@@ -1308,8 +1308,8 @@
                 tgt.onload = () => {
                     editorImgOrig = tgt;
                     editorCroppr = new Croppr(tgt, {
-                        startSize: [80, 80, '%'],
-                        minSize: [10, 10, 'px'],
+                        startSize: [100, 100, '%'],
+                        minSize: [1, 1, 'px'],
                         returnMode: 'real'
                     });
                 };
@@ -1415,14 +1415,14 @@
                     const out = document.createElement('canvas'); out.width = targetW; out.height = targetH;
                     const octx = out.getContext('2d'); octx.filter = filterStr;
                     octx.drawImage(sc, (crop.x - offX) * scaleX, (crop.y - offY) * scaleY, crop.width * scaleX, crop.height * scaleY, 0, 0, targetW, targetH);
-                    
+
                     const imgData = octx.getImageData(0, 0, targetW, targetH).data;
                     let hex = '';
                     for (let i = 0; i < imgData.length; i += 4) {
-                        const r = imgData[i], g = imgData[i+1], b = imgData[i+2], a = imgData[i+3];
+                        const r = imgData[i], g = imgData[i + 1], b = imgData[i + 2], a = imgData[i + 3];
                         const pixIdx = i / 4;
                         accR[pixIdx] += r; accG[pixIdx] += g; accB[pixIdx] += b; accA[pixIdx] += a;
-                        
+
                         const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
                         hex += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
                     }
@@ -1436,9 +1436,9 @@
                 for (let i = 0; i < totalPixels; i++) {
                     const idx = i * 4;
                     avgData.data[idx] = accR[i] / numFrames;
-                    avgData.data[idx+1] = accG[i] / numFrames;
-                    avgData.data[idx+2] = accB[i] / numFrames;
-                    avgData.data[idx+3] = accA[i] / numFrames;
+                    avgData.data[idx + 1] = accG[i] / numFrames;
+                    avgData.data[idx + 2] = accB[i] / numFrames;
+                    avgData.data[idx + 3] = accA[i] / numFrames;
                 }
                 actx.putImageData(avgData, 0, 0);
 
@@ -1533,4 +1533,5 @@
         };
     </script>
 </body>
+
 </html>
