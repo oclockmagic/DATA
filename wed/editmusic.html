@@ -1021,7 +1021,35 @@
             }
         }
 
-        // --- BG Image Handling ---
+        function setDropdownIndex(id, idx) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.setAttribute('data-index', idx);
+            const path = el.getAttribute('data-path');
+            const options = DATA[path] || [];
+            const name = options[idx] || (options.length > 0 ? options[0] : '');
+            
+            const selectedImg = el.querySelector('.selected-img');
+            const selectedText = el.querySelector('.selected-text');
+            
+            if (name) {
+                const imgUrl = RAW_BASE + path + "/" + name;
+                if (selectedImg && name.toLowerCase().endsWith('.png')) {
+                    selectedImg.src = imgUrl;
+                    selectedImg.style.display = 'block';
+                } else if (selectedImg) {
+                    selectedImg.style.display = 'none';
+                }
+                if (selectedText) {
+                    selectedText.innerText = name.replace(/\.[^/.]+$/, "");
+                }
+            }
+
+            if (id === 'sel-bg-ini') updateBgUploadState(parseInt(idx));
+            if (id === 'sel-bass') updateBassUploadState(parseInt(idx));
+        }
+
+        // --- Background Image Handling ---
         const fileBG = document.getElementById('file-bg');
 
         fileBG.onchange = (e) => {
@@ -1129,8 +1157,27 @@
                 const data = e.data;
                 const saveBtn = document.getElementById('btn-save-main');
 
-                if (data === "M_READY") {
-                    sendMetadata();
+                if (data.startsWith("M_READY")) {
+                    if (data.includes(":")) {
+                        const meta = data.split(":")[1].split(",");
+                        if (meta.length >= 7) {
+                            // meta order: bg_effect, bass_val, eq_type, eq_color, eq_effect, eq_peak, bg_mode
+                            const bg_effect = meta[0], bass_val = meta[1], eq_type = meta[2];
+                            const eq_color = meta[3], eq_effect = meta[4], eq_peak = meta[5], bg_mode = meta[6];
+
+                            setDropdownIndex('sel-background', bg_effect);
+                            setDropdownIndex('sel-bass', bass_val);
+                            setDropdownIndex('sel-eq-type', eq_type);
+                            setDropdownIndex('sel-eq-color', eq_color);
+                            setDropdownIndex('sel-eq-effect', eq_effect);
+                            setDropdownIndex('sel-eq-peak', eq_peak);
+                            setDropdownIndex('sel-bg-ini', bg_mode);
+
+                            if (bg_mode !== undefined) updateBgUploadState(parseInt(bg_mode));
+                            if (bass_val !== undefined) updateBassUploadState(parseInt(bass_val));
+                        }
+                    }
+                    // KHÔNG gọi sendMetadata() ở đây để tránh ghi đè ngược lại flash ngay khi vừa nạp
                 } else if (data === "M_META_OK") {
                     // Bước 1: Upload Background (72x72)
                     if (hasUploadedBG) {
