@@ -1504,19 +1504,23 @@
                 if (editorTarget === 'BG') {
                     bgGifFrames = croppedFrames;
                     bgEditorChanged = true;
+                    bassEditorChanged = false; // Khóa chặt: Reset bên kia
                     lastEditorTarget = "BG";
                     bgCtx.clearRect(0, 0, 72, 72);
                     bgCtx.drawImage(previewC, 0, 0, 72, 72);
                     document.getElementById('bg-hint').style.display = 'none';
                     hasUploadedBG = true;
+                    hasUploadedBass = false; // Khóa chặt: Reset bên kia
                 } else {
                     bassGifFrames = croppedFrames;
                     bassEditorChanged = true;
+                    bgEditorChanged = false; // Khóa chặt: Reset bên kia
                     lastEditorTarget = "BASS";
                     bassCtx.clearRect(0, 0, 44, 44);
                     bassCtx.drawImage(previewC, 0, 0, 44, 44);
                     document.getElementById('bass-hint').style.display = 'none';
                     hasUploadedBass = true;
+                    hasUploadedBG = false; // Khóa chặt: Reset bên kia
                 }
             } else {
                 // Ảnh tĩnh — crop 1 frame, vẽ vào canvas
@@ -1527,21 +1531,25 @@
                 octx2.drawImage(editorImgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
                 if (editorTarget === 'BG') {
-                    bgGifFrames = [];  // không có GIF → xóa file .bak khi save
+                    bgGifFrames = [];  
                     bgEditorChanged = true;
+                    bassEditorChanged = false; // Khóa chặt
                     lastEditorTarget = "BG";
                     bgCtx.clearRect(0, 0, 72, 72);
                     bgCtx.drawImage(out2, 0, 0, 72, 72);
                     document.getElementById('bg-hint').style.display = 'none';
                     hasUploadedBG = true;
+                    hasUploadedBass = false; // Khóa chặt
                 } else {
-                    bassGifFrames = [];  // không có GIF → xóa .bas khi save
+                    bassGifFrames = [];  
                     bassEditorChanged = true;
+                    bgEditorChanged = false; // Khóa chặt
                     lastEditorTarget = "BASS";
                     bassCtx.clearRect(0, 0, 44, 44);
                     bassCtx.drawImage(out2, 0, 0, 44, 44);
                     document.getElementById('bass-hint').style.display = 'none';
                     hasUploadedBass = true;
+                    hasUploadedBG = false; // Khóa chặt
                 }
             }
             closeEditorModal();
