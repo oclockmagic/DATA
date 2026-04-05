@@ -843,6 +843,7 @@
         let isDataLoaded = false;
         let hasUploadedBG = false;
         let hasUploadedBass = false;
+        const state = {};
 
         async function initCombobox(config) {
             const el = document.getElementById(config.id);
@@ -865,10 +866,7 @@
             };
 
             let selectedIndex = 0;
-            const paramKey = PARAM_MAP[config.id];
-            if (paramKey && params.has(paramKey)) {
-                selectedIndex = parseInt(params.get(paramKey)) || 0;
-            }
+            // Removed URL param initialization - metadata is now loaded via M_DATA
 
             const render = (items) => {
                 optionsBox.innerHTML = '';
@@ -1558,7 +1556,7 @@
             closeEditorModal();
             document.getElementById('upload-modal').style.display = 'flex';
             document.getElementById('modal-title').innerText = "Processing & Saving...";
-            websocket.send("#MSTB$" + (params.get('idx') || '0'));
+            websocket.send("#MSTB$" + currentMusicIdx);
         }
 
         // =============================================
@@ -1571,11 +1569,11 @@
             return q;
         }
         function startBgAnimUpload() {
-            const idx = params.get('idx') || '0'; animMusicQueue = buildQueue(bgGifFrames);
+            const idx = currentMusicIdx; animMusicQueue = buildQueue(bgGifFrames);
             animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx);
         }
         function startBassAnimUpload() {
-            const idx = params.get('idx') || '0'; animMusicQueue = buildQueue(bassGifFrames);
+            const idx = currentMusicIdx; animMusicQueue = buildQueue(bassGifFrames);
             animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx + ':1');
         }
         function finishSession() {
@@ -1588,11 +1586,11 @@
             if (t === "BG" && bgEditorChanged) {
                 bgEditorChanged = false;
                 if (bgGifFrames.length > 0) startBgAnimUpload();
-                else websocket.send('#MABDEL$' + (params.get('idx') || '0'));
+                else websocket.send('#MABDEL$' + currentMusicIdx);
             } else if (t === "BASS" && bassEditorChanged) {
                 bassEditorChanged = false;
                 if (bassGifFrames.length > 0) startBassAnimUpload();
-                else websocket.send('#MASSDEL$' + (params.get('idx') || '0'));
+                else websocket.send('#MASSDEL$' + currentMusicIdx);
             } else finishSession();
         }
         function afterABSaveOK() { finishSession(); }
@@ -1604,8 +1602,8 @@
             const bassS = document.getElementById('bass-gif-speed');
             const bassV = document.getElementById('bass-gif-speed-val');
 
-            bgS.value = params.get('bgspd') || '4'; bgV.innerText = bgS.value;
-            bassS.value = params.get('basspd') || '4'; bassV.innerText = bassS.value;
+            bgS.value = '4'; bgV.innerText = bgS.value;
+            bassS.value = '4'; bassV.innerText = bassS.value;
 
             let spdTimer = null;
             function autoSave() { clearTimeout(spdTimer); spdTimer = setTimeout(triggerAutoSave, 300); }
