@@ -748,10 +748,7 @@
             </div>
         </div>
         <hr>
-        <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <button class="btn btn-secondary" onclick="window.location.href='music.html?v=' + Date.now()">BACK</button>
-            <button id="btn-save-main" class="btn btn-primary" style="flex: 1.5;">SAVE</button>
-        </div>
+            <button id="btn-save-main" class="btn btn-primary" style="flex: 1; width: 100%;">SAVE</button>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
 
@@ -1238,8 +1235,8 @@
             websocket.send("#MSTB$" + idx);
         }
 
-        document.getElementById('btn-save-main').onclick = async () => {
-            triggerAutoSave();
+        document.getElementById('btn-save-main').onclick = () => {
+            window.location.href = 'music.html?v=' + Date.now();
         };
 
         CONFIG.forEach(initCombobox);
