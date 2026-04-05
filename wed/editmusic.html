@@ -749,8 +749,7 @@
         </div>
         <hr>
         <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <button class="btn btn-secondary" onclick="window.location.href='music.html?v=' + Date.now()">BACK</button>
-            <button id="btn-save-main" class="btn btn-primary" style="flex: 1.5;">SAVE</button>
+            <button id="btn-save-main" class="btn btn-primary" style="flex: 1.5;">BACK</button>
         </div>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
@@ -1230,7 +1229,7 @@
 
         function triggerAutoSave(sourceId) {
             if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
-            
+
             // Reset flags for atomic operation
             hasUploadedBG = false;
             hasUploadedBass = false;
@@ -1241,7 +1240,7 @@
             if (sourceId) {
                 const val = getIdx(sourceId);
                 let cmd = "";
-                switch(sourceId) {
+                switch (sourceId) {
                     case 'sel-bg-ini': cmd = "#MBGMOD$"; break;
                     case 'sel-background': cmd = "#MBGSEL$"; break;
                     case 'sel-bass': cmd = "#MBSSEL$"; break;
@@ -1260,8 +1259,8 @@
             websocket.send("#MSTB$" + idx);
         }
 
-        document.getElementById('btn-save-main').onclick = async () => {
-            triggerAutoSave();
+        document.getElementById('btn-save-main').onclick = () => {
+            window.location.href = 'music.html?v=' + Date.now();
         };
 
         CONFIG.forEach(initCombobox);
@@ -1556,7 +1555,7 @@
                 octx2.drawImage(editorImgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
                 if (editorTarget === 'BG') {
-                    bgGifFrames = [];  
+                    bgGifFrames = [];
                     bgEditorChanged = true;
                     bassEditorChanged = false; // Khóa chặt
                     lastEditorTarget = "BG";
@@ -1566,7 +1565,7 @@
                     hasUploadedBG = true;
                     hasUploadedBass = false; // Khóa chặt
                 } else {
-                    bassGifFrames = [];  
+                    bassGifFrames = [];
                     bassEditorChanged = true;
                     bgEditorChanged = false; // Khóa chặt
                     lastEditorTarget = "BASS";
@@ -1652,7 +1651,7 @@
                     // Không gọi finishSession ở đây, để firmware trả về M_SAVEOK 
                     // lần tới sau khi xóa xong, afterMSaveOK sẽ chạy vào case else cuối.
                 }
-            } 
+            }
             else if (target === "BASS" && bassEditorChanged) {
                 bassEditorChanged = false;
                 if (bassGifFrames.length > 0) {
