@@ -1307,8 +1307,11 @@
                 tgt.style.display = 'block';
                 tgt.onload = () => {
                     editorImgOrig = tgt;
+                    // Lấy kích thước hiển thị thực tế của ảnh để ép khung crop bao quanh 100%
+                    const w = tgt.clientWidth || tgt.width;
+                    const h = tgt.clientHeight || tgt.height;
                     editorCroppr = new Croppr(tgt, {
-                        startSize: [100, 100, '%'],
+                        startSize: [w, h, 'px'],
                         minSize: [1, 1, 'px'],
                         returnMode: 'real'
                     });
