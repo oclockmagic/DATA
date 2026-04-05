@@ -1165,9 +1165,9 @@
                         // Nhảy sang bước 2 if no BG
                         handleStepBG_Done();
                     }
-                } else if (data === "M_RE_OK") {
-                    streamNextChunk();
-                } else if (data === "M_UP_OK") {
+                } else if (data === "M_AUTO_OK") {
+                    console.log("Auto-save Metadata OK.");
+                } else if (data === "M_META_OK") {
                     streamNextChunk();
                 } else if (data === "M_BG_OK") {
                     handleStepBG_Done();
