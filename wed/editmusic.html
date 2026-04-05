@@ -1298,7 +1298,7 @@
             document.getElementById('img-editor-modal').style.display = 'none';
         }
 
-        function editorSetupCroppr(dataUrl) {
+        function editorSetupCroppr(source) {
             // Đảm bảo Modal phải hiện lên trước để lấy được kích thước chính xác
             document.getElementById('img-editor-modal').style.display = 'flex';
             
@@ -1313,20 +1313,35 @@
             if (noImg) noImg.style.display = 'none';
             if (!tgt) return;
 
-            tgt.style.display = 'block';
-            tgt.onload = () => {
-                editorImgOrig = tgt;
-                
-                // Khởi tạo luôn với 100% diện tích chứa. 
-                // Sử dụng % là cách tin cậy nhất trong thư viện Croppr để ôm khít.
-                editorCroppr = new Croppr(tgt, {
-                    startSize: [100, 100, '%'],
-                    aspectRatio: null,
-                    minSize: [1, 1, 'px'],
-                    returnMode: 'real'
-                });
+            const img = new Image();
+            img.src = (typeof source === 'string') ? source : source.src;
+            img.onload = () => {
+                const pW = 440, pH = 320;
+                let uiW, uiH;
+                if (img.width / img.height > pW / pH) {
+                    uiW = pW; uiH = uiW * img.height / img.width;
+                } else {
+                    uiH = pH; uiW = uiH * img.width / img.height;
+                }
+                const canvasUI = document.createElement("canvas");
+                const ctxUI = canvasUI.getContext("2d");
+                canvasUI.width = pW; canvasUI.height = pH;
+                // Draw centered
+                ctxUI.translate(pW / 2, pH / 2);
+                ctxUI.drawImage(img, -uiW / 2, -uiH / 2, uiW, uiH);
+
+                tgt.style.display = 'block';
+                tgt.onload = () => {
+                    editorImgOrig = tgt;
+                    editorCroppr = new Croppr(tgt, {
+                        startSize: [100, 100, '%'],
+                        aspectRatio: null, // Cho phép co giãn tự do theo ý người dùng
+                        minSize: [1, 1, 'px'],
+                        returnMode: 'real'
+                    });
+                };
+                tgt.src = canvasUI.toDataURL();
             };
-            tgt.src = dataUrl;
         }
 
         document.getElementById('editor-file-input').onchange = (e) => {
@@ -1419,10 +1434,22 @@
                     const scx = sc.getContext('2d'); const id3 = scx.createImageData(frame.width, frame.height);
                     id3.data.set(frame.data); scx.putImageData(id3, 0, 0);
 
+                    // BƯỚC QUAN TRỌNG: Phải padding frame về chuẩn 440x320 giống hệt lúc tạo preview editorImgOrig
+                    const pW = 440, pH = 320;
+                    let uiW, uiH;
+                    if (frame.width / frame.height > pW / pH) { uiW = pW; uiH = uiW * frame.height / frame.width; }
+                    else { uiH = pH; uiW = uiH * frame.width / frame.height; }
+
+                    const paddedCanvas = document.createElement("canvas");
+                    const paddedCtx = paddedCanvas.getContext("2d");
+                    paddedCanvas.width = pW; paddedCanvas.height = pH;
+                    paddedCtx.translate(pW / 2, pH / 2);
+                    paddedCtx.drawImage(sc, -uiW / 2, -uiH / 2, uiW, uiH);
+
                     const out = document.createElement('canvas'); out.width = targetW; out.height = targetH;
                     const octx = out.getContext('2d'); octx.filter = filterStr;
-                    // Sử dụng trực tiếp tọa độ thực từ Croppr
-                    octx.drawImage(sc, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+                    // Bây giờ sử dụng paddedCanvas để cắt, tỷ lệ sẽ trùng khớp hoàn toàn
+                    octx.drawImage(paddedCanvas, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
                     const imgData = octx.getImageData(0, 0, targetW, targetH).data;
                     let hex = '';
