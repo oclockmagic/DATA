@@ -1200,10 +1200,14 @@
                 currentStep = "BASS";
                 globalPhotoHex = getRGB565Hex(bassCanvas, 44, 44);
                 hexPos = 0;
-                websocket.send("#MRE1$"); // Reset pos
+                websocket.send("#MRE2$");
             } else {
-                finalizeSave();
+                handleStepBass_Done();
             }
+        }
+
+        function handleStepBass_Done() {
+            afterMSaveOK();
         }
 
         function streamNextChunk() {
