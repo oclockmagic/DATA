@@ -1493,6 +1493,7 @@
         };
 
         function applyEditorCrop() {
+            currentStep = editorTarget; // Thiết lập bước upload cho Handshake
             if (!editorCroppr || !editorImgOrig) { closeEditorModal(); return; }
             const targetW = editorTarget === 'BG' ? 72 : 44;
             const targetH = editorTarget === 'BG' ? 72 : 44;
