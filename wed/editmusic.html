@@ -1299,7 +1299,6 @@
         }
 
         function editorSetupCroppr(dataUrl) {
-            // 1. Hủy bộ crop cũ ngay lập tức nếu đang tồn tại để trả thẻ img về DOM
             if (editorCroppr) {
                 try { editorCroppr.destroy(); } catch (e) { console.error("Crop destroy error:", e); }
                 editorCroppr = null;
@@ -1309,22 +1308,23 @@
             const noImg = document.getElementById('editor-no-image');
 
             if (noImg) noImg.style.display = 'none';
-            if (!tgt) {
-                console.error("Critical: editor-cropper-target not found!");
-                return;
-            }
+            if (!tgt) return;
 
             tgt.style.display = 'block';
             tgt.onload = () => {
                 editorImgOrig = tgt;
-                // Sử dụng natural kích thước thật để bao quanh 100%
-                const w = tgt.naturalWidth;
-                const h = tgt.naturalHeight;
-                
+                const vW = tgt.naturalWidth;
+                const vH = tgt.naturalHeight;
+
                 editorCroppr = new Croppr(tgt, {
-                    startSize: [w, h, 'px'],
+                    startSize: [100, 100, '%'],
                     minSize: [1, 1, 'px'],
-                    returnMode: 'real'
+                    returnMode: 'real',
+                    onInitialize: (instance) => {
+                        // Chỉ chạy khi công cụ đã nạp xong đầy đủ 100%
+                        instance.resizeTo(vW, vH);
+                        instance.moveTo(0, 0);
+                    }
                 });
             };
             tgt.src = dataUrl;
