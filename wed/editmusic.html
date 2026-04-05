@@ -1428,14 +1428,18 @@
             websocket.send('#MABSTB$' + idx + ':1');  // Bass → :1
         }
 
+        function finishSession() {
+            websocket.send("#M_FIN$");
+            document.getElementById('modal-title').innerText = 'Success!';
+            setTimeout(() => { window.location.href = '/music.html?v=' + Date.now(); }, 1200);
+        }
+
         function afterMSaveOK() {
-            // Quyết định phase tiếp theo sau M_SAVEOK
             if (bgEditorChanged) {
                 bgEditorChanged = false;
                 if (bgGifFrames.length > 0) {
                     startBgAnimUpload();
                 } else {
-                    // Ảnh tĩnh → xóa .bak nếu có
                     const idx = params.get('idx') || '0';
                     websocket.send('#MABDEL$' + idx);
                 }
@@ -1448,14 +1452,11 @@
                     websocket.send('#MASSDEL$' + idx);
                 }
             } else {
-                // Không có thay đổi GIF nào → kết thúc
-                document.getElementById('modal-title').innerText = 'Success!';
-                setTimeout(() => { window.location.href = '/music.html?v=' + Date.now(); }, 1500);
+                finishSession();
             }
         }
 
         function afterABSaveOK() {
-            // Sau khi save BG anim xong → kiểm tra còn Bass không
             if (bassEditorChanged) {
                 bassEditorChanged = false;
                 if (bassGifFrames.length > 0) {
@@ -1465,8 +1466,7 @@
                     websocket.send('#MASSDEL$' + idx);
                 }
             } else {
-                document.getElementById('modal-title').innerText = 'Success!';
-                setTimeout(() => { window.location.href = '/music.html?v=' + Date.now(); }, 1500);
+                finishSession();
             }
         }
 
