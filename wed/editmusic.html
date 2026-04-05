@@ -1298,7 +1298,7 @@
             document.getElementById('img-editor-modal').style.display = 'none';
         }
 
-        function editorSetupCroppr(source) {
+        function editorSetupCroppr(source, onReady) {
             // Đảm bảo Modal phải hiện lên trước để lấy được kích thước chính xác
             document.getElementById('img-editor-modal').style.display = 'flex';
             
@@ -1339,6 +1339,8 @@
                         minSize: [1, 1, 'px'],
                         returnMode: 'real'
                     });
+                    // Kích hoạt callback khi đã sẵn sàng (Ví dụ: Chạy GIF loop)
+                    if (typeof onReady === 'function') onReady();
                 };
                 tgt.src = canvasUI.toDataURL();
             };
@@ -1360,10 +1362,27 @@
                         const step = Math.max(1, Math.ceil(numFrames / maxFrames));
                         const cumBuf = new Uint8ClampedArray(gifReader.width * gifReader.height * 4);
                         for (let i = 0; i < numFrames; i++) {
+                            const fi = gifReader.frameInfo(i);
                             gifReader.decodeAndBlitFrameRGBA(i, cumBuf);
+                            
                             if ((i % step === 0 || i === numFrames - 1) && editorGifFrames.length < maxFrames) {
-                                const fi = gifReader.frameInfo(i);
-                                editorGifFrames.push({ width: gifReader.width, height: gifReader.height, data: new Uint8ClampedArray(cumBuf), delay: fi.delay * 10 });
+                                editorGifFrames.push({
+                                    width: gifReader.width,
+                                    height: gifReader.height,
+                                    data: new Uint8ClampedArray(cumBuf),
+                                    delay: fi.delay * 10
+                                });
+                            }
+
+                            // Xử lý Disposal Method 2: Restore to Background
+                            // Sau khi vẽ xong khung hình này, nếu nó yêu cầu "xóa nền", ta xóa vùng đó trong buffer tích lũy
+                            if (fi.disposal === 2) {
+                                for (let dy = 0; dy < fi.height; dy++) {
+                                    for (let dx = 0; dx < fi.width; dx++) {
+                                        const idx = ((fi.y + dy) * gifReader.width + (fi.x + dx)) * 4;
+                                        cumBuf[idx] = 0; cumBuf[idx + 1] = 0; cumBuf[idx + 2] = 0; cumBuf[idx + 3] = 0;
+                                    }
+                                }
                             }
                         }
                         editorIsGif = true;
@@ -1371,18 +1390,24 @@
                         const mc = document.createElement('canvas'); mc.width = mid.width; mc.height = mid.height;
                         const mctx = mc.getContext('2d'); const md = mctx.createImageData(mid.width, mid.height);
                         md.data.set(mid.data); mctx.putImageData(md, 0, 0);
-                        let fIdx = 0; editorGifInterval = setInterval(() => {
-                            const fr = editorGifFrames[fIdx++ % editorGifFrames.length];
-                            const tc = document.createElement('canvas'); tc.width = fr.width; tc.height = fr.height;
-                            const tcx = tc.getContext('2d'); const id2 = tcx.createImageData(fr.width, fr.height);
-                            id2.data.set(fr.data); tcx.putImageData(id2, 0, 0);
-                            const pW = 440, pH = 320; let uiW, uiH;
-                            if (tc.width / tc.height > pW / pH) { uiW = pW; uiH = uiW * tc.height / tc.width; } else { uiH = pH; uiW = uiH * tc.width / tc.height; }
-                            const uc = document.createElement('canvas'); const ucx = uc.getContext('2d'); uc.width = pW; uc.height = pH;
-                            ucx.translate(pW / 2, pH / 2); ucx.drawImage(tc, -uiW / 2, -uiH / 2, uiW, uiH);
-                            document.querySelectorAll('.croppr-image, .croppr-imageClipped').forEach(img => img.src = uc.toDataURL());
-                        }, 100);
-                        editorSetupCroppr(mc.toDataURL());
+
+                        // Chỉ bắt đầu chạy Vòng lặp GIF khi khung nhìn (Croppr) đã nạp xong frame mồi
+                        editorSetupCroppr(mc.toDataURL(), () => {
+                            let fIdx = 0;
+                            editorGifInterval = setInterval(() => {
+                                if (!editorCroppr) return;
+                                const fr = editorGifFrames[fIdx++ % editorGifFrames.length];
+                                const tc = document.createElement('canvas'); tc.width = fr.width; tc.height = fr.height;
+                                const tcx = tc.getContext('2d'); const id2 = tcx.createImageData(fr.width, fr.height);
+                                id2.data.set(fr.data); tcx.putImageData(id2, 0, 0);
+                                const pW = 440, pH = 320; let uiW, uiH;
+                                if (tc.width / tc.height > pW / pH) { uiW = pW; uiH = uiW * tc.height / tc.width; }
+                                else { uiH = pH; uiW = uiH * tc.width / tc.height; }
+                                const uc = document.createElement('canvas'); const ucx = uc.getContext('2d'); uc.width = pW; uc.height = pH;
+                                ucx.translate(pW / 2, pH / 2); ucx.drawImage(tc, -uiW / 2, -uiH / 2, uiW, uiH);
+                                document.querySelectorAll('.croppr-image, .croppr-imageClipped').forEach(img => img.src = uc.toDataURL());
+                            }, 100);
+                        });
                     } catch (err) { editorSetupCroppr(URL.createObjectURL(file)); }
                 };
                 reader.readAsArrayBuffer(file);
