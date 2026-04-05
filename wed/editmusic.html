@@ -1153,17 +1153,16 @@
                     bassGifFrames = [];
                     console.log("Music Metadata Loaded for IDX: " + parts[1]);
                 } else if (data === "M_READY") {
-                    sendMetadata();
-                } else if (data === "M_META_OK") {
-                    // Bước 1: Upload Background (72x72)
-                    if (hasUploadedBG) {
-                        currentStep = "BG";
+                    // KHÔNG gởiMetadata ở đây nữa để tách biệt hoàn toàn
+                    // Tiến hành upload ảnh dựa trên currentStep
+                    if (currentStep === "BG") {
                         globalPhotoHex = getRGB565Hex(bgCanvas, 72, 72);
                         hexPos = 0;
-                        websocket.send("#MRE1$"); // Reset pos
-                    } else {
-                        // Nhảy sang bước 2 if no BG
-                        handleStepBG_Done();
+                        websocket.send("#MRE1$");
+                    } else if (currentStep === "BASS") {
+                        globalPhotoHex = getRGB565Hex(bassCanvas, 44, 44);
+                        hexPos = 0;
+                        websocket.send("#MRE2$"); // Reset cho BASS
                     }
                 } else if (data === "M_AUTO_OK") {
                     console.log("Auto-save Metadata OK.");
@@ -1172,13 +1171,12 @@
                     }
                 } else if (data === "M_RE_OK" || data === "M_UP_OK") {
                     streamNextChunk();
+                } else if (data === "M_BG_OK" || data === "M_BG_SAVEOK") {
+                    handleStepBG_Done();
+                } else if (data === "M_SAVEOK" || data === "M_BASS_SAVEOK") {
+                    handleStepBass_Done();
                 } else if (data === "M_META_OK") {
                     streamNextChunk();
-                } else if (data === "M_BG_OK") {
-                    handleStepBG_Done();
-                } else if (data === "M_SAVEOK") {
-                    // Sau khi save ảnh tĩnh/metadata xong -> kiểm tra có GIF không
-                    afterMSaveOK();
                 } else if (data === "M_AB_READY" || data === "M_AB_UP_OK") {
                     // Gửi chunk anim tiếp theo
                     if (animMusicQueue.length > 0) {
