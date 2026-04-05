@@ -1392,33 +1392,65 @@
             const targetH = editorTarget === 'BG' ? 72 : 44;
             const crop = editorCroppr.getValue();
             const filterStr = `brightness(${eBright}%) saturate(${eSat}%) invert(${eInv}%) grayscale(${eGray}%)`;
+
             if (editorIsGif && editorGifFrames.length > 0) {
-                const croppedFrames = [];
-                editorGifFrames.forEach(frame => {
+                const croppedHexFrames = [];
+                const numFrames = editorGifFrames.length;
+                const totalPixels = targetW * targetH;
+                const accR = new Float32Array(totalPixels).fill(0);
+                const accG = new Float32Array(totalPixels).fill(0);
+                const accB = new Float32Array(totalPixels).fill(0);
+                const accA = new Float32Array(totalPixels).fill(0);
+
+                editorGifFrames.forEach((frame) => {
                     const sc = document.createElement('canvas'); sc.width = frame.width; sc.height = frame.height;
                     const scx = sc.getContext('2d'); const id3 = scx.createImageData(frame.width, frame.height);
                     id3.data.set(frame.data); scx.putImageData(id3, 0, 0);
+
                     const pW = 440, pH = 320; let uiW, uiH;
                     if (sc.width / sc.height > pW / pH) { uiW = pW; uiH = uiW * sc.height / sc.width; } else { uiH = pH; uiW = uiH * sc.width / sc.height; }
                     const scaleX = sc.width / uiW, scaleY = sc.height / uiH;
                     const offX = (pW - uiW) / 2, offY = (pH - uiH) / 2;
+
                     const out = document.createElement('canvas'); out.width = targetW; out.height = targetH;
                     const octx = out.getContext('2d'); octx.filter = filterStr;
                     octx.drawImage(sc, (crop.x - offX) * scaleX, (crop.y - offY) * scaleY, crop.width * scaleX, crop.height * scaleY, 0, 0, targetW, targetH);
-                    const d = octx.getImageData(0, 0, targetW, targetH).data; let h = '';
-                    for (let i = 0; i < d.length; i += 4) {
-                        const r = d[i] >> 4, g = d[i+1] >> 4, b = d[i+2] >> 4, a = d[i+3] >> 4;
-                        h += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                    
+                    const imgData = octx.getImageData(0, 0, targetW, targetH).data;
+                    let hex = '';
+                    for (let i = 0; i < imgData.length; i += 4) {
+                        const r = imgData[i], g = imgData[i+1], b = imgData[i+2], a = imgData[i+3];
+                        const pixIdx = i / 4;
+                        accR[pixIdx] += r; accG[pixIdx] += g; accB[pixIdx] += b; accA[pixIdx] += a;
+                        
+                        const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
+                        hex += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
                     }
-                    croppedFrames.push(h);
+                    croppedHexFrames.push(hex);
                 });
+
+                // Tạo ảnh trung bình (Average Image)
+                const avgCanvas = document.createElement('canvas'); avgCanvas.width = targetW; avgCanvas.height = targetH;
+                const actx = avgCanvas.getContext('2d');
+                const avgData = actx.createImageData(targetW, targetH);
+                for (let i = 0; i < totalPixels; i++) {
+                    const idx = i * 4;
+                    avgData.data[idx] = accR[i] / numFrames;
+                    avgData.data[idx+1] = accG[i] / numFrames;
+                    avgData.data[idx+2] = accB[i] / numFrames;
+                    avgData.data[idx+3] = accA[i] / numFrames;
+                }
+                actx.putImageData(avgData, 0, 0);
+
                 if (editorTarget === 'BG') {
-                    bgGifFrames = croppedFrames; bgEditorChanged = true; bassEditorChanged = false; lastEditorTarget = "BG";
-                    hasUploadedBG = true; hasUploadedBass = false;
+                    bgGifFrames = croppedHexFrames; bgEditorChanged = true; lastEditorTarget = "BG";
+                    hasUploadedBG = true;
+                    bgCtx.drawImage(avgCanvas, 0, 0, 72, 72);
                     document.getElementById('bg-hint').style.display = 'none';
                 } else {
-                    bassGifFrames = croppedFrames; bassEditorChanged = true; bgEditorChanged = false; lastEditorTarget = "BASS";
-                    hasUploadedBass = true; hasUploadedBG = false;
+                    bassGifFrames = croppedHexFrames; bassEditorChanged = true; lastEditorTarget = "BASS";
+                    hasUploadedBass = true;
+                    bassCtx.drawImage(avgCanvas, 0, 0, 44, 44);
                     document.getElementById('bass-hint').style.display = 'none';
                 }
             } else {
@@ -1426,20 +1458,19 @@
                 const octx2 = out2.getContext('2d'); octx2.filter = filterStr;
                 octx2.drawImage(editorImgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
                 if (editorTarget === 'BG') {
-                    bgGifFrames = []; bgEditorChanged = true; bassEditorChanged = false; lastEditorTarget = "BG";
-                    bgCtx.drawImage(out2, 0, 0, 72, 72); hasUploadedBG = true; hasUploadedBass = false;
+                    bgGifFrames = []; bgEditorChanged = true; lastEditorTarget = "BG";
+                    bgCtx.drawImage(out2, 0, 0, 72, 72); hasUploadedBG = true;
                     document.getElementById('bg-hint').style.display = 'none';
                 } else {
-                    bassGifFrames = []; bassEditorChanged = true; bgEditorChanged = false; lastEditorTarget = "BASS";
-                    bassCtx.drawImage(out2, 0, 0, 44, 44); hasUploadedBass = true; hasUploadedBG = false;
+                    bassGifFrames = []; bassEditorChanged = true; lastEditorTarget = "BASS";
+                    bassCtx.drawImage(out2, 0, 0, 44, 44); hasUploadedBass = true;
                     document.getElementById('bass-hint').style.display = 'none';
                 }
             }
             closeEditorModal();
             document.getElementById('upload-modal').style.display = 'flex';
-            document.getElementById('modal-title').innerText = "Saving Change...";
-            const idx = params.get('idx') || '0';
-            websocket.send("#MSTB$" + idx);
+            document.getElementById('modal-title').innerText = "Processing & Saving...";
+            websocket.send("#MSTB$" + (params.get('idx') || '0'));
         }
 
         // =============================================
