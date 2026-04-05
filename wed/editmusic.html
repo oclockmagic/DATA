@@ -1248,15 +1248,8 @@
 
         function triggerAutoSave() {
             if (!websocket || websocket.readyState !== WebSocket.OPEN || !isDataLoaded) return;
-            // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
-            hasUploadedBG = false;
-            hasUploadedBass = false;
-            bgEditorChanged = false;
-            bassEditorChanged = false;
-            lastEditorTarget = ""; // Reset target
-
-            const idx = currentMusicIdx;
-            websocket.send("#MSTB$" + idx);
+            // Chỉ gởi file Metadata thô (#MHGM$), không gởi lại ảnh
+            sendMetadata();
         }
 
         document.getElementById('btn-save-main').onclick = () => {
