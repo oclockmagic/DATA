@@ -445,6 +445,21 @@
                     </div>
                 </div>
 
+                <div class="custom-select-wrapper" id="wrap-bg-ini" style="width: 100px;">
+                    <div class="custom-select" id="sel-bg-ini">
+                        <span class="custom-select-trigger">
+                            <div class="selected-box">
+                                <img class="selected-img" src="" style="display: none;">
+                                <span class="selected-text" style="display:none;">...</span>
+                            </div>
+                            <div class="arrow"></div>
+                        </span>
+                        <div class="custom-options">
+                            <div class="options-container"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div style="position: relative;">
                     <canvas id="bg-canvas" width="72" height="72" class="canvas-circle"
                         onclick="document.getElementById('file-bg').click()"></canvas>
@@ -647,6 +662,7 @@
 
         const DATA = {
             "background": ["00_none.png","01_zoom.png","02_move0.png","03_move1.png","04_bright.png","05_zoom_bright.png","06_move0_bright.png","07_move1_bright.png"],
+            "background/ini": ["none.png", "file.png", "image.png"],
             "bass": ["none.png","image.png","random.png","0.png","1.png","10.png","13.png","14.png","15.png","2.png","20.png","21.png","22.png","23.png","24.png","25.png","26.png","27.png","28.png","29.png","3.png","30.png","31.png","32.png","33.png","34.png","35.png","36.png","37.png","38.png","39.png","4.png","40.png","41.png","42.png","43.png","44.png","45.png","46.png","47.png","48.png","49.png","5.png","50.png","51.png","52.png","53.png","55.png","56.png","57.png","58.png","59.png","6.png","60.png","61.png","63.png","64.png","66.png","68.png","69.png","7.png","70.png","71.png","72.png","73.png","74.png","8.png","9.png","kk.png","ll.png"],
             "equalizer/type": ["000.png","001.png","01-cot.png","02-cot_peak_down.png","03-cot_peak_up.png","04-nhay.png","05-nhay_dac.png","06-nhay_tim.png","07-nhay_vuong.png","08-nhay_tron.png","09-chay.png","10-chay_peak_down.png","11-chay_peak_up.png","12-giua.png","13-giua_peak_down.png","14-giua_peak_up.png","15-xuong.png","16-xuong_peak_down.png","17-xuong_peak_up.png","18-vacham_cong.png","19-vacham_vuong.png","20-vacham_tron.png","21-vacham_tim.png","22-vacham_dac.png","23-vacham_ran1.png","23-vacham_random.png","24-cotdoi.png","25-cotdoi_peak_1.png","25-cotdoi_peak_2.png","25-cotdoi_peak_3.png"],
             "equalizer/color": ["random.png","file.png","011.png","012.png","013.png","014.png","016.png","017.png","018.png","019.png","020.png","021.png","022.png","023.png","024.png","025.png","026.png","027.png","028.png"],
@@ -656,6 +672,7 @@
 
         const CONFIG = [
             { id: 'sel-background', path: 'background', label: 'Background' },
+            { id: 'sel-bg-ini', path: 'background/ini', label: 'Mode' },
             { id: 'sel-bass', path: 'bass', label: 'Bass' },
             { id: 'sel-eq-type', path: 'equalizer/type', label: 'Type' },
             { id: 'sel-eq-color', path: 'equalizer/color', label: 'Color' },
@@ -671,6 +688,7 @@
         const params = new URLSearchParams(window.location.search);
         const PARAM_MAP = {
             'sel-background': 'background',
+            'sel-bg-ini': 'bgcheck',
             'sel-bass': 'bass',
             'sel-eq-type': 'eqtype',
             'sel-eq-color': 'eqcolor',
@@ -733,6 +751,7 @@
                         if (selectedText) selectedText.innerText = displayName;
                         el.classList.remove('open');
                         el.setAttribute('data-index', idx);
+                        if (config.id === 'sel-bg-ini') updateBgUploadState(idx);
                         if (config.id === 'sel-bass') updateBassUploadState(idx);
                     };
                     optionsBox.appendChild(opt);
@@ -766,7 +785,22 @@
                     render(filtered);
                 };
             }
+            if (config.id === 'sel-bg-ini') updateBgUploadState(selectedIndex);
             if (config.id === 'sel-bass') updateBassUploadState(selectedIndex);
+        }
+
+        function updateBgUploadState(idx) {
+            const canvas = document.getElementById('bg-canvas');
+            const hint = document.getElementById('bg-hint');
+            const index = parseInt(idx);
+            if (canvas && hint) {
+                if (index === 2) { // Image (image.png)
+                    canvas.parentElement.classList.remove('disabled-upload');
+                } else {
+                    canvas.parentElement.classList.add('disabled-upload');
+                    hasUploadedBG = false;
+                }
+            }
         }
 
         function updateBassUploadState(idx) {
@@ -1006,16 +1040,20 @@
             }
         }
 
+        function getIdx(id) {
+            return document.getElementById(id).getAttribute('data-index') || '0';
+        }
+
         function sendMetadata() {
-            const idx = params.get('idx') || '0';
-            const getIdx = (id) => document.getElementById(id).getAttribute('data-index') || '0';
             const bg = getIdx('sel-background');
+            const bgmode = getIdx('sel-bg-ini');
             const bass = getIdx('sel-bass');
             const type = getIdx('sel-eq-type');
             const color = getIdx('sel-eq-color');
             const effect = getIdx('sel-eq-effect');
             const peak = getIdx('sel-eq-peak');
-            websocket.send(`#MHGM$${idx},${bg},${bass},${type},${color},${effect},${peak}`);
+            const idx = params.get('idx') || '0';
+            websocket.send(`#MHGM$${idx},${bg},${bass},${type},${color},${effect},${peak},${bgmode}`);
         }
 
         function finalizeSave() {
