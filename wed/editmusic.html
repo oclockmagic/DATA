@@ -908,11 +908,10 @@
                         el.classList.remove('open');
                         el.setAttribute('data-index', idx);
                         if (config.id === 'sel-bg-ini') updateBgUploadState(idx);
-                        if (config.id === 'sel-bg-ini') sendMusicBgMode(idx);
-                        if (config.id === 'sel-background') sendMusicBgSel(idx);
                         if (config.id === 'sel-bass') updateBassUploadState(idx);
 
-                        if (['sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
+                        // Auto-save changes for dropdowns
+                        if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
                             triggerAutoSave();
                         }
                     };
@@ -969,21 +968,28 @@
             const canvas = document.getElementById('bass-canvas');
             const hint = document.getElementById('bass-hint');
             const index = parseInt(idx);
+            console.log("Updating Bass Upload State Index:", index);
+
             if (canvas && hint) {
-                if (index === 1) { // Custom Upload mode
+                if (index === 1) {
+                    // Custom Upload mode
                     canvas.parentElement.classList.remove('disabled-upload');
+                    // We don't reset hasUploadedBass here in case they already uploaded one
                 } else {
                     canvas.parentElement.classList.add('disabled-upload');
-                    hasUploadedBass = false; 
+                    hasUploadedBass = false; // Reset for None (0) or until Auto-draw (>=2) finishes
+
                     if (index >= 2) {
-                        const images = DATA['bass'] || [];
+                        const images = state['sel-bass'] || [];
                         if (images[index]) {
                             const imgUrl = RAW_BASE + "bass/" + images[index];
+                            console.log("Auto-drawing Bass Image:", imgUrl);
                             const img = new Image();
                             img.crossOrigin = "anonymous";
                             img.src = imgUrl;
                             img.onload = () => {
                                 if (bassCtx) {
+                                    console.log("Drawing Bass to Canvas...");
                                     bassCtx.clearRect(0, 0, 44, 44);
                                     let s, dx, dy, dw, dh;
                                     if (img.width > img.height) {
@@ -995,57 +1001,23 @@
                                     }
                                     bassCtx.drawImage(img, dx, dy, dw, dh);
                                     hint.style.display = 'none';
-                                    hasUploadedBass = true;
+                                    hasUploadedBass = true; // Set flag ONLY after successful draw
+                                    console.log("hasUploadedBass set to TRUE");
                                 }
                             };
-                            img.onerror = () => { hasUploadedBass = false; };
+                            img.onerror = (e) => {
+                                console.error("Error loading image for auto-draw:", imgUrl, e);
+                                hasUploadedBass = false;
+                            };
                         }
                     } else if (index === 0) {
+                        // None selected - clear canvas and hide hint
                         if (bassCtx) bassCtx.clearRect(0, 0, 44, 44);
                         hint.style.display = 'block';
                         hasUploadedBass = false;
+                        console.log("hasUploadedBass set to FALSE (None)");
                     }
                 }
-            }
-        }
-
-        function setDropdownIndex(id, idx) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.setAttribute('data-index', idx);
-            const path = el.getAttribute('data-path');
-            const options = DATA[path] || [];
-            const name = options[idx] || (options.length > 0 ? options[0] : '');
-            
-            const selectedImg = el.querySelector('.selected-img');
-            const selectedText = el.querySelector('.selected-text');
-            
-            if (name) {
-                const imgUrl = RAW_BASE + path + "/" + name;
-                if (selectedImg && name.toLowerCase().endsWith('.png')) {
-                    selectedImg.src = imgUrl;
-                    selectedImg.style.display = 'block';
-                } else if (selectedImg) {
-                    selectedImg.style.display = 'none';
-                }
-                if (selectedText) {
-                    selectedText.innerText = name.replace(/\.[^/.]+$/, "");
-                }
-            }
-
-            if (id === 'sel-bg-ini') updateBgUploadState(parseInt(idx));
-            if (id === 'sel-bass') updateBassUploadState(parseInt(idx));
-        }
-
-        function sendMusicBgSel(idx) {
-            if (websocket && websocket.readyState === WebSocket.OPEN) {
-                websocket.send("#MBGSEL$" + idx);
-            }
-        }
-
-        function sendMusicBgMode(idx) {
-            if (websocket && websocket.readyState === WebSocket.OPEN) {
-                websocket.send("#MBGMOD$" + idx);
             }
         }
 
@@ -1157,7 +1129,7 @@
                 const data = e.data;
                 const saveBtn = document.getElementById('btn-save-main');
 
-                if (data.startsWith("M_READY")) {
+                if (data === "M_READY") {
                     sendMetadata();
                 } else if (data === "M_META_OK") {
                     // Bước 1: Upload Background (72x72)
@@ -1234,15 +1206,18 @@
         }
 
         function sendMetadata() {
-            const bg = getIdx('sel-background');
-            const bgmode = getIdx('sel-bg-ini');
+            const bg_sel = getIdx('sel-background');
+            const bg_mode = getIdx('sel-bg-ini');
             const bass = getIdx('sel-bass');
-            const type = getIdx('sel-eq-type');
-            const color = getIdx('sel-eq-color');
-            const effect = getIdx('sel-eq-effect');
-            const peak = getIdx('sel-eq-peak');
+            const eq_type = getIdx('sel-eq-type');
+            const eq_color = getIdx('sel-eq-color');
+            const eq_effect = getIdx('sel-eq-effect');
+            const eq_peak = getIdx('sel-eq-peak');
             const idx = params.get('idx') || '0';
-            websocket.send(`#MHGM$${idx},${bg},${bass},${type},${color},${effect},${peak},${bgmode}`);
+            const bg_spd = document.getElementById('bg-gif-speed').value;
+            const bass_spd = document.getElementById('bass-gif-speed').value;
+
+            websocket.send("#MHGM$" + idx + "$" + bg_sel + "$" + bass + "$" + eq_type + "$" + eq_color + "$" + eq_effect + "$" + eq_peak + "$" + bg_mode + "$" + bg_spd + "$" + bass_spd);
         }
 
         function finalizeSave() {
@@ -1275,20 +1250,18 @@
         // =============================================
         let editorTarget = null;       // "BG" | "BASS"
         let editorCroppr = null;
+        let editorImgOrig = null;
         let editorGifFrames = [];
         let editorIsGif = false;
         let editorGifInterval = null;
         let eBright = 100, eSat = 100, eInv = 0, eGray = 0;
-        let editorImgOrig = null;
 
         // Kết quả sau OK
         let bgGifFrames = [];       // frames đã crop 72×72 (ARGB4444 hex)
         let bassGifFrames = [];     // frames đã crop 44×44 (ARGB4444 hex)
-        let isMetadataOnly = false; // Cờ để biết là lưu dropdown hay lưu từ Editor
         let lastEditorTarget = ""; // Ghi nhớ là vừa sửa BG hay BASS
         let bgEditorChanged = false;    // đã bấm OK từ Editor BG lần này
         let bassEditorChanged = false;  // đã bấm OK từ Editor Bass lần này
-        let editorGifSpeed = 4;
 
         // Override canvas onclick để mở editor
         document.getElementById('bg-canvas').onclick = () => openEditor('BG');
@@ -1299,12 +1272,11 @@
             document.getElementById('editor-target-label').innerText = (target === 'BG') ? 'BG EDITOR (72×72)' : 'BASS EDITOR (44×44)';
             document.getElementById('img-editor-modal').style.display = 'flex';
 
-            // Xóa sạch dấu vết Croppr cũ và ảnh cũ
             if (editorCroppr) { try { editorCroppr.destroy(); } catch (e) { } editorCroppr = null; }
             const tgt = document.getElementById('editor-cropper-target');
             tgt.src = "";
             tgt.style.display = 'none';
-            tgt.style.filter = ''; // Xóa bộ lọc trên ảnh
+            tgt.style.filter = '';
 
             document.getElementById('editor-no-image').style.display = 'block';
             document.getElementById('editor-file-input').value = "";
@@ -1314,14 +1286,12 @@
             editorIsGif = false;
             editorImgOrig = null;
 
-            // Khôi phục thiết lập bộ lọc ban đầu
-            eBright = 100; eSat = 100; eInv = 0; eGray = 0;
+            eBright = 100, eSat = 100, eInv = 0, eGray = 0;
             const sl = document.getElementById('editor-filter-slider');
             sl.value = 100;
             sl.max = 200;
             document.getElementById('editor-filter-value').innerText = '100%';
             document.getElementById('editor-filter-name').innerText = 'Brightness';
-
             document.querySelectorAll('.editor-filter-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('[data-filter="brightness"]').classList.add('active');
         }
@@ -1335,30 +1305,18 @@
             const img = new Image();
             img.src = dataUrl;
             img.onload = () => {
-                const pW = 440, pH = 320;
-                let uiW, uiH;
-                if (img.width / img.height > pW / pH) { uiW = pW; uiH = uiW * img.height / img.width; }
-                else { uiH = pH; uiW = uiH * img.width / img.height; }
-                const c = document.createElement('canvas');
-                const cx = c.getContext('2d');
-                c.width = pW; c.height = pH;
-                cx.translate(pW / 2, pH / 2);
-                cx.drawImage(img, -uiW / 2, -uiH / 2, uiW, uiH);
-
-                if (editorCroppr) { try { editorCroppr.destroy(); } catch (e) { } editorCroppr = null; }
                 document.getElementById('editor-no-image').style.display = 'none';
                 const tgt = document.getElementById('editor-cropper-target');
                 tgt.style.display = 'block';
                 tgt.onload = () => {
                     editorImgOrig = tgt;
-                    if (editorCroppr) { try { editorCroppr.destroy(); } catch (e) { } editorCroppr = null; }
                     editorCroppr = new Croppr(tgt, {
                         startSize: [80, 80, '%'],
                         minSize: [10, 10, 'px'],
                         returnMode: 'real'
                     });
                 };
-                tgt.src = c.toDataURL();
+                tgt.src = dataUrl;
             };
         }
 
@@ -1368,18 +1326,15 @@
             editorIsGif = false;
             editorGifFrames = [];
             if (editorGifInterval) { clearInterval(editorGifInterval); editorGifInterval = null; }
-
             if (file.type === 'image/gif') {
                 const reader = new FileReader();
                 reader.onload = (ev) => {
                     try {
                         const uint8Arr = new Uint8Array(ev.target.result);
                         const gifReader = new GifReader(uint8Arr);
-                        const numFrames = gifReader.numFrames();
-                        const maxFrames = 16;
+                        const numFrames = gifReader.numFrames(), maxFrames = 16;
                         const step = Math.max(1, Math.ceil(numFrames / maxFrames));
                         const cumBuf = new Uint8ClampedArray(gifReader.width * gifReader.height * 4);
-                        editorGifFrames = [];
                         for (let i = 0; i < numFrames; i++) {
                             gifReader.decodeAndBlitFrameRGBA(i, cumBuf);
                             if ((i % step === 0 || i === numFrames - 1) && editorGifFrames.length < maxFrames) {
@@ -1388,54 +1343,29 @@
                             }
                         }
                         editorIsGif = true;
-
-                        // Show middle frame in croppr
                         const mid = editorGifFrames[Math.floor(editorGifFrames.length / 2)];
-                        const mc = document.createElement('canvas');
-                        mc.width = mid.width; mc.height = mid.height;
-                        const mctx = mc.getContext('2d');
-                        const md = mctx.createImageData(mid.width, mid.height);
+                        const mc = document.createElement('canvas'); mc.width = mid.width; mc.height = mid.height;
+                        const mctx = mc.getContext('2d'); const md = mctx.createImageData(mid.width, mid.height);
                         md.data.set(mid.data); mctx.putImageData(md, 0, 0);
-
-                        // Animate preview
-                        let fIdx = 0;
-                        editorGifInterval = setInterval(() => {
-                            const fr = editorGifFrames[fIdx % editorGifFrames.length];
-                            const tc = document.createElement('canvas');
-                            tc.width = fr.width; tc.height = fr.height;
-                            const tcx = tc.getContext('2d');
-                            const id2 = tcx.createImageData(fr.width, fr.height);
+                        let fIdx = 0; editorGifInterval = setInterval(() => {
+                            const fr = editorGifFrames[fIdx++ % editorGifFrames.length];
+                            const tc = document.createElement('canvas'); tc.width = fr.width; tc.height = fr.height;
+                            const tcx = tc.getContext('2d'); const id2 = tcx.createImageData(fr.width, fr.height);
                             id2.data.set(fr.data); tcx.putImageData(id2, 0, 0);
-                            const pW = 440, pH = 320;
-                            let uiW, uiH;
-                            if (tc.width / tc.height > pW / pH) { uiW = pW; uiH = uiW * tc.height / tc.width; }
-                            else { uiH = pH; uiW = uiH * tc.width / tc.height; }
-                            const uc = document.createElement('canvas');
-                            const ucx = uc.getContext('2d');
-                            uc.width = pW; uc.height = pH;
-                            ucx.translate(pW / 2, pH / 2);
-                            ucx.drawImage(tc, -uiW / 2, -uiH / 2, uiW, uiH);
+                            const pW = 440, pH = 320; let uiW, uiH;
+                            if (tc.width / tc.height > pW / pH) { uiW = pW; uiH = uiW * tc.height / tc.width; } else { uiH = pH; uiW = uiH * tc.width / tc.height; }
+                            const uc = document.createElement('canvas'); const ucx = uc.getContext('2d'); uc.width = pW; uc.height = pH;
+                            ucx.translate(pW / 2, pH / 2); ucx.drawImage(tc, -uiW / 2, -uiH / 2, uiW, uiH);
                             document.querySelectorAll('.croppr-image, .croppr-imageClipped').forEach(img => img.src = uc.toDataURL());
-                            fIdx++;
                         }, 100);
-
                         editorSetupCroppr(mc.toDataURL());
-                    } catch (err) {
-                        console.error('GIF decode error', err);
-                        const r2 = new FileReader();
-                        r2.onload = ev2 => editorSetupCroppr(ev2.target.result);
-                        r2.readAsDataURL(file);
-                    }
+                    } catch (err) { editorSetupCroppr(URL.createObjectURL(file)); }
                 };
                 reader.readAsArrayBuffer(file);
-            } else {
-                const reader = new FileReader();
-                reader.onload = ev => editorSetupCroppr(ev.target.result);
-                reader.readAsDataURL(file);
-            }
+            } else { editorSetupCroppr(URL.createObjectURL(file)); }
         };
 
-        // Filter buttons
+        // Filter handlers
         document.querySelectorAll('.editor-filter-btn').forEach(btn => {
             btn.onclick = () => {
                 document.querySelectorAll('.editor-filter-btn').forEach(b => b.classList.remove('active'));
@@ -1451,17 +1381,12 @@
             };
         });
         document.getElementById('editor-filter-slider').oninput = function () {
-            const val = this.value;
-            document.getElementById('editor-filter-value').innerText = val + '%';
-            const active = document.querySelector('.editor-filter-btn.active');
-            if (!active) return;
-            const f = active.dataset.filter;
-            if (f === 'brightness') eBright = val;
-            else if (f === 'saturation') eSat = val;
-            else if (f === 'inversion') eInv = val;
-            else eGray = val;
-            const filterStr = `brightness(${eBright}%) saturate(${eSat}%) invert(${eInv}%) grayscale(${eGray}%)`;
-            document.querySelectorAll('.croppr-image, .croppr-imageClipped').forEach(img => img.style.filter = filterStr);
+            const val = this.value; document.getElementById('editor-filter-value').innerText = val + '%';
+            const f = document.querySelector('.editor-filter-btn.active').dataset.filter;
+            if (f === 'brightness') eBright = val; else if (f === 'saturation') eSat = val;
+            else if (f === 'inversion') eInv = val; else eGray = val;
+            const fs = `brightness(${eBright}%) saturate(${eSat}%) invert(${eInv}%) grayscale(${eGray}%)`;
+            document.querySelectorAll('.croppr-image, .croppr-imageClipped').forEach(img => img.style.filter = fs);
         };
 
         function applyEditorCrop() {
@@ -1470,250 +1395,107 @@
             const targetH = editorTarget === 'BG' ? 72 : 44;
             const crop = editorCroppr.getValue();
             const filterStr = `brightness(${eBright}%) saturate(${eSat}%) invert(${eInv}%) grayscale(${eGray}%)`;
-
             if (editorIsGif && editorGifFrames.length > 0) {
-                // Crop từng frame GIF
                 const croppedFrames = [];
                 editorGifFrames.forEach(frame => {
-                    const sc = document.createElement('canvas');
-                    sc.width = frame.width; sc.height = frame.height;
-                    const scx = sc.getContext('2d');
-                    const id3 = scx.createImageData(frame.width, frame.height);
+                    const sc = document.createElement('canvas'); sc.width = frame.width; sc.height = frame.height;
+                    const scx = sc.getContext('2d'); const id3 = scx.createImageData(frame.width, frame.height);
                     id3.data.set(frame.data); scx.putImageData(id3, 0, 0);
-
-                    // Scale factor: editor-preview-area là 440×320, ảnh gốc là frame.width×frame.height
-                    const pW = 440, pH = 320;
-                    let uiW, uiH;
-                    if (sc.width / sc.height > pW / pH) { uiW = pW; uiH = uiW * sc.height / sc.width; }
-                    else { uiH = pH; uiW = uiH * sc.width / sc.height; }
-                    const scaleX = sc.width / uiW;
-                    const scaleY = sc.height / uiH;
-                    // Offset của ảnh trong canvas preview (centered)
-                    const offX = (pW - uiW) / 2;
-                    const offY = (pH - uiH) / 2;
-
-                    const out = document.createElement('canvas');
-                    out.width = targetW; out.height = targetH;
-                    const octx = out.getContext('2d');
-                    octx.filter = filterStr;
-                    octx.drawImage(sc,
-                        (crop.x - offX) * scaleX, (crop.y - offY) * scaleY,
-                        crop.width * scaleX, crop.height * scaleY,
-                        0, 0, targetW, targetH);
-
-                    const imgD2 = octx.getImageData(0, 0, targetW, targetH).data;
-                    let hex = '';
-                    for (let i = 0; i < imgD2.length; i += 4) {
-                        const r = imgD2[i] >> 4, g = imgD2[i + 1] >> 4, b2 = imgD2[i + 2] >> 4, a = imgD2[i + 3] >> 4;
-                        hex += byteToHex(a | (r << 4)) + byteToHex(g | (b2 << 4));
+                    const pW = 440, pH = 320; let uiW, uiH;
+                    if (sc.width / sc.height > pW / pH) { uiW = pW; uiH = uiW * sc.height / sc.width; } else { uiH = pH; uiW = uiH * sc.width / sc.height; }
+                    const scaleX = sc.width / uiW, scaleY = sc.height / uiH;
+                    const offX = (pW - uiW) / 2, offY = (pH - uiH) / 2;
+                    const out = document.createElement('canvas'); out.width = targetW; out.height = targetH;
+                    const octx = out.getContext('2d'); octx.filter = filterStr;
+                    octx.drawImage(sc, (crop.x - offX) * scaleX, (crop.y - offY) * scaleY, crop.width * scaleX, crop.height * scaleY, 0, 0, targetW, targetH);
+                    const d = octx.getImageData(0, 0, targetW, targetH).data; let h = '';
+                    for (let i = 0; i < d.length; i += 4) {
+                        const r = d[i] >> 4, g = d[i+1] >> 4, b = d[i+2] >> 4, a = d[i+3] >> 4;
+                        h += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
                     }
-                    croppedFrames.push(hex);
+                    croppedFrames.push(h);
                 });
-
-                // Vẽ frame đầu vào canvas chính để preview
-                const previewC = document.createElement('canvas');
-                previewC.width = targetW; previewC.height = targetH;
-                const prevCtx = previewC.getContext('2d');
-                const frame0 = editorGifFrames[0];
-                const sc0 = document.createElement('canvas');
-                sc0.width = frame0.width; sc0.height = frame0.height;
-                const scx0 = sc0.getContext('2d');
-                const id0 = scx0.createImageData(frame0.width, frame0.height);
-                id0.data.set(frame0.data); scx0.putImageData(id0, 0, 0);
-                const pW2 = 440, pH2 = 320;
-                let uiW2, uiH2;
-                if (sc0.width / sc0.height > pW2 / pH2) { uiW2 = pW2; uiH2 = uiW2 * sc0.height / sc0.width; }
-                else { uiH2 = pH2; uiW2 = uiH2 * sc0.width / sc0.height; }
-                const scaleX2 = sc0.width / uiW2, scaleY2 = sc0.height / uiH2;
-                const offX2 = (pW2 - uiW2) / 2, offY2 = (pH2 - uiH2) / 2;
-                prevCtx.filter = filterStr;
-                prevCtx.drawImage(sc0, (crop.x - offX2) * scaleX2, (crop.y - offY2) * scaleY2, crop.width * scaleX2, crop.height * scaleY2, 0, 0, targetW, targetH);
-
                 if (editorTarget === 'BG') {
-                    bgGifFrames = croppedFrames;
-                    bgEditorChanged = true;
-                    bassEditorChanged = false; // Khóa chặt: Reset bên kia
-                    lastEditorTarget = "BG";
-                    bgCtx.clearRect(0, 0, 72, 72);
-                    bgCtx.drawImage(previewC, 0, 0, 72, 72);
+                    bgGifFrames = croppedFrames; bgEditorChanged = true; bassEditorChanged = false; lastEditorTarget = "BG";
+                    hasUploadedBG = true; hasUploadedBass = false;
                     document.getElementById('bg-hint').style.display = 'none';
-                    hasUploadedBG = true;
-                    hasUploadedBass = false; // Khóa chặt: Reset bên kia
                 } else {
-                    bassGifFrames = croppedFrames;
-                    bassEditorChanged = true;
-                    bgEditorChanged = false; // Khóa chặt: Reset bên kia
-                    lastEditorTarget = "BASS";
-                    bassCtx.clearRect(0, 0, 44, 44);
-                    bassCtx.drawImage(previewC, 0, 0, 44, 44);
+                    bassGifFrames = croppedFrames; bassEditorChanged = true; bgEditorChanged = false; lastEditorTarget = "BASS";
+                    hasUploadedBass = true; hasUploadedBG = false;
                     document.getElementById('bass-hint').style.display = 'none';
-                    hasUploadedBass = true;
-                    hasUploadedBG = false; // Khóa chặt: Reset bên kia
                 }
             } else {
-                // Ảnh tĩnh — crop 1 frame, vẽ vào canvas
-                const out2 = document.createElement('canvas');
-                out2.width = targetW; out2.height = targetH;
-                const octx2 = out2.getContext('2d');
-                octx2.filter = filterStr;
+                const out2 = document.createElement('canvas'); out2.width = targetW; out2.height = targetH;
+                const octx2 = out2.getContext('2d'); octx2.filter = filterStr;
                 octx2.drawImage(editorImgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
-
                 if (editorTarget === 'BG') {
-                    bgGifFrames = [];  
-                    bgEditorChanged = true;
-                    bassEditorChanged = false; // Khóa chặt
-                    lastEditorTarget = "BG";
-                    bgCtx.clearRect(0, 0, 72, 72);
-                    bgCtx.drawImage(out2, 0, 0, 72, 72);
+                    bgGifFrames = []; bgEditorChanged = true; bassEditorChanged = false; lastEditorTarget = "BG";
+                    bgCtx.drawImage(out2, 0, 0, 72, 72); hasUploadedBG = true; hasUploadedBass = false;
                     document.getElementById('bg-hint').style.display = 'none';
-                    hasUploadedBG = true;
-                    hasUploadedBass = false; // Khóa chặt
                 } else {
-                    bassGifFrames = [];  
-                    bassEditorChanged = true;
-                    bgEditorChanged = false; // Khóa chặt
-                    lastEditorTarget = "BASS";
-                    bassCtx.clearRect(0, 0, 44, 44);
-                    bassCtx.drawImage(out2, 0, 0, 44, 44);
+                    bassGifFrames = []; bassEditorChanged = true; bgEditorChanged = false; lastEditorTarget = "BASS";
+                    bassCtx.drawImage(out2, 0, 0, 44, 44); hasUploadedBass = true; hasUploadedBG = false;
                     document.getElementById('bass-hint').style.display = 'none';
-                    hasUploadedBass = true;
-                    hasUploadedBG = false; // Khóa chặt
                 }
             }
             closeEditorModal();
-
-            // Auto save image data immediately
             document.getElementById('upload-modal').style.display = 'flex';
             document.getElementById('modal-title').innerText = "Saving Change...";
-            document.getElementById('progress-bar').style.width = '0%';
-            document.getElementById('progress-percent').innerText = '0%';
-
             const idx = params.get('idx') || '0';
-            if (websocket && websocket.readyState === WebSocket.OPEN) {
-                websocket.send("#MSTB$" + idx);
-            }
+            websocket.send("#MSTB$" + idx);
         }
 
         // =============================================
-        // ANIMATION UPLOAD HELPERS
+        // SESSION MANAGEMENT
         // =============================================
-        let animMusicQueue = [];
-        let animMusicPackets = 0;
-        const ANIM_CHUNK_HEX = 1024;  // 512 bytes = 1024 hex chars
-
-        function buildAnimQueue(gifFramesHex) {
-            // Ghép tất cả frame thành 1 stream hex liên tục
-            const allHex = gifFramesHex.join('');
-            const queue = [];
-            for (let i = 0; i < allHex.length; i += ANIM_CHUNK_HEX) {
-                queue.push(allHex.substring(i, i + ANIM_CHUNK_HEX));
-            }
-            return queue;
+        let animMusicQueue = []; let animMusicPackets = 0; const ANIM_CHUNK_HEX = 1024;
+        function buildQueue(frames) {
+            const all = frames.join(''); const q = [];
+            for (let i = 0; i < all.length; i += ANIM_CHUNK_HEX) q.push(all.substring(i, i + ANIM_CHUNK_HEX));
+            return q;
         }
-
         function startBgAnimUpload() {
-            const idx = params.get('idx') || '0';
-            animMusicQueue = buildAnimQueue(bgGifFrames);
-            animMusicPackets = animMusicQueue.length;
-            document.getElementById('modal-title').innerText = 'Uploading BG Anim...';
-            document.getElementById('progress-bar').style.width = '0%';
-            document.getElementById('progress-percent').innerText = '0%';
-            websocket.send('#MABSTB$' + idx);  // BG → :0 (default)
+            const idx = params.get('idx') || '0'; animMusicQueue = buildQueue(bgGifFrames);
+            animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx);
         }
-
         function startBassAnimUpload() {
-            const idx = params.get('idx') || '0';
-            animMusicQueue = buildAnimQueue(bassGifFrames);
-            animMusicPackets = animMusicQueue.length;
-            document.getElementById('modal-title').innerText = 'Uploading Bass Anim...';
-            document.getElementById('progress-bar').style.width = '0%';
-            document.getElementById('progress-percent').innerText = '0%';
-            websocket.send('#MABSTB$' + idx + ':1');  // Bass → :1
+            const idx = params.get('idx') || '0'; animMusicQueue = buildQueue(bassGifFrames);
+            animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx + ':1');
         }
-
         function finishSession() {
             websocket.send("#M_FIN$");
             document.getElementById('modal-title').innerText = 'Success!';
-            setTimeout(() => {
-                document.getElementById('upload-modal').style.display = 'none';
-                // Không cần reload trang, chỉ cần ẩn modal đi vì nạp file đã do firmware lo
-            }, 800);
+            setTimeout(() => { document.getElementById('upload-modal').style.display = 'none'; }, 800);
         }
-
         function afterMSaveOK() {
-            // Lưu biến tạm để tránh race condition
-            const target = lastEditorTarget;
-            lastEditorTarget = ""; // Xóa ngay lập tức
-
-            if (target === "BG" && bgEditorChanged) {
+            const t = lastEditorTarget; lastEditorTarget = "";
+            if (t === "BG" && bgEditorChanged) {
                 bgEditorChanged = false;
-                if (bgGifFrames.length > 0) {
-                    startBgAnimUpload();
-                } else {
-                    const idx = params.get('idx') || '0';
-                    websocket.send('#MABDEL$' + idx);
-                    // Không gọi finishSession ở đây, để firmware trả về M_SAVEOK 
-                    // lần tới sau khi xóa xong, afterMSaveOK sẽ chạy vào case else cuối.
-                }
-            } 
-            else if (target === "BASS" && bassEditorChanged) {
+                if (bgGifFrames.length > 0) startBgAnimUpload();
+                else websocket.send('#MABDEL$' + (params.get('idx') || '0'));
+            } else if (t === "BASS" && bassEditorChanged) {
                 bassEditorChanged = false;
-                if (bassGifFrames.length > 0) {
-                    startBassAnimUpload();
-                } else {
-                    const idx = params.get('idx') || '0';
-                    websocket.send('#MASSDEL$' + idx);
-                }
-            } else {
-                // Trường hợp Metadata dropdown hoặc sau khi xóa .bak/.bas xong
-                finishSession();
-            }
+                if (bassGifFrames.length > 0) startBassAnimUpload();
+                else websocket.send('#MASSDEL$' + (params.get('idx') || '0'));
+            } else finishSession();
         }
+        function afterABSaveOK() { finishSession(); }
 
-        function afterABSaveOK() {
-            // Sau khi upload xong Anim (GIF), kết thúc luôn session
-            // Vì mỗi lần Apply chỉ thực hiện cho 1 đối tượng duy nhất
-            finishSession();
-        }
-
-        // --- GIF Speed Sliders (BG 72x72 / Bass 44x44) ---
+        // Speed Sliders
         (function () {
-            const bgSpeedSlider = document.getElementById('bg-gif-speed');
-            const bgSpeedVal = document.getElementById('bg-gif-speed-val');
-            const bassSpeedSlider = document.getElementById('bass-gif-speed');
-            const bassSpeedVal = document.getElementById('bass-gif-speed-val');
+            const bgS = document.getElementById('bg-gif-speed');
+            const bgV = document.getElementById('bg-gif-speed-val');
+            const bassS = document.getElementById('bass-gif-speed');
+            const bassV = document.getElementById('bass-gif-speed-val');
 
-            // Khởi tạo giá trị từ URL param
-            const initBgSpd = parseInt(params.get('bgspd') || '4');
-            const initBassSpd = parseInt(params.get('basspd') || '4');
-            bgSpeedSlider.value = initBgSpd;
-            bgSpeedVal.innerText = initBgSpd;
-            bassSpeedSlider.value = initBassSpd;
-            bassSpeedVal.innerText = initBassSpd;
+            bgS.value = params.get('bgspd') || '4'; bgV.innerText = bgS.value;
+            bassS.value = params.get('basspd') || '4'; bassV.innerText = bassS.value;
 
-            let bgSpdTimer = null;
-            bgSpeedSlider.oninput = function () {
-                bgSpeedVal.innerText = this.value;
-                clearTimeout(bgSpdTimer);
-                const v = this.value;
-                bgSpdTimer = setTimeout(() => {
-                    if (websocket && websocket.readyState === WebSocket.OPEN) {
-                        websocket.send('#MBGSPD$' + v);
-                    }
-                }, 300);
-            };
+            let spdTimer = null;
+            function autoSave() { clearTimeout(spdTimer); spdTimer = setTimeout(triggerAutoSave, 300); }
 
-            let bassSpdTimer = null;
-            bassSpeedSlider.oninput = function () {
-                bassSpeedVal.innerText = this.value;
-                clearTimeout(bassSpdTimer);
-                const v = this.value;
-                bassSpdTimer = setTimeout(() => {
-                    if (websocket && websocket.readyState === WebSocket.OPEN) {
-                        websocket.send('#MBSSPD$' + v);
-                    }
-                }, 300);
-            };
+            bgS.oninput = function () { bgV.innerText = this.value; autoSave(); };
+            bassS.oninput = function () { bassV.innerText = this.value; autoSave(); };
         })();
 
         window.onclick = (e) => {
@@ -1723,5 +1505,4 @@
         };
     </script>
 </body>
-
 </html>
