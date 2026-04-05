@@ -749,7 +749,8 @@
         </div>
         <hr>
         <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <button id="btn-save-main" class="btn btn-primary" style="flex: 1.5;">BACK</button>
+            <button class="btn btn-secondary" onclick="window.location.href='music.html?v=' + Date.now()">BACK</button>
+            <button id="btn-save-main" class="btn btn-primary" style="flex: 1.5;">SAVE</button>
         </div>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
@@ -899,25 +900,19 @@
                     opt.innerHTML = `${imgTag}<span>${displayName}</span>`;
 
                     opt.onclick = () => {
-                        // Tìm lại index gốc trong mảng DATA để tránh lỗi khi đang search (filtered)
-                        const originalImages = DATA[config.path] || [];
-                        const originalIdx = originalImages.indexOf(name);
-                        const finalIdx = originalIdx !== -1 ? originalIdx : idx;
-
                         if (selectedImg) {
                             selectedImg.src = imgUrl;
                             selectedImg.style.display = 'block';
                         }
                         if (selectedText) selectedText.innerText = displayName;
                         el.classList.remove('open');
-                        el.setAttribute('data-index', finalIdx);
+                        el.setAttribute('data-index', idx);
+                        if (config.id === 'sel-bg-ini') updateBgUploadState(idx);
+                        if (config.id === 'sel-bass') updateBassUploadState(idx);
 
-                        if (config.id === 'sel-bg-ini') updateBgUploadState(finalIdx);
-                        if (config.id === 'sel-bass') updateBassUploadState(finalIdx);
-
-                        // Auto-save changes for dropdowns using specific independent commands
+                        // Auto-save changes for dropdowns
                         if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
-                            triggerAutoSave(config.id);
+                            triggerAutoSave();
                         }
                     };
                     optionsBox.appendChild(opt);
@@ -1227,40 +1222,21 @@
             websocket.send("#MBUM$");
         }
 
-        function triggerAutoSave(sourceId) {
+        function triggerAutoSave() {
             if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
-
-            // Reset flags for atomic operation
+            // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
             hasUploadedBG = false;
             hasUploadedBass = false;
             bgEditorChanged = false;
             bassEditorChanged = false;
-            lastEditorTarget = "";
-
-            if (sourceId) {
-                const val = getIdx(sourceId);
-                let cmd = "";
-                switch (sourceId) {
-                    case 'sel-bg-ini': cmd = "#MBGMOD$"; break;
-                    case 'sel-background': cmd = "#MBGSEL$"; break;
-                    case 'sel-bass': cmd = "#MBSSEL$"; break;
-                    case 'sel-eq-type': cmd = "#MEQTYP$"; break;
-                    case 'sel-eq-color': cmd = "#MEQCOL$"; break;
-                    case 'sel-eq-effect': cmd = "#MEQEFF$"; break;
-                    case 'sel-eq-peak': cmd = "#MEQPEA$"; break;
-                }
-                if (cmd) {
-                    websocket.send(cmd + val);
-                    return;
-                }
-            }
+            lastEditorTarget = ""; // Reset target
 
             const idx = params.get('idx') || '0';
             websocket.send("#MSTB$" + idx);
         }
 
-        document.getElementById('btn-save-main').onclick = () => {
-            window.location.href = 'music.html?v=' + Date.now();
+        document.getElementById('btn-save-main').onclick = async () => {
+            triggerAutoSave();
         };
 
         CONFIG.forEach(initCombobox);
@@ -1555,7 +1531,7 @@
                 octx2.drawImage(editorImgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
 
                 if (editorTarget === 'BG') {
-                    bgGifFrames = [];
+                    bgGifFrames = [];  
                     bgEditorChanged = true;
                     bassEditorChanged = false; // Khóa chặt
                     lastEditorTarget = "BG";
@@ -1565,7 +1541,7 @@
                     hasUploadedBG = true;
                     hasUploadedBass = false; // Khóa chặt
                 } else {
-                    bassGifFrames = [];
+                    bassGifFrames = [];  
                     bassEditorChanged = true;
                     bgEditorChanged = false; // Khóa chặt
                     lastEditorTarget = "BASS";
@@ -1651,7 +1627,7 @@
                     // Không gọi finishSession ở đây, để firmware trả về M_SAVEOK 
                     // lần tới sau khi xóa xong, afterMSaveOK sẽ chạy vào case else cuối.
                 }
-            }
+            } 
             else if (target === "BASS" && bassEditorChanged) {
                 bassEditorChanged = false;
                 if (bassGifFrames.length > 0) {
