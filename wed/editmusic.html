@@ -1167,6 +1167,10 @@
                     }
                 } else if (data === "M_AUTO_OK") {
                     console.log("Auto-save Metadata OK.");
+                    // Nếu đang gởi ảnh (hiện modal) thì tiếp tục stream chunk ảnh đầu tiên
+                    if (document.getElementById('upload-modal').style.display === 'flex') {
+                        streamNextChunk();
+                    }
                 } else if (data === "M_META_OK") {
                     streamNextChunk();
                 } else if (data === "M_BG_OK") {
