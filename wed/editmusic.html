@@ -219,10 +219,10 @@
             border: 1px solid var(--glass-border);
             /* background: rgba(0, 0, 0, 0.4); */
             background-color: #000;
-            background-image: 
-                linear-gradient(45deg, #111 25%, transparent 25%), 
-                linear-gradient(-45deg, #111 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #111 75%), 
+            background-image:
+                linear-gradient(45deg, #111 25%, transparent 25%),
+                linear-gradient(-45deg, #111 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #111 75%),
                 linear-gradient(-45deg, transparent 75%, #111 75%);
             background-size: 10px 10px;
             background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
@@ -298,11 +298,49 @@
             background: var(--primary);
         }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-content { background: #1e293b; padding: 30px; border-radius: 24px; width: 280px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
-        .modal-content h3 { margin: 0; font-weight: 300; letter-spacing: 1px; font-size: 18px; color: white; }
-        .progress-container { width: 100%; height: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; margin: 20px 0; overflow: hidden; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary, var(--primary))); transition: width 0.3s; }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 24px;
+            width: 280px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .modal-content h3 {
+            margin: 0;
+            font-weight: 300;
+            letter-spacing: 1px;
+            font-size: 18px;
+            color: white;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary, var(--primary)));
+            transition: width 0.3s;
+        }
 
         .disabled-upload {
             opacity: 0.3;
@@ -311,36 +349,95 @@
         }
 
         /* ===== Croppr CSS ===== */
-        .croppr-container * { user-select: none; box-sizing: border-box; }
-        .croppr-container img { vertical-align: middle; max-width: 100%; }
-        .croppr { position: relative; display: inline-block; }
-        .croppr-handle, .croppr-imageClipped, .croppr-overlay, .croppr-region { position: absolute; top: 0; }
-        .croppr-overlay { background: rgba(0,0,0,.5); right: 0; bottom: 0; left: 0; z-index: 1; cursor: crosshair; }
-        .croppr-region { border: 1px dashed rgba(0,0,0,.5); z-index: 3; cursor: move; }
-        .croppr-imageClipped { right: 0; bottom: 0; left: 0; z-index: 2; pointer-events: none; }
-        .croppr-handle { border: 1px solid #000; background-color: #fff; width: 10px; height: 10px; z-index: 4; }
-        .croppr-container { position: relative; }
+        .croppr-container * {
+            user-select: none;
+            box-sizing: border-box;
+        }
+
+        .croppr-container img {
+            vertical-align: middle;
+            max-width: 100%;
+        }
+
+        .croppr {
+            position: relative;
+            display: inline-block;
+        }
+
+        .croppr-handle,
+        .croppr-imageClipped,
+        .croppr-overlay,
+        .croppr-region {
+            position: absolute;
+            top: 0;
+        }
+
+        .croppr-overlay {
+            background: rgba(0, 0, 0, .5);
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            cursor: crosshair;
+        }
+
+        .croppr-region {
+            border: 1px dashed rgba(0, 0, 0, .5);
+            z-index: 3;
+            cursor: move;
+        }
+
+        .croppr-imageClipped {
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .croppr-handle {
+            border: 1px solid #000;
+            background-color: #fff;
+            width: 10px;
+            height: 10px;
+            z-index: 4;
+        }
+
+        .croppr-container {
+            position: relative;
+        }
+
         .croppr-region {
             border: 1px dashed #fff !important;
             z-index: 99 !important;
             animation: croppr-glow 0.2s infinite alternate !important;
             background: rgba(255, 0, 0, 0.1) !important;
         }
+
         @keyframes croppr-glow {
-            from { box-shadow: inset 0 0 0 1px rgba(255,0,0,0.9), 0 0 0 1px rgba(255,0,0,0.9); }
-            to   { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.9), 0 0 0 1px rgba(255,255,255,0.9); }
+            from {
+                box-shadow: inset 0 0 0 1px rgba(255, 0, 0, 0.9), 0 0 0 1px rgba(255, 0, 0, 0.9);
+            }
+
+            to {
+                box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.9);
+            }
         }
+
         .croppr-handle {
             border: 2px solid #fff !important;
             background-color: #ff0000 !important;
-            width: 12px !important; height: 12px !important;
-            z-index: 100 !important; border-radius: 3px !important;
+            width: 12px !important;
+            height: 12px !important;
+            z-index: 100 !important;
+            border-radius: 3px !important;
         }
 
         /* ===== Image Editor Modal ===== */
         #img-editor-modal {
             display: none;
-            position: fixed; inset: 0;
+            position: fixed;
+            inset: 0;
             background: rgba(6, 2, 29, 0.70);
             backdrop-filter: blur(6px);
             z-index: 3000;
@@ -349,30 +446,43 @@
             overflow-y: auto;
             padding: 16px;
         }
+
         .editor-inner {
-            width: 100%; max-width: 500px;
+            width: 100%;
+            max-width: 500px;
             background: rgba(15, 12, 42, 0.95);
-            border: 1px solid rgba(255,255,255,0.10);
+            border: 1px solid rgba(255, 255, 255, 0.10);
             border-radius: 24px;
             padding: 20px 18px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
-            display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             backdrop-filter: blur(20px);
             margin: auto;
         }
+
         .editor-topbar {
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 4px;
         }
+
         .editor-title {
-            font-size: 15px; font-weight: 700; letter-spacing: 2px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 2px;
             text-transform: uppercase;
             background: linear-gradient(to right, #6366f1, #a855f7);
-            -webkit-background-clip: text; background-clip: text;
+            -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .editor-preview-area {
-            width: 100%; height: 320px;
+            width: 100%;
+            height: 320px;
             background-color: #000;
             background-image:
                 linear-gradient(45deg, #111 25%, transparent 25%),
@@ -381,41 +491,78 @@
                 linear-gradient(-45deg, transparent 75%, #111 75%);
             background-size: 20px 20px;
             background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-            border-radius: 15px; overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
         }
-        .editor-preview-area > img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .editor-preview-area>img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
         .editor-filter-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
             padding: 12px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 16px; border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
+
         .editor-filter-btn {
-            padding: 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.3); color: var(--text-dim);
-            font-size: 11px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-dim);
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .editor-filter-btn.active, .editor-filter-btn:hover {
-            background: rgba(99,102,241,0.3); border-color: var(--primary);
+
+        .editor-filter-btn.active,
+        .editor-filter-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+            border-color: var(--primary);
             color: white;
         }
-        .editor-slider-row { grid-column: span 2; }
-        .editor-slider-label {
-            display: flex; justify-content: space-between;
-            font-size: 12px; margin-bottom: 4px;
+
+        .editor-slider-row {
+            grid-column: span 2;
         }
+
+        .editor-slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
         .editor-gif-bar {
-            display: none; align-items: center; gap: 10px;
+            display: none;
+            align-items: center;
+            gap: 10px;
             padding: 10px 14px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 14px; border: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
             font-size: 12px;
         }
-        .editor-btns { display: flex; gap: 10px; }
+
+        .editor-btns {
+            display: flex;
+            gap: 10px;
+        }
     </style>
 </head>
 
@@ -476,10 +623,12 @@
                 </div>
             </div>
             <div style="display:flex; align-items:center; gap:10px; margin-top:8px; padding: 0 2px;">
-                <span style="font-size:10px; color:var(--text-dim); white-space:nowrap; letter-spacing:1px;">GIF SPD</span>
-                <input type="range" id="bg-gif-speed" min="1" max="32" value="4"
+                <span style="font-size:10px; color:var(--text-dim); white-space:nowrap; letter-spacing:1px;">GIF
+                    SPD</span>
+                <input type="range" id="bg-gif-speed" min="1" max="16" value="4"
                     style="flex:1; accent-color:var(--primary);">
-                <span id="bg-gif-speed-val" style="font-size:11px; color:var(--primary); min-width:22px; text-align:right;">4</span>
+                <span id="bg-gif-speed-val"
+                    style="font-size:11px; color:var(--primary); min-width:22px; text-align:right;">4</span>
             </div>
         </div>
 
@@ -520,10 +669,12 @@
                 </div>
             </div>
             <div style="display:flex; align-items:center; gap:10px; margin-top:8px; padding: 0 2px;">
-                <span style="font-size:10px; color:var(--text-dim); white-space:nowrap; letter-spacing:1px;">GIF SPD</span>
-                <input type="range" id="bass-gif-speed" min="1" max="32" value="4"
+                <span style="font-size:10px; color:var(--text-dim); white-space:nowrap; letter-spacing:1px;">GIF
+                    SPD</span>
+                <input type="range" id="bass-gif-speed" min="1" max="16" value="4"
                     style="flex:1; accent-color:var(--accent);">
-                <span id="bass-gif-speed-val" style="font-size:11px; color:var(--accent); min-width:22px; text-align:right;">4</span>
+                <span id="bass-gif-speed-val"
+                    style="font-size:11px; color:var(--accent); min-width:22px; text-align:right;">4</span>
             </div>
         </div>
 
@@ -622,7 +773,8 @@
                 <span class="editor-title" id="editor-target-label">BG EDITOR</span>
             </div>
 
-            <button class="btn btn-secondary" style="width:100%;" onclick="document.getElementById('editor-file-input').click()">
+            <button class="btn btn-secondary" style="width:100%;"
+                onclick="document.getElementById('editor-file-input').click()">
                 CHOOSE IMAGE / GIF
             </button>
             <input type="file" id="editor-file-input" accept="image/*" style="display:none">
@@ -643,18 +795,11 @@
                         <span id="editor-filter-name">Brightness</span>
                         <span id="editor-filter-value" style="color:var(--primary);">100%</span>
                     </div>
-                    <input type="range" id="editor-filter-slider" min="0" max="200" value="100" style="width:100%;accent-color:var(--primary);">
+                    <input type="range" id="editor-filter-slider" min="0" max="200" value="100"
+                        style="width:100%;accent-color:var(--primary);">
                 </div>
             </div>
 
-            <!-- GIF info bar (hidden for static images) -->
-            <div class="editor-gif-bar" id="editor-gif-bar">
-                <span>🎞</span>
-                <span id="editor-gif-info">Frames: 0</span>
-                <span style="margin-left:auto;">Speed</span>
-                <input type="range" id="editor-gif-speed" min="1" max="32" value="4" style="width:80px;accent-color:var(--primary);">
-                <span id="editor-gif-speed-val" style="color:var(--primary);min-width:20px;">4</span>
-            </div>
 
             <div class="editor-btns">
                 <button class="btn btn-secondary" onclick="closeEditorModal()">CANCEL</button>
@@ -665,8 +810,8 @@
 
     <script>
         /* omggif v1.0.10 minified */
-        "use strict"; function GifWriter(r,e,t,n){var i=0,a=void 0===(n=void 0===n?{}:n).loop?null:n.loop,o=void 0===n.palette?null:n.palette;if(e<=0||t<=0||e>65535||t>65535)throw new Error("Width/Height invalid.");function f(r){var e=r.length;if(e<2||e>256||e&e-1)throw new Error("Invalid code/color length, must be power of 2 and 2 .. 256.");return e}r[i++]=71,r[i++]=73,r[i++]=70,r[i++]=56,r[i++]=57,r[i++]=97;var l=0,u=0;if(null!==o){for(var h=f(o);h>>=1;)++l;if(h=1<<l,--l,void 0!==n.background){if((u=n.background)>=h)throw new Error("Background index out of range.");if(0===u)throw new Error("Background index explicitly passed as 0.")}}if(r[i++]=255&e,r[i++]=e>>8&255,r[i++]=255&t,r[i++]=t>>8&255,r[i++]=(null!==o?128:0)|l,r[i++]=u,r[i++]=0,null!==o)for(var d=0,s=o.length;d<s;++d){var v=o[d];r[i++]=v>>16&255,r[i++]=v>>8&255,r[i++]=255&v}if(null!==a){if(a<0||a>65535)throw new Error("Loop count invalid.");r[i++]=33,r[i++]=255,r[i++]=11,r[i++]=78,r[i++]=69,r[i++]=84,r[i++]=83,r[i++]=67,r[i++]=65,r[i++]=80,r[i++]=69,r[i++]=50,r[i++]=46,r[i++]=48,r[i++]=3,r[i++]=1,r[i++]=255&a,r[i++]=a>>8&255,r[i++]=0}var c=!1;this.addFrame=function(e,t,n,a,l,u){if(!0===c&&(--i,c=!1),u=void 0===u?{}:u,e<0||t<0||e>65535||t>65535)throw new Error("x/y invalid.");if(n<=0||a<=0||n>65535||a>65535)throw new Error("Width/Height invalid.");if(l.length<n*a)throw new Error("Not enough pixels for the frame size.");var h=!0,d=u.palette;if(null==d&&(h=!1,d=o),null==d)throw new Error("Must supply either a local or global palette.");for(var s=f(d),v=0;s>>=1;)++v;s=1<<v;var w=void 0===u.delay?0:u.delay,p=void 0===u.disposal?0:u.disposal;if(p<0||p>3)throw new Error("Disposal out of range.");var g=!1,x=0;if(void 0!==u.transparent&&null!==u.transparent&&(g=!0,(x=u.transparent)<0||x>=s))throw new Error("Transparent color index.");if((0!==p||g||0!==w)&&(r[i++]=33,r[i++]=249,r[i++]=4,r[i++]=p<<2|(!0===g?1:0),r[i++]=255&w,r[i++]=w>>8&255,r[i++]=x,r[i++]=0),r[i++]=44,r[i++]=255&e,r[i++]=e>>8&255,r[i++]=255&t,r[i++]=t>>8&255,r[i++]=255&n,r[i++]=n>>8&255,r[i++]=255&a,r[i++]=a>>8&255,r[i++]=!0===h?128|v-1:0,!0===h)for(var k=0,b=d.length;k<b;++k){var E=d[k];r[i++]=E>>16&255,r[i++]=E>>8&255,r[i++]=255&E}return i=GifWriterOutputLZWCodeStream(r,i,v<2?2:v,l)},this.end=function(){return!1===c&&(r[i++]=59,c=!0),i},this.getOutputBuffer=function(){return r},this.setOutputBuffer=function(e){r=e},this.getOutputBufferPosition=function(){return i},this.setOutputBufferPosition=function(r){i=r}}function GifWriterOutputLZWCodeStream(r,e,t,n){r[e++]=t;var i=e++,a=1<<t,o=a-1,f=a+1,l=f+1,u=t+1,h=0,d=0;function s(t){for(;h>=t;)r[e++]=255&d,d>>=8,h-=8,e===i+256&&(r[i]=255,i=e++)}function v(r){d|=r<<h,h+=u,s(8)}var c=n[0]&o,w={};v(a);for(var p=1,g=n.length;p<g;++p){var x=n[p]&o,k=c<<8|x,b=w[k];if(void 0===b){for(d|=c<<h,h+=u;h>=8;)r[e++]=255&d,d>>=8,h-=8,e===i+256&&(r[i]=255,i=e++);4096===l?(v(a),l=f+1,u=t+1,w={}):(l>=1<<u&&++u,w[k]=l++),c=x}else c=b}return v(c),v(f),s(1),i+1===e?r[i]=0:(r[i]=e-i-1,r[e++]=0),e}function GifReader(r){var e=0;if(71!==r[e++]||73!==r[e++]||70!==r[e++]||56!==r[e++]||56!=(r[e++]+1&253)||97!==r[e++])throw new Error("Invalid GIF 87a/89a header.");var t=r[e++]|r[e++]<<8,n=r[e++]|r[e++]<<8,i=r[e++],a=i>>7,o=1<<(7&i)+1;r[e++];r[e++];var f=null,l=null;a&&(f=e,l=o,e+=3*o);var u=!0,h=[],d=0,s=null,v=0,c=null;for(this.width=t,this.height=n;u&&e<r.length;)switch(r[e++]){case 33:switch(r[e++]){case 255:if(11!==r[e]||78==r[e+1]&&69==r[e+2]&&84==r[e+3]&&83==r[e+4]&&67==r[e+5]&&65==r[e+6]&&80==r[e+7]&&69==r[e+8]&&50==r[e+9]&&46==r[e+10]&&48==r[e+11]&&3==r[e+12]&&1==r[e+13]&&0==r[e+16])e+=14,c=r[e++]|r[e++]<<8,e++;else for(e+=12;;){if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}break;case 249:if(4!==r[e++]||0!==r[e+4])throw new Error("Invalid graphics extension block.");var w=r[e++];d=r[e++]|r[e++]<<8,s=r[e++],1&w||(s=null),v=w>>2&7,e++;break;case 254:for(;;){if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}break;default:throw new Error("Unknown graphic control label: 0x"+r[e-1].toString(16))}break;case 44:var p=r[e++]|r[e++]<<8,g=r[e++]|r[e++]<<8,x=r[e++]|r[e++]<<8,k=r[e++]|r[e++]<<8,b=r[e++],E=b>>6&1,m=1<<(7&b)+1,y=f,G=l,I=!1;if(b>>7){I=!0;y=e,G=m,e+=3*m}var W=e;for(e++;;){var _;if(!((_=r[e++])>=0))throw Error("Invalid block size");if(0===_)break;e+=_}h.push({x:p,y:g,width:x,height:k,has_local_palette:I,palette_offset:y,palette_size:G,data_offset:W,data_length:e-W,transparent_index:s,interlaced:!!E,delay:d,disposal:v});break;case 59:u=!1;break;default:throw new Error("Unknown gif block: 0x"+r[e-1].toString(16))}this.numFrames=function(){return h.length},this.loopCount=function(){return c},this.frameInfo=function(r){if(r<0||r>=h.length)throw new Error("Frame index out of range.");return h[r]},this.decodeAndBlitFrameBGRA=function(e,n){var i=this.frameInfo(e),a=i.width*i.height,o=new Uint8Array(a);GifReaderLZWOutputIndexStream(r,i.data_offset,o,a);var f=i.palette_offset,l=i.transparent_index;null===l&&(l=256);var u=i.width,h=t-u,d=u,s=4*(i.y*t+i.x),v=4*((i.y+i.height)*t+i.x),c=s,w=4*h;!0===i.interlaced&&(w+=4*t*7);for(var p=8,g=0,x=o.length;g<x;++g){var k=o[g];if(0===d&&(d=u,(c+=w)>=v&&(w=4*h+4*t*(p-1),c=s+(u+h)*(p<<1),p>>=1)),k===l)c+=4;else{var b=r[f+3*k],E=r[f+3*k+1],m=r[f+3*k+2];n[c++]=m,n[c++]=E,n[c++]=b,n[c++]=255}--d}},this.decodeAndBlitFrameRGBA=function(e,n){var i=this.frameInfo(e),a=i.width*i.height,o=new Uint8Array(a);GifReaderLZWOutputIndexStream(r,i.data_offset,o,a);var f=i.palette_offset,l=i.transparent_index;null===l&&(l=256);var u=i.width,h=t-u,d=u,s=4*(i.y*t+i.x),v=4*((i.y+i.height)*t+i.x),c=s,w=4*h;!0===i.interlaced&&(w+=4*t*7);for(var p=8,g=0,x=o.length;g<x;++g){var k=o[g];if(0===d&&(d=u,(c+=w)>=v&&(w=4*h+4*t*(p-1),c=s+(u+h)*(p<<1),p>>=1)),k===l)c+=4;else{var b=r[f+3*k],E=r[f+3*k+1],m=r[f+3*k+2];n[c++]=b,n[c++]=E,n[c++]=m,n[c++]=255}--d}}}function GifReaderLZWOutputIndexStream(r,e,t,n){for(var i=r[e++],a=1<<i,o=a+1,f=o+1,l=i+1,u=(1<<l)-1,h=0,d=0,s=0,v=r[e++],c=new Int32Array(4096),w=null;;){for(;h<16&&0!==v;)d|=r[e++]<<h,h+=8,1===v?v=r[e++]:--v;if(h<l)break;var p=d&u;if(d>>=l,h-=l,p!==a){if(p===o)break;for(var g=p<f?p:w,x=0,k=g;k>a;)k=c[k]>>8,++x;var b=k;if(s+x+(g!==p?1:0)>n)return void console.log("Warning, gif stream longer than expected.");t[s++]=b;var E=s+=x;for(g!==p&&(t[s++]=b),k=g;x--;)k=c[k],t[--E]=255&k,k>>=8;null!==w&&f<4096&&(c[f++]=w<<8|b,f>=u+1&&l<12&&(++l,u=u<<1|1)),w=p}else f=o+1,u=(1<<(l=i+1))-1,w=null}return s!==n&&console.log("Warning, gif stream shorter than expected."),t}try{exports.GifWriter=GifWriter,exports.GifReader=GifReader}catch(r){}
-        !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):t.Croppr=e()}(this,function(){"use strict";function t(t){t.addEventListener("touchstart",e),t.addEventListener("touchend",e),t.addEventListener("touchmove",e)}function e(t){t.preventDefault();var e=t.changedTouches[0],i={touchstart:"mousedown",touchmove:"mousemove",touchend:"mouseup"};e.target.dispatchEvent(new MouseEvent(i[t.type],{bubbles:!0,cancelable:!0,view:window,clientX:e.clientX,clientY:e.clientY,screenX:e.screenX,screenY:e.screenY}))}function i(t,e){return Number(Math.round(t+"e"+e)+"e-"+e)}!function(){for(var t=0,e=["ms","moz","webkit","o"],i=0;i<e.length&&!window.requestAnimationFrame;++i)window.requestAnimationFrame=window[e[i]+"RequestAnimationFrame"],window.cancelAnimationFrame=window[e[i]+"CancelAnimationFrame"]||window[e[i]+"CancelRequestAnimationFrame"];window.requestAnimationFrame||(window.requestAnimationFrame=function(e,i){var n=(new Date).getTime(),o=Math.max(0,16-(n-t)),s=window.setTimeout(function(){e(n+o)},o);return t=n+o,s}),window.cancelAnimationFrame||(window.cancelAnimationFrame=function(t){clearTimeout(t)})}(),function(){function t(t,e){e=e||{bubbles:!1,cancelable:!1,detail:void 0};var i=document.createEvent("CustomEvent");return i.initCustomEvent(t,e.bubbles,e.cancelable,e.detail),i}return"function"!=typeof window.CustomEvent&&(t.prototype=window.Event.prototype,void(window.CustomEvent=t))}(),function(t){function e(e,i){i=i||{bubbles:!1,cancelable:!1};var n=document.createEvent("MouseEvent");return n.initMouseEvent(e,i.bubbles,i.cancelable,t,0,0,0,0,0,!1,!1,!1,!1,0,null),n}try{return new CustomEvent("test"),!1}catch(t){}e.prototype=Event.prototype,t.MouseEvent=e}(window);var n=function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")},o=function(){function t(t,e){for(var i=0;i<e.length;i++){var n=e[i];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(t,n.key,n)}}return function(e,i,n){return i&&t(e.prototype,i),n&&t(e,n),e}}(),s=function t(e,i,n){null===e&&(e=Function.prototype);var o=Object.getOwnPropertyDescriptor(e,i);if(void 0===o){var s=Object.getPrototypeOf(e);return null===s?void 0:t(s,i,n)}if("value"in o)return o.value;var r=o.get;if(void 0!==r)return r.call(n)},r=function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)},a=function(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e},h=function(){function t(t,e){var i=[],n=!0,o=!1,s=void 0;try{for(var r,a=t[Symbol.iterator]();!(n=(r=a.next()).done)&&(i.push(r.value),!e||i.length!==e);n=!0);}catch(t){o=!0,s=t}finally{try{!n&&a.return&&a.return()}finally{if(o)throw s}}return i}return function(e,i){if(Array.isArray(e))return e;if(Symbol.iterator in Object(e))return t(e,i);throw new TypeError("Invalid attempt to destructure non-iterable instance")}}(),l=function t(e,i,o,s){function r(t){t.stopPropagation(),document.addEventListener("mouseup",a),document.addEventListener("mousemove",h),l.eventBus.dispatchEvent(new CustomEvent("handlestart",{detail:{handle:l}}))}function a(t){t.stopPropagation(),document.removeEventListener("mouseup",a),document.removeEventListener("mousemove",h),l.eventBus.dispatchEvent(new CustomEvent("handleend",{detail:{handle:l}}))}function h(t){t.stopPropagation(),l.eventBus.dispatchEvent(new CustomEvent("handlemove",{detail:{mouseX:t.clientX,mouseY:t.clientY}}))}n(this,t);var l=this;this.position=e,this.constraints=i,this.cursor=o,this.eventBus=s,this.el=document.createElement("div"),this.el.className="croppr-handle",this.el.style.cursor=o,this.el.addEventListener("mousedown",r)},u=function(){function t(e,i,o,s){n(this,t),this.x1=e,this.y1=i,this.x2=o,this.y2=s}return o(t,[{key:"set",value:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:null,e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:null,n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null;return this.x1=null==t?this.x1:t,this.y1=null==e?this.y1:e,this.x2=null==i?this.x2:i,this.y2=null==n?this.y2:n,this}},{key:"width",value:function(){return Math.abs(this.x2-this.x1)}},{key:"height",value:function(){return Math.abs(this.y2-this.y1)}},{key:"resize",value:function(t,e){var i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:[0,0],n=this.x1+this.width()*i[0],o=this.y1+this.height()*i[1];return this.x1=n-t*i[0],this.y1=o-e*i[1],this.x2=this.x1+t,this.y2=this.y1+e,this}},{key:"scale",value:function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:[0,0],i=this.width()*t,n=this.height()*t;return this.resize(i,n,e),this}},{key:"move",value:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:null,e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,i=this.width(),n=this.height();return t=null===t?this.x1:t,e=null===e?this.y1:e,this.x1=t,this.y1=e,this.x2=t+i,this.y2=e+n,this}},{key:"getRelativePoint",value:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[0,0],e=this.width()*t[0],i=this.height()*t[1];return[e,i]}},{key:"getAbsolutePoint",value:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:[0,0],e=this.x1+this.width()*t[0],i=this.y1+this.height()*t[1];return[e,i]}},{key:"constrainToRatio",value:function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:[0,0],i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"height";if(null!==t){this.width(),this.height();switch(i){case"height":this.resize(this.width(),this.width()*t,e);break;case"width":this.resize(1*this.height()/t,this.height(),e);break;default:this.resize(this.width(),this.width()*t,e)}return this}}},{key:"constrainToBoundary",value:function(t,e){var i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:[0,0],n=this.getAbsolutePoint(i),o=h(n,2),s=o[0],r=o[1],a=s,l=r,u=t-s,d=e-r,c=-2*i[0]+1,p=-2*i[1]+1,v=null,m=null;switch(c){case-1:v=a;break;case 0:v=2*Math.min(a,u);break;case 1:v=u}switch(p){case-1:m=l;break;case 0:m=2*Math.min(l,d);break;case 1:m=d}if(this.width()>v){var f=v/this.width();this.scale(f,i)}if(this.height()>m){var g=m/this.height();this.scale(g,i)}return this}},{key:"constrainToSize",value:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:null,e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:null,i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:null,n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:null,o=arguments.length>4&&void 0!==arguments[4]?arguments[4]:[0,0],s=arguments.length>5&&void 0!==arguments[5]?arguments[5]:null;if(s&&(s>1?(t=1*e/s,n*=s):s<1&&(e=t*s,i=1*n/s)),t&&this.width()>t){var r=t,a=null===s?this.height():e;this.resize(r,a,o)}if(e&&this.height()>e){var h=null===s?this.width():t,l=e;this.resize(h,l,o)}if(i&&this.width()<i){var u=i,d=null===s?this.height():n;this.resize(u,d,o)}if(n&&this.height()<n){var c=null===s?this.width():i,p=n;this.resize(c,p,o)}return this}}]),t}(),d=[{position:[0,0],constraints:[1,0,0,1],cursor:"nw-resize"},{position:[.5,0],constraints:[1,0,0,0],cursor:"n-resize"},{position:[1,0],constraints:[1,1,0,0],cursor:"ne-resize"},{position:[1,.5],constraints:[0,1,0,0],cursor:"e-resize"},{position:[1,1],constraints:[0,1,1,0],cursor:"se-resize"},{position:[.5,1],constraints:[0,0,1,0],cursor:"s-resize"},{position:[0,1],constraints:[0,0,1,1],cursor:"sw-resize"},{position:[0,.5],constraints:[0,0,0,1],cursor:"w-resize"}],c=function(){function e(t,i){var o=this,s=arguments.length>2&&void 0!==arguments[2]&&arguments[2];if(n(this,e),this.options=e.parseOptions(i||{}),!t.nodeName&&(t=document.querySelector(t),null==t))throw"Unable to find element.";if(!t.getAttribute("src"))throw"Image src not provided.";this._initialized=!1,this._restore={parent:t.parentNode,element:t},s||(0===t.width||0===t.height?t.onload=function(){o.initialize(t)}:this.initialize(t))}return o(e,[{key:"initialize",value:function(t){this.createDOM(t),this.options.convertToPixels(this.cropperEl),this.attachHandlerEvents(),this.attachRegionEvents(),this.attachOverlayEvents(),this.box=this.initializeBox(this.options),this.redraw(),this._initialized=!0,null!==this.options.onInitialize&&this.options.onInitialize(this)}},{key:"createDOM",value:function(e){this.containerEl=document.createElement("div"),this.containerEl.className="croppr-container",this.eventBus=this.containerEl,t(this.containerEl),this.cropperEl=document.createElement("div"),this.cropperEl.className="croppr",this.imageEl=document.createElement("img"),this.imageEl.setAttribute("src",e.getAttribute("src")),this.imageEl.setAttribute("alt",e.getAttribute("alt")),this.imageEl.className="croppr-image",this.imageClippedEl=this.imageEl.cloneNode(),this.imageClippedEl.className="croppr-imageClipped",this.regionEl=document.createElement("div"),this.regionEl.className="croppr-region",this.overlayEl=document.createElement("div"),this.overlayEl.className="croppr-overlay";var i=document.createElement("div");i.className="croppr-handleContainer",this.handles=[];for(var n=0;n<d.length;n++){var o=new l(d[n].position,d[n].constraints,d[n].cursor,this.eventBus);this.handles.push(o),i.appendChild(o.el)}this.cropperEl.appendChild(this.imageEl),this.cropperEl.appendChild(this.imageClippedEl),this.cropperEl.appendChild(this.regionEl),this.cropperEl.appendChild(this.overlayEl),this.cropperEl.appendChild(i),this.containerEl.appendChild(this.cropperEl),e.parentElement.replaceChild(this.containerEl,e)}},{key:"setImage",value:function(t){var e=this;return this.imageEl.onload=function(){e.box=e.initializeBox(e.options),e.redraw()},this.imageEl.src=t,this.imageClippedEl.src=t,this}},{key:"destroy",value:function(){this._restore.parent.replaceChild(this._restore.element,this.containerEl)}},{key:"initializeBox",value:function(t){var e=t.startSize.width,i=t.startSize.height,n=new u(0,0,e,i);n.constrainToRatio(t.aspectRatio,[.5,.5]);var o=t.minSize,s=t.maxSize;n.constrainToSize(s.width,s.height,o.width,o.height,[.5,.5],t.aspectRatio);var r=this.cropperEl.offsetWidth,a=this.cropperEl.offsetHeight;n.constrainToBoundary(r,a,[.5,.5]);var h=this.cropperEl.offsetWidth/2-n.width()/2,l=this.cropperEl.offsetHeight/2-n.height()/2;return n.move(h,l),n}},{key:"redraw",value:function(){var t=this,e=Math.round(this.box.width()),i=Math.round(this.box.height()),n=Math.round(this.box.x1),o=Math.round(this.box.y1),s=Math.round(this.box.x2),r=Math.round(this.box.y2);window.requestAnimationFrame(function(){t.regionEl.style.transform="translate("+n+"px, "+o+"px)",t.regionEl.style.width=e+"px",t.regionEl.style.height=i+"px",t.imageClippedEl.style.clip="rect("+o+"px, "+s+"px, "+r+"px, "+n+"px)";for(var a=t.box.getAbsolutePoint([.5,.5]),h=a[0]-t.cropperEl.offsetWidth/2>>31,l=a[1]-t.cropperEl.offsetHeight/2>>31,u=(h^l)+l+l+4,d=-2*u+8,c=0;c<t.handles.length;c++){var p=t.handles[c],v=p.el.offsetWidth,m=p.el.offsetHeight,f=n+e*p.position[0]-v/2,g=o+i*p.position[1]-m/2;p.el.style.transform="translate("+Math.round(f)+"px, "+Math.round(g)+"px)",p.el.style.zIndex=d==c?5:4}})}},{key:"attachHandlerEvents",value:function(){var t=this.eventBus;t.addEventListener("handlestart",this.onHandleMoveStart.bind(this)),t.addEventListener("handlemove",this.onHandleMoveMoving.bind(this)),t.addEventListener("handleend",this.onHandleMoveEnd.bind(this))}},{key:"attachRegionEvents",value:function(){function t(t){t.stopPropagation(),document.addEventListener("mouseup",i),document.addEventListener("mousemove",e),n.dispatchEvent(new CustomEvent("regionstart",{detail:{mouseX:t.clientX,mouseY:t.clientY}}))}function e(t){t.stopPropagation(),n.dispatchEvent(new CustomEvent("regionmove",{detail:{mouseX:t.clientX,mouseY:t.clientY}}))}function i(t){t.stopPropagation(),document.removeEventListener("mouseup",i),document.removeEventListener("mousemove",e),n.dispatchEvent(new CustomEvent("regionend",{detail:{mouseX:t.clientX,mouseY:t.clientY}}))}var n=this.eventBus;this.regionEl.addEventListener("mousedown",t),n.addEventListener("regionstart",this.onRegionMoveStart.bind(this)),n.addEventListener("regionmove",this.onRegionMoveMoving.bind(this)),n.addEventListener("regionend",this.onRegionMoveEnd.bind(this))}},{key:"attachOverlayEvents",value:function(){function t(t){t.stopPropagation(),document.addEventListener("mouseup",i),document.addEventListener("mousemove",e);var r=o.cropperEl.getBoundingClientRect(),a=t.clientX-r.left,h=t.clientY-r.top;s=o.box,o.box=new u(a,h,a+1,h+1),o.eventBus.dispatchEvent(new CustomEvent("handlestart",{detail:{handle:o.handles[n]}}))}function e(t){t.stopPropagation(),o.eventBus.dispatchEvent(new CustomEvent("handlemove",{detail:{mouseX:t.clientX,mouseY:t.clientY}}))}function i(t){return t.stopPropagation(),document.removeEventListener("mouseup",i),document.removeEventListener("mousemove",e),1===o.box.width()&&1===o.box.height()?void(o.box=s):void o.eventBus.dispatchEvent(new CustomEvent("handleend",{detail:{mouseX:t.clientX,mouseY:t.clientY}}))}var n=4,o=this,s=null;this.overlayEl.addEventListener("mousedown",t)}},{key:"onHandleMoveStart",value:function(t){var e=t.detail.handle,i=[1-e.position[0],1-e.position[1]],n=this.box.getAbsolutePoint(i),o=h(n,2),s=o[0],r=o[1];this.activeHandle={handle:e,originPoint:i,originX:s,originY:r},null!==this.options.onCropStart&&this.options.onCropStart(this.getValue())}},{key:"onHandleMoveMoving",value:function(t){var e=t.detail,i=e.mouseX,n=e.mouseY,o=this.cropperEl.getBoundingClientRect();i-=o.left,n-=o.top,i<0?i=0:i>o.width&&(i=o.width),n<0?n=0:n>o.height&&(n=o.height);var s=this.activeHandle.originPoint.slice(),r=this.activeHandle.originX,a=this.activeHandle.originY,h=this.activeHandle.handle,l=1===h.constraints[0],d=1===h.constraints[1],c=1===h.constraints[2],p=1===h.constraints[3],v=(p||d)&&(l||c),m=p||d?r:this.box.x1,f=p||d?r:this.box.x2,g=l||c?a:this.box.y1,E=l||c?a:this.box.y2;m=p?i:m,f=d?i:f,g=l?n:g,E=c?n:E;var w=!1,y=!1;if((p||d)&&(w=p?i>r:i<r),(l||c)&&(y=l?n>a:n<a),w){var b=m;m=f,f=b,s[0]=1-s[0]}if(y){var x=g;g=E,E=x,s[1]=1-s[1]}var C=new u(m,g,f,E);if(this.options.aspectRatio){var z=this.options.aspectRatio,M=!1;v?M=n>C.y1+z*C.width()||n<C.y2-z*C.width():(l||c)&&(M=!0);var S=M?"width":"height";C.constrainToRatio(z,s,S)}var k=this.options.minSize,R=this.options.maxSize;C.constrainToSize(R.width,R.height,k.width,k.height,s,this.options.aspectRatio);var P=this.cropperEl.offsetWidth,O=this.cropperEl.offsetHeight;C.constrainToBoundary(P,O,s),this.box=C,this.redraw(),null!==this.options.onCropMove&&this.options.onCropMove(this.getValue())}},{key:"onHandleMoveEnd",value:function(t){null!==this.options.onCropEnd&&this.options.onCropEnd(this.getValue())}},{key:"onRegionMoveStart",value:function(t){var e=t.detail,i=e.mouseX,n=e.mouseY,o=this.cropperEl.getBoundingClientRect();i-=o.left,n-=o.top,this.currentMove={offsetX:i-this.box.x1,offsetY:n-this.box.y1},null!==this.options.onCropStart&&this.options.onCropStart(this.getValue())}},{key:"onRegionMoveMoving",value:function(t){var e=t.detail,i=e.mouseX,n=e.mouseY,o=this.currentMove,s=o.offsetX,r=o.offsetY,a=this.cropperEl.getBoundingClientRect();i-=a.left,n-=a.top,this.box.move(i-s,n-r),this.box.x1<0&&this.box.move(0,null),this.box.x2>a.width&&this.box.move(a.width-this.box.width(),null),this.box.y1<0&&this.box.move(null,0),this.box.y2>a.height&&this.box.move(null,a.height-this.box.height()),this.redraw(),null!==this.options.onCropMove&&this.options.onCropMove(this.getValue())}},{key:"onRegionMoveEnd",value:function(t){null!==this.options.onCropEnd&&this.options.onCropEnd(this.getValue())}},{key:"getValue",value:function(t){if(null==t&&(t=this.options.returnMode),"real"==t){var e=this.imageEl.naturalWidth,n=this.imageEl.naturalHeight,o=this.imageEl.getBoundingClientRect(),s=o.width,r=o.height,a=e/s,h=n/r;return{x:Math.round(this.box.x1*a),y:Math.round(this.box.y1*h),width:Math.round(this.box.width()*a),height:Math.round(this.box.height()*h)}}if("ratio"==t){var l=this.imageEl.getBoundingClientRect(),u=l.width,d=l.height;return{x:i(this.box.x1/u,3),y:i(this.box.y1/d,3),width:i(this.box.width()/u,3),height:i(this.box.height()/d,3)}}if("raw"==t)return{x:Math.round(this.box.x1),y:Math.round(this.box.y1),width:Math.round(this.box.width()),height:Math.round(this.box.height())}}}],[{key:"parseOptions",value:function(t){var e={aspectRatio:null,maxSize:{width:null,height:null},minSize:{width:null,height:null},startSize:{width:100,height:100,unit:"%"},returnMode:"real",onInitialize:null,onCropStart:null,onCropMove:null,onCropEnd:null},i=null;void 0!==t.aspectRatio&&("number"==typeof t.aspectRatio?i=t.aspectRatio:t.aspectRatio instanceof Array&&(i=t.aspectRatio[1]/t.aspectRatio[0]));var n=null;void 0!==t.maxSize&&null!==t.maxSize&&(n={width:t.maxSize[0]||null,height:t.maxSize[1]||null,unit:t.maxSize[2]||"px"});var o=null;void 0!==t.minSize&&null!==t.minSize&&(o={width:t.minSize[0]||null,height:t.minSize[1]||null,unit:t.minSize[2]||"px"});var s=null;void 0!==t.startSize&&null!==t.startSize&&(s={width:t.startSize[0]||null,height:t.startSize[1]||null,unit:t.startSize[2]||"%"});var r=null;"function"==typeof t.onInitialize&&(r=t.onInitialize);var a=null;"function"==typeof t.onCropStart&&(a=t.onCropStart);var h=null;"function"==typeof t.onCropEnd&&(h=t.onCropEnd);var l=null;"function"==typeof t.onUpdate&&(console.warn("Croppr.js: `onUpdate` is deprecated"),l=t.onUpdate),"function"==typeof t.onCropMove&&(l=t.onCropMove);var u=null;if(void 0!==t.returnMode){var d=t.returnMode.toLowerCase();if(["real","ratio","raw"].indexOf(d)===-1)throw"Invalid return mode.";u=d}var c=function(t){for(var e=t.offsetWidth,i=t.offsetHeight,n=["maxSize","minSize","startSize"],o=0;o<n.length;o++){var s=n[o];null!==this[s]&&("%"==this[s].unit&&(null!==this[s].width&&(this[s].width=this[s].width/100*e),null!==this[s].height&&(this[s].height=this[s].height/100*i)),delete this[s].unit)}},p=function(t,e){return null!==t?t:e};return{aspectRatio:p(i,e.aspectRatio),maxSize:p(n,e.maxSize),minSize:p(o,e.minSize),startSize:p(s,e.startSize),returnMode:p(u,e.returnMode),onInitialize:p(r,e.onInitialize),onCropStart:p(a,e.onCropStart),onCropMove:p(l,e.onCropMove),onCropEnd:p(h,e.onCropEnd),convertToPixels:c}}}]),e}(),p=function(t){function e(t,i){var o=arguments.length>2&&void 0!==arguments[2]&&arguments[2];return n(this,e),a(this,(e.__proto__||Object.getPrototypeOf(e)).call(this,t,i,o))}return r(e,t),o(e,[{key:"getValue",value:function(t){return s(e.prototype.__proto__||Object.getPrototypeOf(e.prototype),"getValue",this).call(this,t)}},{key:"setImage",value:function(t){return s(e.prototype.__proto__||Object.getPrototypeOf(e.prototype),"setImage",this).call(this,t)}},{key:"destroy",value:function(){return s(e.prototype.__proto__||Object.getPrototypeOf(e.prototype),"destroy",this).call(this)}},{key:"moveTo",value:function(t,e){return this.box.move(t,e),this.redraw(),null!==this.options.onCropEnd&&this.options.onCropEnd(this.getValue()),this}},{key:"resizeTo",value:function(t,e){var i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:[.5,.5];return this.box.resize(t,e,i),this.redraw(),null!==this.options.onCropEnd&&this.options.onCropEnd(this.getValue()),this}},{key:"scaleBy",value:function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:[.5,.5];return this.box.scale(t,e),this.redraw(),null!==this.options.onCropEnd&&this.options.onCropEnd(this.getValue()),this}},{key:"reset",value:function(){return this.box=this.initializeBox(this.options),this.redraw(),null!==this.options.onCropEnd&&this.options.onCropEnd(this.getValue()),this}}]),e}(c);return p});
+        "use strict"; function GifWriter(r, e, t, n) { var i = 0, a = void 0 === (n = void 0 === n ? {} : n).loop ? null : n.loop, o = void 0 === n.palette ? null : n.palette; if (e <= 0 || t <= 0 || e > 65535 || t > 65535) throw new Error("Width/Height invalid."); function f(r) { var e = r.length; if (e < 2 || e > 256 || e & e - 1) throw new Error("Invalid code/color length, must be power of 2 and 2 .. 256."); return e } r[i++] = 71, r[i++] = 73, r[i++] = 70, r[i++] = 56, r[i++] = 57, r[i++] = 97; var l = 0, u = 0; if (null !== o) { for (var h = f(o); h >>= 1;)++l; if (h = 1 << l, --l, void 0 !== n.background) { if ((u = n.background) >= h) throw new Error("Background index out of range."); if (0 === u) throw new Error("Background index explicitly passed as 0.") } } if (r[i++] = 255 & e, r[i++] = e >> 8 & 255, r[i++] = 255 & t, r[i++] = t >> 8 & 255, r[i++] = (null !== o ? 128 : 0) | l, r[i++] = u, r[i++] = 0, null !== o) for (var d = 0, s = o.length; d < s; ++d) { var v = o[d]; r[i++] = v >> 16 & 255, r[i++] = v >> 8 & 255, r[i++] = 255 & v } if (null !== a) { if (a < 0 || a > 65535) throw new Error("Loop count invalid."); r[i++] = 33, r[i++] = 255, r[i++] = 11, r[i++] = 78, r[i++] = 69, r[i++] = 84, r[i++] = 83, r[i++] = 67, r[i++] = 65, r[i++] = 80, r[i++] = 69, r[i++] = 50, r[i++] = 46, r[i++] = 48, r[i++] = 3, r[i++] = 1, r[i++] = 255 & a, r[i++] = a >> 8 & 255, r[i++] = 0 } var c = !1; this.addFrame = function (e, t, n, a, l, u) { if (!0 === c && (--i, c = !1), u = void 0 === u ? {} : u, e < 0 || t < 0 || e > 65535 || t > 65535) throw new Error("x/y invalid."); if (n <= 0 || a <= 0 || n > 65535 || a > 65535) throw new Error("Width/Height invalid."); if (l.length < n * a) throw new Error("Not enough pixels for the frame size."); var h = !0, d = u.palette; if (null == d && (h = !1, d = o), null == d) throw new Error("Must supply either a local or global palette."); for (var s = f(d), v = 0; s >>= 1;)++v; s = 1 << v; var w = void 0 === u.delay ? 0 : u.delay, p = void 0 === u.disposal ? 0 : u.disposal; if (p < 0 || p > 3) throw new Error("Disposal out of range."); var g = !1, x = 0; if (void 0 !== u.transparent && null !== u.transparent && (g = !0, (x = u.transparent) < 0 || x >= s)) throw new Error("Transparent color index."); if ((0 !== p || g || 0 !== w) && (r[i++] = 33, r[i++] = 249, r[i++] = 4, r[i++] = p << 2 | (!0 === g ? 1 : 0), r[i++] = 255 & w, r[i++] = w >> 8 & 255, r[i++] = x, r[i++] = 0), r[i++] = 44, r[i++] = 255 & e, r[i++] = e >> 8 & 255, r[i++] = 255 & t, r[i++] = t >> 8 & 255, r[i++] = 255 & n, r[i++] = n >> 8 & 255, r[i++] = 255 & a, r[i++] = a >> 8 & 255, r[i++] = !0 === h ? 128 | v - 1 : 0, !0 === h) for (var k = 0, b = d.length; k < b; ++k) { var E = d[k]; r[i++] = E >> 16 & 255, r[i++] = E >> 8 & 255, r[i++] = 255 & E } return i = GifWriterOutputLZWCodeStream(r, i, v < 2 ? 2 : v, l) }, this.end = function () { return !1 === c && (r[i++] = 59, c = !0), i }, this.getOutputBuffer = function () { return r }, this.setOutputBuffer = function (e) { r = e }, this.getOutputBufferPosition = function () { return i }, this.setOutputBufferPosition = function (r) { i = r } } function GifWriterOutputLZWCodeStream(r, e, t, n) { r[e++] = t; var i = e++, a = 1 << t, o = a - 1, f = a + 1, l = f + 1, u = t + 1, h = 0, d = 0; function s(t) { for (; h >= t;)r[e++] = 255 & d, d >>= 8, h -= 8, e === i + 256 && (r[i] = 255, i = e++) } function v(r) { d |= r << h, h += u, s(8) } var c = n[0] & o, w = {}; v(a); for (var p = 1, g = n.length; p < g; ++p) { var x = n[p] & o, k = c << 8 | x, b = w[k]; if (void 0 === b) { for (d |= c << h, h += u; h >= 8;)r[e++] = 255 & d, d >>= 8, h -= 8, e === i + 256 && (r[i] = 255, i = e++); 4096 === l ? (v(a), l = f + 1, u = t + 1, w = {}) : (l >= 1 << u && ++u, w[k] = l++), c = x } else c = b } return v(c), v(f), s(1), i + 1 === e ? r[i] = 0 : (r[i] = e - i - 1, r[e++] = 0), e } function GifReader(r) { var e = 0; if (71 !== r[e++] || 73 !== r[e++] || 70 !== r[e++] || 56 !== r[e++] || 56 != (r[e++] + 1 & 253) || 97 !== r[e++]) throw new Error("Invalid GIF 87a/89a header."); var t = r[e++] | r[e++] << 8, n = r[e++] | r[e++] << 8, i = r[e++], a = i >> 7, o = 1 << (7 & i) + 1; r[e++]; r[e++]; var f = null, l = null; a && (f = e, l = o, e += 3 * o); var u = !0, h = [], d = 0, s = null, v = 0, c = null; for (this.width = t, this.height = n; u && e < r.length;)switch (r[e++]) { case 33: switch (r[e++]) { case 255: if (11 !== r[e] || 78 == r[e + 1] && 69 == r[e + 2] && 84 == r[e + 3] && 83 == r[e + 4] && 67 == r[e + 5] && 65 == r[e + 6] && 80 == r[e + 7] && 69 == r[e + 8] && 50 == r[e + 9] && 46 == r[e + 10] && 48 == r[e + 11] && 3 == r[e + 12] && 1 == r[e + 13] && 0 == r[e + 16]) e += 14, c = r[e++] | r[e++] << 8, e++; else for (e += 12; ;) { if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } break; case 249: if (4 !== r[e++] || 0 !== r[e + 4]) throw new Error("Invalid graphics extension block."); var w = r[e++]; d = r[e++] | r[e++] << 8, s = r[e++], 1 & w || (s = null), v = w >> 2 & 7, e++; break; case 254: for (; ;) { if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } break; default: throw new Error("Unknown graphic control label: 0x" + r[e - 1].toString(16)) }break; case 44: var p = r[e++] | r[e++] << 8, g = r[e++] | r[e++] << 8, x = r[e++] | r[e++] << 8, k = r[e++] | r[e++] << 8, b = r[e++], E = b >> 6 & 1, m = 1 << (7 & b) + 1, y = f, G = l, I = !1; if (b >> 7) { I = !0; y = e, G = m, e += 3 * m } var W = e; for (e++; ;) { var _; if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } h.push({ x: p, y: g, width: x, height: k, has_local_palette: I, palette_offset: y, palette_size: G, data_offset: W, data_length: e - W, transparent_index: s, interlaced: !!E, delay: d, disposal: v }); break; case 59: u = !1; break; default: throw new Error("Unknown gif block: 0x" + r[e - 1].toString(16)) }this.numFrames = function () { return h.length }, this.loopCount = function () { return c }, this.frameInfo = function (r) { if (r < 0 || r >= h.length) throw new Error("Frame index out of range."); return h[r] }, this.decodeAndBlitFrameBGRA = function (e, n) { var i = this.frameInfo(e), a = i.width * i.height, o = new Uint8Array(a); GifReaderLZWOutputIndexStream(r, i.data_offset, o, a); var f = i.palette_offset, l = i.transparent_index; null === l && (l = 256); var u = i.width, h = t - u, d = u, s = 4 * (i.y * t + i.x), v = 4 * ((i.y + i.height) * t + i.x), c = s, w = 4 * h; !0 === i.interlaced && (w += 4 * t * 7); for (var p = 8, g = 0, x = o.length; g < x; ++g) { var k = o[g]; if (0 === d && (d = u, (c += w) >= v && (w = 4 * h + 4 * t * (p - 1), c = s + (u + h) * (p << 1), p >>= 1)), k === l) c += 4; else { var b = r[f + 3 * k], E = r[f + 3 * k + 1], m = r[f + 3 * k + 2]; n[c++] = m, n[c++] = E, n[c++] = b, n[c++] = 255 } --d } }, this.decodeAndBlitFrameRGBA = function (e, n) { var i = this.frameInfo(e), a = i.width * i.height, o = new Uint8Array(a); GifReaderLZWOutputIndexStream(r, i.data_offset, o, a); var f = i.palette_offset, l = i.transparent_index; null === l && (l = 256); var u = i.width, h = t - u, d = u, s = 4 * (i.y * t + i.x), v = 4 * ((i.y + i.height) * t + i.x), c = s, w = 4 * h; !0 === i.interlaced && (w += 4 * t * 7); for (var p = 8, g = 0, x = o.length; g < x; ++g) { var k = o[g]; if (0 === d && (d = u, (c += w) >= v && (w = 4 * h + 4 * t * (p - 1), c = s + (u + h) * (p << 1), p >>= 1)), k === l) c += 4; else { var b = r[f + 3 * k], E = r[f + 3 * k + 1], m = r[f + 3 * k + 2]; n[c++] = b, n[c++] = E, n[c++] = m, n[c++] = 255 } --d } } } function GifReaderLZWOutputIndexStream(r, e, t, n) { for (var i = r[e++], a = 1 << i, o = a + 1, f = o + 1, l = i + 1, u = (1 << l) - 1, h = 0, d = 0, s = 0, v = r[e++], c = new Int32Array(4096), w = null; ;) { for (; h < 16 && 0 !== v;)d |= r[e++] << h, h += 8, 1 === v ? v = r[e++] : --v; if (h < l) break; var p = d & u; if (d >>= l, h -= l, p !== a) { if (p === o) break; for (var g = p < f ? p : w, x = 0, k = g; k > a;)k = c[k] >> 8, ++x; var b = k; if (s + x + (g !== p ? 1 : 0) > n) return void console.log("Warning, gif stream longer than expected."); t[s++] = b; var E = s += x; for (g !== p && (t[s++] = b), k = g; x--;)k = c[k], t[--E] = 255 & k, k >>= 8; null !== w && f < 4096 && (c[f++] = w << 8 | b, f >= u + 1 && l < 12 && (++l, u = u << 1 | 1)), w = p } else f = o + 1, u = (1 << (l = i + 1)) - 1, w = null } return s !== n && console.log("Warning, gif stream shorter than expected."), t } try { exports.GifWriter = GifWriter, exports.GifReader = GifReader } catch (r) { }
+        !function (t, e) { "object" == typeof exports && "undefined" != typeof module ? module.exports = e() : "function" == typeof define && define.amd ? define(e) : t.Croppr = e() }(this, function () { "use strict"; function t(t) { t.addEventListener("touchstart", e), t.addEventListener("touchend", e), t.addEventListener("touchmove", e) } function e(t) { t.preventDefault(); var e = t.changedTouches[0], i = { touchstart: "mousedown", touchmove: "mousemove", touchend: "mouseup" }; e.target.dispatchEvent(new MouseEvent(i[t.type], { bubbles: !0, cancelable: !0, view: window, clientX: e.clientX, clientY: e.clientY, screenX: e.screenX, screenY: e.screenY })) } function i(t, e) { return Number(Math.round(t + "e" + e) + "e-" + e) } !function () { for (var t = 0, e = ["ms", "moz", "webkit", "o"], i = 0; i < e.length && !window.requestAnimationFrame; ++i)window.requestAnimationFrame = window[e[i] + "RequestAnimationFrame"], window.cancelAnimationFrame = window[e[i] + "CancelAnimationFrame"] || window[e[i] + "CancelRequestAnimationFrame"]; window.requestAnimationFrame || (window.requestAnimationFrame = function (e, i) { var n = (new Date).getTime(), o = Math.max(0, 16 - (n - t)), s = window.setTimeout(function () { e(n + o) }, o); return t = n + o, s }), window.cancelAnimationFrame || (window.cancelAnimationFrame = function (t) { clearTimeout(t) }) }(), function () { function t(t, e) { e = e || { bubbles: !1, cancelable: !1, detail: void 0 }; var i = document.createEvent("CustomEvent"); return i.initCustomEvent(t, e.bubbles, e.cancelable, e.detail), i } return "function" != typeof window.CustomEvent && (t.prototype = window.Event.prototype, void (window.CustomEvent = t)) }(), function (t) { function e(e, i) { i = i || { bubbles: !1, cancelable: !1 }; var n = document.createEvent("MouseEvent"); return n.initMouseEvent(e, i.bubbles, i.cancelable, t, 0, 0, 0, 0, 0, !1, !1, !1, !1, 0, null), n } try { return new CustomEvent("test"), !1 } catch (t) { } e.prototype = Event.prototype, t.MouseEvent = e }(window); var n = function (t, e) { if (!(t instanceof e)) throw new TypeError("Cannot call a class as a function") }, o = function () { function t(t, e) { for (var i = 0; i < e.length; i++) { var n = e[i]; n.enumerable = n.enumerable || !1, n.configurable = !0, "value" in n && (n.writable = !0), Object.defineProperty(t, n.key, n) } } return function (e, i, n) { return i && t(e.prototype, i), n && t(e, n), e } }(), s = function t(e, i, n) { null === e && (e = Function.prototype); var o = Object.getOwnPropertyDescriptor(e, i); if (void 0 === o) { var s = Object.getPrototypeOf(e); return null === s ? void 0 : t(s, i, n) } if ("value" in o) return o.value; var r = o.get; if (void 0 !== r) return r.call(n) }, r = function (t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function, not " + typeof e); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, enumerable: !1, writable: !0, configurable: !0 } }), e && (Object.setPrototypeOf ? Object.setPrototypeOf(t, e) : t.__proto__ = e) }, a = function (t, e) { if (!t) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return !e || "object" != typeof e && "function" != typeof e ? t : e }, h = function () { function t(t, e) { var i = [], n = !0, o = !1, s = void 0; try { for (var r, a = t[Symbol.iterator](); !(n = (r = a.next()).done) && (i.push(r.value), !e || i.length !== e); n = !0); } catch (t) { o = !0, s = t } finally { try { !n && a.return && a.return() } finally { if (o) throw s } } return i } return function (e, i) { if (Array.isArray(e)) return e; if (Symbol.iterator in Object(e)) return t(e, i); throw new TypeError("Invalid attempt to destructure non-iterable instance") } }(), l = function t(e, i, o, s) { function r(t) { t.stopPropagation(), document.addEventListener("mouseup", a), document.addEventListener("mousemove", h), l.eventBus.dispatchEvent(new CustomEvent("handlestart", { detail: { handle: l } })) } function a(t) { t.stopPropagation(), document.removeEventListener("mouseup", a), document.removeEventListener("mousemove", h), l.eventBus.dispatchEvent(new CustomEvent("handleend", { detail: { handle: l } })) } function h(t) { t.stopPropagation(), l.eventBus.dispatchEvent(new CustomEvent("handlemove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } n(this, t); var l = this; this.position = e, this.constraints = i, this.cursor = o, this.eventBus = s, this.el = document.createElement("div"), this.el.className = "croppr-handle", this.el.style.cursor = o, this.el.addEventListener("mousedown", r) }, u = function () { function t(e, i, o, s) { n(this, t), this.x1 = e, this.y1 = i, this.x2 = o, this.y2 = s } return o(t, [{ key: "set", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : null, n = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : null; return this.x1 = null == t ? this.x1 : t, this.y1 = null == e ? this.y1 : e, this.x2 = null == i ? this.x2 : i, this.y2 = null == n ? this.y2 : n, this } }, { key: "width", value: function () { return Math.abs(this.x2 - this.x1) } }, { key: "height", value: function () { return Math.abs(this.y2 - this.y1) } }, { key: "resize", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [0, 0], n = this.x1 + this.width() * i[0], o = this.y1 + this.height() * i[1]; return this.x1 = n - t * i[0], this.y1 = o - e * i[1], this.x2 = this.x1 + t, this.y2 = this.y1 + e, this } }, { key: "scale", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [0, 0], i = this.width() * t, n = this.height() * t; return this.resize(i, n, e), this } }, { key: "move", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = this.width(), n = this.height(); return t = null === t ? this.x1 : t, e = null === e ? this.y1 : e, this.x1 = t, this.y1 = e, this.x2 = t + i, this.y2 = e + n, this } }, { key: "getRelativePoint", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [0, 0], e = this.width() * t[0], i = this.height() * t[1]; return [e, i] } }, { key: "getAbsolutePoint", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [0, 0], e = this.x1 + this.width() * t[0], i = this.y1 + this.height() * t[1]; return [e, i] } }, { key: "constrainToRatio", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [0, 0], i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "height"; if (null !== t) { this.width(), this.height(); switch (i) { case "height": this.resize(this.width(), this.width() * t, e); break; case "width": this.resize(1 * this.height() / t, this.height(), e); break; default: this.resize(this.width(), this.width() * t, e) }return this } } }, { key: "constrainToBoundary", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [0, 0], n = this.getAbsolutePoint(i), o = h(n, 2), s = o[0], r = o[1], a = s, l = r, u = t - s, d = e - r, c = -2 * i[0] + 1, p = -2 * i[1] + 1, v = null, m = null; switch (c) { case -1: v = a; break; case 0: v = 2 * Math.min(a, u); break; case 1: v = u }switch (p) { case -1: m = l; break; case 0: m = 2 * Math.min(l, d); break; case 1: m = d }if (this.width() > v) { var f = v / this.width(); this.scale(f, i) } if (this.height() > m) { var g = m / this.height(); this.scale(g, i) } return this } }, { key: "constrainToSize", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : null, n = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : null, o = arguments.length > 4 && void 0 !== arguments[4] ? arguments[4] : [0, 0], s = arguments.length > 5 && void 0 !== arguments[5] ? arguments[5] : null; if (s && (s > 1 ? (t = 1 * e / s, n *= s) : s < 1 && (e = t * s, i = 1 * n / s)), t && this.width() > t) { var r = t, a = null === s ? this.height() : e; this.resize(r, a, o) } if (e && this.height() > e) { var h = null === s ? this.width() : t, l = e; this.resize(h, l, o) } if (i && this.width() < i) { var u = i, d = null === s ? this.height() : n; this.resize(u, d, o) } if (n && this.height() < n) { var c = null === s ? this.width() : i, p = n; this.resize(c, p, o) } return this } }]), t }(), d = [{ position: [0, 0], constraints: [1, 0, 0, 1], cursor: "nw-resize" }, { position: [.5, 0], constraints: [1, 0, 0, 0], cursor: "n-resize" }, { position: [1, 0], constraints: [1, 1, 0, 0], cursor: "ne-resize" }, { position: [1, .5], constraints: [0, 1, 0, 0], cursor: "e-resize" }, { position: [1, 1], constraints: [0, 1, 1, 0], cursor: "se-resize" }, { position: [.5, 1], constraints: [0, 0, 1, 0], cursor: "s-resize" }, { position: [0, 1], constraints: [0, 0, 1, 1], cursor: "sw-resize" }, { position: [0, .5], constraints: [0, 0, 0, 1], cursor: "w-resize" }], c = function () { function e(t, i) { var o = this, s = arguments.length > 2 && void 0 !== arguments[2] && arguments[2]; if (n(this, e), this.options = e.parseOptions(i || {}), !t.nodeName && (t = document.querySelector(t), null == t)) throw "Unable to find element."; if (!t.getAttribute("src")) throw "Image src not provided."; this._initialized = !1, this._restore = { parent: t.parentNode, element: t }, s || (0 === t.width || 0 === t.height ? t.onload = function () { o.initialize(t) } : this.initialize(t)) } return o(e, [{ key: "initialize", value: function (t) { this.createDOM(t), this.options.convertToPixels(this.cropperEl), this.attachHandlerEvents(), this.attachRegionEvents(), this.attachOverlayEvents(), this.box = this.initializeBox(this.options), this.redraw(), this._initialized = !0, null !== this.options.onInitialize && this.options.onInitialize(this) } }, { key: "createDOM", value: function (e) { this.containerEl = document.createElement("div"), this.containerEl.className = "croppr-container", this.eventBus = this.containerEl, t(this.containerEl), this.cropperEl = document.createElement("div"), this.cropperEl.className = "croppr", this.imageEl = document.createElement("img"), this.imageEl.setAttribute("src", e.getAttribute("src")), this.imageEl.setAttribute("alt", e.getAttribute("alt")), this.imageEl.className = "croppr-image", this.imageClippedEl = this.imageEl.cloneNode(), this.imageClippedEl.className = "croppr-imageClipped", this.regionEl = document.createElement("div"), this.regionEl.className = "croppr-region", this.overlayEl = document.createElement("div"), this.overlayEl.className = "croppr-overlay"; var i = document.createElement("div"); i.className = "croppr-handleContainer", this.handles = []; for (var n = 0; n < d.length; n++) { var o = new l(d[n].position, d[n].constraints, d[n].cursor, this.eventBus); this.handles.push(o), i.appendChild(o.el) } this.cropperEl.appendChild(this.imageEl), this.cropperEl.appendChild(this.imageClippedEl), this.cropperEl.appendChild(this.regionEl), this.cropperEl.appendChild(this.overlayEl), this.cropperEl.appendChild(i), this.containerEl.appendChild(this.cropperEl), e.parentElement.replaceChild(this.containerEl, e) } }, { key: "setImage", value: function (t) { var e = this; return this.imageEl.onload = function () { e.box = e.initializeBox(e.options), e.redraw() }, this.imageEl.src = t, this.imageClippedEl.src = t, this } }, { key: "destroy", value: function () { this._restore.parent.replaceChild(this._restore.element, this.containerEl) } }, { key: "initializeBox", value: function (t) { var e = t.startSize.width, i = t.startSize.height, n = new u(0, 0, e, i); n.constrainToRatio(t.aspectRatio, [.5, .5]); var o = t.minSize, s = t.maxSize; n.constrainToSize(s.width, s.height, o.width, o.height, [.5, .5], t.aspectRatio); var r = this.cropperEl.offsetWidth, a = this.cropperEl.offsetHeight; n.constrainToBoundary(r, a, [.5, .5]); var h = this.cropperEl.offsetWidth / 2 - n.width() / 2, l = this.cropperEl.offsetHeight / 2 - n.height() / 2; return n.move(h, l), n } }, { key: "redraw", value: function () { var t = this, e = Math.round(this.box.width()), i = Math.round(this.box.height()), n = Math.round(this.box.x1), o = Math.round(this.box.y1), s = Math.round(this.box.x2), r = Math.round(this.box.y2); window.requestAnimationFrame(function () { t.regionEl.style.transform = "translate(" + n + "px, " + o + "px)", t.regionEl.style.width = e + "px", t.regionEl.style.height = i + "px", t.imageClippedEl.style.clip = "rect(" + o + "px, " + s + "px, " + r + "px, " + n + "px)"; for (var a = t.box.getAbsolutePoint([.5, .5]), h = a[0] - t.cropperEl.offsetWidth / 2 >> 31, l = a[1] - t.cropperEl.offsetHeight / 2 >> 31, u = (h ^ l) + l + l + 4, d = -2 * u + 8, c = 0; c < t.handles.length; c++) { var p = t.handles[c], v = p.el.offsetWidth, m = p.el.offsetHeight, f = n + e * p.position[0] - v / 2, g = o + i * p.position[1] - m / 2; p.el.style.transform = "translate(" + Math.round(f) + "px, " + Math.round(g) + "px)", p.el.style.zIndex = d == c ? 5 : 4 } }) } }, { key: "attachHandlerEvents", value: function () { var t = this.eventBus; t.addEventListener("handlestart", this.onHandleMoveStart.bind(this)), t.addEventListener("handlemove", this.onHandleMoveMoving.bind(this)), t.addEventListener("handleend", this.onHandleMoveEnd.bind(this)) } }, { key: "attachRegionEvents", value: function () { function t(t) { t.stopPropagation(), document.addEventListener("mouseup", i), document.addEventListener("mousemove", e), n.dispatchEvent(new CustomEvent("regionstart", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function e(t) { t.stopPropagation(), n.dispatchEvent(new CustomEvent("regionmove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function i(t) { t.stopPropagation(), document.removeEventListener("mouseup", i), document.removeEventListener("mousemove", e), n.dispatchEvent(new CustomEvent("regionend", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } var n = this.eventBus; this.regionEl.addEventListener("mousedown", t), n.addEventListener("regionstart", this.onRegionMoveStart.bind(this)), n.addEventListener("regionmove", this.onRegionMoveMoving.bind(this)), n.addEventListener("regionend", this.onRegionMoveEnd.bind(this)) } }, { key: "attachOverlayEvents", value: function () { function t(t) { t.stopPropagation(), document.addEventListener("mouseup", i), document.addEventListener("mousemove", e); var r = o.cropperEl.getBoundingClientRect(), a = t.clientX - r.left, h = t.clientY - r.top; s = o.box, o.box = new u(a, h, a + 1, h + 1), o.eventBus.dispatchEvent(new CustomEvent("handlestart", { detail: { handle: o.handles[n] } })) } function e(t) { t.stopPropagation(), o.eventBus.dispatchEvent(new CustomEvent("handlemove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function i(t) { return t.stopPropagation(), document.removeEventListener("mouseup", i), document.removeEventListener("mousemove", e), 1 === o.box.width() && 1 === o.box.height() ? void (o.box = s) : void o.eventBus.dispatchEvent(new CustomEvent("handleend", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } var n = 4, o = this, s = null; this.overlayEl.addEventListener("mousedown", t) } }, { key: "onHandleMoveStart", value: function (t) { var e = t.detail.handle, i = [1 - e.position[0], 1 - e.position[1]], n = this.box.getAbsolutePoint(i), o = h(n, 2), s = o[0], r = o[1]; this.activeHandle = { handle: e, originPoint: i, originX: s, originY: r }, null !== this.options.onCropStart && this.options.onCropStart(this.getValue()) } }, { key: "onHandleMoveMoving", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.cropperEl.getBoundingClientRect(); i -= o.left, n -= o.top, i < 0 ? i = 0 : i > o.width && (i = o.width), n < 0 ? n = 0 : n > o.height && (n = o.height); var s = this.activeHandle.originPoint.slice(), r = this.activeHandle.originX, a = this.activeHandle.originY, h = this.activeHandle.handle, l = 1 === h.constraints[0], d = 1 === h.constraints[1], c = 1 === h.constraints[2], p = 1 === h.constraints[3], v = (p || d) && (l || c), m = p || d ? r : this.box.x1, f = p || d ? r : this.box.x2, g = l || c ? a : this.box.y1, E = l || c ? a : this.box.y2; m = p ? i : m, f = d ? i : f, g = l ? n : g, E = c ? n : E; var w = !1, y = !1; if ((p || d) && (w = p ? i > r : i < r), (l || c) && (y = l ? n > a : n < a), w) { var b = m; m = f, f = b, s[0] = 1 - s[0] } if (y) { var x = g; g = E, E = x, s[1] = 1 - s[1] } var C = new u(m, g, f, E); if (this.options.aspectRatio) { var z = this.options.aspectRatio, M = !1; v ? M = n > C.y1 + z * C.width() || n < C.y2 - z * C.width() : (l || c) && (M = !0); var S = M ? "width" : "height"; C.constrainToRatio(z, s, S) } var k = this.options.minSize, R = this.options.maxSize; C.constrainToSize(R.width, R.height, k.width, k.height, s, this.options.aspectRatio); var P = this.cropperEl.offsetWidth, O = this.cropperEl.offsetHeight; C.constrainToBoundary(P, O, s), this.box = C, this.redraw(), null !== this.options.onCropMove && this.options.onCropMove(this.getValue()) } }, { key: "onHandleMoveEnd", value: function (t) { null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()) } }, { key: "onRegionMoveStart", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.cropperEl.getBoundingClientRect(); i -= o.left, n -= o.top, this.currentMove = { offsetX: i - this.box.x1, offsetY: n - this.box.y1 }, null !== this.options.onCropStart && this.options.onCropStart(this.getValue()) } }, { key: "onRegionMoveMoving", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.currentMove, s = o.offsetX, r = o.offsetY, a = this.cropperEl.getBoundingClientRect(); i -= a.left, n -= a.top, this.box.move(i - s, n - r), this.box.x1 < 0 && this.box.move(0, null), this.box.x2 > a.width && this.box.move(a.width - this.box.width(), null), this.box.y1 < 0 && this.box.move(null, 0), this.box.y2 > a.height && this.box.move(null, a.height - this.box.height()), this.redraw(), null !== this.options.onCropMove && this.options.onCropMove(this.getValue()) } }, { key: "onRegionMoveEnd", value: function (t) { null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()) } }, { key: "getValue", value: function (t) { if (null == t && (t = this.options.returnMode), "real" == t) { var e = this.imageEl.naturalWidth, n = this.imageEl.naturalHeight, o = this.imageEl.getBoundingClientRect(), s = o.width, r = o.height, a = e / s, h = n / r; return { x: Math.round(this.box.x1 * a), y: Math.round(this.box.y1 * h), width: Math.round(this.box.width() * a), height: Math.round(this.box.height() * h) } } if ("ratio" == t) { var l = this.imageEl.getBoundingClientRect(), u = l.width, d = l.height; return { x: i(this.box.x1 / u, 3), y: i(this.box.y1 / d, 3), width: i(this.box.width() / u, 3), height: i(this.box.height() / d, 3) } } if ("raw" == t) return { x: Math.round(this.box.x1), y: Math.round(this.box.y1), width: Math.round(this.box.width()), height: Math.round(this.box.height()) } } }], [{ key: "parseOptions", value: function (t) { var e = { aspectRatio: null, maxSize: { width: null, height: null }, minSize: { width: null, height: null }, startSize: { width: 100, height: 100, unit: "%" }, returnMode: "real", onInitialize: null, onCropStart: null, onCropMove: null, onCropEnd: null }, i = null; void 0 !== t.aspectRatio && ("number" == typeof t.aspectRatio ? i = t.aspectRatio : t.aspectRatio instanceof Array && (i = t.aspectRatio[1] / t.aspectRatio[0])); var n = null; void 0 !== t.maxSize && null !== t.maxSize && (n = { width: t.maxSize[0] || null, height: t.maxSize[1] || null, unit: t.maxSize[2] || "px" }); var o = null; void 0 !== t.minSize && null !== t.minSize && (o = { width: t.minSize[0] || null, height: t.minSize[1] || null, unit: t.minSize[2] || "px" }); var s = null; void 0 !== t.startSize && null !== t.startSize && (s = { width: t.startSize[0] || null, height: t.startSize[1] || null, unit: t.startSize[2] || "%" }); var r = null; "function" == typeof t.onInitialize && (r = t.onInitialize); var a = null; "function" == typeof t.onCropStart && (a = t.onCropStart); var h = null; "function" == typeof t.onCropEnd && (h = t.onCropEnd); var l = null; "function" == typeof t.onUpdate && (console.warn("Croppr.js: `onUpdate` is deprecated"), l = t.onUpdate), "function" == typeof t.onCropMove && (l = t.onCropMove); var u = null; if (void 0 !== t.returnMode) { var d = t.returnMode.toLowerCase(); if (["real", "ratio", "raw"].indexOf(d) === -1) throw "Invalid return mode."; u = d } var c = function (t) { for (var e = t.offsetWidth, i = t.offsetHeight, n = ["maxSize", "minSize", "startSize"], o = 0; o < n.length; o++) { var s = n[o]; null !== this[s] && ("%" == this[s].unit && (null !== this[s].width && (this[s].width = this[s].width / 100 * e), null !== this[s].height && (this[s].height = this[s].height / 100 * i)), delete this[s].unit) } }, p = function (t, e) { return null !== t ? t : e }; return { aspectRatio: p(i, e.aspectRatio), maxSize: p(n, e.maxSize), minSize: p(o, e.minSize), startSize: p(s, e.startSize), returnMode: p(u, e.returnMode), onInitialize: p(r, e.onInitialize), onCropStart: p(a, e.onCropStart), onCropMove: p(l, e.onCropMove), onCropEnd: p(h, e.onCropEnd), convertToPixels: c } } }]), e }(), p = function (t) { function e(t, i) { var o = arguments.length > 2 && void 0 !== arguments[2] && arguments[2]; return n(this, e), a(this, (e.__proto__ || Object.getPrototypeOf(e)).call(this, t, i, o)) } return r(e, t), o(e, [{ key: "getValue", value: function (t) { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "getValue", this).call(this, t) } }, { key: "setImage", value: function (t) { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "setImage", this).call(this, t) } }, { key: "destroy", value: function () { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "destroy", this).call(this) } }, { key: "moveTo", value: function (t, e) { return this.box.move(t, e), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "resizeTo", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [.5, .5]; return this.box.resize(t, e, i), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "scaleBy", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [.5, .5]; return this.box.scale(t, e), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "reset", value: function () { return this.box = this.initializeBox(this.options), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }]), e }(c); return p });
     </script>
     <script>
         const RAW_BASE = "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/fft/";
@@ -1121,23 +1266,22 @@
             editorTarget = target;
             document.getElementById('editor-target-label').innerText = (target === 'BG') ? 'BG EDITOR (72×72)' : 'BASS EDITOR (44×44)';
             document.getElementById('img-editor-modal').style.display = 'flex';
-            
+
             // Xóa sạch dấu vết Croppr cũ và ảnh cũ
-            if (editorCroppr) { try { editorCroppr.destroy(); } catch(e){} editorCroppr = null; }
+            if (editorCroppr) { try { editorCroppr.destroy(); } catch (e) { } editorCroppr = null; }
             const tgt = document.getElementById('editor-cropper-target');
             tgt.src = "";
             tgt.style.display = 'none';
             tgt.style.filter = ''; // Xóa bộ lọc trên ảnh
 
             document.getElementById('editor-no-image').style.display = 'block';
-            document.getElementById('editor-gif-bar').style.display = 'none';
             document.getElementById('editor-file-input').value = "";
-            
+
             if (editorGifInterval) { clearInterval(editorGifInterval); editorGifInterval = null; }
             editorGifFrames = [];
             editorIsGif = false;
             editorImgOrig = null;
-            
+
             // Khôi phục thiết lập bộ lọc ban đầu
             eBright = 100; eSat = 100; eInv = 0; eGray = 0;
             const sl = document.getElementById('editor-filter-slider');
@@ -1145,7 +1289,7 @@
             sl.max = 200;
             document.getElementById('editor-filter-value').innerText = '100%';
             document.getElementById('editor-filter-name').innerText = 'Brightness';
-            
+
             document.querySelectorAll('.editor-filter-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('[data-filter="brightness"]').classList.add('active');
         }
@@ -1166,16 +1310,16 @@
                 const c = document.createElement('canvas');
                 const cx = c.getContext('2d');
                 c.width = pW; c.height = pH;
-                cx.translate(pW/2, pH/2);
-                cx.drawImage(img, -uiW/2, -uiH/2, uiW, uiH);
+                cx.translate(pW / 2, pH / 2);
+                cx.drawImage(img, -uiW / 2, -uiH / 2, uiW, uiH);
 
-                if (editorCroppr) { try { editorCroppr.destroy(); } catch(e){} editorCroppr = null; }
+                if (editorCroppr) { try { editorCroppr.destroy(); } catch (e) { } editorCroppr = null; }
                 document.getElementById('editor-no-image').style.display = 'none';
                 const tgt = document.getElementById('editor-cropper-target');
                 tgt.style.display = 'block';
                 tgt.onload = () => {
                     editorImgOrig = tgt;
-                    if (editorCroppr) { try { editorCroppr.destroy(); } catch(e){} editorCroppr = null; }
+                    if (editorCroppr) { try { editorCroppr.destroy(); } catch (e) { } editorCroppr = null; }
                     editorCroppr = new Croppr(tgt, {
                         startSize: [80, 80, '%'],
                         minSize: [10, 10, 'px'],
@@ -1212,8 +1356,6 @@
                             }
                         }
                         editorIsGif = true;
-                        document.getElementById('editor-gif-bar').style.display = 'flex';
-                        document.getElementById('editor-gif-info').innerText = 'Frames: ' + editorGifFrames.length;
 
                         // Show middle frame in croppr
                         const mid = editorGifFrames[Math.floor(editorGifFrames.length / 2)];
@@ -1239,14 +1381,14 @@
                             const uc = document.createElement('canvas');
                             const ucx = uc.getContext('2d');
                             uc.width = pW; uc.height = pH;
-                            ucx.translate(pW/2, pH/2);
-                            ucx.drawImage(tc, -uiW/2, -uiH/2, uiW, uiH);
+                            ucx.translate(pW / 2, pH / 2);
+                            ucx.drawImage(tc, -uiW / 2, -uiH / 2, uiW, uiH);
                             document.querySelectorAll('.croppr-image, .croppr-imageClipped').forEach(img => img.src = uc.toDataURL());
                             fIdx++;
                         }, 100);
 
                         editorSetupCroppr(mc.toDataURL());
-                    } catch(err) {
+                    } catch (err) {
                         console.error('GIF decode error', err);
                         const r2 = new FileReader();
                         r2.onload = ev2 => editorSetupCroppr(ev2.target.result);
@@ -1255,7 +1397,6 @@
                 };
                 reader.readAsArrayBuffer(file);
             } else {
-                document.getElementById('editor-gif-bar').style.display = 'none';
                 const reader = new FileReader();
                 reader.onload = ev => editorSetupCroppr(ev.target.result);
                 reader.readAsDataURL(file);
@@ -1277,7 +1418,7 @@
                 document.getElementById('editor-filter-value').innerText = sl.value + '%';
             };
         });
-        document.getElementById('editor-filter-slider').oninput = function() {
+        document.getElementById('editor-filter-slider').oninput = function () {
             const val = this.value;
             document.getElementById('editor-filter-value').innerText = val + '%';
             const active = document.querySelector('.editor-filter-btn.active');
@@ -1289,10 +1430,6 @@
             else eGray = val;
             const filterStr = `brightness(${eBright}%) saturate(${eSat}%) invert(${eInv}%) grayscale(${eGray}%)`;
             document.querySelectorAll('.croppr-image, .croppr-imageClipped').forEach(img => img.style.filter = filterStr);
-        };
-        document.getElementById('editor-gif-speed').oninput = function() {
-            editorGifSpeed = parseInt(this.value);
-            document.getElementById('editor-gif-speed-val').innerText = this.value;
         };
 
         function applyEditorCrop() {
@@ -1335,7 +1472,7 @@
                     const imgD2 = octx.getImageData(0, 0, targetW, targetH).data;
                     let hex = '';
                     for (let i = 0; i < imgD2.length; i += 4) {
-                        const r = imgD2[i] >> 4, g = imgD2[i+1] >> 4, b2 = imgD2[i+2] >> 4, a = imgD2[i+3] >> 4;
+                        const r = imgD2[i] >> 4, g = imgD2[i + 1] >> 4, b2 = imgD2[i + 2] >> 4, a = imgD2[i + 3] >> 4;
                         hex += byteToHex(a | (r << 4)) + byteToHex(g | (b2 << 4));
                     }
                     croppedFrames.push(hex);
@@ -1358,7 +1495,7 @@
                 const scaleX2 = sc0.width / uiW2, scaleY2 = sc0.height / uiH2;
                 const offX2 = (pW2 - uiW2) / 2, offY2 = (pH2 - uiH2) / 2;
                 prevCtx.filter = filterStr;
-                prevCtx.drawImage(sc0, (crop.x - offX2)*scaleX2, (crop.y - offY2)*scaleY2, crop.width*scaleX2, crop.height*scaleY2, 0, 0, targetW, targetH);
+                prevCtx.drawImage(sc0, (crop.x - offX2) * scaleX2, (crop.y - offY2) * scaleY2, crop.width * scaleX2, crop.height * scaleY2, 0, 0, targetW, targetH);
 
                 if (editorTarget === 'BG') {
                     bgGifFrames = croppedFrames;
@@ -1482,11 +1619,11 @@
         }
 
         // --- GIF Speed Sliders (BG 72x72 / Bass 44x44) ---
-        (function() {
+        (function () {
             const bgSpeedSlider = document.getElementById('bg-gif-speed');
-            const bgSpeedVal    = document.getElementById('bg-gif-speed-val');
+            const bgSpeedVal = document.getElementById('bg-gif-speed-val');
             const bassSpeedSlider = document.getElementById('bass-gif-speed');
-            const bassSpeedVal    = document.getElementById('bass-gif-speed-val');
+            const bassSpeedVal = document.getElementById('bass-gif-speed-val');
 
             // Khởi tạo giá trị từ URL param
             const initBgSpd = parseInt(params.get('bgspd') || '4');
@@ -1497,7 +1634,7 @@
             bassSpeedVal.innerText = initBassSpd;
 
             let bgSpdTimer = null;
-            bgSpeedSlider.oninput = function() {
+            bgSpeedSlider.oninput = function () {
                 bgSpeedVal.innerText = this.value;
                 clearTimeout(bgSpdTimer);
                 const v = this.value;
@@ -1509,7 +1646,7 @@
             };
 
             let bassSpdTimer = null;
-            bassSpeedSlider.oninput = function() {
+            bassSpeedSlider.oninput = function () {
                 bassSpeedVal.innerText = this.value;
                 clearTimeout(bassSpdTimer);
                 const v = this.value;
