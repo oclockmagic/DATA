@@ -277,6 +277,42 @@
             font-family: monospace;
         }
 
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 12px;
+            z-index: 2000;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(46, 204, 113, 0.4);
+            transition: all 0.3s;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 15px 30px -5px rgba(46, 204, 113, 0.6);
+        }
+
         /* Modern Scrollbar Styling */
         ::-webkit-scrollbar {
             width: 4px;
@@ -561,7 +597,12 @@
 
         .editor-btns {
             display: flex;
-            gap: 10px;
+            border: none;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -748,10 +789,6 @@
             </div>
         </div>
         <hr>
-        <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <button class="btn btn-secondary" onclick="window.location.href='music.html?v=' + Date.now()">BACK</button>
-            <button id="btn-save-main" class="btn btn-primary" style="flex: 1.5;">SAVE</button>
-        </div>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
 
@@ -890,7 +927,7 @@
                     optionsBox.innerHTML = '<div class="custom-option">No results</div>';
                     return;
                 }
-                items.forEach((name, idx) => {
+                items.forEach((name) => {
                     const imgUrl = RAW_BASE + config.path + "/" + name;
                     const displayName = name.replace(/\.[^/.]+$/, "");
                     const opt = document.createElement('div');
@@ -906,14 +943,14 @@
                         }
                         if (selectedText) selectedText.innerText = displayName;
                         el.classList.remove('open');
-                        el.setAttribute('data-index', idx);
-                        if (config.id === 'sel-bg-ini') updateBgUploadState(idx);
-                        if (config.id === 'sel-bass') updateBassUploadState(idx);
+                        
+                        const realIdx = images.indexOf(name);
+                        el.setAttribute('data-index', realIdx);
+                        
+                        if (config.id === 'sel-bg-ini') updateBgUploadState(realIdx);
+                        if (config.id === 'sel-bass') updateBassUploadState(realIdx);
 
-                        // Auto-save changes for dropdowns
-                        if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
-                            triggerAutoSave();
-                        }
+                        triggerAutoSave();
                     };
                     optionsBox.appendChild(opt);
                 });
@@ -952,10 +989,9 @@
 
         function updateBgUploadState(idx) {
             const canvas = document.getElementById('bg-canvas');
-            const hint = document.getElementById('bg-hint');
             const index = parseInt(idx);
-            if (canvas && hint) {
-                if (index === 2) { // Image (image.png)
+            if (canvas) {
+                if (index === 2) {
                     canvas.parentElement.classList.remove('disabled-upload');
                 } else {
                     canvas.parentElement.classList.add('disabled-upload');
@@ -968,28 +1004,23 @@
             const canvas = document.getElementById('bass-canvas');
             const hint = document.getElementById('bass-hint');
             const index = parseInt(idx);
-            console.log("Updating Bass Upload State Index:", index);
 
             if (canvas && hint) {
                 if (index === 1) {
-                    // Custom Upload mode
                     canvas.parentElement.classList.remove('disabled-upload');
-                    // We don't reset hasUploadedBass here in case they already uploaded one
                 } else {
                     canvas.parentElement.classList.add('disabled-upload');
-                    hasUploadedBass = false; // Reset for None (0) or until Auto-draw (>=2) finishes
+                    hasUploadedBass = false;
 
                     if (index >= 2) {
                         const images = state['sel-bass'] || [];
                         if (images[index]) {
                             const imgUrl = RAW_BASE + "bass/" + images[index];
-                            console.log("Auto-drawing Bass Image:", imgUrl);
                             const img = new Image();
                             img.crossOrigin = "anonymous";
                             img.src = imgUrl;
                             img.onload = () => {
                                 if (bassCtx) {
-                                    console.log("Drawing Bass to Canvas...");
                                     bassCtx.clearRect(0, 0, 44, 44);
                                     let s, dx, dy, dw, dh;
                                     if (img.width > img.height) {
@@ -1001,29 +1032,20 @@
                                     }
                                     bassCtx.drawImage(img, dx, dy, dw, dh);
                                     hint.style.display = 'none';
-                                    hasUploadedBass = true; // Set flag ONLY after successful draw
-                                    console.log("hasUploadedBass set to TRUE");
+                                    hasUploadedBass = true;
                                 }
-                            };
-                            img.onerror = (e) => {
-                                console.error("Error loading image for auto-draw:", imgUrl, e);
-                                hasUploadedBass = false;
                             };
                         }
                     } else if (index === 0) {
-                        // None selected - clear canvas and hide hint
                         if (bassCtx) bassCtx.clearRect(0, 0, 44, 44);
                         hint.style.display = 'block';
                         hasUploadedBass = false;
-                        console.log("hasUploadedBass set to FALSE (None)");
                     }
                 }
             }
         }
 
-        // --- BG Image Handling ---
         const fileBG = document.getElementById('file-bg');
-
         fileBG.onchange = (e) => {
             if (e.target.files.length) {
                 const reader = new FileReader();
@@ -1034,17 +1056,9 @@
                         bgCtx.clearRect(0, 0, 72, 72);
                         let s, dx, dy, dw, dh;
                         if (img.width > img.height) {
-                            s = 72 / img.height;
-                            dw = img.width * s;
-                            dh = 72;
-                            dx = (72 - dw) / 2;
-                            dy = 0;
+                            s = 72 / img.height; dw = img.width * s; dh = 72; dx = (72 - dw) / 2; dy = 0;
                         } else {
-                            s = 72 / img.width;
-                            dw = 72;
-                            dh = img.height * s;
-                            dx = 0;
-                            dy = (72 - dh) / 2;
+                            s = 72 / img.width; dw = 72; dh = img.height * s; dx = 0; dy = (72 - dh) / 2;
                         }
                         bgCtx.drawImage(img, dx, dy, dw, dh);
                         hasUploadedBG = true;
@@ -1055,9 +1069,7 @@
             }
         };
 
-        // --- Bass Image Handling ---
         const fileBass = document.getElementById('file-bass');
-
         fileBass.onchange = (e) => {
             if (e.target.files.length) {
                 const reader = new FileReader();
@@ -1068,17 +1080,9 @@
                         bassCtx.clearRect(0, 0, 44, 44);
                         let s, dx, dy, dw, dh;
                         if (img.width > img.height) {
-                            s = 44 / img.height;
-                            dw = img.width * s;
-                            dh = 44;
-                            dx = (44 - dw) / 2;
-                            dy = 0;
+                            s = 44 / img.height; dw = img.width * s; dh = 44; dx = (44 - dw) / 2; dy = 0;
                         } else {
-                            s = 44 / img.width;
-                            dw = 44;
-                            dh = img.height * s;
-                            dx = 0;
-                            dy = (44 - dh) / 2;
+                            s = 44 / img.width; dw = 44; dh = img.height * s; dx = 0; dy = (44 - dh) / 2;
                         }
                         bassCtx.drawImage(img, dx, dy, dw, dh);
                         hasUploadedBass = true;
@@ -1099,13 +1103,7 @@
             let hex = "";
             for (let i = 0; i < imgData.length; i += 4) {
                 let r = imgData[i], g = imgData[i + 1], b = imgData[i + 2], a = imgData[i + 3];
-
-                // Alpha threshold: Nếu quá mờ ( < 32/255) thì coi như trong suốt hoàn toàn
-                // Tránh lỗi nhiễu biên gây nền đen khi nội suy scaling
-                if (a < 32) {
-                    a = 0; r = 0; g = 0; b = 0;
-                }
-
+                if (a < 32) { a = 0; r = 0; g = 0; b = 0; }
                 const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
                 hex += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
             }
@@ -1114,7 +1112,7 @@
 
         let globalPhotoHex = "";
         let hexPos = 0;
-        let currentStep = ""; // "BG", "BASS"
+        let currentStep = "";
         const CHUNK_SIZE = 512;
 
         function initWebSocket() {
@@ -1127,19 +1125,15 @@
             };
             websocket.onmessage = (e) => {
                 const data = e.data;
-                const saveBtn = document.getElementById('btn-save-main');
-
                 if (data === "M_READY") {
                     sendMetadata();
                 } else if (data === "M_META_OK") {
-                    // Bước 1: Upload Background (72x72)
                     if (hasUploadedBG) {
                         currentStep = "BG";
                         globalPhotoHex = getRGB565Hex(bgCanvas, 72, 72);
                         hexPos = 0;
-                        websocket.send("#MRE1$"); // Reset pos
+                        websocket.send("#MRE1$");
                     } else {
-                        // Nhảy sang bước 2 if no BG
                         handleStepBG_Done();
                     }
                 } else if (data === "M_RE_OK") {
@@ -1149,16 +1143,10 @@
                 } else if (data === "M_BG_OK") {
                     handleStepBG_Done();
                 } else if (data === "M_SAVEOK") {
-                    // Sau khi save ảnh tĩnh/metadata xong -> kiểm tra có GIF không
                     afterMSaveOK();
                 } else if (data === "M_AB_READY" || data === "M_AB_UP_OK") {
-                    // Gửi chunk anim tiếp theo
                     if (animMusicQueue.length > 0) {
                         const chunk = animMusicQueue.shift();
-                        const sent = animMusicPackets - animMusicQueue.length;
-                        const prg = Math.round((sent / animMusicPackets) * 100);
-                        document.getElementById('progress-bar').style.width = prg + '%';
-                        document.getElementById('progress-percent').innerText = prg + '%';
                         websocket.send('#MABIMG$' + chunk);
                     } else {
                         websocket.send('#MABSAV$');
@@ -1170,18 +1158,17 @@
         }
 
         function handleStepBG_Done() {
-            if (hasUploadedBass || bassEditorChanged) {
+            if (hasUploadedBass) {
                 currentStep = "BASS";
                 globalPhotoHex = getRGB565Hex(bassCanvas, 44, 44);
                 hexPos = 0;
-                websocket.send("#MRE1$"); // Reset pos
+                websocket.send("#MRE1$");
             } else {
                 finalizeSave();
             }
         }
 
         function streamNextChunk() {
-            const saveBtn = document.getElementById('btn-save-main');
             if (hexPos < globalPhotoHex.length) {
                 const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK_SIZE * 2);
                 const tag = (currentStep === "BASS") ? "#MGM2$" : "#MGM1$";
@@ -1194,7 +1181,7 @@
                 document.getElementById('progress-percent').innerText = safePrg + '%';
             } else {
                 if (currentStep === "BG") {
-                    websocket.send("#MFB1$"); // Finalize BG
+                    websocket.send("#MFB1$");
                 } else {
                     finalizeSave();
                 }
@@ -1224,19 +1211,12 @@
 
         function triggerAutoSave() {
             if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
-            // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
-            hasUploadedBG = false;
-            hasUploadedBass = false;
-            bgEditorChanged = false;
-            bassEditorChanged = false;
-            lastEditorTarget = ""; // Reset target
-
             const idx = params.get('idx') || '0';
             websocket.send("#MSTB$" + idx);
         }
 
-        document.getElementById('btn-save-main').onclick = async () => {
-            triggerAutoSave();
+        document.getElementById('btn-save-main').onclick = () => {
+             window.location.href = "music.html?reload=1";
         };
 
         CONFIG.forEach(initCombobox);
