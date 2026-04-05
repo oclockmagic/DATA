@@ -1305,11 +1305,20 @@
                 document.getElementById('editor-no-image').style.display = 'none';
                 const tgt = document.getElementById('editor-cropper-target');
                 tgt.style.display = 'block';
+                
+                // Hủy bộ crop cũ nếu tồn tại để tránh lỗi chồng chéo
+                if (editorCroppr) {
+                    try { editorCroppr.destroy(); } catch(e) {}
+                    editorCroppr = null;
+                }
+
                 tgt.onload = () => {
                     editorImgOrig = tgt;
-                    // Lấy kích thước hiển thị thực tế của ảnh để ép khung crop bao quanh 100%
-                    const w = tgt.clientWidth || tgt.width;
-                    const h = tgt.clientHeight || tgt.height;
+                    // Sử dụng naturalWidth/Height kết hợp returnMode: 'real' 
+                    // sẽ giúp khung crop bao quanh tuyệt đối ảnh gốc
+                    const w = tgt.naturalWidth;
+                    const h = tgt.naturalHeight;
+                    
                     editorCroppr = new Croppr(tgt, {
                         startSize: [w, h, 'px'],
                         minSize: [1, 1, 'px'],
