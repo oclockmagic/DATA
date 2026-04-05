@@ -908,12 +908,11 @@
                         el.classList.remove('open');
                         el.setAttribute('data-index', idx);
                         if (config.id === 'sel-bg-ini') updateBgUploadState(idx);
+                        if (config.id === 'sel-bg-ini') sendMusicBgMode(idx);
+                        if (config.id === 'sel-background') sendMusicBgSel(idx);
                         if (config.id === 'sel-bass') updateBassUploadState(idx);
 
-                        // Auto-save changes for dropdowns
-                        if (['sel-bg-ini', 'sel-background'].includes(config.id)) {
-                            triggerAutoSave(config.id);
-                        } else if (['sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
+                        if (['sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
                             triggerAutoSave();
                         }
                     };
@@ -965,6 +964,7 @@
                 }
             }
         }
+
         function updateBassUploadState(idx) {
             const canvas = document.getElementById('bass-canvas');
             const hint = document.getElementById('bass-hint');
@@ -1035,6 +1035,18 @@
 
             if (id === 'sel-bg-ini') updateBgUploadState(parseInt(idx));
             if (id === 'sel-bass') updateBassUploadState(parseInt(idx));
+        }
+
+        function sendMusicBgSel(idx) {
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send("#MBGSEL$" + idx);
+            }
+        }
+
+        function sendMusicBgMode(idx) {
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send("#MBGMOD$" + idx);
+            }
         }
 
         // --- BG Image Handling ---
@@ -1146,20 +1158,7 @@
                 const saveBtn = document.getElementById('btn-save-main');
 
                 if (data.startsWith("M_READY")) {
-                    if (data.includes(":")) {
-                        const meta = data.split(":")[1].split(",");
-                        if (meta.length >= 7) {
-                            setDropdownIndex('sel-background', meta[0]);
-                            setDropdownIndex('sel-bass', meta[1]);
-                            setDropdownIndex('sel-eq-type', meta[2]);
-                            setDropdownIndex('sel-eq-color', meta[3]);
-                            setDropdownIndex('sel-eq-effect', meta[4]);
-                            setDropdownIndex('sel-eq-peak', meta[5]);
-                            setDropdownIndex('sel-bg-ini', meta[6]);
-                        }
-                    } else {
-                        sendMetadata();
-                    }
+                    sendMetadata();
                 } else if (data === "M_META_OK") {
                     // Bước 1: Upload Background (72x72)
                     if (hasUploadedBG) {
@@ -1251,18 +1250,8 @@
             websocket.send("#MBUM$");
         }
 
-        function triggerAutoSave(sourceId) {
+        function triggerAutoSave() {
             if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
-
-            if (sourceId === 'sel-background') {
-                websocket.send("#MBGSEL$" + getIdx('sel-background'));
-                return;
-            }
-            if (sourceId === 'sel-bg-ini') {
-                websocket.send("#MBGMOD$" + getIdx('sel-bg-ini'));
-                return;
-            }
-
             // Chỉ lưu metadata thô, KHÔNG gửi lại ảnh hiện tại trừ khi vừa crop xong
             hasUploadedBG = false;
             hasUploadedBass = false;
