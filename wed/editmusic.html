@@ -1605,28 +1605,31 @@
         }
 
         function afterMSaveOK() {
-            // Chỉ xử lý BG nếu vừa nhấn OK từ bộ Edit 72x72
-            if (lastEditorTarget === "BG") {
-                bgEditorChanged = false; // Reset ngay
+            // Lưu biến tạm để tránh race condition
+            const target = lastEditorTarget;
+            lastEditorTarget = ""; // Xóa ngay lập tức
+
+            if (target === "BG" && bgEditorChanged) {
+                bgEditorChanged = false;
                 if (bgGifFrames.length > 0) {
                     startBgAnimUpload();
                 } else {
                     const idx = params.get('idx') || '0';
-                    websocket.send('#MABDEL$' + idx); 
-                    finishSession();
+                    websocket.send('#MABDEL$' + idx);
+                    // Không gọi finishSession ở đây, để firmware trả về M_SAVEOK 
+                    // lần tới sau khi xóa xong, afterMSaveOK sẽ chạy vào case else cuối.
                 }
             } 
-            // Chỉ xử lý BASS nếu vừa nhấn OK từ bộ Edit 44x44
-            else if (lastEditorTarget === "BASS") {
-                bassEditorChanged = false; // Reset ngay
+            else if (target === "BASS" && bassEditorChanged) {
+                bassEditorChanged = false;
                 if (bassGifFrames.length > 0) {
                     startBassAnimUpload();
                 } else {
                     const idx = params.get('idx') || '0';
-                    websocket.send('#MASSDEL$' + idx); 
-                    finishSession();
+                    websocket.send('#MASSDEL$' + idx);
                 }
             } else {
+                // Trường hợp Metadata dropdown hoặc sau khi xóa .bak/.bas xong
                 finishSession();
             }
         }
