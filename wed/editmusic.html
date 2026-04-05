@@ -882,6 +882,7 @@
 
                     const imgTag = name && name.toLowerCase().endsWith('.png') ? `<img src="${imgUrl}">` : '';
                     opt.innerHTML = `${imgTag}<span>${displayName}</span>`;
+                    opt.setAttribute('data-index', idx);
 
                     opt.onclick = () => {
                         if (selectedImg) {
@@ -1259,9 +1260,24 @@
             const el = document.getElementById(id);
             if (!el) return;
             el.setAttribute('data-index', val);
-            const item = Array.from(el.querySelectorAll('.combobox-item')).find(i => i.getAttribute('data-index') == val);
+            const item = Array.from(el.querySelectorAll('.custom-option')).find(i => i.getAttribute('data-index') == val);
             if (item) {
-                el.querySelector('.combobox-selected').innerText = item.innerText;
+                const textSpan = item.querySelector('span');
+                if (textSpan) {
+                    const selText = el.querySelector('.selected-text');
+                    if (selText) selText.innerText = textSpan.innerText;
+                }
+                const imgTag = item.querySelector('img');
+                if (imgTag) {
+                    const selImg = el.querySelector('.selected-img');
+                    if (selImg) {
+                        selImg.src = imgTag.src;
+                        selImg.style.display = 'block';
+                    }
+                }
+                // Đặc biệt cho các trạng thái cần xử lý thêm
+                if (id === 'sel-bg-ini') updateBgUploadState(val);
+                if (id === 'sel-bass') updateBassUploadState(val);
             }
         }
 
