@@ -1299,6 +1299,9 @@
         }
 
         function editorSetupCroppr(dataUrl) {
+            // Đảm bảo Modal phải hiện lên trước để lấy được kích thước chính xác
+            document.getElementById('img-editor-modal').style.display = 'flex';
+            
             if (editorCroppr) {
                 try { editorCroppr.destroy(); } catch (e) { console.error("Crop destroy error:", e); }
                 editorCroppr = null;
@@ -1313,18 +1316,14 @@
             tgt.style.display = 'block';
             tgt.onload = () => {
                 editorImgOrig = tgt;
-                const vW = tgt.naturalWidth;
-                const vH = tgt.naturalHeight;
-
+                
+                // Khởi tạo luôn với 100% diện tích chứa. 
+                // Sử dụng % là cách tin cậy nhất trong thư viện Croppr để ôm khít.
                 editorCroppr = new Croppr(tgt, {
                     startSize: [100, 100, '%'],
+                    aspectRatio: null,
                     minSize: [1, 1, 'px'],
-                    returnMode: 'real',
-                    onInitialize: (instance) => {
-                        // Chỉ chạy khi công cụ đã nạp xong đầy đủ 100%
-                        instance.resizeTo(vW, vH);
-                        instance.moveTo(0, 0);
-                    }
+                    returnMode: 'real'
                 });
             };
             tgt.src = dataUrl;
