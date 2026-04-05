@@ -1110,20 +1110,33 @@
             editorTarget = target;
             document.getElementById('editor-target-label').innerText = (target === 'BG') ? 'BG EDITOR (72×72)' : 'BASS EDITOR (44×44)';
             document.getElementById('img-editor-modal').style.display = 'flex';
-            document.getElementById('editor-no-image').style.display = 'block';
-            document.getElementById('editor-cropper-target').style.display = 'none';
-            document.getElementById('editor-gif-bar').style.display = 'none';
+            
+            // Xóa sạch dấu vết Croppr cũ và ảnh cũ
             if (editorCroppr) { try { editorCroppr.destroy(); } catch(e){} editorCroppr = null; }
+            const tgt = document.getElementById('editor-cropper-target');
+            tgt.src = "";
+            tgt.style.display = 'none';
+            tgt.style.filter = ''; // Xóa bộ lọc trên ảnh
+
+            document.getElementById('editor-no-image').style.display = 'block';
+            document.getElementById('editor-gif-bar').style.display = 'none';
+            document.getElementById('editor-file-input').value = "";
+            
             if (editorGifInterval) { clearInterval(editorGifInterval); editorGifInterval = null; }
             editorGifFrames = [];
             editorIsGif = false;
             editorImgOrig = null;
+            
+            // Khôi phục thiết lập bộ lọc ban đầu
             eBright = 100; eSat = 100; eInv = 0; eGray = 0;
-            document.getElementById('editor-filter-slider').value = 100;
+            const sl = document.getElementById('editor-filter-slider');
+            sl.value = 100;
+            sl.max = 200;
             document.getElementById('editor-filter-value').innerText = '100%';
+            document.getElementById('editor-filter-name').innerText = 'Brightness';
+            
             document.querySelectorAll('.editor-filter-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('[data-filter="brightness"]').classList.add('active');
-            document.getElementById('editor-filter-name').innerText = 'Brightness';
         }
 
         function closeEditorModal() {
