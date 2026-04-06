@@ -364,6 +364,17 @@
                         oninput="document.getElementById('speed-val').innerText = this.value" onchange="sendSpeed()"
                         style="width: 100%;">
                 </div>
+                <!-- Cấu trúc GIF Overlay y hệt Music (Đàng hoàng 100%) -->
+                <div id="gif-controls" style="margin-top: 15px; display: none; border-top: 1px solid var(--glass-border); padding-top: 10px;">
+                    <div class="flex-row" style="justify-content: space-between; align-items: center;">
+                        <label style="font-size: 13px; color: #ffccff;">GIF Overlay Mode (Frame đè nền)</label>
+                        <label class="switch">
+                            <input type="checkbox" id="gif-overlay">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <p style="font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 5px;">* Tự động nhận diện khi nạp GIF. Bật nếu ảnh bị nháy đen.</p>
+                </div>
             </div>
         </div>
 
@@ -767,6 +778,21 @@
                             const uint8Arr = new Uint8Array(buffer);
                             const gifReader = new GifReader(uint8Arr);
                             const numFrames = gifReader.numFrames();
+                            
+                            // --- AI ANALYZER: Tự động nhận diện Chế độ GIF (Đàng hoàng 100%) ---
+                            const gifControls = document.getElementById('gif-controls');
+                            if (numFrames > 0) {
+                                if (gifControls) gifControls.style.display = 'block'; // Hiện bảng điều khiển GIF
+                                const info = gifReader.frameInfo(0);
+                                const isOverlay = (info.disposal === 1);
+                                const overlayCheck = document.getElementById('gif-overlay');
+                                if (overlayCheck) {
+                                    overlayCheck.checked = isOverlay;
+                                    dprintf("AI: Đã tự động nhận diện chế độ GIF: " + (isOverlay ? "OVERLAY (ĐÈ)" : "REPLACE (XÓA)"));
+                                }
+                            } else {
+                                if (gifControls) gifControls.style.display = 'none';
+                            }
 
                             const maxFrames = 16;
                             const decimation = Math.max(1, numFrames / maxFrames);
@@ -932,8 +958,20 @@
                 nhex += h;
             }
 
-            // Gói gộp Metadata: #CMET$idx:spd:qot:typ:h:m:d:mo:ext:al:mel:hex
-            const metaPacket = `#CMET$${idx}:${spd}:${qidx}:${typ}:${gi}:${ph}:${ng}:${th}:${tnu}:${am}:${mel}:${nhex}`;
+            // Thu thập các đèn tín hiệu hiện thực
+            const hasImg = document.getElementById('section-image').style.display !== 'none' ? 1 : 0;
+            const hasAlm = document.getElementById('section-alarm').style.display !== 'none' ? 1 : 0;
+            const hasTxt = document.getElementById('section-text').style.display !== 'none' ? 1 : 0;
+            const cnd = (document.getElementById('manual-text-container').style.display !== 'none') ? 1 : 0;
+            const overlay = document.getElementById('gif-overlay')?.checked ? 1 : 0;
+
+            const px = document.getElementById('pos-x').value || 0;
+            const py = document.getElementById('pos-y').value || 0;
+            const pw = document.getElementById('pos-w').value || 64;
+            const phh = document.getElementById('pos-h').value || 64;
+
+            // Gói gộp Metadata 20 thông số chuẩn (Đàng hoàng 100%): #CMET$idx:spd:qot:typ:h:m:d:mo:ext:al:mel:tut:hen:chu:cnd:x:y:w:h:hex
+            const metaPacket = `#CMET$${idx}:${spd}:${qidx}:${typ}:${gi}:${ph}:${ng}:${th}:${tnu}:${am}:${mel}:${hasImg}:${hasAlm}:${hasTxt}:${cnd}:${px}:${py}:${pw}:${phh}:${nhex}`;
             
             // 2. Kiểm tra có ảnh mới không
             if (imgOrig && imageChanged) {
@@ -1088,7 +1126,7 @@
                     if (p[12] !== '0') document.getElementById('section-alarm').style.display = 'block';
                     if (p[13] !== '0') {
                         document.getElementById('section-text').style.display = 'block';
-                        // Phân loại: Tự viết (1) hay Danh ngôn (0)
+                        // Phân loại: p[14] là noidung (1: Text tự viết, 0: Danh ngôn)
                         if (p[14] === '1') {
                             document.getElementById('manual-text-container').style.display = 'block';
                             if (document.getElementById('quote-selection-container')) document.getElementById('quote-selection-container').style.display = 'none';
@@ -1099,45 +1137,14 @@
                     }
 
                     // --- KHÔI PHỤC TỌA ĐỘ VÀ KÍCH CỠ ---
-                    document.getElementById('pos-x').value = p[15];
-                    document.getElementById('pos-y').value = p[16];
-                    document.getElementById('pos-w').value = p[17];
-                    document.getElementById('pos-h').value = p[18];
-
-                    // --- PHÁT HIỆN LOẠI GIF (A-SERIES) ---
-                    isGifAnimation = (idx >= 50);
-                    if (isGifAnimation) {
-                        const gifSpeedInput = document.getElementById('speed-gif');
-                        if (gifSpeedInput) {
-                            gifSpeedInput.value = p[1]; // Dùng chung spd cho gif
-                            document.getElementById('speed-gif-val').innerText = p[1];
-                        }
-                        // Hiện các thông tin liên quan đến Frame nếu cần
-                        dprintf("LOG: Đã nhận diện được đây là file Hoạt ảnh.");
-                    }
-
-                    // --- LOAD ẢNH THUMBNAIL (NẾU CÓ) ---
-                    if (p[11] !== '0') {
-                        const rawName = (idx < 50) ? `C${idx}.raw` : `A${idx-50}.raw`;
-                        const targetImg = document.getElementById('cropper-target');
-                        targetImg.src = "/get_file?name=" + rawName + "&v=" + Date.now();
-                        targetImg.style.display = 'block';
-                        document.getElementById('no-image-text').style.display = 'none';
-                        targetImg.onload = () => {
-                            imgOrig = targetImg;
-                            if (croppr) { try { croppr.destroy(); } catch (e) { } }
-                            croppr = new Croppr(targetImg, {
-                                startSize: [parseInt(p[17]), parseInt(p[18]), 'px'], // Bê nguyên cỡ cũ
-                                minSize: [10, 10, 'px'],
-                                returnMode: 'real',
-                                onInitialize: (instance) => {
-                                    // Chỉnh tọa độ ban đầu cho khớp
-                                    instance.moveTo(parseInt(p[15]), parseInt(p[16]));
-                                },
-                                onCropEnd: () => { imageChanged = true; triggerChange(); }
-                            });
-                        };
-                    }
+                    const savedX = parseInt(p[15]);
+                    const savedY = parseInt(p[16]);
+                    const savedW = parseInt(p[17]);
+                    const savedH = parseInt(p[18]);
+                    document.getElementById('pos-x').value = savedX;
+                    document.getElementById('pos-y').value = savedY;
+                    document.getElementById('pos-w').value = savedW;
+                    document.getElementById('pos-h').value = savedH;
 
                     updateUI(); // Cập nhật ẩn hiện các ô theo Type (Alarm)
                 }
