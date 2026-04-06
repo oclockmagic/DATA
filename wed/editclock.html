@@ -1161,6 +1161,7 @@
 
         let isSaving = false; // Lệnh Lưu vào Flash
         let isRedirecting = false; // Lệnh Chuyển trang
+        let currentEditIdx = 0; // Lưu index đang sửa thực tế từ ESP
 
         function startUpload(mainData, toFlash, doRedirect) {
             if (windowGifInterval) {
@@ -1241,8 +1242,18 @@
                 }
             });
 
-            // Padding mỗi frame được coi là 8192 bytes nhị phân (16384 hex), ESP32 ghi theo sector 2048
-            // Thực tế binary trọn gói gộp lại sẽ được ESP32 ghi tuần tự.        function initWebSocket() {
+            // Gửi dữ liệu Animation (Phase 2)
+            animQueue = [];
+            for (let i = 0; i < allFramesHex.length; i += 1024) {
+                animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
+            }
+            animPackets = animQueue.length;
+            
+            // Sử dụng index thực tế đã nhận từ handshake
+            websocket.send("#ASTB$" + currentEditIdx); 
+        }
+
+        function initWebSocket() {
             websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
             websocket.onopen = () => {
                 document.getElementById('ws-status').innerText = "Connected";
@@ -1298,6 +1309,7 @@
                 } else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
                     const p = data.split(':');
                     // p: idx:1, tutao:2, hen:3, chu:4, x:5, y:6, w:7, h:8, speed:9, typ:10, gio:11, phut:12, ngay:13, thang:14, extra:15, am:16, mel:17, text:18, qot:19, 20:offset65
+                    currentEditIdx = p[1];
                     const idx = p[1];
                     const isTutao = (p[2] === '1');
                     const isAlarm = (p[3] === '1');
