@@ -709,8 +709,11 @@
         }
 
         const triggerChange = () => {
-            if (btnPreview) btnPreview.disabled = false;
-            if (btnSave) btnSave.disabled = false;
+            const btnSaveOnly = document.getElementById('btn-save-image-only');
+            if (btnSaveOnly) {
+                btnSaveOnly.disabled = !imageChanged;
+                btnSaveOnly.style.opacity = imageChanged ? "1" : "0.5";
+            }
         };
 
         const updateUI = () => {
