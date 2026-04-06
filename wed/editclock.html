@@ -634,6 +634,11 @@
 <option value="161">Zorba (Give it time!)</option>
 </select>
             </div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-primary" id="btn-save-meta-only" style="width: 100%; height: 36px; font-size: 10px;">
+                    SAVE META ONLY
+                </button>
+            </div>
         </div>
 
         <div id="section-image-params" style="display: none;">
@@ -644,9 +649,7 @@
         </div>
         <hr>
         <div class="flex-row">
-            <button class="btn btn-secondary" id="btn-back">BACK</button>
-            <button class="btn btn-primary" id="btn-preview" disabled>PREVIEW</button>
-            <button class="btn btn-accent" id="btn-save" disabled>SAVE</button>
+            <button class="btn btn-secondary" id="btn-back" style="width: 100%;">BACK</button>
         </div>
 
         <div class="status-tag" id="ws-status">Disconnected</div>
@@ -734,8 +737,6 @@
         const posY = document.getElementById('pos-y');
         const posW = document.getElementById('pos-w');
         const posH = document.getElementById('pos-h');
-        const btnPreview = document.getElementById('btn-preview');
-        const btnSave = document.getElementById('btn-save');
         const filterSlider = document.getElementById('filter-slider');
         const filterName = document.getElementById('filter-name');
         const filterValue = document.getElementById('filter-value');
@@ -945,8 +946,6 @@
         }
 
         // Action Logic
-        btnPreview.onclick = () => sendImageData(true, false);
-        btnSave.onclick = () => sendImageData(true, true);
         let isCanceling = false;
         document.getElementById('btn-back').onclick = () => {
             goBackWithReferrer();
@@ -977,12 +976,55 @@
             }
         }
 
-        function sendQuote() {
+        function sendMetaData(toFlash, doRedirect) {
             if (!connectt) return;
-            const qidx = document.getElementById('quote_idx').value;
-            if (qidx !== "") {
-                websocket.send("#CQOT$" + qidx);
+            const params = new URLSearchParams(window.location.search);
+            const isAlarm = (params.get('chk') && params.get('chk') !== '0');
+            const isText = (params.get('chu') && params.get('chu') !== '0');
+            const isTutao = (params.get('tutao') && params.get('tutao') !== '0');
+            const tutao = (params.get('tutao') === '1' ? 1 : 0);
+
+            const px = parseInt(posX.value) || 0;
+            const py = parseInt(posY.value) || 0;
+            const pw = parseInt(posW.value) || 64;
+            const phh = parseInt(posH.value) || 64;
+
+            isSaving = toFlash;
+            isRedirecting = doRedirect;
+            uploadModal.style.display = 'flex';
+            document.getElementById('modal-title').innerText = isSaving ? "Saving Meta..." : "Previewing Status...";
+
+            // 0. Gửi Header 
+            websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
+
+            // 1. Gửi Quote
+            const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "";
+            if (qidx !== "") websocket.send("#CQOT$" + qidx);
+
+            // 2. Gửi Note/Text
+            const tv = document.getElementById('text').value;
+            let nhex = "";
+            for (let i = 0; i < tv.length; i++) {
+                let c = tv.charCodeAt(i); let h = byteToHex(c < 256 ? c : 32);
+                for (let k in revMap) if (revMap[k] === tv[i]) { h = byteToHex(parseInt(k)); break; }
+                nhex += h;
             }
+            if (isText) websocket.send(`#CNOT$${tv.length},${nhex}`);
+
+            // 3. Gửi Alarm
+            const typ = parseInt(document.getElementById("typ").value) || 0;
+            const gi = parseInt(document.getElementById("gio").value) || 0;
+            const ph = parseInt(document.getElementById("phut").value) || 0;
+            const ng = parseInt(document.getElementById("ngay").value) || 1;
+            const th = parseInt(document.getElementById("thang").value) || 1;
+            const tnu = parseInt(document.getElementById("thu").value) || 0;
+            const am = parseInt(document.getElementById("am").value) || 0;
+            const mel = parseInt(document.getElementById("mel").value) || 0;
+            if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+
+            // 4. Kết thúc
+            websocket.send("#CRES$");
+            websocket.send(isSaving ? "#CSAV:MET" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
         }
 
         function sendImageData(finalSave, doRedirect, onlyImage = false) {
@@ -1194,7 +1236,7 @@
                         progressPercent.innerText = prog + '%';
                     } else {
                         if (isSaving) {
-                            websocket.send("#CSAV$" + (isGifAnimation ? ":1" : ":0"));
+                            websocket.send("#CSAV:IMG" + (isGifAnimation ? ":1" : ":0"));
                         } else {
                             websocket.send("#CFIN$");
                         }
@@ -1356,6 +1398,13 @@
                 btnSaveOnly.onclick = () => {
                     imageChanged = true; // Force re-render of current crop
                     sendImageData(true, false, true);
+                };
+            }
+
+            const btnSaveMetaOnly = document.getElementById('btn-save-meta-only');
+            if (btnSaveMetaOnly) {
+                btnSaveMetaOnly.onclick = () => {
+                    sendMetaData(true, false);
                 };
             }
         });
