@@ -1064,11 +1064,12 @@
                 return;
             }
 
-            // 2. Xử lý Metadata Tổng hợp (#CMET) - Tự động điền Form
+            // 2. Xử lý Metadata Tổng hợp (#CMET) - Tự động điền Form và đóng mở mục tương ứng
             if (data.startsWith("#CMET$")) {
-                // p: 0idx, 1spd, 2qot, 3typ, 4h, 5m, 6d, 7mo, 8thu, 9am, 10mel, 11hex
+                // p: 0idx, 1spd, 2qot, 3typ, 4h, 5m, 6d, 7mo, 8thu, 9am, 10mel, 11tutao, 12hen, 13chu, 14cnd, 15hex
                 const p = data.slice(6).split(':');
-                if (p.length >= 11) {
+                if (p.length >= 15) {
+                    const idx = p[0];
                     document.getElementById('speed').value = p[1];
                     document.getElementById('speed-val').innerText = p[1];
                     if (document.getElementById('quote_idx')) document.getElementById('quote_idx').value = p[2];
@@ -1080,9 +1081,44 @@
                     document.getElementById('thu').value = p[8];
                     document.getElementById('am').value = p[9];
                     document.getElementById('mel').value = p[10];
-                    if (p[11]) document.getElementById('text').value = decodeHexText(p[11]);
+                    if (p[15]) document.getElementById('text').value = decodeHexText(p[15]);
                     
-                    updateUI(); // Cập nhật ẩn hiện các ô theo Type
+                    // --- ĐÓNG MỞ CÁC MỤC CHỈNH SỬA (FROM) ---
+                    if (p[11] !== '0') document.getElementById('section-image').style.display = 'block';
+                    if (p[12] !== '0') document.getElementById('section-alarm').style.display = 'block';
+                    if (p[13] !== '0') {
+                        document.getElementById('section-text').style.display = 'block';
+                        // Phân loại: Tự viết (1) hay Danh ngôn (0)
+                        if (p[14] === '1') {
+                            document.getElementById('manual-text-container').style.display = 'block';
+                            if (document.getElementById('quote-selection-container')) document.getElementById('quote-selection-container').style.display = 'none';
+                        } else {
+                            document.getElementById('manual-text-container').style.display = 'none';
+                            if (document.getElementById('quote-selection-container')) document.getElementById('quote-selection-container').style.display = 'block';
+                        }
+                    }
+
+                    // --- LOAD ẢNH THUMBNAIL (NẾU CÓ) ---
+                    if (p[11] !== '0') {
+                        const rawName = (idx < 50) ? `C${idx}.raw` : `A${idx-50}.raw`;
+                        const targetImg = document.getElementById('cropper-target');
+                        targetImg.src = "/get_file?name=" + rawName + "&v=" + Date.now();
+                        targetImg.style.display = 'block';
+                        document.getElementById('no-image-text').style.display = 'none';
+                        targetImg.onload = () => {
+                            imgOrig = targetImg;
+                            if (croppr) { try { croppr.destroy(); } catch (e) { } }
+                            croppr = new Croppr(targetImg, {
+                                startSize: [100, 100, '%'],
+                                minSize: [10, 10, 'px'],
+                                returnMode: 'real',
+                                onInitialize: (instance) => { },
+                                onCropEnd: () => { imageChanged = true; triggerChange(); }
+                            });
+                        };
+                    }
+
+                    updateUI(); // Cập nhật ẩn hiện các ô theo Type (Alarm)
                 }
                 return;
             }
