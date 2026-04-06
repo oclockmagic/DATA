@@ -769,6 +769,7 @@
         const uploadModal = document.getElementById('upload-modal');
 
         // Logic to update inputs (Layer select was removed)
+        let tutaoFlag = "0", chkFlag = "0", chuFlag = "0", cnoidungFlag = "0";
 
 
         let isGifAnimation = false;
@@ -1002,11 +1003,6 @@
 
         function sendMetaData(toFlash, doRedirect) {
             if (!connectt) return;
-            const params = new URLSearchParams(window.location.search);
-            const isAlarm = (params.get('chk') && params.get('chk') !== '0');
-            const isText = (params.get('chu') && params.get('chu') !== '0');
-            const isTutao = (params.get('tutao') && params.get('tutao') !== '0');
-            const tutao = (params.get('tutao') === '1' ? 1 : 0);
 
             const px = parseInt(posX.value) || 0;
             const py = parseInt(posY.value) || 0;
@@ -1016,14 +1012,17 @@
             isSaving = toFlash;
             isRedirecting = doRedirect;
             uploadModal.style.display = 'flex';
-            document.getElementById('modal-title').innerText = isSaving ? "Saving Meta..." : "Previewing Status...";
+            document.getElementById('modal-title').innerText = isSaving ? "Saving..." : "Previewing Status...";
 
             // 0. Gửi Header 
-            websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
+            websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutaoFlag}`);
 
-            // 1. Gửi Quote
-            const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "";
-            if (qidx !== "") websocket.send("#CQOT$" + qidx);
+            // 1. Gửi Quote + Nội dung flag
+            const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
+            websocket.send(`#CQOT$${qidx}:${cnoidungFlag}`);
+
+            // 1b. Gửi cờ bật/tắt (Force sync flags before sending data)
+            websocket.send(`#CFLG$${chuFlag},${chkFlag}`);
 
             // 2. Gửi Note/Text
             const tv = document.getElementById('text').value;
@@ -1033,7 +1032,7 @@
                 for (let k in revMap) if (revMap[k] === tv[i]) { h = byteToHex(parseInt(k)); break; }
                 nhex += h;
             }
-            if (isText) websocket.send(`#CNOT$${tv.length},${nhex}`);
+            if (chuFlag !== '0') websocket.send(`#CNOT$${tv.length},${nhex}`);
 
             // 3. Gửi Alarm
             const typ = parseInt(document.getElementById("typ").value) || 0;
@@ -1044,7 +1043,7 @@
             const tnu = parseInt(document.getElementById("thu").value) || 0;
             const am = parseInt(document.getElementById("am").value) || 0;
             const mel = parseInt(document.getElementById("mel").value) || 0;
-            if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+            if (chkFlag !== '0') websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
 
             // 4. Kết thúc
             websocket.send("#CRES$");
@@ -1053,10 +1052,6 @@
 
         function sendImageData(finalSave, doRedirect, onlyImage = false) {
             if (!connectt) return;
-            const params = new URLSearchParams(window.location.search);
-            const isAlarm = (params.get('chk') && params.get('chk') !== '0');
-            const isText = (params.get('chu') && params.get('chu') !== '0');
-            const isTutao = (params.get('tutao') && params.get('tutao') !== '0');
 
             const px = parseInt(posX.value) || 0;
             const py = parseInt(posY.value) || 0;
@@ -1067,7 +1062,6 @@
             const targetH = phh;
 
             let hexData = "";
-            let imageHasContent = (imgOrig && imageChanged);
 
             if (croppr && imageChanged) {
                 const crop = croppr.getValue();
@@ -1099,7 +1093,6 @@
             }
 
             if (finalSave) {
-                const tutao = (params.get('tutao') === '1' ? 1 : 0);
                 const typ = parseInt(document.getElementById("typ").value) || 0;
                 const gi = parseInt(document.getElementById("gio").value) || 0;
                 const ph = parseInt(document.getElementById("phut").value) || 0;
@@ -1109,8 +1102,8 @@
                 const am = parseInt(document.getElementById("am").value) || 0;
                 const mel = parseInt(document.getElementById("mel").value) || 0;
 
-                // 0. Gửi Header (X, Y, W, H, Tutao)
-                websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
+                // 0. Gửi Header 
+                websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutaoFlag}`);
 
                 if (!onlyImage) {
                     const tv = document.getElementById('text').value;
@@ -1121,8 +1114,8 @@
                         nhex += h;
                     }
 
-                    if (isText) websocket.send(`#CNOT$${tv.length},${nhex}`);
-                    if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+                    if (chuFlag !== '0') websocket.send(`#CNOT$${tv.length},${nhex}`);
+                    if (chkFlag !== '0') websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
                 }
             }
 
@@ -1327,10 +1320,6 @@
                         const qotEl = document.getElementById('quote_idx');
                         if (qotEl && p[19] !== undefined) qotEl.value = p[19];
 
-                        // State flags
-                        const tutaoFlag = p[2];
-                        const chkFlag = p[3];  // checkhengio
-                        const chuFlag = p[4];  // chu_check
                         const cnoidungFlag = p[20];
 
                         // 1. Text Section
