@@ -741,10 +741,27 @@
             triggerChange();
             const v = document.getElementById("typ").value;
             const al = document.getElementById("am"), th = document.getElementById("thang"), ng = document.getElementById("ngay"), gi = document.getElementById("gio"), ph = document.getElementById("phut"), tn = document.getElementById("thu");
+            
             [al, th, ng, gi, ph, tn].forEach(el => el.classList.remove("disable"));
             if (v == "0") [al, th, ng].forEach(el => el.classList.add("disable"));
             else if (v == "1") [gi, ph, tn].forEach(el => el.classList.add("disable"));
             else if (v == "2") [tn].forEach(el => el.classList.add("disable"));
+
+            // Cập nhật hiển thị nút SAVE META ONLY
+            // Hiện khi thỏa mãn 1 trong 3 điều kiện (Alarm bật, Text Manual bật, hoặc Quote bật)
+            const secAlarm = document.getElementById('section-alarm');
+            const secText  = document.getElementById('section-text');
+            const btnMetaGroup = document.getElementById('btn-save-meta-only').parentElement;
+
+            const isAlarmVisible = (secAlarm && secAlarm.style.display !== 'none');
+            const isTextVisible  = (secText  && secText.style.display  !== 'none');
+
+            // Hiển thị nếu có ít nhất một trong các phần meta đang bật
+            if (isAlarmVisible || isTextVisible) {
+                btnMetaGroup.style.display = 'block';
+            } else {
+                btnMetaGroup.style.display = 'none';
+            }
         };
 
         let croppr = null;
