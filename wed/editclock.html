@@ -1354,27 +1354,14 @@
 
                         // 3. Image Section
                         const secImg = document.getElementById('section-image');
+                        const targetImg = document.getElementById('cropper-target');
+                        const noImgTxt = document.getElementById('no-image-text');
+                        
                         if (tutaoFlag === '1') {
                             if (secImg) secImg.style.display = 'block';
-                            const rawImg = (currentLayer < 100) ? 'clock' + currentLayer + '.raw' : 'clock' + (currentLayer - 100) + '.raw';
-                            const targetImg = document.getElementById('cropper-target');
-                            if (targetImg) {
-                                targetImg.src = '/get_file?name=' + rawImg + '&v=' + Date.now();
-                                targetImg.style.display = 'block';
-                                const noImgTxt = document.getElementById('no-image-text');
-                                if (noImgTxt) noImgTxt.style.display = 'none';
-                                targetImg.onload = () => {
-                                    imgOrig = targetImg;
-                                    const btnSaveOnly = document.getElementById('btn-save-image-only');
-                                    if (btnSaveOnly) btnSaveOnly.disabled = false;
-                                    if (croppr) { try { croppr.destroy(); } catch (e) { } }
-                                    croppr = new Croppr(targetImg, {
-                                        startSize: [80, 80, '%'], minSize: [10, 10, 'px'], returnMode: 'real',
-                                        onInitialize: () => { triggerChange(); },
-                                        onCropEnd: () => { imageChanged = true; triggerChange(); }
-                                    });
-                                };
-                            }
+                            if (targetImg) targetImg.style.display = 'none';
+                            if (noImgTxt) noImgTxt.style.display = 'block';
+                            if (croppr) { try { croppr.destroy(); } catch (e) { } croppr = null; }
                         } else {
                             if (secImg) secImg.style.display = 'none';
                         }
