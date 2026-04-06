@@ -655,7 +655,8 @@
 </select>
             </div>
             <div style="margin-top: 20px;">
-                <button class="btn btn-primary" id="btn-save-meta-only" style="width: 100%; height: 36px; font-size: 10px;">
+                <button class="btn btn-primary" id="btn-save-meta-only"
+                    style="width: 100%; height: 36px; font-size: 10px;">
                     SAVE META ONLY
                 </button>
             </div>
@@ -1327,9 +1328,9 @@
                         if (qotEl && p[19] !== undefined) qotEl.value = p[19];
 
                         // State flags
-                        const tutaoFlag    = p[2];
-                        const chkFlag      = p[3];  // checkhengio
-                        const chuFlag      = p[4];  // chu_check
+                        const tutaoFlag = p[2];
+                        const chkFlag = p[3];  // checkhengio
+                        const chuFlag = p[4];  // chu_check
                         const cnoidungFlag = p[20];
 
                         // 1. Text Section
@@ -1337,13 +1338,13 @@
                         if (secText) secText.style.display = (chuFlag !== '0') ? 'block' : 'none';
                         if (chuFlag !== '0') {
                             const manualBox = document.getElementById('manual-text-container');
-                            const quoteBox  = document.getElementById('quote-selection-container');
+                            const quoteBox = document.getElementById('quote-selection-container');
                             if (cnoidungFlag === '1') {
                                 if (manualBox) manualBox.style.display = 'block';
-                                if (quoteBox)  quoteBox.style.display  = 'none';
+                                if (quoteBox) quoteBox.style.display = 'none';
                             } else {
                                 if (manualBox) manualBox.style.display = 'none';
-                                if (quoteBox)  quoteBox.style.display  = 'block';
+                                if (quoteBox) quoteBox.style.display = 'block';
                             }
                         }
 
@@ -1355,7 +1356,7 @@
                         const secImg = document.getElementById('section-image');
                         if (tutaoFlag === '1') {
                             if (secImg) secImg.style.display = 'block';
-                            const rawImg  = (currentLayer < 100) ? 'clock' + currentLayer + '.raw' : 'clock' + (currentLayer - 100) + '.raw';
+                            const rawImg = (currentLayer < 100) ? 'clock' + currentLayer + '.raw' : 'clock' + (currentLayer - 100) + '.raw';
                             const targetImg = document.getElementById('cropper-target');
                             if (targetImg) {
                                 targetImg.src = '/get_file?name=' + rawImg + '&v=' + Date.now();
@@ -1380,7 +1381,7 @@
 
                         updateUI();
                         console.log('[editclock] DOWNLOAD_EDIT_CLOCK OK, idx=' + currentLayer);
-                    } catch(err) {
+                    } catch (err) {
                         console.error('[editclock] Error processing DOWNLOAD_EDIT_CLOCK:', err);
                     } finally {
                         // Luôn tắt overlay dù có lỗi hay không
@@ -1400,7 +1401,7 @@
             const btnSaveOnly = document.getElementById('btn-save-image-only');
             if (btnSaveOnly) {
                 btnSaveOnly.onclick = () => {
-                    imageChanged = true; 
+                    imageChanged = true;
                     sendImageData(true, false, true);
                 };
             }
