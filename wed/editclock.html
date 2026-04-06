@@ -1168,10 +1168,9 @@
                     if (!onlyImage) {
                         // Gửi Quote (nếu có)
                         const quoteBox = document.getElementById('quote-selection-container');
-                        // Gửi Quote Index
                         if (isText && quoteBox && quoteBox.style.display !== 'none') {
                             const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
-                            websocket.send("#CLOCK_QUOTE$" + qidx);
+                            websocket.send("#CQOT$" + qidx);
                         }
 
                         // Gửi Note/Text (nếu có)
@@ -1184,10 +1183,10 @@
                             for (let i = 0; i < tv.length; i++) {
                                 nhex += charToHex[tv[i]] || byteToHex(tv.charCodeAt(i) < 256 ? tv.charCodeAt(i) : 32);
                             }
-                            websocket.send(`#CLOCK_TEXT$${tv.length},${nhex}`);
+                            websocket.send(`#CNOT$${tv.length},${nhex}`);
                         }
 
-                        if (isAlarm) websocket.send(`#CLOCK_ALARM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+                        if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
                     }
                 }
 
@@ -1198,7 +1197,8 @@
                     isRedirecting = doRedirect;
                     uploadModal.style.display = 'flex';
                     document.getElementById('modal-title').innerText = isSaving ? "Saving..." : "Previewing...";
-                    websocket.send("#CLOCK_SAVE_META" + (isGifAnimation ? ":GIF" : ""));
+                    websocket.send("#CRES$");
+                    websocket.send(isSaving ? "#CSAV$" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
                 }
 
                 if (finalSave || imageChanged) {
@@ -1220,12 +1220,12 @@
                 isRedirecting = doRedirect;
 
                 uploadQueue = [];
-                for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CLOCK_IMG_CHUNK$" + mainData.substring(i, i + 1024));
+                for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CIMG$" + mainData.substring(i, i + 1024));
 
                 totalPackets = uploadQueue.length;
                 const params = new URLSearchParams(window.location.search);
                 const idx = params.get('idx') || 0;
-                websocket.send("#CLOCK_INIT$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
+                websocket.send("#CSTB$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
             }
 
             let animQueue = [];
@@ -1292,10 +1292,10 @@
                 // Thực tế binary trọn gói gộp lại sẽ được ESP32 ghi tuần tự.
                 animQueue = [];
                 for (let i = 0; i < allFramesHex.length; i += 1024) {
-                    animQueue.push("#CLOCK_GIF_CHUNK$" + allFramesHex.substring(i, i + 1024));
+                    animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
                 }
                 animPackets = animQueue.length;
-                websocket.send("#CLOCK_GIF_INIT$" + currentLayer); 
+                websocket.send("#ASTB$" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
             }
 
             function initWebSocket() {
@@ -1304,7 +1304,7 @@
                 websocket.onopen = () => {
                     connectt = 1;
                     document.getElementById('ws-status').innerText = "Connected";
-                    websocket.send("#CLOCK_GET_DATA$");
+                    websocket.send("#CGET$");
                     // Retry tự động nếu 3 giây chưa nhận được data
                     setTimeout(() => {
                         const ov = document.getElementById('init-overlay');
@@ -1326,49 +1326,56 @@
                             websocket.send(uploadQueue.shift());
                             const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
                             progressBar.style.width = prog + '%';
-                            sendNextPacket();
+                            progressPercent.innerText = prog + '%';
                         } else {
-                            websocket.send("#CLOCK_SAVE_META" + (isGifAnimation ? ":GIF" : ""));
-                        }
-                    } else if (data === "CLOCK_CHUNK_OK") {
-                        sendNextPacket();
-                    } else if (data === "CLOCK_SAVE_META_OK") {
-                        if (isGifAnimation) startAnimationUpload();
-                        else {
-                            uploadModal.style.display = 'none';
-                            if (isRedirecting) window.location.href = "clock.html?v=" + Date.now();
-                            else {
-                                websocket.send("#CLOCK_CLOSE$");
-                                window.location.reload();
+                            if (isSaving) {
+                                websocket.send("#CSAV:IMG" + (isGifAnimation ? ":1" : ":0"));
+                            } else {
+                                websocket.send("#CFIN$");
                             }
                         }
-                    } else if (data === "CLOCK_GIF_READY" || data === "CLOCK_GIF_CHUNK_OK") {
-                        if (animQueue.length > 0) {
-                            const chunk = animQueue.shift();
-                            websocket.send(chunk);
-                            const prg = Math.round(((animPackets - animQueue.length) / animPackets) * 100);
-                            progressBar.style.width = prg + '%';
-                            progressPercent.innerText = prg + '%';
+                    } else if (data === "C_SAVEOK") {
+                        if (isGifAnimation) {
+                            startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
                         } else {
-                            websocket.send("#CLOCK_GIF_DONE$");
+                            if (isRedirecting) {
+                                document.getElementById('modal-title').innerText = "Success!";
+                                setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                            } else {
+                                uploadModal.style.display = 'none';
+                            }
                         }
-                    } else if (data === "CLOCK_GIF_SAVE_OK") {
-                        uploadModal.style.display = 'none';
-                        if (isRedirecting) window.location.href = "clock.html?v=" + Date.now();
-                        else {
-                            websocket.send("#CLOCK_CLOSE$");
-                            window.location.reload();
+                    } else if (data === "A_READY" || data === "A_UP_OK") {
+                        if (animQueue.length > 0) {
+                            websocket.send(animQueue.shift());
+                            const prog = Math.round(((animPackets - animQueue.length) / animPackets) * 100);
+                            progressBar.style.width = prog + '%';
+                            progressPercent.innerText = prog + '%';
+                        } else {
+                            websocket.send("#ASAV$"); // Kết thúc Animation
                         }
-                    } else if (data.startsWith("WEB_CLOCK_CONFIG_DATA:")) {
+                    } else if (data === "A_SAVEOK") {
+                        if (isRedirecting) {
+                            document.getElementById('modal-title').innerText = "Animation Saved!";
+                            setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                        } else {
+                            uploadModal.style.display = 'none';
+                        }
+                    } else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
+                        const overlay = document.getElementById('init-overlay');
                         try {
-                            const overlay = document.getElementById('init-overlay');
                             const p = data.split(':');
-                            currentLayer = p[1];
-                            
+                            // p[1]=idx p[2]=tutao p[3]=checkhengio p[4]=chu_check
+                            // p[5]=x p[6]=y p[7]=w p[8]=h p[9]=speed
+                            // p[10]=typ p[11]=gio p[12]=phut p[13]=ngay p[14]=thang
+                            // p[15]=extra p[16]=am p[17]=mel p[18]=text p[19]=qot p[20]=cnoidung
+                            currentLayer = parseInt(p[1]);
+
                             document.getElementById('pos-x').value = p[5];
                             document.getElementById('pos-y').value = p[6];
                             document.getElementById('pos-w').value = p[7];
                             document.getElementById('pos-h').value = p[8];
+
                             document.getElementById('speed').value = p[9];
                             document.getElementById('speed-val').innerText = p[9];
                             document.getElementById('typ').value = p[10];
@@ -1380,14 +1387,13 @@
                             document.getElementById('am').value = p[16];
                             document.getElementById('mel').value = p[17];
 
-                            if (p[18]) {
-                                const tEl = document.getElementById('text');
-                                if (tEl) tEl.value = decodeHexText(p[18]);
-                            }
+                            if (p[18]) { const tEl = document.getElementById('text'); if (tEl) tEl.value = decodeHexText(p[18]); }
                             const qotEl = document.getElementById('quote_idx');
                             if (qotEl && p[19] !== undefined) qotEl.value = p[19];
-                            
+
+                            // State flags
                             const tutaoFlag = p[2];
+                            const chkFlag = p[3];  // checkhengio
                             const chuFlag = p[4];  // chu_check
                             const cnoidungFlag = p[20];
 
