@@ -296,6 +296,27 @@
             pointer-events: none;
             filter: blur(1px);
         }
+
+        /* Status log panel - Premium design */
+        #log-panel {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 11px;
+            color: #4facfe;
+            height: 60px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .log-entry {
+            margin-bottom: 2px;
+            border-left: 2px solid var(--primary);
+            padding-left: 5px;
+        }
     </style>
 </head>
 
@@ -585,6 +606,10 @@
             <button class="btn btn-secondary" id="btn-back">BACK</button>
             <button class="btn btn-primary" id="btn-preview" disabled>PREVIEW</button>
             <button class="btn btn-accent" id="btn-save" disabled>SAVE</button>
+        </div>
+
+        <div id="log-panel">
+            <div class="log-entry">System ready. Waiting for metadata...</div>
         </div>
 
         <div class="status-tag" id="ws-status">Disconnected</div>
@@ -1023,113 +1048,100 @@
                 connectt = 0;
                 document.getElementById('ws-status').innerText = "Disconnected";
             };
-            websocket.onmessage = (e) => {
-                const data = e.data;
-                
-                // --- Xử lý nạp dữ liệu khởi tạo ---
-                if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
-                    const p = data.split(':');
-                    // p: 0idx, 1tutao, 2hen, 3chu, 4x, 5y, 6w, 7h, 8speed, 9typ, 10gio, 11phut, 12ngay, 13thang, 14ex, 15am, 16mel, 17hex, 18qot, 19cnd
-                    document.getElementById('pos-x').value = p[4];
-                    document.getElementById('pos-y').value = p[5];
-                    document.getElementById('pos-w').value = p[6];
-                    document.getElementById('pos-h').value = p[7];
-                    document.getElementById('speed').value = p[8];
-                    document.getElementById('speed-val').innerText = p[8];
-                    document.getElementById('typ').value = p[9];
-                    document.getElementById('gio').value = p[10];
-                    document.getElementById('phut').value = p[11];
-                    document.getElementById('ngay').value = p[12];
-                    document.getElementById('thang').value = p[13];
-                    document.getElementById('thu').value = p[14];
-                    document.getElementById('am').value = p[15];
-                    document.getElementById('mel').value = p[16];
-                    if (p[17]) document.getElementById('text').value = decodeHexText(p[17]);
-                    if (p[18] !== undefined && document.getElementById('quote_idx')) {
-                        document.getElementById('quote_idx').value = p[18];
-                    }
+        websocket.onmessage = (e) => {
+            const data = e.data;
 
-                    // Show Hide Sections
-                    if (p[1] !== '0') document.getElementById('section-image').style.display = 'block';
-                    if (p[2] !== '0') document.getElementById('section-alarm').style.display = 'block';
-                    if (p[3] !== '0') {
-                        document.getElementById('section-text').style.display = 'block';
-                        if (p[19] === '1') {
-                            document.getElementById('manual-text-container').style.display = 'block';
-                            if (document.getElementById('quote-selection-container')) 
-                                document.getElementById('quote-selection-container').style.display = 'none';
-                        } else {
-                            document.getElementById('manual-text-container').style.display = 'none';
-                            if (document.getElementById('quote-selection-container')) 
-                                document.getElementById('quote-selection-container').style.display = 'block';
-                        }
-                    }
+            // 1. Xử lý LOG từ Chip (Hiển thị lên bảng tin)
+            if (data.startsWith("LOG:")) {
+                const logPanel = document.getElementById('log-panel');
+                if (logPanel) {
+                    const entry = document.createElement('div');
+                    entry.className = 'log-entry';
+                    entry.innerText = data.substring(4);
+                    logPanel.appendChild(entry);
+                    logPanel.scrollTop = logPanel.scrollHeight;
+                }
+                return;
+            }
 
-                    // Tải ảnh icon nếu có
-                    const idx = p[0];
-                    const rawName = (idx < 50) ? `C${idx}.raw` : `A${idx-50}.raw`;
-                    const targetImg = document.getElementById('cropper-target');
-                    targetImg.src = "/get_file?name=" + rawName + "&v=" + Date.now();
-                    targetImg.style.display = 'block';
-                    document.getElementById('no-image-text').style.display = 'none';
-                    targetImg.onload = () => {
-                        imgOrig = targetImg;
-                        if (croppr) { try { croppr.destroy(); } catch (e) { } }
-                        croppr = new Croppr(targetImg, {
-                            startSize: [100, 100, '%'],
-                            minSize: [10, 10, 'px'],
-                            returnMode: 'real',
-                            onInitialize: (instance) => { },
-                            onCropEnd: () => { imageChanged = true; triggerChange(); }
-                        });
-                    };
+            // 2. Xử lý Metadata Tổng hợp (#CMET) - Tự động điền Form
+            if (data.startsWith("#CMET$")) {
+                // p: 0idx, 1spd, 2qot, 3typ, 4h, 5m, 6d, 7mo, 8thu, 9am, 10mel, 11hex
+                const p = data.slice(6).split(':');
+                if (p.length >= 11) {
+                    document.getElementById('speed').value = p[1];
+                    document.getElementById('speed-val').innerText = p[1];
+                    if (document.getElementById('quote_idx')) document.getElementById('quote_idx').value = p[2];
+                    document.getElementById('typ').value = p[3];
+                    document.getElementById('gio').value = p[4];
+                    document.getElementById('phut').value = p[5];
+                    document.getElementById('ngay').value = p[6];
+                    document.getElementById('thang').value = p[7];
+                    document.getElementById('thu').value = p[8];
+                    document.getElementById('am').value = p[9];
+                    document.getElementById('mel').value = p[10];
+                    if (p[11]) document.getElementById('text').value = decodeHexText(p[11]);
+                    
+                    updateUI(); // Cập nhật ẩn hiện các ô theo Type
+                }
+                return;
+            }
 
-                    updateUI();
-                }
+            // 3. Xử lý Trạng thái Ready từ Chip
+            if (data === "C_VIEW_READY") {
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('btn-preview').disabled = false;
+                document.getElementById('btn-save').disabled = false;
+                return;
+            }
 
-                // --- Xử lý vòng lặp Lưu ---
-                else if (data === "C_META_OK") {
-                    if (pendingImageUpload) {
-                        startImageUploadFlow();
-                    } else {
-                        uploadModal.style.display = 'none';
-                        if (saveDoRedirect) goBackWithReferrer();
-                    }
-                }
-                else if (data === "C_READY" || data === "C_UP_OK") {
-                    if (uploadQueue.length > 0) {
-                        websocket.send(uploadQueue.shift());
-                        const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
-                        progressBar.style.width = prog + '%';
-                        progressPercent.innerText = prog + '%';
-                    } else {
-                        // Ảnh tĩnh nạp xong -> Lưu & Gộp
-                        websocket.send("#CSAV$" + (isGifAnimation ? ":1" : ":0"));
-                    }
-                } 
-                else if (data === "C_SAVEOK") {
-                    if (isGifAnimation) {
-                        startAnimationUpload();
-                    } else {
-                        uploadModal.style.display = 'none';
-                        if (saveDoRedirect) goBackWithReferrer();
-                    }
-                }
-                else if (data === "A_READY" || data === "A_UP_OK") {
-                    if (animQueue.length > 0) {
-                        websocket.send(animQueue.shift());
-                        const prog = Math.round(((animPackets - animQueue.length) / animPackets) * 100);
-                        progressBar.style.width = prog + '%';
-                        progressPercent.innerText = prog + '%';
-                    } else {
-                        websocket.send("#ASAV$");
-                    }
-                }
-                else if (data === "A_SAVEOK") {
+            // 4. Xử lý nạp ảnh tĩnh (Static)
+            if (data === "C_META_OK") {
+                if (pendingImageUpload) startImageUploadFlow();
+                else {
                     uploadModal.style.display = 'none';
                     if (saveDoRedirect) goBackWithReferrer();
                 }
-            };
+            }
+            else if (data === "C_READY" || data === "C_UP_OK") {
+                if (uploadQueue.length > 0) {
+                    websocket.send(uploadQueue.shift());
+                    const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
+                    progressBar.style.width = prog + '%';
+                    progressPercent.innerText = prog + '%';
+                } else {
+                    websocket.send("#CSAV$" + (isGifAnimation ? ":1" : ":0"));
+                }
+            }
+            else if (data === "C_SAVEOK") {
+                if (isGifAnimation) startAnimationUpload();
+                else {
+                    uploadModal.style.display = 'none';
+                    if (saveDoRedirect) goBackWithReferrer();
+                }
+            }
+
+            // 5. Xử lý nạp ảnh động (Animation)
+            else if (data === "A_READY" || data === "A_UP_OK") {
+                if (animQueue.length > 0) {
+                    websocket.send(animQueue.shift());
+                    const prog = Math.round(((animPackets - animQueue.length) / animPackets) * 100);
+                    progressBar.style.width = prog + '%';
+                    progressPercent.innerText = prog + '%';
+                } else {
+                    websocket.send("#ASAV$");
+                }
+            }
+            else if (data === "A_SAVEOK") {
+                uploadModal.style.display = 'none';
+                if (saveDoRedirect) goBackWithReferrer();
+            }
+
+            // 6. Xử lý cũ (Dành cho việc gọi từ Store hoặc List cũ)
+            else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
+                // ... Vẫn giữ để tương thích nếu cần
+            }
+        };
         }
 
         function goBackWithReferrer() {
