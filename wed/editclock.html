@@ -1414,7 +1414,9 @@
 
                             // 2. Alarm Section
                             const secAlarm = document.getElementById('section-alarm');
-                            if (secAlarm) secAlarm.style.display = (chkFlag !== '0') ? 'block' : 'none';
+                            if (secAlarm) {
+                                secAlarm.setAttribute('data-active', (chkFlag !== '0') ? '1' : '0');
+                            }
 
                             // 3. Image Section
                             const secImg = document.getElementById('section-image');
