@@ -1066,10 +1066,10 @@
 
             // 2. Xử lý Metadata Tổng hợp (#CMET) - Tự động điền Form và đóng mở mục tương ứng
             if (data.startsWith("#CMET$")) {
-                // p: 0idx, 1spd, 2qot, 3typ, 4h, 5m, 6d, 7mo, 8thu, 9am, 10mel, 11tutao, 12hen, 13chu, 14cnd, 15hex
+                // p: 0idx, 1spd, 2qot, 3typ, 4h, 5m, 6d, 7mo, 8thu, 9am, 10mel, 11tutao, 12hen, 13chu, 14cnd, 15x, 16y, 17w, 18h, 19hex
                 const p = data.slice(6).split(':');
-                if (p.length >= 15) {
-                    const idx = p[0];
+                if (p.length >= 19) {
+                    const idx = parseInt(p[0]);
                     document.getElementById('speed').value = p[1];
                     document.getElementById('speed-val').innerText = p[1];
                     if (document.getElementById('quote_idx')) document.getElementById('quote_idx').value = p[2];
@@ -1081,7 +1081,7 @@
                     document.getElementById('thu').value = p[8];
                     document.getElementById('am').value = p[9];
                     document.getElementById('mel').value = p[10];
-                    if (p[15]) document.getElementById('text').value = decodeHexText(p[15]);
+                    if (p[19]) document.getElementById('text').value = decodeHexText(p[19]);
                     
                     // --- ĐÓNG MỞ CÁC MỤC CHỈNH SỬA (FROM) ---
                     if (p[11] !== '0') document.getElementById('section-image').style.display = 'block';
@@ -1098,6 +1098,24 @@
                         }
                     }
 
+                    // --- KHÔI PHỤC TỌA ĐỘ VÀ KÍCH CỠ ---
+                    document.getElementById('pos-x').value = p[15];
+                    document.getElementById('pos-y').value = p[16];
+                    document.getElementById('pos-w').value = p[17];
+                    document.getElementById('pos-h').value = p[18];
+
+                    // --- PHÁT HIỆN LOẠI GIF (A-SERIES) ---
+                    isGifAnimation = (idx >= 50);
+                    if (isGifAnimation) {
+                        const gifSpeedInput = document.getElementById('speed-gif');
+                        if (gifSpeedInput) {
+                            gifSpeedInput.value = p[1]; // Dùng chung spd cho gif
+                            document.getElementById('speed-gif-val').innerText = p[1];
+                        }
+                        // Hiện các thông tin liên quan đến Frame nếu cần
+                        dprintf("LOG: Đã nhận diện được đây là file Hoạt ảnh.");
+                    }
+
                     // --- LOAD ẢNH THUMBNAIL (NẾU CÓ) ---
                     if (p[11] !== '0') {
                         const rawName = (idx < 50) ? `C${idx}.raw` : `A${idx-50}.raw`;
@@ -1109,10 +1127,13 @@
                             imgOrig = targetImg;
                             if (croppr) { try { croppr.destroy(); } catch (e) { } }
                             croppr = new Croppr(targetImg, {
-                                startSize: [100, 100, '%'],
+                                startSize: [parseInt(p[17]), parseInt(p[18]), 'px'], // Bê nguyên cỡ cũ
                                 minSize: [10, 10, 'px'],
                                 returnMode: 'real',
-                                onInitialize: (instance) => { },
+                                onInitialize: (instance) => {
+                                    // Chỉnh tọa độ ban đầu cho khớp
+                                    instance.moveTo(parseInt(p[15]), parseInt(p[16]));
+                                },
                                 onCropEnd: () => { imageChanged = true; triggerChange(); }
                             });
                         };
