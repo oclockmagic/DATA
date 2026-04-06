@@ -1041,7 +1041,7 @@
                 document.getElementById('ws-status').innerText = "Connected";
                 const params = new URLSearchParams(window.location.search);
                 const idx = params.get('idx');
-                if (idx !== null) websocket.send("#C_VIEW$" + idx); // Gửi lệnh xem Socket mới
+                if (idx !== null) websocket.send("#CVIE$" + idx); // Gửi lệnh xem (Đồng bộ Metadata)
             };
             websocket.onclose = () => {
                 setTimeout(initWebSocket, 2000);
