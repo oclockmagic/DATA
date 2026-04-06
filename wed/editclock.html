@@ -772,8 +772,9 @@
                     imgOrig = targetImg;
                     if (croppr) { try { croppr.destroy(); } catch (e) { } croppr = null; }
                     croppr = new Croppr(targetImg, {
-                        startSize: [80, 80, '%'],
-                        minSize: [10, 10, 'px'],
+                        startSize: [90, 90, '%'],
+                        minSize: [1, 1, 'px'],
+                        aspectRatio: null,
                         returnMode: 'real',
                         onInitialize: () => { imageChanged = true; triggerChange(); },
                         onCropEnd: () => { imageChanged = true; triggerChange(); }
@@ -803,18 +804,27 @@
                             const decimation = Math.max(1, numFrames / maxFrames);
 
                             const cumulativeBuffer = new Uint8ClampedArray(gifReader.width * gifReader.height * 4);
-                            const tempStep = Math.ceil(decimation);
+                            const tempStep = Math.max(1, Math.ceil(numFrames / maxFrames));
                             for (let i = 0; i < numFrames; i++) {
+                                const frameInfo = gifReader.frameInfo(i);
                                 gifReader.decodeAndBlitFrameRGBA(i, cumulativeBuffer);
                                 if (i % tempStep === 0 || i === numFrames - 1) {
                                     if (gifFramesData.length < maxFrames) {
-                                        const frameInfo = gifReader.frameInfo(i);
                                         gifFramesData.push({
                                             width: gifReader.width,
                                             height: gifReader.height,
                                             data: new Uint8ClampedArray(cumulativeBuffer),
                                             delay: frameInfo.delay * 10
                                         });
+                                    }
+                                }
+                                // Xử lý Disposal Method 2: Restore to Background
+                                if (frameInfo.disposal === 2) {
+                                    for (let dy = 0; dy < frameInfo.height; dy++) {
+                                        for (let dx = 0; dx < frameInfo.width; dx++) {
+                                            const idx = ((frameInfo.y + dy) * gifReader.width + (frameInfo.x + dx)) * 4;
+                                            cumulativeBuffer[idx] = 0; cumulativeBuffer[idx + 1] = 0; cumulativeBuffer[idx + 2] = 0; cumulativeBuffer[idx + 3] = 0;
+                                        }
                                     }
                                 }
                             }
@@ -997,8 +1007,15 @@
 
                 const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
                 for (let i = 0; i < imgData.length; i += 4) {
-                    const r = imgData[i] >> 4, g = imgData[i + 1] >> 4, b = imgData[i + 2] >> 4, a = imgData[i + 3] >> 4;
-                    hexData += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                    let r = imgData[i], g = imgData[i + 1], b = imgData[i + 2], a = imgData[i + 3];
+
+                    // Alpha threshold: Nếu quá mờ ( < 32/255 ) thì coi như trong suốt hoàn toàn
+                    if (a < 32) {
+                        a = 0; r = 0; g = 0; b = 0;
+                    }
+
+                    const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
+                    hexData += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
                 }
 
                 const targetHexLen = targetW * targetH * 4;
@@ -1119,8 +1136,15 @@
 
                 const pixels = finalCtx.getImageData(0, 0, targetW, targetH).data;
                 for (let i = 0; i < pixels.length; i += 4) {
-                    const r = pixels[i] >> 4, g = pixels[i + 1] >> 4, b = pixels[i + 2] >> 4, a = pixels[i + 3] >> 4;
-                    allFramesHex += byteToHex(a | (r << 4)) + byteToHex(g | (b << 4));
+                    let r = pixels[i], g = pixels[i + 1], b = pixels[i + 2], a = pixels[i + 3];
+
+                    // Alpha threshold
+                    if (a < 32) {
+                        a = 0; r = 0; g = 0; b = 0;
+                    }
+
+                    const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
+                    allFramesHex += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
                 }
             });
 
