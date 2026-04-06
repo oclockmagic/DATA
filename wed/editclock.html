@@ -1063,11 +1063,12 @@
             if (hexData) {
                 startUpload(hexData, finalSave, doRedirect);
             } else if (finalSave) {
-                isSaving = doRedirect;
+                isSaving = finalSave;
+                isRedirecting = doRedirect;
                 uploadModal.style.display = 'flex';
-                document.getElementById('modal-title').innerText = "Finishing...";
+                document.getElementById('modal-title').innerText = isSaving ? "Saving..." : "Previewing...";
                 websocket.send("#CRES$");
-                websocket.send("#CSAV$" + (isGifAnimation ? ":1" : ":0"));
+                websocket.send(isSaving ? "#CSAV$" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
             }
 
             if (finalSave || imageChanged) {
@@ -1075,19 +1076,18 @@
             }
         }
 
-        let uploadQueue = [];
-        let totalPackets = 0;
-        // let layerToSave = 0; // redundant with currentLayer
-        let isSaving = false;
+        let isSaving = false; // Lệnh Lưu vào Flash
+        let isRedirecting = false; // Lệnh Chuyển trang
 
-        function startUpload(mainData, finalSave, doRedirect) {
+        function startUpload(mainData, toFlash, doRedirect) {
             if (windowGifInterval) {
                 clearInterval(windowGifInterval);
                 windowGifInterval = null;
             }
             uploadModal.style.display = 'flex';
-            document.getElementById('modal-title').innerText = doRedirect ? "Saving..." : "Previewing...";
-            isSaving = doRedirect;
+            document.getElementById('modal-title').innerText = toFlash ? "Saving..." : "Previewing...";
+            isSaving = toFlash;
+            isRedirecting = doRedirect;
 
             uploadQueue = [];
             for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CIMG$" + mainData.substring(i, i + 1024));
@@ -1203,7 +1203,7 @@
                     if (isGifAnimation) {
                         startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
                     } else {
-                        if (isSaving) {
+                        if (isRedirecting) {
                             document.getElementById('modal-title').innerText = "Success!";
                             setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
                         } else {
@@ -1220,7 +1220,7 @@
                         websocket.send("#ASAV$"); // Kết thúc Animation
                     }
                 } else if (data === "A_SAVEOK") {
-                    if (isSaving) {
+                    if (isRedirecting) {
                         document.getElementById('modal-title').innerText = "Animation Saved!";
                         setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
                     } else {
@@ -1355,7 +1355,7 @@
             if (btnSaveOnly) {
                 btnSaveOnly.onclick = () => {
                     imageChanged = true; // Force re-render of current crop
-                    sendImageData(true, true, true);
+                    sendImageData(true, false, true);
                 };
             }
         });
