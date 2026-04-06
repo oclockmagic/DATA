@@ -46,6 +46,38 @@
             z-index: 1;
         }
 
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(6, 2, 29, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         h2 {
             text-align: center;
             font-weight: 700;
@@ -356,6 +388,12 @@
 </head>
 
 <body>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <div style="font-weight: 700; letter-spacing: 2px; color: var(--primary);">INITIALIZING DATA...</div>
+        <div style="font-size: 10px; margin-top: 10px; color: rgba(255,255,255,0.4);">Waiting for WebSocket connection...</div>
+    </div>
+
     <div class="container">
         <h2>CUSTOM EDITOR</h2>
         <hr>
@@ -1204,30 +1242,16 @@
             });
 
             // Padding mỗi frame được coi là 8192 bytes nhị phân (16384 hex), ESP32 ghi theo sector 2048
-            // Thực tế binary trọn gói gộp lại sẽ được ESP32 ghi tuần tự.
-            animQueue = [];
-            for (let i = 0; i < allFramesHex.length; i += 1024) {
-                animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
-            }
-            animPackets = animQueue.length;
-            const idx = new URLSearchParams(window.location.search).get('idx') || 0;
-            websocket.send("#ASTB$" + idx); // Lệnh bắt đầu Animation
-        }
-
-        function initWebSocket() {
-            if (websocket && (websocket.readyState === WebSocket.CONNECTING || websocket.readyState === WebSocket.OPEN)) return;
+            // Thực tế binary trọn gói gộp lại sẽ được ESP32 ghi tuần tự.        function initWebSocket() {
             websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
             websocket.onopen = () => {
-                connectt = 1;
                 document.getElementById('ws-status').innerText = "Connected";
-                const params = new URLSearchParams(window.location.search);
-                const idx = params.get('idx');
-                if (idx !== null) websocket.send("#CLK$" + idx);
+                // Khi vừa kết nối, không cần idx từ URL, yêu cầu ESP nạp data của VTSELECT hiện tại
+                websocket.send("#CGET$");
             };
             websocket.onclose = () => {
-                setTimeout(initWebSocket, 2000);
-                connectt = 0;
                 document.getElementById('ws-status').innerText = "Disconnected";
+                setTimeout(initWebSocket, 2000);
             };
             websocket.onmessage = (e) => {
                 const data = e.data;
@@ -1273,9 +1297,19 @@
                     }
                 } else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
                     const p = data.split(':');
-                    // p: idx:1, tutao:2, hen:3, chu:4, x:5, y:6, w:7, h:8, speed:9, typ:10, gio:11, phut:12, ngay:13, thang:14, extra:15, am:16, mel:17, text:18, qot:19
-                    document.getElementById('pos-w').value = p[7];
-                    document.getElementById('pos-h').value = p[8];
+                    // p: idx:1, tutao:2, hen:3, chu:4, x:5, y:6, w:7, h:8, speed:9, typ:10, gio:11, phut:12, ngay:13, thang:14, extra:15, am:16, mel:17, text:18, qot:19, 20:offset65
+                    const idx = p[1];
+                    const isTutao = (p[2] === '1');
+                    const isAlarm = (p[3] === '1');
+                    const isText = (p[4] === '1');
+
+                    // 1. Populate Coords
+                    posX.value = p[5];
+                    posY.value = p[6];
+                    posW.value = p[7];
+                    posH.value = p[8];
+
+                    // 2. Populate Other Fields
                     document.getElementById('speed').value = p[9];
                     document.getElementById('speed-val').innerText = p[9];
                     document.getElementById('typ').value = p[10];
@@ -1287,8 +1321,13 @@
                     document.getElementById('am').value = p[16];
                     document.getElementById('mel').value = p[17];
                     if (p[18]) document.getElementById('text').value = decodeHexText(p[18]);
+                    if (p[19] !== undefined) document.getElementById('quote_idx').value = p[19];
 
-                    if (p[4] !== '0') {
+                    // 3. Logic ẩn hiện
+                    document.getElementById('section-image').style.display = isTutao ? 'block' : 'none';
+                    document.getElementById('section-alarm').style.display = isAlarm ? 'block' : 'none';
+                    
+                    if (isText) {
                         document.getElementById('section-text').style.display = 'block';
                         if (p[20] === '1') {
                             document.getElementById('manual-text-container').style.display = 'block';
@@ -1300,98 +1339,40 @@
                     } else {
                         document.getElementById('section-text').style.display = 'none';
                     }
-                    if (p[19] !== undefined) document.getElementById('quote_idx').value = p[19];
 
+                    // 4. Nạp Thumbnail nếu là Tự tạo
+                    if (isTutao) {
+                        const targetImg = document.getElementById('cropper-target');
+                        targetImg.src = "/get_file?name=clock" + idx + ".raw&v=" + Date.now();
+                        targetImg.style.display = 'block';
+                        document.getElementById('no-image-text').style.display = 'none';
+                        targetImg.onload = () => {
+                            imgOrig = targetImg;
+                            const btnSaveOnly = document.getElementById('btn-save-image-only');
+                            if (btnSaveOnly) btnSaveOnly.disabled = false;
+                            if (croppr) { try { croppr.destroy(); } catch (e) { } }
+                            croppr = new Croppr(targetImg, {
+                                startSize: [80, 80, '%'],
+                                minSize: [10, 10, 'px'],
+                                returnMode: 'real',
+                                onInitialize: () => { triggerChange(); },
+                                onCropEnd: () => { imageChanged = true; triggerChange(); }
+                            });
+                        };
+                    }
+
+                    // 5. Giải phóng UI
                     updateUI();
+                    document.getElementById('loading-overlay').style.opacity = '0';
+                    setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; }, 500);
                 }
             };
         }
 
         window.addEventListener('load', () => {
             initWebSocket();
-            const params = new URLSearchParams(window.location.search);
-            const idx = params.get('idx');
-            const x = params.get('x'), y = params.get('y'), w = params.get('w'), h = params.get('h');
-
-            if (idx !== null) currentLayer = parseInt(idx);
-            if (x !== null) posX.value = x;
-            if (y !== null) posY.value = y;
-            if (w !== null) posW.value = w;
-            if (h !== null) posH.value = h;
-
-            const fields = ['typ', 'gio', 'phut', 'ngay', 'thang', 'thu', 'am', 'mel', 'speed'];
-            fields.forEach(f => {
-                let v = params.get(f);
-                if (v !== null) {
-                    let el = document.getElementById(f);
-                    if (el) {
-                        el.value = v;
-                        if (f === 'speed') document.getElementById('speed-val').innerText = v;
-                    }
-                }
-            });
-
-            // Show/Hide sections based on flags
-            let tutaoFlag = params.get('tutao');
-            let chuFlag = params.get('chu');
-            let chkFlag = params.get('chk');
-            let qotFlag = params.get('qot');
-            let cnoidungFlag = params.get('cnoidung');
-
-            if (tutaoFlag && tutaoFlag !== '0') document.getElementById('section-image').style.display = 'block';
-            if (chuFlag && chuFlag !== '0') {
-                document.getElementById('section-text').style.display = 'block';
-                if (cnoidungFlag === '1') {
-                    document.getElementById('manual-text-container').style.display = 'block';
-                    document.getElementById('quote-selection-container').style.display = 'none';
-                } else {
-                    document.getElementById('manual-text-container').style.display = 'none';
-                    document.getElementById('quote-selection-container').style.display = 'block';
-                }
-            }
-            if (qotFlag !== null && document.getElementById('quote_idx')) {
-                document.getElementById('quote_idx').value = qotFlag;
-            }
-            if (chkFlag && chkFlag !== '0') document.getElementById('section-alarm').style.display = 'block';
-
-            let txt = params.get('text');
-            if (txt) document.getElementById('text').value = decodeHexText(txt);
-            updateUI();
-
-            // Load raw image if provided
-            const rawImg = params.get('rawImg');
-            if (rawImg && tutaoFlag === '1') {
-                const targetImg = document.getElementById('cropper-target');
-                targetImg.src = "/get_file?name=" + rawImg + "&v=" + Date.now();
-                targetImg.style.display = 'block';
-                document.getElementById('no-image-text').style.display = 'none';
-                targetImg.onload = () => {
-                    imgOrig = targetImg;
-                    const btnSaveOnly = document.getElementById('btn-save-image-only');
-                    if (btnSaveOnly) btnSaveOnly.disabled = false;
-                    if (croppr) { try { croppr.destroy(); } catch (e) { } }
-                    croppr = new Croppr(targetImg, {
-                        startSize: [80, 80, '%'],
-                        minSize: [10, 10, 'px'],
-                        returnMode: 'real',
-                        onInitialize: () => {
-                            triggerChange();
-                        },
-                        onCropEnd: () => {
-                            imageChanged = true;
-                            triggerChange();
-                        }
-                    });
-                };
-            }
-
-            if (typeof m_x !== 'undefined' && idx === null) {
-                posX.value = m_x[0];
-                posY.value = m_y[0];
-                posW.value = m_w[0];
-                posH.value = m_h[0];
-            }
-
+            
+            // Gán sự kiện cho các nút bấm (giữ nguyên logic cũ nhưng đặt ở đây cho phẳng)
             document.getElementById('btn-back').onclick = () => {
                 goBackWithReferrer();
             };
@@ -1399,7 +1380,7 @@
             const btnSaveOnly = document.getElementById('btn-save-image-only');
             if (btnSaveOnly) {
                 btnSaveOnly.onclick = () => {
-                    imageChanged = true; // Force re-render of current crop
+                    imageChanged = true; 
                     sendImageData(true, false, true);
                 };
             }
