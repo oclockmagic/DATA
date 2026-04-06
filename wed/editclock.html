@@ -1230,8 +1230,7 @@
                 animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
             }
             animPackets = animQueue.length;
-            const idx = new URLSearchParams(window.location.search).get('idx') || 0;
-            websocket.send("#ASTB$" + idx); // Lệnh bắt đầu Animation
+            websocket.send("#ASTB$" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
         }
 
         function initWebSocket() {
