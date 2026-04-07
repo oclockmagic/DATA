@@ -1582,7 +1582,7 @@
                     document.getElementById('bass-hint').style.display = 'none';
                 }
             }
-            closeEditorModal();
+            // closeEditorModal(); // Cắt bỏ: Đợi cho đến khi M_SAVEOK mới đóng
             document.getElementById('upload-modal').style.display = 'flex';
             document.getElementById('modal-title').innerText = "Processing & Saving...";
             websocket.send("#MSTB$" + currentMusicIdx);
@@ -1608,7 +1608,13 @@
         function finishSession() {
             websocket.send("#M_FIN$");
             document.getElementById('modal-title').innerText = 'Success!';
-            setTimeout(() => { document.getElementById('upload-modal').style.display = 'none'; }, 800);
+            bgEditorChanged = false;
+            bassEditorChanged = false;
+            closeEditorModal(); // Turning off the crop form
+            setTimeout(() => { 
+                document.getElementById('upload-modal').style.display = 'none';
+                window.location.href = 'music.html?v=' + Date.now(); 
+            }, 1000);
         }
         function afterMSaveOK() {
             const t = lastEditorTarget; lastEditorTarget = "";
