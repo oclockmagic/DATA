@@ -1022,8 +1022,9 @@
 
             function sendSpeed() {
                 if (!connectt) return;
+                const spd = parseInt(document.getElementById('speed').value);
                 if (spd >= 1 && spd <= 32) {
-                    websocket.send("C_SPD:" + spd);
+                    websocket.send("#CSPD$" + spd);
                 }
             }
 
@@ -1051,14 +1052,14 @@
                 document.getElementById('modal-title').innerText = isSaving ? "Saving Meta..." : "Previewing Status...";
 
                 // 0. Gửi Header (Tọa độ và cờ tutao)
-                websocket.send(`C_HDR:${px},${py},${pw},${phh},${tutao}`);
+                websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
 
                 // 1. Gửi Quote (nếu là chế độ danh ngôn)
                 const quoteBox = document.getElementById('quote-selection-container');
                 const isQuoteMode = (quoteBox && quoteBox.style.display !== 'none');
                 if (isText && isQuoteMode) {
                     const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
-                    websocket.send("C_QOT:" + qidx);
+                    websocket.send("#CQOT$" + qidx);
                 }
 
                 // 2. Gửi Note/Text (nếu là chế độ tự nhập)
@@ -1074,7 +1075,7 @@
                     for (let i = 0; i < tv.length; i++) {
                         nhex += charToHex[tv[i]] || byteToHex(tv.charCodeAt(i) < 256 ? tv.charCodeAt(i) : 32);
                     }
-                    websocket.send(`C_TEXT:${tv.length},${nhex}`);
+                    websocket.send(`#CNOT$${tv.length},${nhex}`);
                 }
 
                 // 3. Gửi Alarm (nếu bật alarm)
@@ -1087,12 +1088,12 @@
                     const tnu = parseInt(document.getElementById("thu").value) || 0;
                     const am = parseInt(document.getElementById("am").value) || 0;
                     const mel = parseInt(document.getElementById("mel").value) || 0;
-                    websocket.send(`C_ALARM:${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+                    websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
                 }
 
                 // 4. Kết thúc: Lưu vào Flash với flag MET để chip chỉ ghi header/alarm/text, không ghi ảnh
-                websocket.send("C_RES");
-                websocket.send(isSaving ? "C_SAVE:MET" + (isGifAnimation ? ":1" : ":0") : "C_FIN");
+                websocket.send("#CRES$");
+                websocket.send(isSaving ? "#CSAV:MET" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
             }
 
             function sendImageData(finalSave, doRedirect, onlyImage = false) {
@@ -1162,14 +1163,14 @@
                     const mel = parseInt(document.getElementById("mel").value) || 0;
 
                     // 0. Gửi Header 
-                    websocket.send(`C_HDR:${px},${py},${pw},${phh},${tutao}`);
+                    websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
 
                     if (!onlyImage) {
                         // Gửi Quote (nếu có)
                         const quoteBox = document.getElementById('quote-selection-container');
                         if (isText && quoteBox && quoteBox.style.display !== 'none') {
                             const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
-                            websocket.send("C_QOT:" + qidx);
+                            websocket.send("#CQOT$" + qidx);
                         }
 
                         // Gửi Note/Text (nếu có)
@@ -1182,10 +1183,10 @@
                             for (let i = 0; i < tv.length; i++) {
                                 nhex += charToHex[tv[i]] || byteToHex(tv.charCodeAt(i) < 256 ? tv.charCodeAt(i) : 32);
                             }
-                            websocket.send(`C_TEXT:${tv.length},${nhex}`);
+                            websocket.send(`#CNOT$${tv.length},${nhex}`);
                         }
 
-                        if (isAlarm) websocket.send(`C_ALARM:${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+                        if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
                     }
                 }
 
@@ -1196,8 +1197,8 @@
                     isRedirecting = doRedirect;
                     uploadModal.style.display = 'flex';
                     document.getElementById('modal-title').innerText = isSaving ? "Saving..." : "Previewing...";
-                    websocket.send("C_RES");
-                    websocket.send(isSaving ? "C_SAVE" + (isGifAnimation ? ":1" : ":0") : "C_FIN");
+                    websocket.send("#CRES$");
+                    websocket.send(isSaving ? "#CSAV$" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
                 }
 
                 if (finalSave || imageChanged) {
@@ -1219,12 +1220,12 @@
                 isRedirecting = doRedirect;
 
                 uploadQueue = [];
-                for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("C_IMG:" + mainData.substring(i, i + 1024));
+                for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CIMG$" + mainData.substring(i, i + 1024));
 
                 totalPackets = uploadQueue.length;
                 const params = new URLSearchParams(window.location.search);
                 const idx = params.get('idx') || 0;
-                websocket.send("C_START:" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
+                websocket.send("#CSTB$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
             }
 
             let animQueue = [];
@@ -1291,10 +1292,10 @@
                 // Thực tế binary trọn gói gộp lại sẽ được ESP32 ghi tuần tự.
                 animQueue = [];
                 for (let i = 0; i < allFramesHex.length; i += 1024) {
-                    animQueue.push("A_IMG:" + allFramesHex.substring(i, i + 1024));
+                    animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
                 }
                 animPackets = animQueue.length;
-                websocket.send("A_START:" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
+                websocket.send("#ASTB$" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
             }
 
             function initWebSocket() {
@@ -1303,13 +1304,13 @@
                 websocket.onopen = () => {
                     connectt = 1;
                     document.getElementById('ws-status').innerText = "Connected";
-                    websocket.send("C_FETCH");
+                    websocket.send("#CGET$");
                     // Retry tự động nếu 3 giây chưa nhận được data
                     setTimeout(() => {
                         const ov = document.getElementById('init-overlay');
                         if (ov && ov.style.display !== 'none') {
-                            console.warn('[editclock] No C_DATA after 3s, retrying C_FETCH...');
-                            if (websocket && websocket.readyState === WebSocket.OPEN) websocket.send("C_FETCH");
+                            console.warn('[editclock] No DOWNLOAD_EDIT_CLOCK after 3s, retrying #CGET$...');
+                            if (websocket && websocket.readyState === WebSocket.OPEN) websocket.send("#CGET$");
                         }
                     }, 3000);
                 };
@@ -1328,9 +1329,9 @@
                             progressPercent.innerText = prog + '%';
                         } else {
                             if (isSaving) {
-                                websocket.send("C_SAVE:IMG" + (isGifAnimation ? ":1" : ":0"));
+                                websocket.send("#CSAV:IMG" + (isGifAnimation ? ":1" : ":0"));
                             } else {
-                                websocket.send("C_FIN");
+                                websocket.send("#CFIN$");
                             }
                         }
                     } else if (data === "C_SAVEOK") {
@@ -1351,7 +1352,7 @@
                             progressBar.style.width = prog + '%';
                             progressPercent.innerText = prog + '%';
                         } else {
-                            websocket.send("A_SAVE"); // Kết thúc Animation
+                            websocket.send("#ASAV$"); // Kết thúc Animation
                         }
                     } else if (data === "A_SAVEOK") {
                         if (isRedirecting) {
@@ -1360,7 +1361,7 @@
                         } else {
                             uploadModal.style.display = 'none';
                         }
-                    } else if (data.startsWith("C_DATA:")) {
+                    } else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
                         const overlay = document.getElementById('init-overlay');
                         try {
                             const p = data.split(':');
