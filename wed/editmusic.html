@@ -1108,7 +1108,7 @@
             websocket.onopen = () => {
                 statusEl.innerText = "Connected";
                 // Khi vừa kết nối, gởi lệnh lấy định dạng dữ liệu thực tế từ ESP32
-                websocket.send("#MGET$");
+                websocket.send("M_FETCH");
             };
             websocket.onclose = () => {
                 statusEl.innerText = "Disconnected";
@@ -1158,11 +1158,11 @@
                     if (currentStep === "BG") {
                         globalPhotoHex = getRGB565Hex(bgCanvas, 72, 72);
                         hexPos = 0;
-                        websocket.send("#MRE1$");
+                        websocket.send("M_RES:BG");
                     } else if (currentStep === "BASS") {
                         globalPhotoHex = getRGB565Hex(bassCanvas, 44, 44);
                         hexPos = 0;
-                        websocket.send("#MRE2$"); // Reset cho BASS
+                        websocket.send("M_RES:BASS"); // Reset cho BASS
                     }
                 } else if (data === "M_AUTO_OK") {
                     console.log("Auto-save Metadata OK.");
@@ -1185,9 +1185,9 @@
                         const prg = Math.round((sent / animMusicPackets) * 100);
                         document.getElementById('progress-bar').style.width = prg + '%';
                         document.getElementById('progress-percent').innerText = prg + '%';
-                        websocket.send('#MABIMG$' + chunk);
+                        websocket.send('M_ANIM:IMG:' + chunk);
                     } else {
-                        websocket.send('#MABSAV$');
+                        websocket.send('M_ANIM:SAVE');
                     }
                 } else if (data === "M_AB_SAVEOK") {
                     afterABSaveOK();
@@ -1214,7 +1214,7 @@
             const saveBtn = document.getElementById('btn-save-main');
             if (hexPos < globalPhotoHex.length) {
                 const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK_SIZE * 2);
-                const tag = (currentStep === "BASS") ? "#MGM2$" : "#MGM1$";
+                const tag = (currentStep === "BASS") ? "M_IMG:BASS:" : "M_IMG:BG:";
                 websocket.send(tag + chunk);
                 hexPos += CHUNK_SIZE * 2;
                 const prg = Math.round((hexPos / globalPhotoHex.length) * 100);
@@ -1224,7 +1224,7 @@
                 document.getElementById('progress-percent').innerText = safePrg + '%';
             } else {
                 if (currentStep === "BG") {
-                    websocket.send("#MFB1$"); // Finalize BG
+                    websocket.send("M_SAVE:BG"); // Finalize BG
                 } else {
                     finalizeSave();
                 }
@@ -1248,12 +1248,12 @@
             const bg_spd = document.getElementById('bg-gif-speed').value;
             const bass_spd = document.getElementById('bass-gif-speed').value;
 
-            websocket.send("#MHGM$" + idx + "$" + bg_sel + "$" + bass + "$" + eq_type + "$" + eq_color + "$" + eq_effect + "$" + eq_peak + "$" + bg_mode + "$" + bg_spd + "$" + bass_spd);
+            websocket.send("M_META:" + idx + ":" + bg_sel + ":" + bass + ":" + eq_type + ":" + eq_color + ":" + eq_effect + ":" + eq_peak + ":" + bg_mode + ":" + bg_spd + ":" + bass_spd);
         }
 
         function finalizeSave() {
             const suffix = (currentStep === "BASS") ? ":1" : "";
-            websocket.send("#MBUM$" + currentMusicIdx + suffix);
+            websocket.send("M_SAVE:BASS" + suffix);
         }
 
         function triggerAutoSave() {
@@ -1585,7 +1585,7 @@
             closeEditorModal();
             document.getElementById('upload-modal').style.display = 'flex';
             document.getElementById('modal-title').innerText = "Processing & Saving...";
-            websocket.send("#MSTB$" + currentMusicIdx);
+            websocket.send("M_START:" + currentMusicIdx);
         }
 
         // =============================================
@@ -1599,14 +1599,14 @@
         }
         function startBgAnimUpload() {
             const idx = currentMusicIdx; animMusicQueue = buildQueue(bgGifFrames);
-            animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx);
+            animMusicPackets = animMusicQueue.length; websocket.send('M_ANIM:START:' + idx);
         }
         function startBassAnimUpload() {
             const idx = currentMusicIdx; animMusicQueue = buildQueue(bassGifFrames);
-            animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx + ':1');
+            animMusicPackets = animMusicQueue.length; websocket.send('M_ANIM:START:' + idx + ':1');
         }
         function finishSession() {
-            websocket.send("#M_FIN$");
+            websocket.send("M_FIN");
             document.getElementById('modal-title').innerText = 'Success!';
             setTimeout(() => { document.getElementById('upload-modal').style.display = 'none'; }, 800);
         }
@@ -1615,11 +1615,11 @@
             if (t === "BG" && bgEditorChanged) {
                 bgEditorChanged = false;
                 if (bgGifFrames.length > 0) startBgAnimUpload();
-                else websocket.send('#MABDEL$' + currentMusicIdx);
+                else websocket.send('M_ANIM:DEL:BG:' + currentMusicIdx);
             } else if (t === "BASS" && bassEditorChanged) {
                 bassEditorChanged = false;
                 if (bassGifFrames.length > 0) startBassAnimUpload();
-                else websocket.send('#MASSDEL$' + currentMusicIdx);
+                else websocket.send('M_ANIM:DEL:BASS:' + currentMusicIdx);
             } else finishSession();
         }
         function afterABSaveOK() { finishSession(); }
