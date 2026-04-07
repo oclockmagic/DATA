@@ -138,6 +138,17 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .selected-text {
+            color: #fff !important;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block !important;
+            min-width: 0;
+            font-size: 13px;
+        }
+
         .custom-options {
             position: absolute;
             top: calc(100% + 8px);
@@ -577,13 +588,13 @@
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="custom-select-wrapper" id="wrap-background" style="flex: 1;">
                     <div class="custom-select" id="sel-background">
-                        <span class="custom-select-trigger">
+                        <div class="custom-select-trigger">
                             <div class="selected-box">
                                 <img class="selected-img" src="" style="display: none;">
                                 <span class="selected-text">Loading...</span>
                             </div>
                             <div class="arrow"></div>
-                        </span>
+                        </div>
                         <div class="custom-options">
                             <input type="text" class="search-box" placeholder="Search..."
                                 onclick="event.stopPropagation()">
@@ -594,13 +605,13 @@
 
                 <div class="custom-select-wrapper" id="wrap-bg-ini" style="width: 100px;">
                     <div class="custom-select" id="sel-bg-ini">
-                        <span class="custom-select-trigger">
+                        <div class="custom-select-trigger">
                             <div class="selected-box">
                                 <img class="selected-img" src="" style="display: none;">
-                                <span class="selected-text" style="display:none;">...</span>
+                                <span class="selected-text">...</span>
                             </div>
                             <div class="arrow"></div>
-                        </span>
+                        </div>
                         <div class="custom-options">
                             <div class="options-container"></div>
                         </div>
@@ -638,13 +649,13 @@
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="custom-select-wrapper" id="wrap-bass" style="flex: 1;">
                     <div class="custom-select" id="sel-bass">
-                        <span class="custom-select-trigger">
+                        <div class="custom-select-trigger">
                             <div class="selected-box">
                                 <img class="selected-img" src="" style="display: none;">
                                 <span class="selected-text">Loading...</span>
                             </div>
                             <div class="arrow"></div>
-                        </span>
+                        </div>
                         <div class="custom-options">
                             <input type="text" class="search-box" placeholder="Search..."
                                 onclick="event.stopPropagation()">
@@ -686,13 +697,13 @@
             <div>
                 <span class="section-label" style="font-size: 9px;">Bar Type</span>
                 <div class="custom-select" id="sel-eq-type">
-                    <span class="custom-select-trigger">
+                    <div class="custom-select-trigger">
                         <div class="selected-box">
                             <img class="selected-img" src="" style="display: none;">
                             <span class="selected-text">...</span>
                         </div>
                         <div class="arrow"></div>
-                    </span>
+                    </div>
                     <div class="custom-options">
                         <div class="options-container"></div>
                     </div>
@@ -702,13 +713,13 @@
             <div>
                 <span class="section-label" style="font-size: 9px;">Effect</span>
                 <div class="custom-select" id="sel-eq-effect">
-                    <span class="custom-select-trigger">
+                    <div class="custom-select-trigger">
                         <div class="selected-box">
                             <img class="selected-img" src="" style="display: none;">
                             <span class="selected-text">...</span>
                         </div>
                         <div class="arrow"></div>
-                    </span>
+                    </div>
                     <div class="custom-options">
                         <div class="options-container"></div>
                     </div>
@@ -718,13 +729,13 @@
             <div>
                 <span class="section-label" style="font-size: 9px;">Color Theme</span>
                 <div class="custom-select" id="sel-eq-color">
-                    <span class="custom-select-trigger">
+                    <div class="custom-select-trigger">
                         <div class="selected-box">
                             <img class="selected-img" src="" style="display: none;">
                             <span class="selected-text">...</span>
                         </div>
                         <div class="arrow"></div>
-                    </span>
+                    </div>
                     <div class="custom-options">
                         <div class="options-container"></div>
                     </div>
@@ -734,13 +745,13 @@
             <div>
                 <span class="section-label" style="font-size: 9px;">Peak Style</span>
                 <div class="custom-select" id="sel-eq-peak">
-                    <span class="custom-select-trigger">
+                    <div class="custom-select-trigger">
                         <div class="selected-box">
                             <img class="selected-img" src="" style="display: none;">
                             <span class="selected-text">...</span>
                         </div>
                         <div class="arrow"></div>
-                    </span>
+                    </div>
                     <div class="custom-options">
                         <div class="options-container"></div>
                     </div>
@@ -881,7 +892,7 @@
                     opt.className = 'custom-option';
 
                     const imgTag = name && name.toLowerCase().endsWith('.png') ? `<img src="${imgUrl}">` : '';
-                    opt.innerHTML = `${imgTag}<span>${displayName}</span>`;
+                    opt.innerHTML = `${imgTag}<span class="option-text">${displayName}</span>`;
                     opt.setAttribute('data-index', idx);
 
                     opt.onclick = () => {
@@ -1134,13 +1145,13 @@
                         updateUIComponent('sel-eq-effect', parts[6]);
                         updateUIComponent('sel-eq-peak', parts[7]);
                         updateUIComponent('sel-bg-ini', parts[8]);
-                        
+
                         const bgSpd = document.getElementById('bg-gif-speed');
                         if (bgSpd) { bgSpd.value = parts[9]; document.getElementById('bg-gif-speed-val').innerText = parts[9]; }
-                        
+
                         const bassSpd = document.getElementById('bass-gif-speed');
                         if (bassSpd) { bassSpd.value = parts[10]; document.getElementById('bass-gif-speed-val').innerText = parts[10]; }
-                        
+
                         console.log("UI Update finished for Music Metadata.");
                     } else {
                         console.error("M_DATA packet too short:", parts.length);
@@ -1270,27 +1281,31 @@
             const el = document.getElementById(id);
             if (!el) { console.warn("Component not found:", id); return; }
             el.setAttribute('data-index', val);
-            const item = Array.from(el.querySelectorAll('.custom-option')).find(i => i.getAttribute('data-index') == val);
-            if (item) {
-                const textSpan = item.querySelector('span');
-                if (textSpan) {
-                    const selText = el.querySelector('.selected-text');
-                    if (selText) selText.innerText = textSpan.innerText;
-                }
-                const imgTag = item.querySelector('img');
-                const selImg = el.querySelector('.selected-img');
-                if (imgTag && selImg) {
-                    selImg.src = imgTag.src;
-                    selImg.style.display = 'block';
-                } else if (selImg) {
-                    selImg.style.display = 'none';
-                }
-                if (id === 'sel-bg-ini') updateBgUploadState(val);
-                if (id === 'sel-bass') updateBassUploadState(val);
-                console.log(`Updated ${id} to index ${val} (${textSpan ? textSpan.innerText : 'no text'})`);
-            } else {
-                console.warn(`Item with index ${val} NOT FOUND in ${id}`);
+
+            // Find config entry for this id to get the data path
+            const cfg = CONFIG.find(c => c.id === id);
+            const dataPath = cfg ? cfg.path : null;
+            const dataArr = dataPath ? (DATA[dataPath] || []) : [];
+            const idx = parseInt(val);
+            const fileName = (idx >= 0 && idx < dataArr.length) ? dataArr[idx] : null;
+            const displayName = fileName ? fileName.replace(/\.[^/.]+$/, '') : '';
+
+            // Update selected text from DATA array (reliable, doesn't depend on DOM render state)
+            const selText = el.querySelector('.selected-text');
+            if (selText && displayName !== '') selText.textContent = displayName;
+
+            // Update selected image
+            const selImg = el.querySelector('.selected-img');
+            if (selImg && fileName && fileName.toLowerCase().endsWith('.png')) {
+                selImg.src = RAW_BASE + dataPath + '/' + fileName;
+                selImg.style.display = 'block';
+            } else if (selImg) {
+                selImg.style.display = 'none';
             }
+
+            if (id === 'sel-bg-ini') updateBgUploadState(val);
+            if (id === 'sel-bass') updateBassUploadState(val);
+            console.log(`Updated ${id} to index ${val} (${displayName || 'N/A'})`);
         }
 
         CONFIG.forEach(initCombobox);
@@ -1355,7 +1370,7 @@
         function editorSetupCroppr(source, onReady) {
             // Đảm bảo Modal phải hiện lên trước để lấy được kích thước chính xác
             document.getElementById('img-editor-modal').style.display = 'flex';
-            
+
             if (editorCroppr) {
                 try { editorCroppr.destroy(); } catch (e) { console.error("Crop destroy error:", e); }
                 editorCroppr = null;
@@ -1418,7 +1433,7 @@
                         for (let i = 0; i < numFrames; i++) {
                             const fi = gifReader.frameInfo(i);
                             gifReader.decodeAndBlitFrameRGBA(i, cumBuf);
-                            
+
                             if ((i % step === 0 || i === numFrames - 1) && editorGifFrames.length < maxFrames) {
                                 editorGifFrames.push({
                                     width: gifReader.width,
