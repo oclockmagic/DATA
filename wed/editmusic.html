@@ -1200,7 +1200,7 @@
                 currentStep = "BASS";
                 globalPhotoHex = getRGB565Hex(bassCanvas, 44, 44);
                 hexPos = 0;
-                websocket.send("#MRE2$");
+                websocket.send("M_RES:BASS");
             } else {
                 handleStepBass_Done();
             }
