@@ -891,7 +891,7 @@
                     opt.className = 'custom-option';
 
                     const imgTag = name && name.toLowerCase().endsWith('.png') ? `<img src="${imgUrl}">` : '';
-                    opt.innerHTML = `${imgTag}<span>${displayName}</span>`;
+                    opt.innerHTML = `${imgTag}<span class="option-text">${displayName}</span>`;
                     opt.setAttribute('data-index', idx);
 
                     opt.onclick = () => {
@@ -1282,7 +1282,7 @@
             el.setAttribute('data-index', val);
             const item = Array.from(el.querySelectorAll('.custom-option')).find(i => i.getAttribute('data-index') == val);
             if (item) {
-                const textSpan = item.querySelector('span');
+                const textSpan = item.querySelector('.option-text') || item.querySelector('span');
                 if (textSpan) {
                     const selText = el.querySelector('.selected-text');
                     if (selText) selText.innerText = textSpan.innerText;
