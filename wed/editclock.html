@@ -1298,6 +1298,20 @@
                 websocket.send("#ASTB$" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
             }
 
+            function sendQuote() {
+                const qIdx = document.getElementById('quote_idx').value;
+                if (websocket && websocket.readyState === 1) {
+                    websocket.send("#CQOT$" + qIdx);
+                }
+            }
+
+            function sendSpeed() {
+                const speed = document.getElementById('speed').value;
+                if (websocket && websocket.readyState === 1) {
+                    websocket.send("#CSPD$" + speed);
+                }
+            }
+
             function initWebSocket() {
                 if (websocket && (websocket.readyState === WebSocket.CONNECTING || websocket.readyState === WebSocket.OPEN)) return;
                 websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
