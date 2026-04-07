@@ -52,6 +52,7 @@
             margin-bottom: 20px;
             background: linear-gradient(to right, #BA68C8, #4FC3F7);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 600;
             letter-spacing: 1px;
@@ -161,10 +162,10 @@
 </div>
 
 <script>
-    function upbutton0() { window.open("/clock.html", "_self"); }
-    function upbutton1() { window.open("/music.html", "_self"); }
-    function upbutton2() { window.open("/binance","_self"); }  
-    function upbutton3() { window.open("/setsys","_self"); }  
+    function upbutton0() { window.open("/clock.html?v=" + Date.now(), "_self"); }
+    function upbutton1() { window.open("/music.html?v=" + Date.now(), "_self"); }
+    function upbutton2() { window.open("/binance?v=" + Date.now(), "_self"); }  
+    function upbutton3() { window.open("/setsys?v=" + Date.now(), "_self"); }  
 </script>
 </body>
 </html>
