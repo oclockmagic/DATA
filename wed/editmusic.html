@@ -1145,13 +1145,13 @@
                         updateUIComponent('sel-eq-effect', parts[6]);
                         updateUIComponent('sel-eq-peak', parts[7]);
                         updateUIComponent('sel-bg-ini', parts[8]);
-                        
+
                         const bgSpd = document.getElementById('bg-gif-speed');
                         if (bgSpd) { bgSpd.value = parts[9]; document.getElementById('bg-gif-speed-val').innerText = parts[9]; }
-                        
+
                         const bassSpd = document.getElementById('bass-gif-speed');
                         if (bassSpd) { bassSpd.value = parts[10]; document.getElementById('bass-gif-speed-val').innerText = parts[10]; }
-                        
+
                         console.log("UI Update finished for Music Metadata.");
                     } else {
                         console.error("M_DATA packet too short:", parts.length);
@@ -1366,7 +1366,7 @@
         function editorSetupCroppr(source, onReady) {
             // Đảm bảo Modal phải hiện lên trước để lấy được kích thước chính xác
             document.getElementById('img-editor-modal').style.display = 'flex';
-            
+
             if (editorCroppr) {
                 try { editorCroppr.destroy(); } catch (e) { console.error("Crop destroy error:", e); }
                 editorCroppr = null;
@@ -1429,7 +1429,7 @@
                         for (let i = 0; i < numFrames; i++) {
                             const fi = gifReader.frameInfo(i);
                             gifReader.decodeAndBlitFrameRGBA(i, cumBuf);
-                            
+
                             if ((i % step === 0 || i === numFrames - 1) && editorGifFrames.length < maxFrames) {
                                 editorGifFrames.push({
                                     width: gifReader.width,
