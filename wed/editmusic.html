@@ -1605,11 +1605,11 @@
             const idx = currentMusicIdx; animMusicQueue = buildQueue(bassGifFrames);
             animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx + ':1');
         }
-        function finishSession() {
+        function finishSession(savedTarget) {
             websocket.send("#M_FIN$");
             document.getElementById('modal-title').innerText = 'Success!';
-            bgEditorChanged = false;
-            bassEditorChanged = false;
+            if (savedTarget === "BG") bgEditorChanged = false;
+            if (savedTarget === "BASS") bassEditorChanged = false;
             closeEditorModal(); // Turning off the crop form
             setTimeout(() => { 
                 document.getElementById('upload-modal').style.display = 'none';
@@ -1625,9 +1625,12 @@
                 bassEditorChanged = false;
                 if (bassGifFrames.length > 0) startBassAnimUpload();
                 else websocket.send('#MASSDEL$' + currentMusicIdx);
-            } else finishSession();
+            } else finishSession(t);
         }
-        function afterABSaveOK() { finishSession(); }
+        function afterABSaveOK() { 
+            // In AB Save, we usually finish everything
+            finishSession(bgEditorChanged ? "BG" : (bassEditorChanged ? "BASS" : "")); 
+        }
 
         // Speed Sliders
         (function () {
