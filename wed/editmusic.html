@@ -1281,27 +1281,31 @@
             const el = document.getElementById(id);
             if (!el) { console.warn("Component not found:", id); return; }
             el.setAttribute('data-index', val);
-            const item = Array.from(el.querySelectorAll('.custom-option')).find(i => i.getAttribute('data-index') == val);
-            if (item) {
-                const textSpan = item.querySelector('.option-text') || item.querySelector('span');
-                if (textSpan) {
-                    const selText = el.querySelector('.selected-text');
-                    if (selText) selText.innerText = textSpan.innerText;
-                }
-                const imgTag = item.querySelector('img');
-                const selImg = el.querySelector('.selected-img');
-                if (imgTag && selImg) {
-                    selImg.src = imgTag.src;
-                    selImg.style.display = 'block';
-                } else if (selImg) {
-                    selImg.style.display = 'none';
-                }
-                if (id === 'sel-bg-ini') updateBgUploadState(val);
-                if (id === 'sel-bass') updateBassUploadState(val);
-                console.log(`Updated ${id} to index ${val} (${textSpan ? textSpan.innerText : 'no text'})`);
-            } else {
-                console.warn(`Item with index ${val} NOT FOUND in ${id}`);
+
+            // Find config entry for this id to get the data path
+            const cfg = CONFIG.find(c => c.id === id);
+            const dataPath = cfg ? cfg.path : null;
+            const dataArr = dataPath ? (DATA[dataPath] || []) : [];
+            const idx = parseInt(val);
+            const fileName = (idx >= 0 && idx < dataArr.length) ? dataArr[idx] : null;
+            const displayName = fileName ? fileName.replace(/\.[^/.]+$/, '') : '';
+
+            // Update selected text from DATA array (reliable, doesn't depend on DOM render state)
+            const selText = el.querySelector('.selected-text');
+            if (selText && displayName !== '') selText.textContent = displayName;
+
+            // Update selected image
+            const selImg = el.querySelector('.selected-img');
+            if (selImg && fileName && fileName.toLowerCase().endsWith('.png')) {
+                selImg.src = RAW_BASE + dataPath + '/' + fileName;
+                selImg.style.display = 'block';
+            } else if (selImg) {
+                selImg.style.display = 'none';
             }
+
+            if (id === 'sel-bg-ini') updateBgUploadState(val);
+            if (id === 'sel-bass') updateBassUploadState(val);
+            console.log(`Updated ${id} to index ${val} (${displayName || 'N/A'})`);
         }
 
         CONFIG.forEach(initCombobox);
