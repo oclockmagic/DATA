@@ -748,7 +748,7 @@
             </div>
         </div>
         <hr>
-        <button id="btn-save-main" class="btn btn-primary" style="flex: 1; width: 100%;">SAVE</button>
+        <button id="btn-back" class="btn btn-secondary" style="flex: 1; width: 100%;">BACK</button>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
 
@@ -1646,6 +1646,21 @@
                 document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
             }
         };
+        function goBackWithReferrer() {
+            const ref = document.referrer;
+            if (ref) {
+                try {
+                    const url = new URL(ref);
+                    url.searchParams.set('v', Date.now());
+                    window.location.href = url.toString();
+                } catch (e) {
+                    window.location.href = '/music.html?v=' + Date.now();
+                }
+            } else {
+                window.location.href = '/music.html?v=' + Date.now();
+            }
+        }
+        document.getElementById('btn-back').onclick = goBackWithReferrer;
     </script>
 </body>
 
