@@ -1134,13 +1134,13 @@
                         updateUIComponent('sel-eq-effect', parts[6]);
                         updateUIComponent('sel-eq-peak', parts[7]);
                         updateUIComponent('sel-bg-ini', parts[8]);
-                        
+
                         const bgSpd = document.getElementById('bg-gif-speed');
                         if (bgSpd) { bgSpd.value = parts[9]; document.getElementById('bg-gif-speed-val').innerText = parts[9]; }
-                        
+
                         const bassSpd = document.getElementById('bass-gif-speed');
                         if (bassSpd) { bassSpd.value = parts[10]; document.getElementById('bass-gif-speed-val').innerText = parts[10]; }
-                        
+
                         console.log("UI Update finished for Music Metadata.");
                     } else {
                         console.error("M_DATA packet too short:", parts.length);
@@ -1355,7 +1355,7 @@
         function editorSetupCroppr(source, onReady) {
             // Đảm bảo Modal phải hiện lên trước để lấy được kích thước chính xác
             document.getElementById('img-editor-modal').style.display = 'flex';
-            
+
             if (editorCroppr) {
                 try { editorCroppr.destroy(); } catch (e) { console.error("Crop destroy error:", e); }
                 editorCroppr = null;
@@ -1418,7 +1418,7 @@
                         for (let i = 0; i < numFrames; i++) {
                             const fi = gifReader.frameInfo(i);
                             gifReader.decodeAndBlitFrameRGBA(i, cumBuf);
-                            
+
                             if ((i % step === 0 || i === numFrames - 1) && editorGifFrames.length < maxFrames) {
                                 editorGifFrames.push({
                                     width: gifReader.width,
@@ -1582,7 +1582,7 @@
                     document.getElementById('bass-hint').style.display = 'none';
                 }
             }
-            // closeEditorModal(); // Cắt bỏ: Đợi cho đến khi M_SAVEOK mới đóng
+            closeEditorModal();
             document.getElementById('upload-modal').style.display = 'flex';
             document.getElementById('modal-title').innerText = "Processing & Saving...";
             websocket.send("#MSTB$" + currentMusicIdx);
@@ -1605,15 +1605,10 @@
             const idx = currentMusicIdx; animMusicQueue = buildQueue(bassGifFrames);
             animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx + ':1');
         }
-        function finishSession(savedTarget) {
+        function finishSession() {
             websocket.send("#M_FIN$");
             document.getElementById('modal-title').innerText = 'Success!';
-            if (savedTarget === "BG") bgEditorChanged = false;
-            if (savedTarget === "BASS") bassEditorChanged = false;
-            closeEditorModal(); // Turning off the crop form
-            setTimeout(() => { 
-                document.getElementById('upload-modal').style.display = 'none';
-            }, 1000);
+            setTimeout(() => { document.getElementById('upload-modal').style.display = 'none'; }, 800);
         }
         function afterMSaveOK() {
             const t = lastEditorTarget; lastEditorTarget = "";
@@ -1625,12 +1620,9 @@
                 bassEditorChanged = false;
                 if (bassGifFrames.length > 0) startBassAnimUpload();
                 else websocket.send('#MASSDEL$' + currentMusicIdx);
-            } else finishSession(t);
+            } else finishSession();
         }
-        function afterABSaveOK() { 
-            // In AB Save, we usually finish everything
-            finishSession(bgEditorChanged ? "BG" : (bassEditorChanged ? "BASS" : "")); 
-        }
+        function afterABSaveOK() { finishSession(); }
 
         // Speed Sliders
         (function () {
