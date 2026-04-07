@@ -483,10 +483,14 @@
                 <div style="margin-top: 10px;">
                     <label>Time & Date</label>
                     <div class="flex-row">
-                        <div class="flex-column"><label>Hour</label><input type="number" id='gio' min="0" max="23"></div>
-                        <div class="flex-column"><label>Min</label><input type="number" id='phut' min="0" max="59"></div>
-                        <div class="flex-column"><label>Day</label><input type="number" id='ngay' min="1" max="31"></div>
-                        <div class="flex-column"><label>Month</label><input type="number" id='thang' min="1" max="12"></div>
+                        <div class="flex-column"><label>Hour</label><input type="number" id='gio' min="0" max="23">
+                        </div>
+                        <div class="flex-column"><label>Min</label><input type="number" id='phut' min="0" max="59">
+                        </div>
+                        <div class="flex-column"><label>Day</label><input type="number" id='ngay' min="1" max="31">
+                        </div>
+                        <div class="flex-column"><label>Month</label><input type="number" id='thang' min="1" max="12">
+                        </div>
                     </div>
                 </div>
                 <div class="flex-column" style="margin-top: 10px; margin-bottom: 20px;">
@@ -657,7 +661,8 @@
                 </div>
             </div>
 
-            <div id="section-meta-save" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: none;">
+            <div id="section-meta-save"
+                style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: none;">
                 <button class="btn btn-primary" id="btn-save-meta-only"
                     style="width: 100%; height: 36px; font-size: 10px;">
                     SAVE META ONLY
@@ -665,822 +670,822 @@
             </div>
         </div>
 
-            <div id="section-image-params" style="display: none;">
-                <input type="number" id="pos-x" value="0">
-                <input type="number" id="pos-y" value="0">
-                <input type="number" id="pos-w" value="64">
-                <input type="number" id="pos-h" value="64">
-            </div>
-            <hr>
-            <div class="flex-row">
-                <button class="btn btn-secondary" id="btn-back" style="width: 100%;">BACK</button>
-            </div>
-
-            <div class="status-tag" id="ws-status">Disconnected</div>
+        <div id="section-image-params" style="display: none;">
+            <input type="number" id="pos-x" value="0">
+            <input type="number" id="pos-y" value="0">
+            <input type="number" id="pos-w" value="64">
+            <input type="number" id="pos-h" value="64">
+        </div>
+        <hr>
+        <div class="flex-row">
+            <button class="btn btn-secondary" id="btn-back" style="width: 100%;">BACK</button>
         </div>
 
-        <div id="upload-modal" class="modal">
-            <div class="modal-content">
-                <h3 id="modal-title">Uploading...</h3>
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                </div>
-                <div id="progress-percent" style="font-size: 14px; color: var(--primary);">0%</div>
+        <div class="status-tag" id="ws-status">Disconnected</div>
+    </div>
+
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Uploading...</h3>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
             </div>
+            <div id="progress-percent" style="font-size: 14px; color: var(--primary);">0%</div>
         </div>
+    </div>
 
-        <script>
-            /**
-             * Minified by jsDelivr using Terser v5.37.0.
-             * Original file: /npm/omggif@1.0.10/omggif.js
-             *
-             * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
-             */
-            "use strict"; function GifWriter(r, e, t, n) { var i = 0, a = void 0 === (n = void 0 === n ? {} : n).loop ? null : n.loop, o = void 0 === n.palette ? null : n.palette; if (e <= 0 || t <= 0 || e > 65535 || t > 65535) throw new Error("Width/Height invalid."); function f(r) { var e = r.length; if (e < 2 || e > 256 || e & e - 1) throw new Error("Invalid code/color length, must be power of 2 and 2 .. 256."); return e } r[i++] = 71, r[i++] = 73, r[i++] = 70, r[i++] = 56, r[i++] = 57, r[i++] = 97; var l = 0, u = 0; if (null !== o) { for (var h = f(o); h >>= 1;)++l; if (h = 1 << l, --l, void 0 !== n.background) { if ((u = n.background) >= h) throw new Error("Background index out of range."); if (0 === u) throw new Error("Background index explicitly passed as 0.") } } if (r[i++] = 255 & e, r[i++] = e >> 8 & 255, r[i++] = 255 & t, r[i++] = t >> 8 & 255, r[i++] = (null !== o ? 128 : 0) | l, r[i++] = u, r[i++] = 0, null !== o) for (var d = 0, s = o.length; d < s; ++d) { var v = o[d]; r[i++] = v >> 16 & 255, r[i++] = v >> 8 & 255, r[i++] = 255 & v } if (null !== a) { if (a < 0 || a > 65535) throw new Error("Loop count invalid."); r[i++] = 33, r[i++] = 255, r[i++] = 11, r[i++] = 78, r[i++] = 69, r[i++] = 84, r[i++] = 83, r[i++] = 67, r[i++] = 65, r[i++] = 80, r[i++] = 69, r[i++] = 50, r[i++] = 46, r[i++] = 48, r[i++] = 3, r[i++] = 1, r[i++] = 255 & a, r[i++] = a >> 8 & 255, r[i++] = 0 } var c = !1; this.addFrame = function (e, t, n, a, l, u) { if (!0 === c && (--i, c = !1), u = void 0 === u ? {} : u, e < 0 || t < 0 || e > 65535 || t > 65535) throw new Error("x/y invalid."); if (n <= 0 || a <= 0 || n > 65535 || a > 65535) throw new Error("Width/Height invalid."); if (l.length < n * a) throw new Error("Not enough pixels for the frame size."); var h = !0, d = u.palette; if (null == d && (h = !1, d = o), null == d) throw new Error("Must supply either a local or global palette."); for (var s = f(d), v = 0; s >>= 1;)++v; s = 1 << v; var w = void 0 === u.delay ? 0 : u.delay, p = void 0 === u.disposal ? 0 : u.disposal; if (p < 0 || p > 3) throw new Error("Disposal out of range."); var g = !1, x = 0; if (void 0 !== u.transparent && null !== u.transparent && (g = !0, (x = u.transparent) < 0 || x >= s)) throw new Error("Transparent color index."); if ((0 !== p || g || 0 !== w) && (r[i++] = 33, r[i++] = 249, r[i++] = 4, r[i++] = p << 2 | (!0 === g ? 1 : 0), r[i++] = 255 & w, r[i++] = w >> 8 & 255, r[i++] = x, r[i++] = 0), r[i++] = 44, r[i++] = 255 & e, r[i++] = e >> 8 & 255, r[i++] = 255 & t, r[i++] = t >> 8 & 255, r[i++] = 255 & n, r[i++] = n >> 8 & 255, r[i++] = 255 & a, r[i++] = a >> 8 & 255, r[i++] = !0 === h ? 128 | v - 1 : 0, !0 === h) for (var k = 0, b = d.length; k < b; ++k) { var E = d[k]; r[i++] = E >> 16 & 255, r[i++] = E >> 8 & 255, r[i++] = 255 & E } return i = GifWriterOutputLZWCodeStream(r, i, v < 2 ? 2 : v, l) }, this.end = function () { return !1 === c && (r[i++] = 59, c = !0), i }, this.getOutputBuffer = function () { return r }, this.setOutputBuffer = function (e) { r = e }, this.getOutputBufferPosition = function () { return i }, this.setOutputBufferPosition = function (r) { i = r } } function GifWriterOutputLZWCodeStream(r, e, t, n) { r[e++] = t; var i = e++, a = 1 << t, o = a - 1, f = a + 1, l = f + 1, u = t + 1, h = 0, d = 0; function s(t) { for (; h >= t;)r[e++] = 255 & d, d >>= 8, h -= 8, e === i + 256 && (r[i] = 255, i = e++) } function v(r) { d |= r << h, h += u, s(8) } var c = n[0] & o, w = {}; v(a); for (var p = 1, g = n.length; p < g; ++p) { var x = n[p] & o, k = c << 8 | x, b = w[k]; if (void 0 === b) { for (d |= c << h, h += u; h >= 8;)r[e++] = 255 & d, d >>= 8, h -= 8, e === i + 256 && (r[i] = 255, i = e++); 4096 === l ? (v(a), l = f + 1, u = t + 1, w = {}) : (l >= 1 << u && ++u, w[k] = l++), c = x } else c = b } return v(c), v(f), s(1), i + 1 === e ? r[i] = 0 : (r[i] = e - i - 1, r[e++] = 0), e } function GifReader(r) { var e = 0; if (71 !== r[e++] || 73 !== r[e++] || 70 !== r[e++] || 56 !== r[e++] || 56 != (r[e++] + 1 & 253) || 97 !== r[e++]) throw new Error("Invalid GIF 87a/89a header."); var t = r[e++] | r[e++] << 8, n = r[e++] | r[e++] << 8, i = r[e++], a = i >> 7, o = 1 << (7 & i) + 1; r[e++]; r[e++]; var f = null, l = null; a && (f = e, l = o, e += 3 * o); var u = !0, h = [], d = 0, s = null, v = 0, c = null; for (this.width = t, this.height = n; u && e < r.length;)switch (r[e++]) { case 33: switch (r[e++]) { case 255: if (11 !== r[e] || 78 == r[e + 1] && 69 == r[e + 2] && 84 == r[e + 3] && 83 == r[e + 4] && 67 == r[e + 5] && 65 == r[e + 6] && 80 == r[e + 7] && 69 == r[e + 8] && 50 == r[e + 9] && 46 == r[e + 10] && 48 == r[e + 11] && 3 == r[e + 12] && 1 == r[e + 13] && 0 == r[e + 16]) e += 14, c = r[e++] | r[e++] << 8, e++; else for (e += 12; ;) { if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } break; case 249: if (4 !== r[e++] || 0 !== r[e + 4]) throw new Error("Invalid graphics extension block."); var w = r[e++]; d = r[e++] | r[e++] << 8, s = r[e++], 1 & w || (s = null), v = w >> 2 & 7, e++; break; case 254: for (; ;) { if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } break; default: throw new Error("Unknown graphic control label: 0x" + r[e - 1].toString(16)) }break; case 44: var p = r[e++] | r[e++] << 8, g = r[e++] | r[e++] << 8, x = r[e++] | r[e++] << 8, k = r[e++] | r[e++] << 8, b = r[e++], E = b >> 6 & 1, m = 1 << (7 & b) + 1, y = f, G = l, I = !1; if (b >> 7) { I = !0; y = e, G = m, e += 3 * m } var W = e; for (e++; ;) { var _; if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } h.push({ x: p, y: g, width: x, height: k, has_local_palette: I, palette_offset: y, palette_size: G, data_offset: W, data_length: e - W, transparent_index: s, interlaced: !!E, delay: d, disposal: v }); break; case 59: u = !1; break; default: throw new Error("Unknown gif block: 0x" + r[e - 1].toString(16)) }this.numFrames = function () { return h.length }, this.loopCount = function () { return c }, this.frameInfo = function (r) { if (r < 0 || r >= h.length) throw new Error("Frame index out of range."); return h[r] }, this.decodeAndBlitFrameBGRA = function (e, n) { var i = this.frameInfo(e), a = i.width * i.height, o = new Uint8Array(a); GifReaderLZWOutputIndexStream(r, i.data_offset, o, a); var f = i.palette_offset, l = i.transparent_index; null === l && (l = 256); var u = i.width, h = t - u, d = u, s = 4 * (i.y * t + i.x), v = 4 * ((i.y + i.height) * t + i.x), c = s, w = 4 * h; !0 === i.interlaced && (w += 4 * t * 7); for (var p = 8, g = 0, x = o.length; g < x; ++g) { var k = o[g]; if (0 === d && (d = u, (c += w) >= v && (w = 4 * h + 4 * t * (p - 1), c = s + (u + h) * (p << 1), p >>= 1)), k === l) c += 4; else { var b = r[f + 3 * k], E = r[f + 3 * k + 1], m = r[f + 3 * k + 2]; n[c++] = m, n[c++] = E, n[c++] = b, n[c++] = 255 } --d } }, this.decodeAndBlitFrameRGBA = function (e, n) { var i = this.frameInfo(e), a = i.width * i.height, o = new Uint8Array(a); GifReaderLZWOutputIndexStream(r, i.data_offset, o, a); var f = i.palette_offset, l = i.transparent_index; null === l && (l = 256); var u = i.width, h = t - u, d = u, s = 4 * (i.y * t + i.x), v = 4 * ((i.y + i.height) * t + i.x), c = s, w = 4 * h; !0 === i.interlaced && (w += 4 * t * 7); for (var p = 8, g = 0, x = o.length; g < x; ++g) { var k = o[g]; if (0 === d && (d = u, (c += w) >= v && (w = 4 * h + 4 * t * (p - 1), c = s + (u + h) * (p << 1), p >>= 1)), k === l) c += 4; else { var b = r[f + 3 * k], E = r[f + 3 * k + 1], m = r[f + 3 * k + 2]; n[c++] = b, n[c++] = E, n[c++] = m, n[c++] = 255 } --d } } } function GifReaderLZWOutputIndexStream(r, e, t, n) { for (var i = r[e++], a = 1 << i, o = a + 1, f = o + 1, l = i + 1, u = (1 << l) - 1, h = 0, d = 0, s = 0, v = r[e++], c = new Int32Array(4096), w = null; ;) { for (; h < 16 && 0 !== v;)d |= r[e++] << h, h += 8, 1 === v ? v = r[e++] : --v; if (h < l) break; var p = d & u; if (d >>= l, h -= l, p !== a) { if (p === o) break; for (var g = p < f ? p : w, x = 0, k = g; k > a;)k = c[k] >> 8, ++x; var b = k; if (s + x + (g !== p ? 1 : 0) > n) return void console.log("Warning, gif stream longer than expected."); t[s++] = b; var E = s += x; for (g !== p && (t[s++] = b), k = g; x--;)k = c[k], t[--E] = 255 & k, k >>= 8; null !== w && f < 4096 && (c[f++] = w << 8 | b, f >= u + 1 && l < 12 && (++l, u = u << 1 | 1)), w = p } else f = o + 1, u = (1 << (l = i + 1)) - 1, w = null } return s !== n && console.log("Warning, gif stream shorter than expected."), t } try { exports.GifWriter = GifWriter, exports.GifReader = GifReader } catch (r) { }
-            //# sourceMappingURL=/sm/64893916a2a295923f98fd9d9dec5e1494eb2e1a2221bfae4e48498c0156bdcb.map
+    <script>
+        /**
+         * Minified by jsDelivr using Terser v5.37.0.
+         * Original file: /npm/omggif@1.0.10/omggif.js
+         *
+         * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+         */
+        "use strict"; function GifWriter(r, e, t, n) { var i = 0, a = void 0 === (n = void 0 === n ? {} : n).loop ? null : n.loop, o = void 0 === n.palette ? null : n.palette; if (e <= 0 || t <= 0 || e > 65535 || t > 65535) throw new Error("Width/Height invalid."); function f(r) { var e = r.length; if (e < 2 || e > 256 || e & e - 1) throw new Error("Invalid code/color length, must be power of 2 and 2 .. 256."); return e } r[i++] = 71, r[i++] = 73, r[i++] = 70, r[i++] = 56, r[i++] = 57, r[i++] = 97; var l = 0, u = 0; if (null !== o) { for (var h = f(o); h >>= 1;)++l; if (h = 1 << l, --l, void 0 !== n.background) { if ((u = n.background) >= h) throw new Error("Background index out of range."); if (0 === u) throw new Error("Background index explicitly passed as 0.") } } if (r[i++] = 255 & e, r[i++] = e >> 8 & 255, r[i++] = 255 & t, r[i++] = t >> 8 & 255, r[i++] = (null !== o ? 128 : 0) | l, r[i++] = u, r[i++] = 0, null !== o) for (var d = 0, s = o.length; d < s; ++d) { var v = o[d]; r[i++] = v >> 16 & 255, r[i++] = v >> 8 & 255, r[i++] = 255 & v } if (null !== a) { if (a < 0 || a > 65535) throw new Error("Loop count invalid."); r[i++] = 33, r[i++] = 255, r[i++] = 11, r[i++] = 78, r[i++] = 69, r[i++] = 84, r[i++] = 83, r[i++] = 67, r[i++] = 65, r[i++] = 80, r[i++] = 69, r[i++] = 50, r[i++] = 46, r[i++] = 48, r[i++] = 3, r[i++] = 1, r[i++] = 255 & a, r[i++] = a >> 8 & 255, r[i++] = 0 } var c = !1; this.addFrame = function (e, t, n, a, l, u) { if (!0 === c && (--i, c = !1), u = void 0 === u ? {} : u, e < 0 || t < 0 || e > 65535 || t > 65535) throw new Error("x/y invalid."); if (n <= 0 || a <= 0 || n > 65535 || a > 65535) throw new Error("Width/Height invalid."); if (l.length < n * a) throw new Error("Not enough pixels for the frame size."); var h = !0, d = u.palette; if (null == d && (h = !1, d = o), null == d) throw new Error("Must supply either a local or global palette."); for (var s = f(d), v = 0; s >>= 1;)++v; s = 1 << v; var w = void 0 === u.delay ? 0 : u.delay, p = void 0 === u.disposal ? 0 : u.disposal; if (p < 0 || p > 3) throw new Error("Disposal out of range."); var g = !1, x = 0; if (void 0 !== u.transparent && null !== u.transparent && (g = !0, (x = u.transparent) < 0 || x >= s)) throw new Error("Transparent color index."); if ((0 !== p || g || 0 !== w) && (r[i++] = 33, r[i++] = 249, r[i++] = 4, r[i++] = p << 2 | (!0 === g ? 1 : 0), r[i++] = 255 & w, r[i++] = w >> 8 & 255, r[i++] = x, r[i++] = 0), r[i++] = 44, r[i++] = 255 & e, r[i++] = e >> 8 & 255, r[i++] = 255 & t, r[i++] = t >> 8 & 255, r[i++] = 255 & n, r[i++] = n >> 8 & 255, r[i++] = 255 & a, r[i++] = a >> 8 & 255, r[i++] = !0 === h ? 128 | v - 1 : 0, !0 === h) for (var k = 0, b = d.length; k < b; ++k) { var E = d[k]; r[i++] = E >> 16 & 255, r[i++] = E >> 8 & 255, r[i++] = 255 & E } return i = GifWriterOutputLZWCodeStream(r, i, v < 2 ? 2 : v, l) }, this.end = function () { return !1 === c && (r[i++] = 59, c = !0), i }, this.getOutputBuffer = function () { return r }, this.setOutputBuffer = function (e) { r = e }, this.getOutputBufferPosition = function () { return i }, this.setOutputBufferPosition = function (r) { i = r } } function GifWriterOutputLZWCodeStream(r, e, t, n) { r[e++] = t; var i = e++, a = 1 << t, o = a - 1, f = a + 1, l = f + 1, u = t + 1, h = 0, d = 0; function s(t) { for (; h >= t;)r[e++] = 255 & d, d >>= 8, h -= 8, e === i + 256 && (r[i] = 255, i = e++) } function v(r) { d |= r << h, h += u, s(8) } var c = n[0] & o, w = {}; v(a); for (var p = 1, g = n.length; p < g; ++p) { var x = n[p] & o, k = c << 8 | x, b = w[k]; if (void 0 === b) { for (d |= c << h, h += u; h >= 8;)r[e++] = 255 & d, d >>= 8, h -= 8, e === i + 256 && (r[i] = 255, i = e++); 4096 === l ? (v(a), l = f + 1, u = t + 1, w = {}) : (l >= 1 << u && ++u, w[k] = l++), c = x } else c = b } return v(c), v(f), s(1), i + 1 === e ? r[i] = 0 : (r[i] = e - i - 1, r[e++] = 0), e } function GifReader(r) { var e = 0; if (71 !== r[e++] || 73 !== r[e++] || 70 !== r[e++] || 56 !== r[e++] || 56 != (r[e++] + 1 & 253) || 97 !== r[e++]) throw new Error("Invalid GIF 87a/89a header."); var t = r[e++] | r[e++] << 8, n = r[e++] | r[e++] << 8, i = r[e++], a = i >> 7, o = 1 << (7 & i) + 1; r[e++]; r[e++]; var f = null, l = null; a && (f = e, l = o, e += 3 * o); var u = !0, h = [], d = 0, s = null, v = 0, c = null; for (this.width = t, this.height = n; u && e < r.length;)switch (r[e++]) { case 33: switch (r[e++]) { case 255: if (11 !== r[e] || 78 == r[e + 1] && 69 == r[e + 2] && 84 == r[e + 3] && 83 == r[e + 4] && 67 == r[e + 5] && 65 == r[e + 6] && 80 == r[e + 7] && 69 == r[e + 8] && 50 == r[e + 9] && 46 == r[e + 10] && 48 == r[e + 11] && 3 == r[e + 12] && 1 == r[e + 13] && 0 == r[e + 16]) e += 14, c = r[e++] | r[e++] << 8, e++; else for (e += 12; ;) { if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } break; case 249: if (4 !== r[e++] || 0 !== r[e + 4]) throw new Error("Invalid graphics extension block."); var w = r[e++]; d = r[e++] | r[e++] << 8, s = r[e++], 1 & w || (s = null), v = w >> 2 & 7, e++; break; case 254: for (; ;) { if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } break; default: throw new Error("Unknown graphic control label: 0x" + r[e - 1].toString(16)) }break; case 44: var p = r[e++] | r[e++] << 8, g = r[e++] | r[e++] << 8, x = r[e++] | r[e++] << 8, k = r[e++] | r[e++] << 8, b = r[e++], E = b >> 6 & 1, m = 1 << (7 & b) + 1, y = f, G = l, I = !1; if (b >> 7) { I = !0; y = e, G = m, e += 3 * m } var W = e; for (e++; ;) { var _; if (!((_ = r[e++]) >= 0)) throw Error("Invalid block size"); if (0 === _) break; e += _ } h.push({ x: p, y: g, width: x, height: k, has_local_palette: I, palette_offset: y, palette_size: G, data_offset: W, data_length: e - W, transparent_index: s, interlaced: !!E, delay: d, disposal: v }); break; case 59: u = !1; break; default: throw new Error("Unknown gif block: 0x" + r[e - 1].toString(16)) }this.numFrames = function () { return h.length }, this.loopCount = function () { return c }, this.frameInfo = function (r) { if (r < 0 || r >= h.length) throw new Error("Frame index out of range."); return h[r] }, this.decodeAndBlitFrameBGRA = function (e, n) { var i = this.frameInfo(e), a = i.width * i.height, o = new Uint8Array(a); GifReaderLZWOutputIndexStream(r, i.data_offset, o, a); var f = i.palette_offset, l = i.transparent_index; null === l && (l = 256); var u = i.width, h = t - u, d = u, s = 4 * (i.y * t + i.x), v = 4 * ((i.y + i.height) * t + i.x), c = s, w = 4 * h; !0 === i.interlaced && (w += 4 * t * 7); for (var p = 8, g = 0, x = o.length; g < x; ++g) { var k = o[g]; if (0 === d && (d = u, (c += w) >= v && (w = 4 * h + 4 * t * (p - 1), c = s + (u + h) * (p << 1), p >>= 1)), k === l) c += 4; else { var b = r[f + 3 * k], E = r[f + 3 * k + 1], m = r[f + 3 * k + 2]; n[c++] = m, n[c++] = E, n[c++] = b, n[c++] = 255 } --d } }, this.decodeAndBlitFrameRGBA = function (e, n) { var i = this.frameInfo(e), a = i.width * i.height, o = new Uint8Array(a); GifReaderLZWOutputIndexStream(r, i.data_offset, o, a); var f = i.palette_offset, l = i.transparent_index; null === l && (l = 256); var u = i.width, h = t - u, d = u, s = 4 * (i.y * t + i.x), v = 4 * ((i.y + i.height) * t + i.x), c = s, w = 4 * h; !0 === i.interlaced && (w += 4 * t * 7); for (var p = 8, g = 0, x = o.length; g < x; ++g) { var k = o[g]; if (0 === d && (d = u, (c += w) >= v && (w = 4 * h + 4 * t * (p - 1), c = s + (u + h) * (p << 1), p >>= 1)), k === l) c += 4; else { var b = r[f + 3 * k], E = r[f + 3 * k + 1], m = r[f + 3 * k + 2]; n[c++] = b, n[c++] = E, n[c++] = m, n[c++] = 255 } --d } } } function GifReaderLZWOutputIndexStream(r, e, t, n) { for (var i = r[e++], a = 1 << i, o = a + 1, f = o + 1, l = i + 1, u = (1 << l) - 1, h = 0, d = 0, s = 0, v = r[e++], c = new Int32Array(4096), w = null; ;) { for (; h < 16 && 0 !== v;)d |= r[e++] << h, h += 8, 1 === v ? v = r[e++] : --v; if (h < l) break; var p = d & u; if (d >>= l, h -= l, p !== a) { if (p === o) break; for (var g = p < f ? p : w, x = 0, k = g; k > a;)k = c[k] >> 8, ++x; var b = k; if (s + x + (g !== p ? 1 : 0) > n) return void console.log("Warning, gif stream longer than expected."); t[s++] = b; var E = s += x; for (g !== p && (t[s++] = b), k = g; x--;)k = c[k], t[--E] = 255 & k, k >>= 8; null !== w && f < 4096 && (c[f++] = w << 8 | b, f >= u + 1 && l < 12 && (++l, u = u << 1 | 1)), w = p } else f = o + 1, u = (1 << (l = i + 1)) - 1, w = null } return s !== n && console.log("Warning, gif stream shorter than expected."), t } try { exports.GifWriter = GifWriter, exports.GifReader = GifReader } catch (r) { }
+        //# sourceMappingURL=/sm/64893916a2a295923f98fd9d9dec5e1494eb2e1a2221bfae4e48498c0156bdcb.map
 
-            !function (t, e) { "object" == typeof exports && "undefined" != typeof module ? module.exports = e() : "function" == typeof define && define.amd ? define(e) : t.Croppr = e() }(this, function () { "use strict"; function t(t) { t.addEventListener("touchstart", e), t.addEventListener("touchend", e), t.addEventListener("touchmove", e) } function e(t) { t.preventDefault(); var e = t.changedTouches[0], i = { touchstart: "mousedown", touchmove: "mousemove", touchend: "mouseup" }; e.target.dispatchEvent(new MouseEvent(i[t.type], { bubbles: !0, cancelable: !0, view: window, clientX: e.clientX, clientY: e.clientY, screenX: e.screenX, screenY: e.screenY })) } function i(t, e) { return Number(Math.round(t + "e" + e) + "e-" + e) } !function () { for (var t = 0, e = ["ms", "moz", "webkit", "o"], i = 0; i < e.length && !window.requestAnimationFrame; ++i)window.requestAnimationFrame = window[e[i] + "RequestAnimationFrame"], window.cancelAnimationFrame = window[e[i] + "CancelAnimationFrame"] || window[e[i] + "CancelRequestAnimationFrame"]; window.requestAnimationFrame || (window.requestAnimationFrame = function (e, i) { var n = (new Date).getTime(), o = Math.max(0, 16 - (n - t)), s = window.setTimeout(function () { e(n + o) }, o); return t = n + o, s }), window.cancelAnimationFrame || (window.cancelAnimationFrame = function (t) { clearTimeout(t) }) }(), function () { function t(t, e) { e = e || { bubbles: !1, cancelable: !1, detail: void 0 }; var i = document.createEvent("CustomEvent"); return i.initCustomEvent(t, e.bubbles, e.cancelable, e.detail), i } return "function" != typeof window.CustomEvent && (t.prototype = window.Event.prototype, void (window.CustomEvent = t)) }(), function (t) { function e(e, i) { i = i || { bubbles: !1, cancelable: !1 }; var n = document.createEvent("MouseEvent"); return n.initMouseEvent(e, i.bubbles, i.cancelable, t, 0, 0, 0, 0, 0, !1, !1, !1, !1, 0, null), n } try { return new CustomEvent("test"), !1 } catch (t) { } e.prototype = Event.prototype, t.MouseEvent = e }(window); var n = function (t, e) { if (!(t instanceof e)) throw new TypeError("Cannot call a class as a function") }, o = function () { function t(t, e) { for (var i = 0; i < e.length; i++) { var n = e[i]; n.enumerable = n.enumerable || !1, n.configurable = !0, "value" in n && (n.writable = !0), Object.defineProperty(t, n.key, n) } } return function (e, i, n) { return i && t(e.prototype, i), n && t(e, n), e } }(), s = function t(e, i, n) { null === e && (e = Function.prototype); var o = Object.getOwnPropertyDescriptor(e, i); if (void 0 === o) { var s = Object.getPrototypeOf(e); return null === s ? void 0 : t(s, i, n) } if ("value" in o) return o.value; var r = o.get; if (void 0 !== r) return r.call(n) }, r = function (t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function, not " + typeof e); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, enumerable: !1, writable: !0, configurable: !0 } }), e && (Object.setPrototypeOf ? Object.setPrototypeOf(t, e) : t.__proto__ = e) }, a = function (t, e) { if (!t) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return !e || "object" != typeof e && "function" != typeof e ? t : e }, h = function () { function t(t, e) { var i = [], n = !0, o = !1, s = void 0; try { for (var r, a = t[Symbol.iterator](); !(n = (r = a.next()).done) && (i.push(r.value), !e || i.length !== e); n = !0); } catch (t) { o = !0, s = t } finally { try { !n && a.return && a.return() } finally { if (o) throw s } } return i } return function (e, i) { if (Array.isArray(e)) return e; if (Symbol.iterator in Object(e)) return t(e, i); throw new TypeError("Invalid attempt to destructure non-iterable instance") } }(), l = function t(e, i, o, s) { function r(t) { t.stopPropagation(), document.addEventListener("mouseup", a), document.addEventListener("mousemove", h), l.eventBus.dispatchEvent(new CustomEvent("handlestart", { detail: { handle: l } })) } function a(t) { t.stopPropagation(), document.removeEventListener("mouseup", a), document.removeEventListener("mousemove", h), l.eventBus.dispatchEvent(new CustomEvent("handleend", { detail: { handle: l } })) } function h(t) { t.stopPropagation(), l.eventBus.dispatchEvent(new CustomEvent("handlemove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } n(this, t); var l = this; this.position = e, this.constraints = i, this.cursor = o, this.eventBus = s, this.el = document.createElement("div"), this.el.className = "croppr-handle", this.el.style.cursor = o, this.el.addEventListener("mousedown", r) }, u = function () { function t(e, i, o, s) { n(this, t), this.x1 = e, this.y1 = i, this.x2 = o, this.y2 = s } return o(t, [{ key: "set", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : null, n = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : null; return this.x1 = null == t ? this.x1 : t, this.y1 = null == e ? this.y1 : e, this.x2 = null == i ? this.x2 : i, this.y2 = null == n ? this.y2 : n, this } }, { key: "width", value: function () { return Math.abs(this.x2 - this.x1) } }, { key: "height", value: function () { return Math.abs(this.y2 - this.y1) } }, { key: "resize", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [0, 0], n = this.x1 + this.width() * i[0], o = this.y1 + this.height() * i[1]; return this.x1 = n - t * i[0], this.y1 = o - e * i[1], this.x2 = this.x1 + t, this.y2 = this.y1 + e, this } }, { key: "scale", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [0, 0], i = this.width() * t, n = this.height() * t; return this.resize(i, n, e), this } }, { key: "move", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = this.width(), n = this.height(); return t = null === t ? this.x1 : t, e = null === e ? this.y1 : e, this.x1 = t, this.y1 = e, this.x2 = t + i, this.y2 = e + n, this } }, { key: "getRelativePoint", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [0, 0], e = this.width() * t[0], i = this.height() * t[1]; return [e, i] } }, { key: "getAbsolutePoint", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [0, 0], e = this.x1 + this.width() * t[0], i = this.y1 + this.height() * t[1]; return [e, i] } }, { key: "constrainToRatio", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [0, 0], i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "height"; if (null !== t) { this.width(), this.height(); switch (i) { case "height": this.resize(this.width(), this.width() * t, e); break; case "width": this.resize(1 * this.height() / t, this.height(), e); break; default: this.resize(this.width(), this.width() * t, e) }return this } } }, { key: "constrainToBoundary", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [0, 0], n = this.getAbsolutePoint(i), o = h(n, 2), s = o[0], r = o[1], a = s, l = r, u = t - s, d = e - r, c = -2 * i[0] + 1, p = -2 * i[1] + 1, v = null, m = null; switch (c) { case -1: v = a; break; case 0: v = 2 * Math.min(a, u); break; case 1: v = u }switch (p) { case -1: m = l; break; case 0: m = 2 * Math.min(l, d); break; case 1: m = d }if (this.width() > v) { var f = v / this.width(); this.scale(f, i) } if (this.height() > m) { var g = m / this.height(); this.scale(g, i) } return this } }, { key: "constrainToSize", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : null, n = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : null, o = arguments.length > 4 && void 0 !== arguments[4] ? arguments[4] : [0, 0], s = arguments.length > 5 && void 0 !== arguments[5] ? arguments[5] : null; if (s && (s > 1 ? (t = 1 * e / s, n *= s) : s < 1 && (e = t * s, i = 1 * n / s)), t && this.width() > t) { var r = t, a = null === s ? this.height() : e; this.resize(r, a, o) } if (e && this.height() > e) { var h = null === s ? this.width() : t, l = e; this.resize(h, l, o) } if (i && this.width() < i) { var u = i, d = null === s ? this.height() : n; this.resize(u, d, o) } if (n && this.height() < n) { var c = null === s ? this.width() : i, p = n; this.resize(c, p, o) } return this } }]), t }(), d = [{ position: [0, 0], constraints: [1, 0, 0, 1], cursor: "nw-resize" }, { position: [.5, 0], constraints: [1, 0, 0, 0], cursor: "n-resize" }, { position: [1, 0], constraints: [1, 1, 0, 0], cursor: "ne-resize" }, { position: [1, .5], constraints: [0, 1, 0, 0], cursor: "e-resize" }, { position: [1, 1], constraints: [0, 1, 1, 0], cursor: "se-resize" }, { position: [.5, 1], constraints: [0, 0, 1, 0], cursor: "s-resize" }, { position: [0, 1], constraints: [0, 0, 1, 1], cursor: "sw-resize" }, { position: [0, .5], constraints: [0, 0, 0, 1], cursor: "w-resize" }], c = function () { function e(t, i) { var o = this, s = arguments.length > 2 && void 0 !== arguments[2] && arguments[2]; if (n(this, e), this.options = e.parseOptions(i || {}), !t.nodeName && (t = document.querySelector(t), null == t)) throw "Unable to find element."; if (!t.getAttribute("src")) throw "Image src not provided."; this._initialized = !1, this._restore = { parent: t.parentNode, element: t }, s || (0 === t.width || 0 === t.height ? t.onload = function () { o.initialize(t) } : this.initialize(t)) } return o(e, [{ key: "initialize", value: function (t) { this.createDOM(t), this.options.convertToPixels(this.cropperEl), this.attachHandlerEvents(), this.attachRegionEvents(), this.attachOverlayEvents(), this.box = this.initializeBox(this.options), this.redraw(), this._initialized = !0, null !== this.options.onInitialize && this.options.onInitialize(this) } }, { key: "createDOM", value: function (e) { this.containerEl = document.createElement("div"), this.containerEl.className = "croppr-container", this.eventBus = this.containerEl, t(this.containerEl), this.cropperEl = document.createElement("div"), this.cropperEl.className = "croppr", this.imageEl = document.createElement("img"), this.imageEl.setAttribute("src", e.getAttribute("src")), this.imageEl.setAttribute("alt", e.getAttribute("alt")), this.imageEl.className = "croppr-image", this.imageClippedEl = this.imageEl.cloneNode(), this.imageClippedEl.className = "croppr-imageClipped", this.regionEl = document.createElement("div"), this.regionEl.className = "croppr-region", this.overlayEl = document.createElement("div"), this.overlayEl.className = "croppr-overlay"; var i = document.createElement("div"); i.className = "croppr-handleContainer", this.handles = []; for (var n = 0; n < d.length; n++) { var o = new l(d[n].position, d[n].constraints, d[n].cursor, this.eventBus); this.handles.push(o), i.appendChild(o.el) } this.cropperEl.appendChild(this.imageEl), this.cropperEl.appendChild(this.imageClippedEl), this.cropperEl.appendChild(this.regionEl), this.cropperEl.appendChild(this.overlayEl), this.cropperEl.appendChild(i), this.containerEl.appendChild(this.cropperEl), e.parentElement.replaceChild(this.containerEl, e) } }, { key: "setImage", value: function (t) { var e = this; return this.imageEl.onload = function () { e.box = e.initializeBox(e.options), e.redraw() }, this.imageEl.src = t, this.imageClippedEl.src = t, this } }, { key: "destroy", value: function () { this._restore.parent.replaceChild(this._restore.element, this.containerEl) } }, { key: "initializeBox", value: function (t) { var e = t.startSize.width, i = t.startSize.height, n = new u(0, 0, e, i); n.constrainToRatio(t.aspectRatio, [.5, .5]); var o = t.minSize, s = t.maxSize; n.constrainToSize(s.width, s.height, o.width, o.height, [.5, .5], t.aspectRatio); var r = this.cropperEl.offsetWidth, a = this.cropperEl.offsetHeight; n.constrainToBoundary(r, a, [.5, .5]); var h = this.cropperEl.offsetWidth / 2 - n.width() / 2, l = this.cropperEl.offsetHeight / 2 - n.height() / 2; return n.move(h, l), n } }, { key: "redraw", value: function () { var t = this, e = Math.round(this.box.width()), i = Math.round(this.box.height()), n = Math.round(this.box.x1), o = Math.round(this.box.y1), s = Math.round(this.box.x2), r = Math.round(this.box.y2); window.requestAnimationFrame(function () { t.regionEl.style.transform = "translate(" + n + "px, " + o + "px)", t.regionEl.style.width = e + "px", t.regionEl.style.height = i + "px", t.imageClippedEl.style.clip = "rect(" + o + "px, " + s + "px, " + r + "px, " + n + "px)"; for (var a = t.box.getAbsolutePoint([.5, .5]), h = a[0] - t.cropperEl.offsetWidth / 2 >> 31, l = a[1] - t.cropperEl.offsetHeight / 2 >> 31, u = (h ^ l) + l + l + 4, d = -2 * u + 8, c = 0; c < t.handles.length; c++) { var p = t.handles[c], v = p.el.offsetWidth, m = p.el.offsetHeight, f = n + e * p.position[0] - v / 2, g = o + i * p.position[1] - m / 2; p.el.style.transform = "translate(" + Math.round(f) + "px, " + Math.round(g) + "px)", p.el.style.zIndex = d == c ? 5 : 4 } }) } }, { key: "attachHandlerEvents", value: function () { var t = this.eventBus; t.addEventListener("handlestart", this.onHandleMoveStart.bind(this)), t.addEventListener("handlemove", this.onHandleMoveMoving.bind(this)), t.addEventListener("handleend", this.onHandleMoveEnd.bind(this)) } }, { key: "attachRegionEvents", value: function () { function t(t) { t.stopPropagation(), document.addEventListener("mouseup", i), document.addEventListener("mousemove", e), n.dispatchEvent(new CustomEvent("regionstart", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function e(t) { t.stopPropagation(), n.dispatchEvent(new CustomEvent("regionmove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function i(t) { t.stopPropagation(), document.removeEventListener("mouseup", i), document.removeEventListener("mousemove", e), n.dispatchEvent(new CustomEvent("regionend", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } var n = this.eventBus; this.regionEl.addEventListener("mousedown", t), n.addEventListener("regionstart", this.onRegionMoveStart.bind(this)), n.addEventListener("regionmove", this.onRegionMoveMoving.bind(this)), n.addEventListener("regionend", this.onRegionMoveEnd.bind(this)) } }, { key: "attachOverlayEvents", value: function () { function t(t) { t.stopPropagation(), document.addEventListener("mouseup", i), document.addEventListener("mousemove", e); var r = o.cropperEl.getBoundingClientRect(), a = t.clientX - r.left, h = t.clientY - r.top; s = o.box, o.box = new u(a, h, a + 1, h + 1), o.eventBus.dispatchEvent(new CustomEvent("handlestart", { detail: { handle: o.handles[n] } })) } function e(t) { t.stopPropagation(), o.eventBus.dispatchEvent(new CustomEvent("handlemove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function i(t) { return t.stopPropagation(), document.removeEventListener("mouseup", i), document.removeEventListener("mousemove", e), 1 === o.box.width() && 1 === o.box.height() ? void (o.box = s) : void o.eventBus.dispatchEvent(new CustomEvent("handleend", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } var n = 4, o = this, s = null; this.overlayEl.addEventListener("mousedown", t) } }, { key: "onHandleMoveStart", value: function (t) { var e = t.detail.handle, i = [1 - e.position[0], 1 - e.position[1]], n = this.box.getAbsolutePoint(i), o = h(n, 2), s = o[0], r = o[1]; this.activeHandle = { handle: e, originPoint: i, originX: s, originY: r }, null !== this.options.onCropStart && this.options.onCropStart(this.getValue()) } }, { key: "onHandleMoveMoving", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.cropperEl.getBoundingClientRect(); i -= o.left, n -= o.top, i < 0 ? i = 0 : i > o.width && (i = o.width), n < 0 ? n = 0 : n > o.height && (n = o.height); var s = this.activeHandle.originPoint.slice(), r = this.activeHandle.originX, a = this.activeHandle.originY, h = this.activeHandle.handle, l = 1 === h.constraints[0], d = 1 === h.constraints[1], c = 1 === h.constraints[2], p = 1 === h.constraints[3], v = (p || d) && (l || c), m = p || d ? r : this.box.x1, f = p || d ? r : this.box.x2, g = l || c ? a : this.box.y1, E = l || c ? a : this.box.y2; m = p ? i : m, f = d ? i : f, g = l ? n : g, E = c ? n : E; var w = !1, y = !1; if ((p || d) && (w = p ? i > r : i < r), (l || c) && (y = l ? n > a : n < a), w) { var b = m; m = f, f = b, s[0] = 1 - s[0] } if (y) { var x = g; g = E, E = x, s[1] = 1 - s[1] } var C = new u(m, g, f, E); if (this.options.aspectRatio) { var z = this.options.aspectRatio, M = !1; v ? M = n > C.y1 + z * C.width() || n < C.y2 - z * C.width() : (l || c) && (M = !0); var S = M ? "width" : "height"; C.constrainToRatio(z, s, S) } var k = this.options.minSize, R = this.options.maxSize; C.constrainToSize(R.width, R.height, k.width, k.height, s, this.options.aspectRatio); var P = this.cropperEl.offsetWidth, O = this.cropperEl.offsetHeight; C.constrainToBoundary(P, O, s), this.box = C, this.redraw(), null !== this.options.onCropMove && this.options.onCropMove(this.getValue()) } }, { key: "onHandleMoveEnd", value: function (t) { null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()) } }, { key: "onRegionMoveStart", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.cropperEl.getBoundingClientRect(); i -= o.left, n -= o.top, this.currentMove = { offsetX: i - this.box.x1, offsetY: n - this.box.y1 }, null !== this.options.onCropStart && this.options.onCropStart(this.getValue()) } }, { key: "onRegionMoveMoving", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.currentMove, s = o.offsetX, r = o.offsetY, a = this.cropperEl.getBoundingClientRect(); i -= a.left, n -= a.top, this.box.move(i - s, n - r), this.box.x1 < 0 && this.box.move(0, null), this.box.x2 > a.width && this.box.move(a.width - this.box.width(), null), this.box.y1 < 0 && this.box.move(null, 0), this.box.y2 > a.height && this.box.move(null, a.height - this.box.height()), this.redraw(), null !== this.options.onCropMove && this.options.onCropMove(this.getValue()) } }, { key: "onRegionMoveEnd", value: function (t) { null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()) } }, { key: "getValue", value: function (t) { if (null == t && (t = this.options.returnMode), "real" == t) { var e = this.imageEl.naturalWidth, n = this.imageEl.naturalHeight, o = this.imageEl.getBoundingClientRect(), s = o.width, r = o.height, a = e / s, h = n / r; return { x: Math.round(this.box.x1 * a), y: Math.round(this.box.y1 * h), width: Math.round(this.box.width() * a), height: Math.round(this.box.height() * h) } } if ("ratio" == t) { var l = this.imageEl.getBoundingClientRect(), u = l.width, d = l.height; return { x: i(this.box.x1 / u, 3), y: i(this.box.y1 / d, 3), width: i(this.box.width() / u, 3), height: i(this.box.height() / d, 3) } } if ("raw" == t) return { x: Math.round(this.box.x1), y: Math.round(this.box.y1), width: Math.round(this.box.width()), height: Math.round(this.box.height()) } } }], [{ key: "parseOptions", value: function (t) { var e = { aspectRatio: null, maxSize: { width: null, height: null }, minSize: { width: null, height: null }, startSize: { width: 100, height: 100, unit: "%" }, returnMode: "real", onInitialize: null, onCropStart: null, onCropMove: null, onCropEnd: null }, i = null; void 0 !== t.aspectRatio && ("number" == typeof t.aspectRatio ? i = t.aspectRatio : t.aspectRatio instanceof Array && (i = t.aspectRatio[1] / t.aspectRatio[0])); var n = null; void 0 !== t.maxSize && null !== t.maxSize && (n = { width: t.maxSize[0] || null, height: t.maxSize[1] || null, unit: t.maxSize[2] || "px" }); var o = null; void 0 !== t.minSize && null !== t.minSize && (o = { width: t.minSize[0] || null, height: t.minSize[1] || null, unit: t.minSize[2] || "px" }); var s = null; void 0 !== t.startSize && null !== t.startSize && (s = { width: t.startSize[0] || null, height: t.startSize[1] || null, unit: t.startSize[2] || "%" }); var r = null; "function" == typeof t.onInitialize && (r = t.onInitialize); var a = null; "function" == typeof t.onCropStart && (a = t.onCropStart); var h = null; "function" == typeof t.onCropEnd && (h = t.onCropEnd); var l = null; "function" == typeof t.onUpdate && (console.warn("Croppr.js: `onUpdate` is deprecated and will be removed in the next major release. Please use `onCropMove` or `onCropEnd` instead."), l = t.onUpdate), "function" == typeof t.onCropMove && (l = t.onCropMove); var u = null; if (void 0 !== t.returnMode) { var d = t.returnMode.toLowerCase(); if (["real", "ratio", "raw"].indexOf(d) === -1) throw "Invalid return mode."; u = d } var c = function (t) { for (var e = t.offsetWidth, i = t.offsetHeight, n = ["maxSize", "minSize", "startSize"], o = 0; o < n.length; o++) { var s = n[o]; null !== this[s] && ("%" == this[s].unit && (null !== this[s].width && (this[s].width = this[s].width / 100 * e), null !== this[s].height && (this[s].height = this[s].height / 100 * i)), delete this[s].unit) } }, p = function (t, e) { return null !== t ? t : e }; return { aspectRatio: p(i, e.aspectRatio), maxSize: p(n, e.maxSize), minSize: p(o, e.minSize), startSize: p(s, e.startSize), returnMode: p(u, e.returnMode), onInitialize: p(r, e.onInitialize), onCropStart: p(a, e.onCropStart), onCropMove: p(l, e.onCropMove), onCropEnd: p(h, e.onCropEnd), convertToPixels: c } } }]), e }(), p = function (t) { function e(t, i) { var o = arguments.length > 2 && void 0 !== arguments[2] && arguments[2]; return n(this, e), a(this, (e.__proto__ || Object.getPrototypeOf(e)).call(this, t, i, o)) } return r(e, t), o(e, [{ key: "getValue", value: function (t) { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "getValue", this).call(this, t) } }, { key: "setImage", value: function (t) { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "setImage", this).call(this, t) } }, { key: "destroy", value: function () { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "destroy", this).call(this) } }, { key: "moveTo", value: function (t, e) { return this.box.move(t, e), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "resizeTo", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [.5, .5]; return this.box.resize(t, e, i), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "scaleBy", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [.5, .5]; return this.box.scale(t, e), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "reset", value: function () { return this.box = this.initializeBox(this.options), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }]), e }(c); return p });
-
-
-        </script>
-        <script>
-
-            // Initialize default variables (formerly @@777***)
-            var m_x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            var m_y = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            var m_w = [64, 64, 64, 64, 64, 64, 64, 64, 64, 64];
-            var m_h = [64, 64, 64, 64, 64, 64, 64, 64, 64, 64];
-            var m_t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        !function (t, e) { "object" == typeof exports && "undefined" != typeof module ? module.exports = e() : "function" == typeof define && define.amd ? define(e) : t.Croppr = e() }(this, function () { "use strict"; function t(t) { t.addEventListener("touchstart", e), t.addEventListener("touchend", e), t.addEventListener("touchmove", e) } function e(t) { t.preventDefault(); var e = t.changedTouches[0], i = { touchstart: "mousedown", touchmove: "mousemove", touchend: "mouseup" }; e.target.dispatchEvent(new MouseEvent(i[t.type], { bubbles: !0, cancelable: !0, view: window, clientX: e.clientX, clientY: e.clientY, screenX: e.screenX, screenY: e.screenY })) } function i(t, e) { return Number(Math.round(t + "e" + e) + "e-" + e) } !function () { for (var t = 0, e = ["ms", "moz", "webkit", "o"], i = 0; i < e.length && !window.requestAnimationFrame; ++i)window.requestAnimationFrame = window[e[i] + "RequestAnimationFrame"], window.cancelAnimationFrame = window[e[i] + "CancelAnimationFrame"] || window[e[i] + "CancelRequestAnimationFrame"]; window.requestAnimationFrame || (window.requestAnimationFrame = function (e, i) { var n = (new Date).getTime(), o = Math.max(0, 16 - (n - t)), s = window.setTimeout(function () { e(n + o) }, o); return t = n + o, s }), window.cancelAnimationFrame || (window.cancelAnimationFrame = function (t) { clearTimeout(t) }) }(), function () { function t(t, e) { e = e || { bubbles: !1, cancelable: !1, detail: void 0 }; var i = document.createEvent("CustomEvent"); return i.initCustomEvent(t, e.bubbles, e.cancelable, e.detail), i } return "function" != typeof window.CustomEvent && (t.prototype = window.Event.prototype, void (window.CustomEvent = t)) }(), function (t) { function e(e, i) { i = i || { bubbles: !1, cancelable: !1 }; var n = document.createEvent("MouseEvent"); return n.initMouseEvent(e, i.bubbles, i.cancelable, t, 0, 0, 0, 0, 0, !1, !1, !1, !1, 0, null), n } try { return new CustomEvent("test"), !1 } catch (t) { } e.prototype = Event.prototype, t.MouseEvent = e }(window); var n = function (t, e) { if (!(t instanceof e)) throw new TypeError("Cannot call a class as a function") }, o = function () { function t(t, e) { for (var i = 0; i < e.length; i++) { var n = e[i]; n.enumerable = n.enumerable || !1, n.configurable = !0, "value" in n && (n.writable = !0), Object.defineProperty(t, n.key, n) } } return function (e, i, n) { return i && t(e.prototype, i), n && t(e, n), e } }(), s = function t(e, i, n) { null === e && (e = Function.prototype); var o = Object.getOwnPropertyDescriptor(e, i); if (void 0 === o) { var s = Object.getPrototypeOf(e); return null === s ? void 0 : t(s, i, n) } if ("value" in o) return o.value; var r = o.get; if (void 0 !== r) return r.call(n) }, r = function (t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function, not " + typeof e); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, enumerable: !1, writable: !0, configurable: !0 } }), e && (Object.setPrototypeOf ? Object.setPrototypeOf(t, e) : t.__proto__ = e) }, a = function (t, e) { if (!t) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return !e || "object" != typeof e && "function" != typeof e ? t : e }, h = function () { function t(t, e) { var i = [], n = !0, o = !1, s = void 0; try { for (var r, a = t[Symbol.iterator](); !(n = (r = a.next()).done) && (i.push(r.value), !e || i.length !== e); n = !0); } catch (t) { o = !0, s = t } finally { try { !n && a.return && a.return() } finally { if (o) throw s } } return i } return function (e, i) { if (Array.isArray(e)) return e; if (Symbol.iterator in Object(e)) return t(e, i); throw new TypeError("Invalid attempt to destructure non-iterable instance") } }(), l = function t(e, i, o, s) { function r(t) { t.stopPropagation(), document.addEventListener("mouseup", a), document.addEventListener("mousemove", h), l.eventBus.dispatchEvent(new CustomEvent("handlestart", { detail: { handle: l } })) } function a(t) { t.stopPropagation(), document.removeEventListener("mouseup", a), document.removeEventListener("mousemove", h), l.eventBus.dispatchEvent(new CustomEvent("handleend", { detail: { handle: l } })) } function h(t) { t.stopPropagation(), l.eventBus.dispatchEvent(new CustomEvent("handlemove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } n(this, t); var l = this; this.position = e, this.constraints = i, this.cursor = o, this.eventBus = s, this.el = document.createElement("div"), this.el.className = "croppr-handle", this.el.style.cursor = o, this.el.addEventListener("mousedown", r) }, u = function () { function t(e, i, o, s) { n(this, t), this.x1 = e, this.y1 = i, this.x2 = o, this.y2 = s } return o(t, [{ key: "set", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : null, n = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : null; return this.x1 = null == t ? this.x1 : t, this.y1 = null == e ? this.y1 : e, this.x2 = null == i ? this.x2 : i, this.y2 = null == n ? this.y2 : n, this } }, { key: "width", value: function () { return Math.abs(this.x2 - this.x1) } }, { key: "height", value: function () { return Math.abs(this.y2 - this.y1) } }, { key: "resize", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [0, 0], n = this.x1 + this.width() * i[0], o = this.y1 + this.height() * i[1]; return this.x1 = n - t * i[0], this.y1 = o - e * i[1], this.x2 = this.x1 + t, this.y2 = this.y1 + e, this } }, { key: "scale", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [0, 0], i = this.width() * t, n = this.height() * t; return this.resize(i, n, e), this } }, { key: "move", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = this.width(), n = this.height(); return t = null === t ? this.x1 : t, e = null === e ? this.y1 : e, this.x1 = t, this.y1 = e, this.x2 = t + i, this.y2 = e + n, this } }, { key: "getRelativePoint", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [0, 0], e = this.width() * t[0], i = this.height() * t[1]; return [e, i] } }, { key: "getAbsolutePoint", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : [0, 0], e = this.x1 + this.width() * t[0], i = this.y1 + this.height() * t[1]; return [e, i] } }, { key: "constrainToRatio", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [0, 0], i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : "height"; if (null !== t) { this.width(), this.height(); switch (i) { case "height": this.resize(this.width(), this.width() * t, e); break; case "width": this.resize(1 * this.height() / t, this.height(), e); break; default: this.resize(this.width(), this.width() * t, e) }return this } } }, { key: "constrainToBoundary", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [0, 0], n = this.getAbsolutePoint(i), o = h(n, 2), s = o[0], r = o[1], a = s, l = r, u = t - s, d = e - r, c = -2 * i[0] + 1, p = -2 * i[1] + 1, v = null, m = null; switch (c) { case -1: v = a; break; case 0: v = 2 * Math.min(a, u); break; case 1: v = u }switch (p) { case -1: m = l; break; case 0: m = 2 * Math.min(l, d); break; case 1: m = d }if (this.width() > v) { var f = v / this.width(); this.scale(f, i) } if (this.height() > m) { var g = m / this.height(); this.scale(g, i) } return this } }, { key: "constrainToSize", value: function () { var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : null, e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : null, i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : null, n = arguments.length > 3 && void 0 !== arguments[3] ? arguments[3] : null, o = arguments.length > 4 && void 0 !== arguments[4] ? arguments[4] : [0, 0], s = arguments.length > 5 && void 0 !== arguments[5] ? arguments[5] : null; if (s && (s > 1 ? (t = 1 * e / s, n *= s) : s < 1 && (e = t * s, i = 1 * n / s)), t && this.width() > t) { var r = t, a = null === s ? this.height() : e; this.resize(r, a, o) } if (e && this.height() > e) { var h = null === s ? this.width() : t, l = e; this.resize(h, l, o) } if (i && this.width() < i) { var u = i, d = null === s ? this.height() : n; this.resize(u, d, o) } if (n && this.height() < n) { var c = null === s ? this.width() : i, p = n; this.resize(c, p, o) } return this } }]), t }(), d = [{ position: [0, 0], constraints: [1, 0, 0, 1], cursor: "nw-resize" }, { position: [.5, 0], constraints: [1, 0, 0, 0], cursor: "n-resize" }, { position: [1, 0], constraints: [1, 1, 0, 0], cursor: "ne-resize" }, { position: [1, .5], constraints: [0, 1, 0, 0], cursor: "e-resize" }, { position: [1, 1], constraints: [0, 1, 1, 0], cursor: "se-resize" }, { position: [.5, 1], constraints: [0, 0, 1, 0], cursor: "s-resize" }, { position: [0, 1], constraints: [0, 0, 1, 1], cursor: "sw-resize" }, { position: [0, .5], constraints: [0, 0, 0, 1], cursor: "w-resize" }], c = function () { function e(t, i) { var o = this, s = arguments.length > 2 && void 0 !== arguments[2] && arguments[2]; if (n(this, e), this.options = e.parseOptions(i || {}), !t.nodeName && (t = document.querySelector(t), null == t)) throw "Unable to find element."; if (!t.getAttribute("src")) throw "Image src not provided."; this._initialized = !1, this._restore = { parent: t.parentNode, element: t }, s || (0 === t.width || 0 === t.height ? t.onload = function () { o.initialize(t) } : this.initialize(t)) } return o(e, [{ key: "initialize", value: function (t) { this.createDOM(t), this.options.convertToPixels(this.cropperEl), this.attachHandlerEvents(), this.attachRegionEvents(), this.attachOverlayEvents(), this.box = this.initializeBox(this.options), this.redraw(), this._initialized = !0, null !== this.options.onInitialize && this.options.onInitialize(this) } }, { key: "createDOM", value: function (e) { this.containerEl = document.createElement("div"), this.containerEl.className = "croppr-container", this.eventBus = this.containerEl, t(this.containerEl), this.cropperEl = document.createElement("div"), this.cropperEl.className = "croppr", this.imageEl = document.createElement("img"), this.imageEl.setAttribute("src", e.getAttribute("src")), this.imageEl.setAttribute("alt", e.getAttribute("alt")), this.imageEl.className = "croppr-image", this.imageClippedEl = this.imageEl.cloneNode(), this.imageClippedEl.className = "croppr-imageClipped", this.regionEl = document.createElement("div"), this.regionEl.className = "croppr-region", this.overlayEl = document.createElement("div"), this.overlayEl.className = "croppr-overlay"; var i = document.createElement("div"); i.className = "croppr-handleContainer", this.handles = []; for (var n = 0; n < d.length; n++) { var o = new l(d[n].position, d[n].constraints, d[n].cursor, this.eventBus); this.handles.push(o), i.appendChild(o.el) } this.cropperEl.appendChild(this.imageEl), this.cropperEl.appendChild(this.imageClippedEl), this.cropperEl.appendChild(this.regionEl), this.cropperEl.appendChild(this.overlayEl), this.cropperEl.appendChild(i), this.containerEl.appendChild(this.cropperEl), e.parentElement.replaceChild(this.containerEl, e) } }, { key: "setImage", value: function (t) { var e = this; return this.imageEl.onload = function () { e.box = e.initializeBox(e.options), e.redraw() }, this.imageEl.src = t, this.imageClippedEl.src = t, this } }, { key: "destroy", value: function () { this._restore.parent.replaceChild(this._restore.element, this.containerEl) } }, { key: "initializeBox", value: function (t) { var e = t.startSize.width, i = t.startSize.height, n = new u(0, 0, e, i); n.constrainToRatio(t.aspectRatio, [.5, .5]); var o = t.minSize, s = t.maxSize; n.constrainToSize(s.width, s.height, o.width, o.height, [.5, .5], t.aspectRatio); var r = this.cropperEl.offsetWidth, a = this.cropperEl.offsetHeight; n.constrainToBoundary(r, a, [.5, .5]); var h = this.cropperEl.offsetWidth / 2 - n.width() / 2, l = this.cropperEl.offsetHeight / 2 - n.height() / 2; return n.move(h, l), n } }, { key: "redraw", value: function () { var t = this, e = Math.round(this.box.width()), i = Math.round(this.box.height()), n = Math.round(this.box.x1), o = Math.round(this.box.y1), s = Math.round(this.box.x2), r = Math.round(this.box.y2); window.requestAnimationFrame(function () { t.regionEl.style.transform = "translate(" + n + "px, " + o + "px)", t.regionEl.style.width = e + "px", t.regionEl.style.height = i + "px", t.imageClippedEl.style.clip = "rect(" + o + "px, " + s + "px, " + r + "px, " + n + "px)"; for (var a = t.box.getAbsolutePoint([.5, .5]), h = a[0] - t.cropperEl.offsetWidth / 2 >> 31, l = a[1] - t.cropperEl.offsetHeight / 2 >> 31, u = (h ^ l) + l + l + 4, d = -2 * u + 8, c = 0; c < t.handles.length; c++) { var p = t.handles[c], v = p.el.offsetWidth, m = p.el.offsetHeight, f = n + e * p.position[0] - v / 2, g = o + i * p.position[1] - m / 2; p.el.style.transform = "translate(" + Math.round(f) + "px, " + Math.round(g) + "px)", p.el.style.zIndex = d == c ? 5 : 4 } }) } }, { key: "attachHandlerEvents", value: function () { var t = this.eventBus; t.addEventListener("handlestart", this.onHandleMoveStart.bind(this)), t.addEventListener("handlemove", this.onHandleMoveMoving.bind(this)), t.addEventListener("handleend", this.onHandleMoveEnd.bind(this)) } }, { key: "attachRegionEvents", value: function () { function t(t) { t.stopPropagation(), document.addEventListener("mouseup", i), document.addEventListener("mousemove", e), n.dispatchEvent(new CustomEvent("regionstart", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function e(t) { t.stopPropagation(), n.dispatchEvent(new CustomEvent("regionmove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function i(t) { t.stopPropagation(), document.removeEventListener("mouseup", i), document.removeEventListener("mousemove", e), n.dispatchEvent(new CustomEvent("regionend", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } var n = this.eventBus; this.regionEl.addEventListener("mousedown", t), n.addEventListener("regionstart", this.onRegionMoveStart.bind(this)), n.addEventListener("regionmove", this.onRegionMoveMoving.bind(this)), n.addEventListener("regionend", this.onRegionMoveEnd.bind(this)) } }, { key: "attachOverlayEvents", value: function () { function t(t) { t.stopPropagation(), document.addEventListener("mouseup", i), document.addEventListener("mousemove", e); var r = o.cropperEl.getBoundingClientRect(), a = t.clientX - r.left, h = t.clientY - r.top; s = o.box, o.box = new u(a, h, a + 1, h + 1), o.eventBus.dispatchEvent(new CustomEvent("handlestart", { detail: { handle: o.handles[n] } })) } function e(t) { t.stopPropagation(), o.eventBus.dispatchEvent(new CustomEvent("handlemove", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } function i(t) { return t.stopPropagation(), document.removeEventListener("mouseup", i), document.removeEventListener("mousemove", e), 1 === o.box.width() && 1 === o.box.height() ? void (o.box = s) : void o.eventBus.dispatchEvent(new CustomEvent("handleend", { detail: { mouseX: t.clientX, mouseY: t.clientY } })) } var n = 4, o = this, s = null; this.overlayEl.addEventListener("mousedown", t) } }, { key: "onHandleMoveStart", value: function (t) { var e = t.detail.handle, i = [1 - e.position[0], 1 - e.position[1]], n = this.box.getAbsolutePoint(i), o = h(n, 2), s = o[0], r = o[1]; this.activeHandle = { handle: e, originPoint: i, originX: s, originY: r }, null !== this.options.onCropStart && this.options.onCropStart(this.getValue()) } }, { key: "onHandleMoveMoving", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.cropperEl.getBoundingClientRect(); i -= o.left, n -= o.top, i < 0 ? i = 0 : i > o.width && (i = o.width), n < 0 ? n = 0 : n > o.height && (n = o.height); var s = this.activeHandle.originPoint.slice(), r = this.activeHandle.originX, a = this.activeHandle.originY, h = this.activeHandle.handle, l = 1 === h.constraints[0], d = 1 === h.constraints[1], c = 1 === h.constraints[2], p = 1 === h.constraints[3], v = (p || d) && (l || c), m = p || d ? r : this.box.x1, f = p || d ? r : this.box.x2, g = l || c ? a : this.box.y1, E = l || c ? a : this.box.y2; m = p ? i : m, f = d ? i : f, g = l ? n : g, E = c ? n : E; var w = !1, y = !1; if ((p || d) && (w = p ? i > r : i < r), (l || c) && (y = l ? n > a : n < a), w) { var b = m; m = f, f = b, s[0] = 1 - s[0] } if (y) { var x = g; g = E, E = x, s[1] = 1 - s[1] } var C = new u(m, g, f, E); if (this.options.aspectRatio) { var z = this.options.aspectRatio, M = !1; v ? M = n > C.y1 + z * C.width() || n < C.y2 - z * C.width() : (l || c) && (M = !0); var S = M ? "width" : "height"; C.constrainToRatio(z, s, S) } var k = this.options.minSize, R = this.options.maxSize; C.constrainToSize(R.width, R.height, k.width, k.height, s, this.options.aspectRatio); var P = this.cropperEl.offsetWidth, O = this.cropperEl.offsetHeight; C.constrainToBoundary(P, O, s), this.box = C, this.redraw(), null !== this.options.onCropMove && this.options.onCropMove(this.getValue()) } }, { key: "onHandleMoveEnd", value: function (t) { null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()) } }, { key: "onRegionMoveStart", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.cropperEl.getBoundingClientRect(); i -= o.left, n -= o.top, this.currentMove = { offsetX: i - this.box.x1, offsetY: n - this.box.y1 }, null !== this.options.onCropStart && this.options.onCropStart(this.getValue()) } }, { key: "onRegionMoveMoving", value: function (t) { var e = t.detail, i = e.mouseX, n = e.mouseY, o = this.currentMove, s = o.offsetX, r = o.offsetY, a = this.cropperEl.getBoundingClientRect(); i -= a.left, n -= a.top, this.box.move(i - s, n - r), this.box.x1 < 0 && this.box.move(0, null), this.box.x2 > a.width && this.box.move(a.width - this.box.width(), null), this.box.y1 < 0 && this.box.move(null, 0), this.box.y2 > a.height && this.box.move(null, a.height - this.box.height()), this.redraw(), null !== this.options.onCropMove && this.options.onCropMove(this.getValue()) } }, { key: "onRegionMoveEnd", value: function (t) { null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()) } }, { key: "getValue", value: function (t) { if (null == t && (t = this.options.returnMode), "real" == t) { var e = this.imageEl.naturalWidth, n = this.imageEl.naturalHeight, o = this.imageEl.getBoundingClientRect(), s = o.width, r = o.height, a = e / s, h = n / r; return { x: Math.round(this.box.x1 * a), y: Math.round(this.box.y1 * h), width: Math.round(this.box.width() * a), height: Math.round(this.box.height() * h) } } if ("ratio" == t) { var l = this.imageEl.getBoundingClientRect(), u = l.width, d = l.height; return { x: i(this.box.x1 / u, 3), y: i(this.box.y1 / d, 3), width: i(this.box.width() / u, 3), height: i(this.box.height() / d, 3) } } if ("raw" == t) return { x: Math.round(this.box.x1), y: Math.round(this.box.y1), width: Math.round(this.box.width()), height: Math.round(this.box.height()) } } }], [{ key: "parseOptions", value: function (t) { var e = { aspectRatio: null, maxSize: { width: null, height: null }, minSize: { width: null, height: null }, startSize: { width: 100, height: 100, unit: "%" }, returnMode: "real", onInitialize: null, onCropStart: null, onCropMove: null, onCropEnd: null }, i = null; void 0 !== t.aspectRatio && ("number" == typeof t.aspectRatio ? i = t.aspectRatio : t.aspectRatio instanceof Array && (i = t.aspectRatio[1] / t.aspectRatio[0])); var n = null; void 0 !== t.maxSize && null !== t.maxSize && (n = { width: t.maxSize[0] || null, height: t.maxSize[1] || null, unit: t.maxSize[2] || "px" }); var o = null; void 0 !== t.minSize && null !== t.minSize && (o = { width: t.minSize[0] || null, height: t.minSize[1] || null, unit: t.minSize[2] || "px" }); var s = null; void 0 !== t.startSize && null !== t.startSize && (s = { width: t.startSize[0] || null, height: t.startSize[1] || null, unit: t.startSize[2] || "%" }); var r = null; "function" == typeof t.onInitialize && (r = t.onInitialize); var a = null; "function" == typeof t.onCropStart && (a = t.onCropStart); var h = null; "function" == typeof t.onCropEnd && (h = t.onCropEnd); var l = null; "function" == typeof t.onUpdate && (console.warn("Croppr.js: `onUpdate` is deprecated and will be removed in the next major release. Please use `onCropMove` or `onCropEnd` instead."), l = t.onUpdate), "function" == typeof t.onCropMove && (l = t.onCropMove); var u = null; if (void 0 !== t.returnMode) { var d = t.returnMode.toLowerCase(); if (["real", "ratio", "raw"].indexOf(d) === -1) throw "Invalid return mode."; u = d } var c = function (t) { for (var e = t.offsetWidth, i = t.offsetHeight, n = ["maxSize", "minSize", "startSize"], o = 0; o < n.length; o++) { var s = n[o]; null !== this[s] && ("%" == this[s].unit && (null !== this[s].width && (this[s].width = this[s].width / 100 * e), null !== this[s].height && (this[s].height = this[s].height / 100 * i)), delete this[s].unit) } }, p = function (t, e) { return null !== t ? t : e }; return { aspectRatio: p(i, e.aspectRatio), maxSize: p(n, e.maxSize), minSize: p(o, e.minSize), startSize: p(s, e.startSize), returnMode: p(u, e.returnMode), onInitialize: p(r, e.onInitialize), onCropStart: p(a, e.onCropStart), onCropMove: p(l, e.onCropMove), onCropEnd: p(h, e.onCropEnd), convertToPixels: c } } }]), e }(), p = function (t) { function e(t, i) { var o = arguments.length > 2 && void 0 !== arguments[2] && arguments[2]; return n(this, e), a(this, (e.__proto__ || Object.getPrototypeOf(e)).call(this, t, i, o)) } return r(e, t), o(e, [{ key: "getValue", value: function (t) { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "getValue", this).call(this, t) } }, { key: "setImage", value: function (t) { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "setImage", this).call(this, t) } }, { key: "destroy", value: function () { return s(e.prototype.__proto__ || Object.getPrototypeOf(e.prototype), "destroy", this).call(this) } }, { key: "moveTo", value: function (t, e) { return this.box.move(t, e), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "resizeTo", value: function (t, e) { var i = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : [.5, .5]; return this.box.resize(t, e, i), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "scaleBy", value: function (t) { var e = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [.5, .5]; return this.box.scale(t, e), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }, { key: "reset", value: function () { return this.box = this.initializeBox(this.options), this.redraw(), null !== this.options.onCropEnd && this.options.onCropEnd(this.getValue()), this } }]), e }(c); return p });
 
 
-            // Logic to update inputs (Layer select was removed)
-            const layerSelect = null;
-            const revMap = {
-                0x7F: 'à', 0x80: 'ả', 0x81: 'ã', 0x82: 'á', 0x83: 'ạ', 0x84: 'ă', 0x85: 'ằ', 0x86: 'ẳ', 0x87: 'ẵ', 0x88: 'ắ', 0x89: 'ặ', 0x8A: 'â', 0x8B: 'ầ', 0x8C: 'ẩ', 0x8D: 'ẫ', 0x8E: 'ấ', 0x8F: 'ậ', 0x90: 'đ',
-                0x91: 'è', 0x92: 'ẻ', 0x93: 'ẽ', 0x94: 'é', 0x95: 'ẹ', 0x96: 'ê', 0x97: 'ề', 0x98: 'ể', 0x99: 'ễ', 0x9A: 'ế', 0x9B: 'ệ', 0x9C: 'ì', 0x9D: 'ỉ', 0x9E: 'ĩ', 0x9F: 'í', 0xA0: 'ị', 0xA1: 'ò', 0xA2: 'ỏ',
-                0xA3: 'õ', 0xA4: 'ó', 0xA5: 'ọ', 0xA6: 'ô', 0xA7: 'ồ', 0xA8: 'ổ', 0xA9: 'ỗ', 0xAA: 'ố', 0xAB: 'ộ', 0xAC: 'ơ', 0xAD: 'ờ', 0xAE: 'ở', 0xAF: 'ỡ', 0xB0: 'ớ', 0xB1: 'ợ', 0xB2: 'ù', 0xB3: 'ủ', 0xB4: 'ũ',
-                0xB5: 'ú', 0xB6: 'ụ', 0xB7: 'ư', 0xB8: 'ừ', 0xB9: 'ử', 0xBA: 'ữ', 0xBB: 'ứ', 0xBC: 'ự', 0xBD: 'ỳ', 0xBE: 'ỷ', 0xBF: 'ỹ', 0xC0: 'ý', 0xC1: 'ỵ',
-                0xC2: 'À', 0xC3: 'Ả', 0xC4: 'Ã', 0xC5: 'Á', 0xC6: 'Ạ', 0xC7: 'Ă', 0xC8: 'Ằ', 0xC9: 'Ẳ', 0xCA: 'Ẵ', 0xCB: 'Ắ', 0xCC: 'Ặ', 0xCD: 'Â', 0xCE: 'Ầ', 0xCF: 'Ẩ', 0xD0: 'Ẫ', 0xD1: 'Ấ', 0xD2: 'Ậ', 0xD3: 'Đ',
-                0xD4: 'È', 0xD5: 'Ẻ', 0xD6: 'Ẽ', 0xD7: 'É', 0xD8: 'Ẹ', 0xD9: 'Ê', 0xDA: 'Ề', 0xDB: 'Ể', 0xDC: 'Ễ', 0xDD: 'Ế', 0xDE: 'Ệ', 0xDF: 'Ì', 0xE0: 'Ỉ', 0xE1: 'Ĩ', 0xE2: 'Í', 0xE3: 'Ị', 0xE4: 'Ò', 0xE5: 'Ỏ',
-                0xE6: 'Õ', 0xE7: 'Ó', 0xE8: 'Ọ', 0xE9: 'Ô', 0xEA: 'Ồ', 0xEB: 'Ổ', 0xEC: 'Ỗ', 0xED: 'Ố', 0xEE: 'Ộ', 0xEF: 'Ơ', 0xF0: 'Ờ', 0xF1: 'Ở', 0xF2: 'Ỡ', 0xF3: 'Ớ', 0xF4: 'Ợ', 0xF5: 'Ù', 0xF6: 'Ủ', 0xF7: 'Ũ',
-                0xF8: 'Ú', 0xF9: 'Ụ', 0xFA: 'Ư', 0xFB: 'Ừ', 0xFC: 'Ử', 0xFD: 'Ữ', 0xFE: 'Ứ', 0xFF: 'Ự',
-                0x1F: 'Ỳ', 0x1E: 'Ỷ', 0x1D: 'Ỹ', 0x1C: 'Ý', 0x1B: 'Ỵ'
-            };
+    </script>
+    <script>
 
-            function decodeHexText(hex) {
-                let s = ""; for (let i = 0; i < hex.length; i += 2) { let b = parseInt(hex.substr(i, 2), 16); s += revMap[b] || String.fromCharCode(b); }
-                return s;
+        // Initialize default variables (formerly @@777***)
+        var m_x = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        var m_y = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        var m_w = [64, 64, 64, 64, 64, 64, 64, 64, 64, 64];
+        var m_h = [64, 64, 64, 64, 64, 64, 64, 64, 64, 64];
+        var m_t = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+
+        // Logic to update inputs (Layer select was removed)
+        const layerSelect = null;
+        const revMap = {
+            0x7F: 'à', 0x80: 'ả', 0x81: 'ã', 0x82: 'á', 0x83: 'ạ', 0x84: 'ă', 0x85: 'ằ', 0x86: 'ẳ', 0x87: 'ẵ', 0x88: 'ắ', 0x89: 'ặ', 0x8A: 'â', 0x8B: 'ầ', 0x8C: 'ẩ', 0x8D: 'ẫ', 0x8E: 'ấ', 0x8F: 'ậ', 0x90: 'đ',
+            0x91: 'è', 0x92: 'ẻ', 0x93: 'ẽ', 0x94: 'é', 0x95: 'ẹ', 0x96: 'ê', 0x97: 'ề', 0x98: 'ể', 0x99: 'ễ', 0x9A: 'ế', 0x9B: 'ệ', 0x9C: 'ì', 0x9D: 'ỉ', 0x9E: 'ĩ', 0x9F: 'í', 0xA0: 'ị', 0xA1: 'ò', 0xA2: 'ỏ',
+            0xA3: 'õ', 0xA4: 'ó', 0xA5: 'ọ', 0xA6: 'ô', 0xA7: 'ồ', 0xA8: 'ổ', 0xA9: 'ỗ', 0xAA: 'ố', 0xAB: 'ộ', 0xAC: 'ơ', 0xAD: 'ờ', 0xAE: 'ở', 0xAF: 'ỡ', 0xB0: 'ớ', 0xB1: 'ợ', 0xB2: 'ù', 0xB3: 'ủ', 0xB4: 'ũ',
+            0xB5: 'ú', 0xB6: 'ụ', 0xB7: 'ư', 0xB8: 'ừ', 0xB9: 'ử', 0xBA: 'ữ', 0xBB: 'ứ', 0xBC: 'ự', 0xBD: 'ỳ', 0xBE: 'ỷ', 0xBF: 'ỹ', 0xC0: 'ý', 0xC1: 'ỵ',
+            0xC2: 'À', 0xC3: 'Ả', 0xC4: 'Ã', 0xC5: 'Á', 0xC6: 'Ạ', 0xC7: 'Ă', 0xC8: 'Ằ', 0xC9: 'Ẳ', 0xCA: 'Ẵ', 0xCB: 'Ắ', 0xCC: 'Ặ', 0xCD: 'Â', 0xCE: 'Ầ', 0xCF: 'Ẩ', 0xD0: 'Ẫ', 0xD1: 'Ấ', 0xD2: 'Ậ', 0xD3: 'Đ',
+            0xD4: 'È', 0xD5: 'Ẻ', 0xD6: 'Ẽ', 0xD7: 'É', 0xD8: 'Ẹ', 0xD9: 'Ê', 0xDA: 'Ề', 0xDB: 'Ể', 0xDC: 'Ễ', 0xDD: 'Ế', 0xDE: 'Ệ', 0xDF: 'Ì', 0xE0: 'Ỉ', 0xE1: 'Ĩ', 0xE2: 'Í', 0xE3: 'Ị', 0xE4: 'Ò', 0xE5: 'Ỏ',
+            0xE6: 'Õ', 0xE7: 'Ó', 0xE8: 'Ọ', 0xE9: 'Ô', 0xEA: 'Ồ', 0xEB: 'Ổ', 0xEC: 'Ỗ', 0xED: 'Ố', 0xEE: 'Ộ', 0xEF: 'Ơ', 0xF0: 'Ờ', 0xF1: 'Ở', 0xF2: 'Ỡ', 0xF3: 'Ớ', 0xF4: 'Ợ', 0xF5: 'Ù', 0xF6: 'Ủ', 0xF7: 'Ũ',
+            0xF8: 'Ú', 0xF9: 'Ụ', 0xFA: 'Ư', 0xFB: 'Ừ', 0xFC: 'Ử', 0xFD: 'Ữ', 0xFE: 'Ứ', 0xFF: 'Ự',
+            0x1F: 'Ỳ', 0x1E: 'Ỷ', 0x1D: 'Ỹ', 0x1C: 'Ý', 0x1B: 'Ỵ'
+        };
+
+        function decodeHexText(hex) {
+            let s = ""; for (let i = 0; i < hex.length; i += 2) { let b = parseInt(hex.substr(i, 2), 16); s += revMap[b] || String.fromCharCode(b); }
+            return s;
+        }
+
+        const triggerChange = () => {
+            const btnSaveOnly = document.getElementById('btn-save-image-only');
+            if (btnSaveOnly) {
+                btnSaveOnly.disabled = !imageChanged;
+                btnSaveOnly.style.opacity = imageChanged ? "1" : "0.5";
             }
+        };
 
-            const triggerChange = () => {
-                const btnSaveOnly = document.getElementById('btn-save-image-only');
-                if (btnSaveOnly) {
-                    btnSaveOnly.disabled = !imageChanged;
-                    btnSaveOnly.style.opacity = imageChanged ? "1" : "0.5";
-                }
-            };
+        const updateUI = () => {
+            triggerChange();
+            const v = document.getElementById("typ").value;
+            const al = document.getElementById("am"), th = document.getElementById("thang"), ng = document.getElementById("ngay"), gi = document.getElementById("gio"), ph = document.getElementById("phut"), tn = document.getElementById("thu");
 
-            const updateUI = () => {
-                triggerChange();
-                const v = document.getElementById("typ").value;
-                const al = document.getElementById("am"), th = document.getElementById("thang"), ng = document.getElementById("ngay"), gi = document.getElementById("gio"), ph = document.getElementById("phut"), tn = document.getElementById("thu");
+            [al, th, ng, gi, ph, tn].forEach(el => el.classList.remove("disable"));
+            if (v == "0") [al, th, ng].forEach(el => el.classList.add("disable"));
+            else if (v == "1") [gi, ph, tn].forEach(el => el.classList.add("disable"));
+            else if (v == "2") [tn].forEach(el => el.classList.add("disable"));
 
-                [al, th, ng, gi, ph, tn].forEach(el => el.classList.remove("disable"));
-                if (v == "0") [al, th, ng].forEach(el => el.classList.add("disable"));
-                else if (v == "1") [gi, ph, tn].forEach(el => el.classList.add("disable"));
-                else if (v == "2") [tn].forEach(el => el.classList.add("disable"));
+            // Logic hiển thị meta
+            const secAlarm = document.getElementById('section-alarm');
+            const secText = document.getElementById('section-text');
+            const secMetaSave = document.getElementById('section-meta-save');
+            const alarmFields = document.getElementById('alarm-fields-container');
 
-                // Logic hiển thị meta
-                const secAlarm = document.getElementById('section-alarm');
-                const secText = document.getElementById('section-text');
-                const secMetaSave = document.getElementById('section-meta-save');
-                const alarmFields = document.getElementById('alarm-fields-container');
+            const isAlarmActive = (secAlarm.getAttribute('data-active') === '1');
+            const isTextActive = (secText.style.display !== 'none');
 
-                const isAlarmActive = (secAlarm.getAttribute('data-active') === '1');
-                const isTextActive = (secText.style.display !== 'none');
+            // Nút save meta hiện khi có ít nhất 1 cái active
+            secMetaSave.style.display = (isAlarmActive || isTextActive) ? 'block' : 'none';
 
-                // Nút save meta hiện khi có ít nhất 1 cái active
-                secMetaSave.style.display = (isAlarmActive || isTextActive) ? 'block' : 'none';
+            // Nếu chỉ có Text active mà Alarm không active, ta vẫn hiện secAlarm nhưng ẩn các fields bên trong
+            // để mục đích là chứa nút SAVE META ONLY ở cuối.
+            if (isAlarmActive) {
+                secAlarm.style.display = 'block';
+                alarmFields.style.display = 'block';
+            } else if (isTextActive) {
+                secAlarm.style.display = 'block';
+                alarmFields.style.display = 'none';
+            } else {
+                secAlarm.style.display = 'none';
+            }
+        };
 
-                // Nếu chỉ có Text active mà Alarm không active, ta vẫn hiện secAlarm nhưng ẩn các fields bên trong
-                // để mục đích là chứa nút SAVE META ONLY ở cuối.
-                if (isAlarmActive) {
-                    secAlarm.style.display = 'block';
-                    alarmFields.style.display = 'block';
-                } else if (isTextActive) {
-                    secAlarm.style.display = 'block';
-                    alarmFields.style.display = 'none';
+        let croppr = null;
+        let imgOrig = null;
+        let imageChanged = false;
+        let brightness = 100, saturation = 100, inversion = 0, grayscale = 0;
+        let websocket;
+        let connectt = 0;
+        let currentLayer = 0;
+
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        const posX = document.getElementById('pos-x');
+        const posY = document.getElementById('pos-y');
+        const posW = document.getElementById('pos-w');
+        const posH = document.getElementById('pos-h');
+        const filterSlider = document.getElementById('filter-slider');
+        const filterName = document.getElementById('filter-name');
+        const filterValue = document.getElementById('filter-value');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+        const uploadModal = document.getElementById('upload-modal');
+
+        // Logic to update inputs (Layer select was removed)
+
+
+        let isGifAnimation = false;
+        let gifFramesData = [];
+        let windowGifInterval = null;
+
+        function setupCropprImage(dataUrl) {
+            const img = new Image();
+            img.src = dataUrl;
+            img.onload = () => {
+                const pW = 368, pH = 380;
+                let uiW, uiH;
+                if (img.width / img.height > pW / pH) {
+                    uiW = pW; uiH = uiW * img.height / img.width;
                 } else {
-                    secAlarm.style.display = 'none';
+                    uiH = pH; uiW = uiH * img.width / img.height;
                 }
-            };
+                const canvasUI = document.createElement("canvas");
+                const ctxUI = canvasUI.getContext("2d");
+                canvasUI.width = pW; canvasUI.height = pH;
+                ctxUI.translate(pW / 2, pH / 2);
+                ctxUI.drawImage(img, -uiW / 2, -uiH / 2, uiW, uiH);
 
-            let croppr = null;
-            let imgOrig = null;
-            let imageChanged = false;
-            let brightness = 100, saturation = 100, inversion = 0, grayscale = 0;
-            let websocket;
-            let connectt = 0;
-            let currentLayer = 0;
+                if (croppr) { try { croppr.destroy(); } catch (e) { } croppr = null; }
+                const noImageText = document.getElementById('no-image-text');
+                if (noImageText) noImageText.style.display = 'none';
 
-            const fileInput = document.getElementById('file-input');
-            const previewContainer = document.getElementById('preview-container');
-            const posX = document.getElementById('pos-x');
-            const posY = document.getElementById('pos-y');
-            const posW = document.getElementById('pos-w');
-            const posH = document.getElementById('pos-h');
-            const filterSlider = document.getElementById('filter-slider');
-            const filterName = document.getElementById('filter-name');
-            const filterValue = document.getElementById('filter-value');
-            const progressBar = document.getElementById('progress-bar');
-            const progressPercent = document.getElementById('progress-percent');
-            const uploadModal = document.getElementById('upload-modal');
-
-            // Logic to update inputs (Layer select was removed)
-
-
-            let isGifAnimation = false;
-            let gifFramesData = [];
-            let windowGifInterval = null;
-
-            function setupCropprImage(dataUrl) {
-                const img = new Image();
-                img.src = dataUrl;
-                img.onload = () => {
-                    const pW = 368, pH = 380;
-                    let uiW, uiH;
-                    if (img.width / img.height > pW / pH) {
-                        uiW = pW; uiH = uiW * img.height / img.width;
-                    } else {
-                        uiH = pH; uiW = uiH * img.width / img.height;
-                    }
-                    const canvasUI = document.createElement("canvas");
-                    const ctxUI = canvasUI.getContext("2d");
-                    canvasUI.width = pW; canvasUI.height = pH;
-                    ctxUI.translate(pW / 2, pH / 2);
-                    ctxUI.drawImage(img, -uiW / 2, -uiH / 2, uiW, uiH);
-
+                const targetImg = document.getElementById('cropper-target');
+                if (!targetImg) return;
+                targetImg.style.display = 'block';
+                targetImg.onload = () => {
+                    imgOrig = targetImg;
+                    const btnSaveOnly = document.getElementById('btn-save-image-only');
+                    if (btnSaveOnly) btnSaveOnly.disabled = false;
                     if (croppr) { try { croppr.destroy(); } catch (e) { } croppr = null; }
-                    const noImageText = document.getElementById('no-image-text');
-                    if (noImageText) noImageText.style.display = 'none';
-
-                    const targetImg = document.getElementById('cropper-target');
-                    if (!targetImg) return;
-                    targetImg.style.display = 'block';
-                    targetImg.onload = () => {
-                        imgOrig = targetImg;
-                        const btnSaveOnly = document.getElementById('btn-save-image-only');
-                        if (btnSaveOnly) btnSaveOnly.disabled = false;
-                        if (croppr) { try { croppr.destroy(); } catch (e) { } croppr = null; }
-                        croppr = new Croppr(targetImg, {
-                            startSize: [90, 90, '%'],
-                            minSize: [1, 1, 'px'],
-                            aspectRatio: null,
-                            returnMode: 'real',
-                            onInitialize: () => { imageChanged = true; triggerChange(); },
-                            onCropEnd: () => { imageChanged = true; triggerChange(); }
-                        });
-                    };
-                    targetImg.src = canvasUI.toDataURL();
+                    croppr = new Croppr(targetImg, {
+                        startSize: [90, 90, '%'],
+                        minSize: [1, 1, 'px'],
+                        aspectRatio: null,
+                        returnMode: 'real',
+                        onInitialize: () => { imageChanged = true; triggerChange(); },
+                        onCropEnd: () => { imageChanged = true; triggerChange(); }
+                    });
                 };
-            }
+                targetImg.src = canvasUI.toDataURL();
+            };
+        }
 
-            fileInput.onchange = (e) => {
-                if (e.target.files.length) {
-                    const file = e.target.files[0];
-                    isGifAnimation = false;
-                    gifFramesData = [];
-                    if (windowGifInterval) { clearInterval(windowGifInterval); windowGifInterval = null; }
+        fileInput.onchange = (e) => {
+            if (e.target.files.length) {
+                const file = e.target.files[0];
+                isGifAnimation = false;
+                gifFramesData = [];
+                if (windowGifInterval) { clearInterval(windowGifInterval); windowGifInterval = null; }
 
-                    if (file.type === 'image/gif') {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => {
-                            try {
-                                const buffer = ev.target.result;
-                                const uint8Arr = new Uint8Array(buffer);
-                                const gifReader = new GifReader(uint8Arr);
-                                const numFrames = gifReader.numFrames();
+                if (file.type === 'image/gif') {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        try {
+                            const buffer = ev.target.result;
+                            const uint8Arr = new Uint8Array(buffer);
+                            const gifReader = new GifReader(uint8Arr);
+                            const numFrames = gifReader.numFrames();
 
-                                const maxFrames = 16;
-                                const decimation = Math.max(1, numFrames / maxFrames);
+                            const maxFrames = 16;
+                            const decimation = Math.max(1, numFrames / maxFrames);
 
-                                const cumulativeBuffer = new Uint8ClampedArray(gifReader.width * gifReader.height * 4);
-                                const tempStep = Math.max(1, Math.ceil(numFrames / maxFrames));
-                                for (let i = 0; i < numFrames; i++) {
-                                    const frameInfo = gifReader.frameInfo(i);
-                                    gifReader.decodeAndBlitFrameRGBA(i, cumulativeBuffer);
-                                    if (i % tempStep === 0 || i === numFrames - 1) {
-                                        if (gifFramesData.length < maxFrames) {
-                                            gifFramesData.push({
-                                                width: gifReader.width,
-                                                height: gifReader.height,
-                                                data: new Uint8ClampedArray(cumulativeBuffer),
-                                                delay: frameInfo.delay * 10
-                                            });
-                                        }
+                            const cumulativeBuffer = new Uint8ClampedArray(gifReader.width * gifReader.height * 4);
+                            const tempStep = Math.max(1, Math.ceil(numFrames / maxFrames));
+                            for (let i = 0; i < numFrames; i++) {
+                                const frameInfo = gifReader.frameInfo(i);
+                                gifReader.decodeAndBlitFrameRGBA(i, cumulativeBuffer);
+                                if (i % tempStep === 0 || i === numFrames - 1) {
+                                    if (gifFramesData.length < maxFrames) {
+                                        gifFramesData.push({
+                                            width: gifReader.width,
+                                            height: gifReader.height,
+                                            data: new Uint8ClampedArray(cumulativeBuffer),
+                                            delay: frameInfo.delay * 10
+                                        });
                                     }
-                                    // Xử lý Disposal Method 2: Restore to Background
-                                    if (frameInfo.disposal === 2) {
-                                        for (let dy = 0; dy < frameInfo.height; dy++) {
-                                            for (let dx = 0; dx < frameInfo.width; dx++) {
-                                                const idx = ((frameInfo.y + dy) * gifReader.width + (frameInfo.x + dx)) * 4;
-                                                cumulativeBuffer[idx] = 0; cumulativeBuffer[idx + 1] = 0; cumulativeBuffer[idx + 2] = 0; cumulativeBuffer[idx + 3] = 0;
-                                            }
+                                }
+                                // Xử lý Disposal Method 2: Restore to Background
+                                if (frameInfo.disposal === 2) {
+                                    for (let dy = 0; dy < frameInfo.height; dy++) {
+                                        for (let dx = 0; dx < frameInfo.width; dx++) {
+                                            const idx = ((frameInfo.y + dy) * gifReader.width + (frameInfo.x + dx)) * 4;
+                                            cumulativeBuffer[idx] = 0; cumulativeBuffer[idx + 1] = 0; cumulativeBuffer[idx + 2] = 0; cumulativeBuffer[idx + 3] = 0;
                                         }
                                     }
                                 }
-                                isGifAnimation = true;
-
-                                const midIdx = Math.floor(gifFramesData.length / 2);
-                                const midFrame = gifFramesData[midIdx];
-                                const midCanvas = document.createElement("canvas");
-                                midCanvas.width = midFrame.width; midCanvas.height = midFrame.height;
-                                const midCtx = midCanvas.getContext("2d");
-                                const imageData = midCtx.createImageData(midFrame.width, midFrame.height);
-                                imageData.data.set(midFrame.data);
-                                midCtx.putImageData(imageData, 0, 0);
-
-                                let frameStep = 0;
-                                windowGifInterval = setInterval(() => {
-                                    const fr = gifFramesData[frameStep % gifFramesData.length];
-                                    const tempCanvas = document.createElement("canvas");
-                                    tempCanvas.width = fr.width; tempCanvas.height = fr.height;
-                                    const tempCtx = tempCanvas.getContext("2d");
-                                    const imgD = tempCtx.createImageData(fr.width, fr.height);
-                                    imgD.data.set(fr.data);
-                                    tempCtx.putImageData(imgD, 0, 0);
-
-                                    const pW = 368, pH = 380;
-                                    let uiW, uiH;
-                                    if (tempCanvas.width / tempCanvas.height > pW / pH) {
-                                        uiW = pW; uiH = uiW * tempCanvas.height / tempCanvas.width;
-                                    } else {
-                                        uiH = pH; uiW = uiH * tempCanvas.width / tempCanvas.height;
-                                    }
-                                    const canvasUI = document.createElement("canvas");
-                                    const ctxUI = canvasUI.getContext("2d");
-                                    canvasUI.width = pW; canvasUI.height = pH;
-                                    ctxUI.translate(pW / 2, pH / 2);
-                                    ctxUI.drawImage(tempCanvas, -uiW / 2, -uiH / 2, uiW, uiH);
-
-                                    const previewImgs = document.querySelectorAll('.croppr-image, .croppr-imageClipped');
-                                    previewImgs.forEach(img => img.src = canvasUI.toDataURL());
-                                    frameStep++;
-                                }, 100);
-
-                                setupCropprImage(midCanvas.toDataURL());
-                            } catch (err) {
-                                console.error("Lỗi giải mã GIF", err);
-                                const r2 = new FileReader();
-                                r2.onload = (ev2) => setupCropprImage(ev2.target.result);
-                                r2.readAsDataURL(file);
                             }
-                        };
-                        reader.readAsArrayBuffer(file);
-                    } else {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => setupCropprImage(ev.target.result);
-                        reader.readAsDataURL(file);
-                    }
-                }
-            };
+                            isGifAnimation = true;
 
-            // Filter Logic
-            document.querySelectorAll('.btn-filter').forEach(btn => {
-                btn.onclick = () => {
-                    document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    imageChanged = true;
-                    triggerChange();
-                    filterName.innerText = btn.innerText;
-                    if (btn.id === 'brightness' || btn.id === 'saturation') {
-                        filterSlider.max = 200;
-                        filterSlider.value = (btn.id === 'brightness') ? brightness : saturation;
-                    } else {
-                        filterSlider.max = 100;
-                        filterSlider.value = (btn.id === 'inversion') ? inversion : grayscale;
-                    }
-                    filterValue.innerText = filterSlider.value + '%';
-                };
-            });
+                            const midIdx = Math.floor(gifFramesData.length / 2);
+                            const midFrame = gifFramesData[midIdx];
+                            const midCanvas = document.createElement("canvas");
+                            midCanvas.width = midFrame.width; midCanvas.height = midFrame.height;
+                            const midCtx = midCanvas.getContext("2d");
+                            const imageData = midCtx.createImageData(midFrame.width, midFrame.height);
+                            imageData.data.set(midFrame.data);
+                            midCtx.putImageData(imageData, 0, 0);
 
-            filterSlider.oninput = () => {
-                const val = filterSlider.value;
-                filterValue.innerText = val + '%';
-                const active = document.querySelector('.btn-filter.active').id;
-                if (active === 'brightness') brightness = val;
-                else if (active === 'saturation') saturation = val;
-                else if (active === 'inversion') inversion = val;
-                else grayscale = val;
+                            let frameStep = 0;
+                            windowGifInterval = setInterval(() => {
+                                const fr = gifFramesData[frameStep % gifFramesData.length];
+                                const tempCanvas = document.createElement("canvas");
+                                tempCanvas.width = fr.width; tempCanvas.height = fr.height;
+                                const tempCtx = tempCanvas.getContext("2d");
+                                const imgD = tempCtx.createImageData(fr.width, fr.height);
+                                imgD.data.set(fr.data);
+                                tempCtx.putImageData(imgD, 0, 0);
 
-                if (imgOrig) {
-                    imageChanged = true;
-                    const filterStr = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-                    // Áp dụng cho cả ảnh nền và ảnh trong khung crop của Croppr
-                    const previewImgs = document.querySelectorAll('.croppr-image, .croppr-imageClipped');
-                    previewImgs.forEach(img => img.style.filter = filterStr);
-                }
-                triggerChange();
-            };
+                                const pW = 368, pH = 380;
+                                let uiW, uiH;
+                                if (tempCanvas.width / tempCanvas.height > pW / pH) {
+                                    uiW = pW; uiH = uiW * tempCanvas.height / tempCanvas.width;
+                                } else {
+                                    uiH = pH; uiW = uiH * tempCanvas.width / tempCanvas.height;
+                                }
+                                const canvasUI = document.createElement("canvas");
+                                const ctxUI = canvasUI.getContext("2d");
+                                canvasUI.width = pW; canvasUI.height = pH;
+                                ctxUI.translate(pW / 2, pH / 2);
+                                ctxUI.drawImage(tempCanvas, -uiW / 2, -uiH / 2, uiW, uiH);
 
-            // Auto-hook all inputs for change tracking
-            ['text', 'chk', 'typ', 'am', 'thu', 'gio', 'phut', 'ngay', 'thang', 'mel'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', triggerChange);
-                    el.addEventListener('change', triggerChange);
-                }
-            });
+                                const previewImgs = document.querySelectorAll('.croppr-image, .croppr-imageClipped');
+                                previewImgs.forEach(img => img.src = canvasUI.toDataURL());
+                                frameStep++;
+                            }, 100);
 
-            function byteToHex(b) {
-                const s = (b & 0xFF).toString(16);
-                return s.length === 1 ? '0' + s : s;
-            }
-
-            // Action Logic
-            let isCanceling = false;
-            document.getElementById('btn-back').onclick = () => {
-                goBackWithReferrer();
-            };
-
-            function goBackWithReferrer() {
-                const ref = document.referrer;
-                if (ref) {
-                    try {
-                        const url = new URL(ref);
-                        url.searchParams.set('v', Date.now());
-                        window.location.href = url.toString();
-                    } catch (e) {
-                        window.location.href = '/clock.html?v=' + Date.now();
-                    }
+                            setupCropprImage(midCanvas.toDataURL());
+                        } catch (err) {
+                            console.error("Lỗi giải mã GIF", err);
+                            const r2 = new FileReader();
+                            r2.onload = (ev2) => setupCropprImage(ev2.target.result);
+                            r2.readAsDataURL(file);
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
                 } else {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => setupCropprImage(ev.target.result);
+                    reader.readAsDataURL(file);
+                }
+            }
+        };
+
+        // Filter Logic
+        document.querySelectorAll('.btn-filter').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                imageChanged = true;
+                triggerChange();
+                filterName.innerText = btn.innerText;
+                if (btn.id === 'brightness' || btn.id === 'saturation') {
+                    filterSlider.max = 200;
+                    filterSlider.value = (btn.id === 'brightness') ? brightness : saturation;
+                } else {
+                    filterSlider.max = 100;
+                    filterSlider.value = (btn.id === 'inversion') ? inversion : grayscale;
+                }
+                filterValue.innerText = filterSlider.value + '%';
+            };
+        });
+
+        filterSlider.oninput = () => {
+            const val = filterSlider.value;
+            filterValue.innerText = val + '%';
+            const active = document.querySelector('.btn-filter.active').id;
+            if (active === 'brightness') brightness = val;
+            else if (active === 'saturation') saturation = val;
+            else if (active === 'inversion') inversion = val;
+            else grayscale = val;
+
+            if (imgOrig) {
+                imageChanged = true;
+                const filterStr = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+                // Áp dụng cho cả ảnh nền và ảnh trong khung crop của Croppr
+                const previewImgs = document.querySelectorAll('.croppr-image, .croppr-imageClipped');
+                previewImgs.forEach(img => img.style.filter = filterStr);
+            }
+            triggerChange();
+        };
+
+        // Auto-hook all inputs for change tracking
+        ['text', 'chk', 'typ', 'am', 'thu', 'gio', 'phut', 'ngay', 'thang', 'mel'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', triggerChange);
+                el.addEventListener('change', triggerChange);
+            }
+        });
+
+        function byteToHex(b) {
+            const s = (b & 0xFF).toString(16);
+            return s.length === 1 ? '0' + s : s;
+        }
+
+        // Action Logic
+        let isCanceling = false;
+        document.getElementById('btn-back').onclick = () => {
+            goBackWithReferrer();
+        };
+
+        function goBackWithReferrer() {
+            const ref = document.referrer;
+            if (ref) {
+                try {
+                    const url = new URL(ref);
+                    url.searchParams.set('v', Date.now());
+                    window.location.href = url.toString();
+                } catch (e) {
                     window.location.href = '/clock.html?v=' + Date.now();
                 }
+            } else {
+                window.location.href = '/clock.html?v=' + Date.now();
+            }
+        }
+
+
+
+        function sendSpeed() {
+            if (!connectt) return;
+            const spd = parseInt(document.getElementById('speed').value);
+            if (spd >= 1 && spd <= 32) {
+                websocket.send("#CSPD$" + spd);
+            }
+        }
+
+        function sendMetaData(toFlash, doRedirect) {
+            if (!connectt) return;
+
+            // Lấy trạng thái trực tiếp từ UI (loại bỏ URL params)
+            const secAlarm = document.getElementById('section-alarm');
+            const secText = document.getElementById('section-text');
+            const secImg = document.getElementById('section-image');
+
+            const isAlarm = (secAlarm && secAlarm.style.display !== 'none');
+            const isText = (secText && secText.style.display !== 'none');
+            const isTutao = (secImg && secImg.style.display !== 'none'); // tutao
+            const tutao = isTutao ? 1 : 0;
+
+            const px = parseInt(posX.value) || 0;
+            const py = parseInt(posY.value) || 0;
+            const pw = parseInt(posW.value) || 64;
+            const phh = parseInt(posH.value) || 64;
+
+            isSaving = toFlash;
+            isRedirecting = doRedirect;
+            uploadModal.style.display = 'flex';
+            document.getElementById('modal-title').innerText = isSaving ? "Saving Meta..." : "Previewing Status...";
+
+            // 0. Gửi Header (Tọa độ và cờ tutao)
+            websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
+
+            // 1. Gửi Quote (nếu là chế độ danh ngôn)
+            const quoteBox = document.getElementById('quote-selection-container');
+            const isQuoteMode = (quoteBox && quoteBox.style.display !== 'none');
+            if (isText && isQuoteMode) {
+                const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
+                websocket.send("#CQOT$" + qidx);
             }
 
+            // 2. Gửi Note/Text (nếu là chế độ tự nhập)
+            const manualBox = document.getElementById('manual-text-container');
+            const isManualMode = (manualBox && manualBox.style.display !== 'none');
+            if (isText && isManualMode) {
+                const tv = document.getElementById('text').value;
+                let nhex = "";
+                // Sử dụng map đảo để convert text sang hex chuẩn firmware
+                const charToHex = {};
+                for (let k in revMap) charToHex[revMap[k]] = byteToHex(parseInt(k));
 
+                for (let i = 0; i < tv.length; i++) {
+                    nhex += charToHex[tv[i]] || byteToHex(tv.charCodeAt(i) < 256 ? tv.charCodeAt(i) : 32);
+                }
+                websocket.send(`#CNOT$${tv.length},${nhex}`);
+            }
 
-            function sendSpeed() {
-                if (!connectt) return;
-                const spd = parseInt(document.getElementById('speed').value);
-                if (spd >= 1 && spd <= 32) {
-                    websocket.send("#CSPD$" + spd);
+            // 3. Gửi Alarm (nếu bật alarm)
+            if (isAlarm) {
+                const typ = parseInt(document.getElementById("typ").value) || 0;
+                const gi = parseInt(document.getElementById("gio").value) || 0;
+                const ph = parseInt(document.getElementById("phut").value) || 0;
+                const ng = parseInt(document.getElementById("ngay").value) || 1;
+                const th = parseInt(document.getElementById("thang").value) || 1;
+                const tnu = parseInt(document.getElementById("thu").value) || 0;
+                const am = parseInt(document.getElementById("am").value) || 0;
+                const mel = parseInt(document.getElementById("mel").value) || 0;
+                websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
+            }
+
+            // 4. Kết thúc: Lưu vào Flash với flag MET để chip chỉ ghi header/alarm/text, không ghi ảnh
+            websocket.send("#CRES$");
+            websocket.send(isSaving ? "#CSAV:MET" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
+        }
+
+        function sendImageData(finalSave, doRedirect, onlyImage = false) {
+            if (!connectt) return;
+            const params = new URLSearchParams(window.location.search);
+            const isAlarm = (params.get('chk') && params.get('chk') !== '0');
+            const isText = (params.get('chu') && params.get('chu') !== '0');
+            const isTutao = (params.get('tutao') && params.get('tutao') !== '0');
+
+            const px = parseInt(posX.value) || 0;
+            const py = parseInt(posY.value) || 0;
+            const pw = parseInt(posW.value) || 64;
+            const phh = parseInt(posH.value) || 64;
+
+            const targetW = pw;
+            const targetH = phh;
+
+            let hexData = "";
+            let imageHasContent = (imgOrig && imageChanged);
+
+            if (croppr && imageChanged) {
+                const crop = croppr.getValue();
+                const canvas = document.createElement('canvas');
+                canvas.width = targetW;
+                canvas.height = targetH;
+                const ctx = canvas.getContext('2d');
+                ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+
+                ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+
+                const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
+                for (let i = 0; i < imgData.length; i += 4) {
+                    let r = imgData[i], g = imgData[i + 1], b = imgData[i + 2], a = imgData[i + 3];
+
+                    // Alpha threshold: Nếu quá mờ ( < 32/255 ) thì coi như trong suốt hoàn toàn
+                    if (a < 32) {
+                        a = 0; r = 0; g = 0; b = 0;
+                    }
+
+                    const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
+                    hexData += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
+                }
+
+                const targetHexLen = targetW * targetH * 4;
+                if (hexData.length < targetHexLen) {
+                    hexData = hexData.padEnd(targetHexLen, '0');
                 }
             }
 
-            function sendMetaData(toFlash, doRedirect) {
-                if (!connectt) return;
-
-                // Lấy trạng thái trực tiếp từ UI (loại bỏ URL params)
+            if (finalSave) {
+                // Lấy trạng thái trực tiếp từ UI
                 const secAlarm = document.getElementById('section-alarm');
                 const secText = document.getElementById('section-text');
                 const secImg = document.getElementById('section-image');
 
                 const isAlarm = (secAlarm && secAlarm.style.display !== 'none');
                 const isText = (secText && secText.style.display !== 'none');
-                const isTutao = (secImg && secImg.style.display !== 'none'); // tutao
-                const tutao = isTutao ? 1 : 0;
+                const tutao = (secImg && secImg.style.display !== 'none') ? 1 : 0;
 
-                const px = parseInt(posX.value) || 0;
-                const py = parseInt(posY.value) || 0;
-                const pw = parseInt(posW.value) || 64;
-                const phh = parseInt(posH.value) || 64;
+                const typ = parseInt(document.getElementById("typ").value) || 0;
+                const gi = parseInt(document.getElementById("gio").value) || 0;
+                const ph = parseInt(document.getElementById("phut").value) || 0;
+                const ng = parseInt(document.getElementById("ngay").value) || 1;
+                const th = parseInt(document.getElementById("thang").value) || 1;
+                const tnu = parseInt(document.getElementById("thu").value) || 0;
+                const am = parseInt(document.getElementById("am").value) || 0;
+                const mel = parseInt(document.getElementById("mel").value) || 0;
 
-                isSaving = toFlash;
-                isRedirecting = doRedirect;
-                uploadModal.style.display = 'flex';
-                document.getElementById('modal-title').innerText = isSaving ? "Saving Meta..." : "Previewing Status...";
-
-                // 0. Gửi Header (Tọa độ và cờ tutao)
+                // 0. Gửi Header 
                 websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
 
-                // 1. Gửi Quote (nếu là chế độ danh ngôn)
-                const quoteBox = document.getElementById('quote-selection-container');
-                const isQuoteMode = (quoteBox && quoteBox.style.display !== 'none');
-                if (isText && isQuoteMode) {
-                    const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
-                    websocket.send("#CQOT$" + qidx);
-                }
-
-                // 2. Gửi Note/Text (nếu là chế độ tự nhập)
-                const manualBox = document.getElementById('manual-text-container');
-                const isManualMode = (manualBox && manualBox.style.display !== 'none');
-                if (isText && isManualMode) {
-                    const tv = document.getElementById('text').value;
-                    let nhex = "";
-                    // Sử dụng map đảo để convert text sang hex chuẩn firmware
-                    const charToHex = {};
-                    for (let k in revMap) charToHex[revMap[k]] = byteToHex(parseInt(k));
-
-                    for (let i = 0; i < tv.length; i++) {
-                        nhex += charToHex[tv[i]] || byteToHex(tv.charCodeAt(i) < 256 ? tv.charCodeAt(i) : 32);
+                if (!onlyImage) {
+                    // Gửi Quote (nếu có)
+                    const quoteBox = document.getElementById('quote-selection-container');
+                    if (isText && quoteBox && quoteBox.style.display !== 'none') {
+                        const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
+                        websocket.send("#CQOT$" + qidx);
                     }
-                    websocket.send(`#CNOT$${tv.length},${nhex}`);
-                }
 
-                // 3. Gửi Alarm (nếu bật alarm)
-                if (isAlarm) {
-                    const typ = parseInt(document.getElementById("typ").value) || 0;
-                    const gi = parseInt(document.getElementById("gio").value) || 0;
-                    const ph = parseInt(document.getElementById("phut").value) || 0;
-                    const ng = parseInt(document.getElementById("ngay").value) || 1;
-                    const th = parseInt(document.getElementById("thang").value) || 1;
-                    const tnu = parseInt(document.getElementById("thu").value) || 0;
-                    const am = parseInt(document.getElementById("am").value) || 0;
-                    const mel = parseInt(document.getElementById("mel").value) || 0;
-                    websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
-                }
-
-                // 4. Kết thúc: Lưu vào Flash với flag MET để chip chỉ ghi header/alarm/text, không ghi ảnh
-                websocket.send("#CRES$");
-                websocket.send(isSaving ? "#CSAV:MET" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
-            }
-
-            function sendImageData(finalSave, doRedirect, onlyImage = false) {
-                if (!connectt) return;
-                const params = new URLSearchParams(window.location.search);
-                const isAlarm = (params.get('chk') && params.get('chk') !== '0');
-                const isText = (params.get('chu') && params.get('chu') !== '0');
-                const isTutao = (params.get('tutao') && params.get('tutao') !== '0');
-
-                const px = parseInt(posX.value) || 0;
-                const py = parseInt(posY.value) || 0;
-                const pw = parseInt(posW.value) || 64;
-                const phh = parseInt(posH.value) || 64;
-
-                const targetW = pw;
-                const targetH = phh;
-
-                let hexData = "";
-                let imageHasContent = (imgOrig && imageChanged);
-
-                if (croppr && imageChanged) {
-                    const crop = croppr.getValue();
-                    const canvas = document.createElement('canvas');
-                    canvas.width = targetW;
-                    canvas.height = targetH;
-                    const ctx = canvas.getContext('2d');
-                    ctx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-
-                    ctx.drawImage(imgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
-
-                    const imgData = ctx.getImageData(0, 0, targetW, targetH).data;
-                    for (let i = 0; i < imgData.length; i += 4) {
-                        let r = imgData[i], g = imgData[i + 1], b = imgData[i + 2], a = imgData[i + 3];
-
-                        // Alpha threshold: Nếu quá mờ ( < 32/255 ) thì coi như trong suốt hoàn toàn
-                        if (a < 32) {
-                            a = 0; r = 0; g = 0; b = 0;
+                    // Gửi Note/Text (nếu có)
+                    const manualBox = document.getElementById('manual-text-container');
+                    if (isText && manualBox && manualBox.style.display !== 'none') {
+                        const tv = document.getElementById('text').value;
+                        let nhex = "";
+                        const charToHex = {};
+                        for (let k in revMap) charToHex[revMap[k]] = byteToHex(parseInt(k));
+                        for (let i = 0; i < tv.length; i++) {
+                            nhex += charToHex[tv[i]] || byteToHex(tv.charCodeAt(i) < 256 ? tv.charCodeAt(i) : 32);
                         }
-
-                        const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
-                        hexData += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
+                        websocket.send(`#CNOT$${tv.length},${nhex}`);
                     }
 
-                    const targetHexLen = targetW * targetH * 4;
-                    if (hexData.length < targetHexLen) {
-                        hexData = hexData.padEnd(targetHexLen, '0');
-                    }
-                }
-
-                if (finalSave) {
-                    // Lấy trạng thái trực tiếp từ UI
-                    const secAlarm = document.getElementById('section-alarm');
-                    const secText = document.getElementById('section-text');
-                    const secImg = document.getElementById('section-image');
-
-                    const isAlarm = (secAlarm && secAlarm.style.display !== 'none');
-                    const isText = (secText && secText.style.display !== 'none');
-                    const tutao = (secImg && secImg.style.display !== 'none') ? 1 : 0;
-
-                    const typ = parseInt(document.getElementById("typ").value) || 0;
-                    const gi = parseInt(document.getElementById("gio").value) || 0;
-                    const ph = parseInt(document.getElementById("phut").value) || 0;
-                    const ng = parseInt(document.getElementById("ngay").value) || 1;
-                    const th = parseInt(document.getElementById("thang").value) || 1;
-                    const tnu = parseInt(document.getElementById("thu").value) || 0;
-                    const am = parseInt(document.getElementById("am").value) || 0;
-                    const mel = parseInt(document.getElementById("mel").value) || 0;
-
-                    // 0. Gửi Header 
-                    websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
-
-                    if (!onlyImage) {
-                        // Gửi Quote (nếu có)
-                        const quoteBox = document.getElementById('quote-selection-container');
-                        if (isText && quoteBox && quoteBox.style.display !== 'none') {
-                            const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
-                            websocket.send("#CQOT$" + qidx);
-                        }
-
-                        // Gửi Note/Text (nếu có)
-                        const manualBox = document.getElementById('manual-text-container');
-                        if (isText && manualBox && manualBox.style.display !== 'none') {
-                            const tv = document.getElementById('text').value;
-                            let nhex = "";
-                            const charToHex = {};
-                            for (let k in revMap) charToHex[revMap[k]] = byteToHex(parseInt(k));
-                            for (let i = 0; i < tv.length; i++) {
-                                nhex += charToHex[tv[i]] || byteToHex(tv.charCodeAt(i) < 256 ? tv.charCodeAt(i) : 32);
-                            }
-                            websocket.send(`#CNOT$${tv.length},${nhex}`);
-                        }
-
-                        if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
-                    }
-                }
-
-                if (hexData) {
-                    startUpload(hexData, finalSave, doRedirect);
-                } else if (finalSave) {
-                    isSaving = finalSave;
-                    isRedirecting = doRedirect;
-                    uploadModal.style.display = 'flex';
-                    document.getElementById('modal-title').innerText = isSaving ? "Saving..." : "Previewing...";
-                    websocket.send("#CRES$");
-                    websocket.send(isSaving ? "#CSAV$" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
-                }
-
-                if (finalSave || imageChanged) {
-                    imageChanged = false;
+                    if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel}`);
                 }
             }
 
-            let isSaving = false; // Lệnh Lưu vào Flash
-            let isRedirecting = false; // Lệnh Chuyển trang
-
-            function startUpload(mainData, toFlash, doRedirect) {
-                if (windowGifInterval) {
-                    clearInterval(windowGifInterval);
-                    windowGifInterval = null;
-                }
-                uploadModal.style.display = 'flex';
-                document.getElementById('modal-title').innerText = toFlash ? "Saving..." : "Previewing...";
-                isSaving = toFlash;
+            if (hexData) {
+                startUpload(hexData, finalSave, doRedirect);
+            } else if (finalSave) {
+                isSaving = finalSave;
                 isRedirecting = doRedirect;
-
-                uploadQueue = [];
-                for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CIMG$" + mainData.substring(i, i + 1024));
-
-                totalPackets = uploadQueue.length;
-                const params = new URLSearchParams(window.location.search);
-                const idx = params.get('idx') || 0;
-                websocket.send("#CSTB$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
+                uploadModal.style.display = 'flex';
+                document.getElementById('modal-title').innerText = isSaving ? "Saving..." : "Previewing...";
+                websocket.send("#CRES$");
+                websocket.send(isSaving ? "#CSAV$" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
             }
 
-            let animQueue = [];
-            let animPackets = 0;
-            function startAnimationUpload() {
-                if (!isGifAnimation || gifFramesData.length === 0) return;
+            if (finalSave || imageChanged) {
+                imageChanged = false;
+            }
+        }
 
-                document.getElementById('modal-title').innerText = "Uploading Animation...";
-                progressBar.style.width = '0%';
-                progressPercent.innerText = '0%';
+        let isSaving = false; // Lệnh Lưu vào Flash
+        let isRedirecting = false; // Lệnh Chuyển trang
 
-                const targetW = parseInt(posW.value) || 64;
-                const targetH = parseInt(posH.value) || 64;
-                const crop = croppr.getValue();
-                let allFramesHex = "";
+        function startUpload(mainData, toFlash, doRedirect) {
+            if (windowGifInterval) {
+                clearInterval(windowGifInterval);
+                windowGifInterval = null;
+            }
+            uploadModal.style.display = 'flex';
+            document.getElementById('modal-title').innerText = toFlash ? "Saving..." : "Previewing...";
+            isSaving = toFlash;
+            isRedirecting = doRedirect;
 
-                const pW = 368, pH = 380; // Kích thước giao diện preview chuẩn
+            uploadQueue = [];
+            for (let i = 0; i < mainData.length; i += 1024) uploadQueue.push("#CIMG$" + mainData.substring(i, i + 1024));
 
-                gifFramesData.forEach(fr => {
-                    const offCanvas = document.createElement('canvas');
-                    offCanvas.width = fr.width; offCanvas.height = fr.height;
-                    const offCtx = offCanvas.getContext('2d');
-                    const imgDataObj = offCtx.createImageData(fr.width, fr.height);
-                    imgDataObj.data.set(fr.data);
-                    offCtx.putImageData(imgDataObj, 0, 0);
+            totalPackets = uploadQueue.length;
+            const params = new URLSearchParams(window.location.search);
+            const idx = params.get('idx') || 0;
+            websocket.send("#CSTB$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
+        }
 
-                    // BƯỚC THIẾU: Phải padding frame về chuẩn 368x380 giống hệt lúc tạo preview imgOrig
-                    // Nếu không, tọa độ crop.x, crop.y (được đo trên imgOrig 368x380) sẽ bị áp sai lệch hoàn toàn vào khung gốc
-                    let uiW, uiH;
-                    if (fr.width / fr.height > pW / pH) {
-                        uiW = pW; uiH = uiW * fr.height / fr.width;
+        let animQueue = [];
+        let animPackets = 0;
+        function startAnimationUpload() {
+            if (!isGifAnimation || gifFramesData.length === 0) return;
+
+            document.getElementById('modal-title').innerText = "Uploading Animation...";
+            progressBar.style.width = '0%';
+            progressPercent.innerText = '0%';
+
+            const targetW = parseInt(posW.value) || 64;
+            const targetH = parseInt(posH.value) || 64;
+            const crop = croppr.getValue();
+            let allFramesHex = "";
+
+            const pW = 368, pH = 380; // Kích thước giao diện preview chuẩn
+
+            gifFramesData.forEach(fr => {
+                const offCanvas = document.createElement('canvas');
+                offCanvas.width = fr.width; offCanvas.height = fr.height;
+                const offCtx = offCanvas.getContext('2d');
+                const imgDataObj = offCtx.createImageData(fr.width, fr.height);
+                imgDataObj.data.set(fr.data);
+                offCtx.putImageData(imgDataObj, 0, 0);
+
+                // BƯỚC THIẾU: Phải padding frame về chuẩn 368x380 giống hệt lúc tạo preview imgOrig
+                // Nếu không, tọa độ crop.x, crop.y (được đo trên imgOrig 368x380) sẽ bị áp sai lệch hoàn toàn vào khung gốc
+                let uiW, uiH;
+                if (fr.width / fr.height > pW / pH) {
+                    uiW = pW; uiH = uiW * fr.height / fr.width;
+                } else {
+                    uiH = pH; uiW = uiH * fr.width / fr.height;
+                }
+                const paddedCanvas = document.createElement("canvas");
+                const paddedCtx = paddedCanvas.getContext("2d");
+                paddedCanvas.width = pW; paddedCanvas.height = pH;
+                paddedCtx.translate(pW / 2, pH / 2);
+                paddedCtx.drawImage(offCanvas, -uiW / 2, -uiH / 2, uiW, uiH);
+
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = targetW; finalCanvas.height = targetH;
+                const finalCtx = finalCanvas.getContext('2d');
+                finalCtx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
+
+                // Bây giờ sử dụng paddedCanvas để cắt, tỷ lệ sẽ trùng khớp hoàn toàn
+                finalCtx.drawImage(paddedCanvas, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
+
+                const pixels = finalCtx.getImageData(0, 0, targetW, targetH).data;
+                for (let i = 0; i < pixels.length; i += 4) {
+                    let r = pixels[i], g = pixels[i + 1], b = pixels[i + 2], a = pixels[i + 3];
+
+                    // Alpha threshold
+                    if (a < 32) {
+                        a = 0; r = 0; g = 0; b = 0;
+                    }
+
+                    const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
+                    allFramesHex += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
+                }
+            });
+
+            // Padding mỗi frame được coi là 8192 bytes nhị phân (16384 hex), ESP32 ghi theo sector 2048
+            // Thực tế binary trọn gói gộp lại sẽ được ESP32 ghi tuần tự.
+            animQueue = [];
+            for (let i = 0; i < allFramesHex.length; i += 1024) {
+                animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
+            }
+            animPackets = animQueue.length;
+            websocket.send("#ASTB$" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
+        }
+
+        function sendQuote() {
+            const qIdx = document.getElementById('quote_idx').value;
+            if (websocket && websocket.readyState === 1) {
+                websocket.send("#CQOT$" + qIdx);
+            }
+        }
+
+        function sendSpeed() {
+            const speed = document.getElementById('speed').value;
+            if (websocket && websocket.readyState === 1) {
+                websocket.send("#CSPD$" + speed);
+            }
+        }
+
+        function initWebSocket() {
+            if (websocket && (websocket.readyState === WebSocket.CONNECTING || websocket.readyState === WebSocket.OPEN)) return;
+            websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
+            websocket.onopen = () => {
+                connectt = 1;
+                document.getElementById('ws-status').innerText = "Connected";
+                websocket.send("#CGET$");
+                // Retry tự động nếu 3 giây chưa nhận được data
+                setTimeout(() => {
+                    const ov = document.getElementById('init-overlay');
+                    if (ov && ov.style.display !== 'none') {
+                        console.warn('[editclock] No DOWNLOAD_EDIT_CLOCK after 3s, retrying #CGET$...');
+                        if (websocket && websocket.readyState === WebSocket.OPEN) websocket.send("#CGET$");
+                    }
+                }, 3000);
+            };
+            websocket.onclose = () => {
+                setTimeout(initWebSocket, 2000);
+                connectt = 0;
+                document.getElementById('ws-status').innerText = "Disconnected";
+            };
+            websocket.onmessage = (e) => {
+                const data = e.data;
+                if (data === "C_READY" || data === "C_UP_OK") {
+                    if (uploadQueue.length > 0) {
+                        websocket.send(uploadQueue.shift());
+                        const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
+                        progressBar.style.width = prog + '%';
+                        progressPercent.innerText = prog + '%';
                     } else {
-                        uiH = pH; uiW = uiH * fr.width / fr.height;
+                        if (isSaving) {
+                            websocket.send("#CSAV:IMG" + (isGifAnimation ? ":1" : ":0"));
+                        } else {
+                            websocket.send("#CFIN$");
+                        }
                     }
-                    const paddedCanvas = document.createElement("canvas");
-                    const paddedCtx = paddedCanvas.getContext("2d");
-                    paddedCanvas.width = pW; paddedCanvas.height = pH;
-                    paddedCtx.translate(pW / 2, pH / 2);
-                    paddedCtx.drawImage(offCanvas, -uiW / 2, -uiH / 2, uiW, uiH);
-
-                    const finalCanvas = document.createElement('canvas');
-                    finalCanvas.width = targetW; finalCanvas.height = targetH;
-                    const finalCtx = finalCanvas.getContext('2d');
-                    finalCtx.filter = `brightness(${brightness}%) saturate(${saturation}%) invert(${inversion}%) grayscale(${grayscale}%)`;
-
-                    // Bây giờ sử dụng paddedCanvas để cắt, tỷ lệ sẽ trùng khớp hoàn toàn
-                    finalCtx.drawImage(paddedCanvas, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
-
-                    const pixels = finalCtx.getImageData(0, 0, targetW, targetH).data;
-                    for (let i = 0; i < pixels.length; i += 4) {
-                        let r = pixels[i], g = pixels[i + 1], b = pixels[i + 2], a = pixels[i + 3];
-
-                        // Alpha threshold
-                        if (a < 32) {
-                            a = 0; r = 0; g = 0; b = 0;
-                        }
-
-                        const r4 = r >> 4, g4 = g >> 4, b4 = b >> 4, a4 = a >> 4;
-                        allFramesHex += byteToHex(a4 | (r4 << 4)) + byteToHex(g4 | (b4 << 4));
-                    }
-                });
-
-                // Padding mỗi frame được coi là 8192 bytes nhị phân (16384 hex), ESP32 ghi theo sector 2048
-                // Thực tế binary trọn gói gộp lại sẽ được ESP32 ghi tuần tự.
-                animQueue = [];
-                for (let i = 0; i < allFramesHex.length; i += 1024) {
-                    animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
-                }
-                animPackets = animQueue.length;
-                websocket.send("#ASTB$" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
-            }
-
-            function sendQuote() {
-                const qIdx = document.getElementById('quote_idx').value;
-                if (websocket && websocket.readyState === 1) {
-                    websocket.send("#CQOT$" + qIdx);
-                }
-            }
-
-            function sendSpeed() {
-                const speed = document.getElementById('speed').value;
-                if (websocket && websocket.readyState === 1) {
-                    websocket.send("#CSPD$" + speed);
-                }
-            }
-
-            function initWebSocket() {
-                if (websocket && (websocket.readyState === WebSocket.CONNECTING || websocket.readyState === WebSocket.OPEN)) return;
-                websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
-                websocket.onopen = () => {
-                    connectt = 1;
-                    document.getElementById('ws-status').innerText = "Connected";
-                    websocket.send("#CGET$");
-                    // Retry tự động nếu 3 giây chưa nhận được data
-                    setTimeout(() => {
-                        const ov = document.getElementById('init-overlay');
-                        if (ov && ov.style.display !== 'none') {
-                            console.warn('[editclock] No DOWNLOAD_EDIT_CLOCK after 3s, retrying #CGET$...');
-                            if (websocket && websocket.readyState === WebSocket.OPEN) websocket.send("#CGET$");
-                        }
-                    }, 3000);
-                };
-                websocket.onclose = () => {
-                    setTimeout(initWebSocket, 2000);
-                    connectt = 0;
-                    document.getElementById('ws-status').innerText = "Disconnected";
-                };
-                websocket.onmessage = (e) => {
-                    const data = e.data;
-                    if (data === "C_READY" || data === "C_UP_OK") {
-                        if (uploadQueue.length > 0) {
-                            websocket.send(uploadQueue.shift());
-                            const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
-                            progressBar.style.width = prog + '%';
-                            progressPercent.innerText = prog + '%';
-                        } else {
-                            if (isSaving) {
-                                websocket.send("#CSAV:IMG" + (isGifAnimation ? ":1" : ":0"));
-                            } else {
-                                websocket.send("#CFIN$");
-                            }
-                        }
-                    } else if (data === "C_SAVEOK") {
-                        if (isGifAnimation) {
-                            startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
-                        } else {
-                            if (isRedirecting) {
-                                document.getElementById('modal-title').innerText = "Success!";
-                                setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
-                            } else {
-                                uploadModal.style.display = 'none';
-                            }
-                        }
-                    } else if (data === "A_READY" || data === "A_UP_OK") {
-                        if (animQueue.length > 0) {
-                            websocket.send(animQueue.shift());
-                            const prog = Math.round(((animPackets - animQueue.length) / animPackets) * 100);
-                            progressBar.style.width = prog + '%';
-                            progressPercent.innerText = prog + '%';
-                        } else {
-                            websocket.send("#ASAV$"); // Kết thúc Animation
-                        }
-                    } else if (data === "A_SAVEOK") {
+                } else if (data === "C_SAVEOK") {
+                    if (isGifAnimation) {
+                        startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
+                    } else {
                         if (isRedirecting) {
-                            document.getElementById('modal-title').innerText = "Animation Saved!";
+                            document.getElementById('modal-title').innerText = "Success!";
                             setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
                         } else {
                             uploadModal.style.display = 'none';
                         }
-                    } else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
-                        const overlay = document.getElementById('init-overlay');
-                        try {
-                            const p = data.split(':');
-                            // p[1]=idx p[2]=tutao p[3]=checkhengio p[4]=chu_check
-                            // p[5]=x p[6]=y p[7]=w p[8]=h p[9]=speed
-                            // p[10]=typ p[11]=gio p[12]=phut p[13]=ngay p[14]=thang
-                            // p[15]=extra p[16]=am p[17]=mel p[18]=text p[19]=qot p[20]=cnoidung
-                            currentLayer = parseInt(p[1]);
-
-                            document.getElementById('pos-x').value = p[5];
-                            document.getElementById('pos-y').value = p[6];
-                            document.getElementById('pos-w').value = p[7];
-                            document.getElementById('pos-h').value = p[8];
-
-                            document.getElementById('speed').value = p[9];
-                            document.getElementById('speed-val').innerText = p[9];
-                            document.getElementById('typ').value = p[10];
-                            document.getElementById('gio').value = p[11];
-                            document.getElementById('phut').value = p[12];
-                            document.getElementById('ngay').value = p[13];
-                            document.getElementById('thang').value = p[14];
-                            document.getElementById('thu').value = p[15];
-                            document.getElementById('am').value = p[16];
-                            document.getElementById('mel').value = p[17];
-
-                            if (p[18]) { const tEl = document.getElementById('text'); if (tEl) tEl.value = decodeHexText(p[18]); }
-                            const qotEl = document.getElementById('quote_idx');
-                            if (qotEl && p[19] !== undefined) qotEl.value = p[19];
-
-                            // State flags
-                            const tutaoFlag = p[2];
-                            const chkFlag = p[3];  // checkhengio
-                            const chuFlag = p[4];  // chu_check
-                            const cnoidungFlag = p[20];
-
-                            // 1. Text Section
-                            const secText = document.getElementById('section-text');
-                            if (secText) secText.style.display = (chuFlag !== '0') ? 'block' : 'none';
-                            if (chuFlag !== '0') {
-                                const manualBox = document.getElementById('manual-text-container');
-                                const quoteBox = document.getElementById('quote-selection-container');
-                                if (cnoidungFlag === '1') {
-                                    if (manualBox) manualBox.style.display = 'block';
-                                    if (quoteBox) quoteBox.style.display = 'none';
-                                } else {
-                                    if (manualBox) manualBox.style.display = 'none';
-                                    if (quoteBox) quoteBox.style.display = 'block';
-                                }
-                            }
-
-                            // 2. Alarm Section
-                            const secAlarm = document.getElementById('section-alarm');
-                            if (secAlarm) {
-                                secAlarm.setAttribute('data-active', (chkFlag !== '0') ? '1' : '0');
-                            }
-
-                            // 3. Image Section
-                            const secImg = document.getElementById('section-image');
-                            const targetImg = document.getElementById('cropper-target');
-                            const noImgTxt = document.getElementById('no-image-text');
-
-                            if (tutaoFlag === '1') {
-                                if (secImg) secImg.style.display = 'block';
-                                if (targetImg) targetImg.style.display = 'none';
-                                if (noImgTxt) noImgTxt.style.display = 'block';
-                                if (croppr) { try { croppr.destroy(); } catch (e) { } croppr = null; }
-                            } else {
-                                if (secImg) secImg.style.display = 'none';
-                            }
-
-                            updateUI();
-                            console.log('[editclock] DOWNLOAD_EDIT_CLOCK OK, idx=' + currentLayer);
-                        } catch (err) {
-                            console.error('[editclock] Error processing DOWNLOAD_EDIT_CLOCK:', err);
-                        } finally {
-                            // Luôn tắt overlay dù có lỗi hay không
-                            if (overlay) overlay.style.display = 'none';
-                        }
                     }
+                } else if (data === "A_READY" || data === "A_UP_OK") {
+                    if (animQueue.length > 0) {
+                        websocket.send(animQueue.shift());
+                        const prog = Math.round(((animPackets - animQueue.length) / animPackets) * 100);
+                        progressBar.style.width = prog + '%';
+                        progressPercent.innerText = prog + '%';
+                    } else {
+                        websocket.send("#ASAV$"); // Kết thúc Animation
+                    }
+                } else if (data === "A_SAVEOK") {
+                    if (isRedirecting) {
+                        document.getElementById('modal-title').innerText = "Animation Saved!";
+                        setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
+                    } else {
+                        uploadModal.style.display = 'none';
+                    }
+                } else if (data.startsWith("DOWNLOAD_EDIT_CLOCK:")) {
+                    const overlay = document.getElementById('init-overlay');
+                    try {
+                        const p = data.split(':');
+                        // p[1]=idx p[2]=tutao p[3]=checkhengio p[4]=chu_check
+                        // p[5]=x p[6]=y p[7]=w p[8]=h p[9]=speed
+                        // p[10]=typ p[11]=gio p[12]=phut p[13]=ngay p[14]=thang
+                        // p[15]=extra p[16]=am p[17]=mel p[18]=text p[19]=qot p[20]=cnoidung
+                        currentLayer = parseInt(p[1]);
+
+                        document.getElementById('pos-x').value = p[5];
+                        document.getElementById('pos-y').value = p[6];
+                        document.getElementById('pos-w').value = p[7];
+                        document.getElementById('pos-h').value = p[8];
+
+                        document.getElementById('speed').value = p[9];
+                        document.getElementById('speed-val').innerText = p[9];
+                        document.getElementById('typ').value = p[10];
+                        document.getElementById('gio').value = p[11];
+                        document.getElementById('phut').value = p[12];
+                        document.getElementById('ngay').value = p[13];
+                        document.getElementById('thang').value = p[14];
+                        document.getElementById('thu').value = p[15];
+                        document.getElementById('am').value = p[16];
+                        document.getElementById('mel').value = p[17];
+
+                        if (p[18]) { const tEl = document.getElementById('text'); if (tEl) tEl.value = decodeHexText(p[18]); }
+                        const qotEl = document.getElementById('quote_idx');
+                        if (qotEl && p[19] !== undefined) qotEl.value = p[19];
+
+                        // State flags
+                        const tutaoFlag = p[2];
+                        const chkFlag = p[3];  // checkhengio
+                        const chuFlag = p[4];  // chu_check
+                        const cnoidungFlag = p[20];
+
+                        // 1. Text Section
+                        const secText = document.getElementById('section-text');
+                        if (secText) secText.style.display = (chuFlag !== '0') ? 'block' : 'none';
+                        if (chuFlag !== '0') {
+                            const manualBox = document.getElementById('manual-text-container');
+                            const quoteBox = document.getElementById('quote-selection-container');
+                            if (cnoidungFlag === '1') {
+                                if (manualBox) manualBox.style.display = 'block';
+                                if (quoteBox) quoteBox.style.display = 'none';
+                            } else {
+                                if (manualBox) manualBox.style.display = 'none';
+                                if (quoteBox) quoteBox.style.display = 'block';
+                            }
+                        }
+
+                        // 2. Alarm Section
+                        const secAlarm = document.getElementById('section-alarm');
+                        if (secAlarm) {
+                            secAlarm.setAttribute('data-active', (chkFlag !== '0') ? '1' : '0');
+                        }
+
+                        // 3. Image Section
+                        const secImg = document.getElementById('section-image');
+                        const targetImg = document.getElementById('cropper-target');
+                        const noImgTxt = document.getElementById('no-image-text');
+
+                        if (tutaoFlag === '1') {
+                            if (secImg) secImg.style.display = 'block';
+                            if (targetImg) targetImg.style.display = 'none';
+                            if (noImgTxt) noImgTxt.style.display = 'block';
+                            if (croppr) { try { croppr.destroy(); } catch (e) { } croppr = null; }
+                        } else {
+                            if (secImg) secImg.style.display = 'none';
+                        }
+
+                        updateUI();
+                        console.log('[editclock] DOWNLOAD_EDIT_CLOCK OK, idx=' + currentLayer);
+                    } catch (err) {
+                        console.error('[editclock] Error processing DOWNLOAD_EDIT_CLOCK:', err);
+                    } finally {
+                        // Luôn tắt overlay dù có lỗi hay không
+                        if (overlay) overlay.style.display = 'none';
+                    }
+                }
+            };
+        }
+
+        window.addEventListener('load', () => {
+            initWebSocket();
+
+            document.getElementById('btn-back').onclick = () => {
+                goBackWithReferrer();
+            };
+
+            const btnSaveOnly = document.getElementById('btn-save-image-only');
+            if (btnSaveOnly) {
+                btnSaveOnly.onclick = () => {
+                    imageChanged = true;
+                    sendImageData(true, false, true);
                 };
             }
 
-            window.addEventListener('load', () => {
-                initWebSocket();
-
-                document.getElementById('btn-back').onclick = () => {
-                    goBackWithReferrer();
+            const btnSaveMetaOnly = document.getElementById('btn-save-meta-only');
+            if (btnSaveMetaOnly) {
+                btnSaveMetaOnly.onclick = () => {
+                    sendMetaData(true, false);
                 };
-
-                const btnSaveOnly = document.getElementById('btn-save-image-only');
-                if (btnSaveOnly) {
-                    btnSaveOnly.onclick = () => {
-                        imageChanged = true;
-                        sendImageData(true, false, true);
-                    };
-                }
-
-                const btnSaveMetaOnly = document.getElementById('btn-save-meta-only');
-                if (btnSaveMetaOnly) {
-                    btnSaveMetaOnly.onclick = () => {
-                        sendMetaData(true, false);
-                    };
-                }
-            });
-        </script>
+            }
+        });
+    </script>
 </body>
 
 </html>
