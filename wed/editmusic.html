@@ -138,6 +138,16 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .selected-text {
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
         .custom-options {
             position: absolute;
             top: calc(100% + 8px);
@@ -577,13 +587,13 @@
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="custom-select-wrapper" id="wrap-background" style="flex: 1;">
                     <div class="custom-select" id="sel-background">
-                        <span class="custom-select-trigger">
+                        <div class="custom-select-trigger">
                             <div class="selected-box">
                                 <img class="selected-img" src="" style="display: none;">
                                 <span class="selected-text">Loading...</span>
                             </div>
                             <div class="arrow"></div>
-                        </span>
+                        </div>
                         <div class="custom-options">
                             <input type="text" class="search-box" placeholder="Search..."
                                 onclick="event.stopPropagation()">
@@ -594,13 +604,13 @@
 
                 <div class="custom-select-wrapper" id="wrap-bg-ini" style="width: 100px;">
                     <div class="custom-select" id="sel-bg-ini">
-                        <span class="custom-select-trigger">
+                        <div class="custom-select-trigger">
                             <div class="selected-box">
                                 <img class="selected-img" src="" style="display: none;">
                                 <span class="selected-text">...</span>
                             </div>
                             <div class="arrow"></div>
-                        </span>
+                        </div>
                         <div class="custom-options">
                             <div class="options-container"></div>
                         </div>
@@ -638,13 +648,13 @@
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="custom-select-wrapper" id="wrap-bass" style="flex: 1;">
                     <div class="custom-select" id="sel-bass">
-                        <span class="custom-select-trigger">
+                        <div class="custom-select-trigger">
                             <div class="selected-box">
                                 <img class="selected-img" src="" style="display: none;">
                                 <span class="selected-text">Loading...</span>
                             </div>
                             <div class="arrow"></div>
-                        </span>
+                        </div>
                         <div class="custom-options">
                             <input type="text" class="search-box" placeholder="Search..."
                                 onclick="event.stopPropagation()">
@@ -686,13 +696,13 @@
             <div>
                 <span class="section-label" style="font-size: 9px;">Bar Type</span>
                 <div class="custom-select" id="sel-eq-type">
-                    <span class="custom-select-trigger">
+                    <div class="custom-select-trigger">
                         <div class="selected-box">
                             <img class="selected-img" src="" style="display: none;">
                             <span class="selected-text">...</span>
                         </div>
                         <div class="arrow"></div>
-                    </span>
+                    </div>
                     <div class="custom-options">
                         <div class="options-container"></div>
                     </div>
@@ -702,13 +712,13 @@
             <div>
                 <span class="section-label" style="font-size: 9px;">Effect</span>
                 <div class="custom-select" id="sel-eq-effect">
-                    <span class="custom-select-trigger">
+                    <div class="custom-select-trigger">
                         <div class="selected-box">
                             <img class="selected-img" src="" style="display: none;">
                             <span class="selected-text">...</span>
                         </div>
                         <div class="arrow"></div>
-                    </span>
+                    </div>
                     <div class="custom-options">
                         <div class="options-container"></div>
                     </div>
@@ -718,13 +728,13 @@
             <div>
                 <span class="section-label" style="font-size: 9px;">Color Theme</span>
                 <div class="custom-select" id="sel-eq-color">
-                    <span class="custom-select-trigger">
+                    <div class="custom-select-trigger">
                         <div class="selected-box">
                             <img class="selected-img" src="" style="display: none;">
                             <span class="selected-text">...</span>
                         </div>
                         <div class="arrow"></div>
-                    </span>
+                    </div>
                     <div class="custom-options">
                         <div class="options-container"></div>
                     </div>
@@ -734,13 +744,13 @@
             <div>
                 <span class="section-label" style="font-size: 9px;">Peak Style</span>
                 <div class="custom-select" id="sel-eq-peak">
-                    <span class="custom-select-trigger">
+                    <div class="custom-select-trigger">
                         <div class="selected-box">
                             <img class="selected-img" src="" style="display: none;">
                             <span class="selected-text">...</span>
                         </div>
                         <div class="arrow"></div>
-                    </span>
+                    </div>
                     <div class="custom-options">
                         <div class="options-container"></div>
                     </div>
