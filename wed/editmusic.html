@@ -1270,26 +1270,36 @@
             const el = document.getElementById(id);
             if (!el) { console.warn("Component not found:", id); return; }
             el.setAttribute('data-index', val);
-            const item = Array.from(el.querySelectorAll('.custom-option')).find(i => i.getAttribute('data-index') == val);
-            if (item) {
-                const textSpan = item.querySelector('span');
-                if (textSpan) {
-                    const selText = el.querySelector('.selected-text');
-                    if (selText) selText.innerText = textSpan.innerText;
-                }
-                const imgTag = item.querySelector('img');
+
+            // Tìm config tương ứng để lấy path dữ liệu
+            const config = CONFIG.find(c => c.id === id);
+            if (!config) return;
+
+            const items = DATA[config.path] || [];
+            const name = items[val];
+
+            if (name !== undefined) {
+                const imgUrl = RAW_BASE + config.path + "/" + name;
+                const displayName = name.replace(/\.[^/.]+$/, "");
+
+                const selText = el.querySelector('.selected-text');
+                if (selText) selText.innerText = displayName;
+
                 const selImg = el.querySelector('.selected-img');
-                if (imgTag && selImg) {
-                    selImg.src = imgTag.src;
-                    selImg.style.display = 'block';
-                } else if (selImg) {
-                    selImg.style.display = 'none';
+                if (selImg) {
+                    if (name && name.toLowerCase().endsWith('.png')) {
+                        selImg.src = imgUrl;
+                        selImg.style.display = 'block';
+                    } else {
+                        selImg.style.display = 'none';
+                    }
                 }
+
                 if (id === 'sel-bg-ini') updateBgUploadState(val);
                 if (id === 'sel-bass') updateBassUploadState(val);
-                console.log(`Updated ${id} to index ${val} (${textSpan ? textSpan.innerText : 'no text'})`);
+                console.log(`Updated ${id} to index ${val} (Direct from DATA: ${displayName})`);
             } else {
-                console.warn(`Item with index ${val} NOT FOUND in ${id}`);
+                console.warn(`Index ${val} NOT FOUND in DATA for path ${config.path}`);
             }
         }
 
