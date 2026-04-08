@@ -748,7 +748,7 @@
             </div>
         </div>
         <hr>
-        <button id="btn-save-main" class="btn btn-primary" style="flex: 1; width: 100%;">SAVE</button>
+        <button id="btn-back-main" class="btn btn-secondary" style="flex: 1; width: 100%;">BACK</button>
         <div class="status-tag" id="ws-status">Disconnected</div>
     </div>
 
@@ -1117,7 +1117,7 @@
             };
             websocket.onmessage = (e) => {
                 const data = e.data;
-                const saveBtn = document.getElementById('btn-save-main');
+                const backBtn = document.getElementById('btn-backmain');
 
                 // Xử lý gói tin Metadata đầy đủ từ ESP32
                 if (data.startsWith("M_DATA:")) {
@@ -1134,13 +1134,13 @@
                         updateUIComponent('sel-eq-effect', parts[6]);
                         updateUIComponent('sel-eq-peak', parts[7]);
                         updateUIComponent('sel-bg-ini', parts[8]);
-                        
+
                         const bgSpd = document.getElementById('bg-gif-speed');
                         if (bgSpd) { bgSpd.value = parts[9]; document.getElementById('bg-gif-speed-val').innerText = parts[9]; }
-                        
+
                         const bassSpd = document.getElementById('bass-gif-speed');
                         if (bassSpd) { bassSpd.value = parts[10]; document.getElementById('bass-gif-speed-val').innerText = parts[10]; }
-                        
+
                         console.log("UI Update finished for Music Metadata.");
                     } else {
                         console.error("M_DATA packet too short:", parts.length);
@@ -1211,7 +1211,7 @@
         }
 
         function streamNextChunk() {
-            const saveBtn = document.getElementById('btn-save-main');
+            const backBtn = document.getElementById('btn-back-main');
             if (hexPos < globalPhotoHex.length) {
                 const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK_SIZE * 2);
                 const tag = (currentStep === "BASS") ? "#MGM2$" : "#MGM1$";
@@ -1262,7 +1262,7 @@
             sendMetadata();
         }
 
-        document.getElementById('btn-save-main').onclick = () => {
+        document.getElementById('btn-back-main').onclick = () => {
             window.location.href = 'music.html?v=' + Date.now();
         };
 
@@ -1365,7 +1365,7 @@
         function editorSetupCroppr(source, onReady) {
             // Đảm bảo Modal phải hiện lên trước để lấy được kích thước chính xác
             document.getElementById('img-editor-modal').style.display = 'flex';
-            
+
             if (editorCroppr) {
                 try { editorCroppr.destroy(); } catch (e) { console.error("Crop destroy error:", e); }
                 editorCroppr = null;
@@ -1428,7 +1428,7 @@
                         for (let i = 0; i < numFrames; i++) {
                             const fi = gifReader.frameInfo(i);
                             gifReader.decodeAndBlitFrameRGBA(i, cumBuf);
-                            
+
                             if ((i % step === 0 || i === numFrames - 1) && editorGifFrames.length < maxFrames) {
                                 editorGifFrames.push({
                                     width: gifReader.width,
