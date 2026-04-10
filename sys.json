@@ -10,16 +10,16 @@
     "newchar.dat": 29527657
   },
   "sys": {
-    "melody.dat": 29529567,
+    "melody.dat": 29597038,
     "quota.dat": 29529568,
     "fcard.dat": 29529566,
     "coloreq.dat": 29589486,
     "colorpk.dat": 29589486,
     "bass.dat": 29589486,
     "listdata.lst": 29594066,
-    "listclock.lst": 29597011,
-    "listalarm.lst": 29597011,
-    "listmusic.lst": 29597011
+    "listclock.lst": 29597038,
+    "listalarm.lst": 29597038,
+    "listmusic.lst": 29597038
   },
   "data": {
     "001.dat": 29544882
