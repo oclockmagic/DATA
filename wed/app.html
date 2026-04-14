@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=0.8, user-scalable=no">
+    <title>SETTING - MAGIC O'CLOCK</title>
+    <style>
+        :root {
+            --primary: #4facfe;
+            --secondary: #00f2fe;
+            --accent: #BA68C8;
+            --bg-dark: rgb(6, 2, 29);
+            --glass: rgba(15, 23, 42, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-dark);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' id='eAMJOgF4ve61' viewBox='0 0 640 480' shape-rendering='geometricPrecision' text-rendering='geometricPrecision' style='background-color:rgb(6,2,29)'%3E%3Cstyle%3E%3C!%5BCDATA%5B%23eAMJOgF4ve62 %7Banimation: eAMJOgF4ve62_s_do 12000ms linear infinite normal forwards%7D@keyframes eAMJOgF4ve62_s_do %7B 0%25 %7Bstroke-dashoffset: 0%7D 100%25 %7Bstroke-dashoffset: 300%7D%7D %23eAMJOgF4ve63 %7Banimation: eAMJOgF4ve63_s_do 12000ms linear infinite normal forwards%7D@keyframes eAMJOgF4ve63_s_do %7B 0%25 %7Bstroke-dashoffset: 0%7D 100%25 %7Bstroke-dashoffset: 360%7D%7D %23eAMJOgF4ve64 %7Banimation: eAMJOgF4ve64_s_do 12000ms linear infinite normal forwards%7D@keyframes eAMJOgF4ve64_s_do %7B 0%25 %7Bstroke-dashoffset: 0%7D 100%25 %7Bstroke-dashoffset: 500%7D%7D %23eAMJOgF4ve65 %7Banimation: eAMJOgF4ve65_s_do 12000ms linear infinite normal forwards%7D@keyframes eAMJOgF4ve65_s_do %7B 0%25 %7Bstroke-dashoffset: 0%7D 100%25 %7Bstroke-dashoffset: 360%7D%7D%5D%5D%3E%3C/style%3E%3Cdefs%3E%3ClinearGradient id='eAMJOgF4ve62-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%3E%3Cstop id='eAMJOgF4ve62-stroke-0' offset='0%25' stop-color='rgb(0,54,164)'/%3E%3Cstop id='eAMJOgF4ve62-stroke-1' offset='49%25' stop-color='rgb(106,35,100)'/%3E%3Cstop id='eAMJOgF4ve62-stroke-2' offset='100%25' stop-color='rgb(76,206,255)'/%3E%3C/linearGradient%3E%3ClinearGradient id='eAMJOgF4ve63-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%3E%3Cstop id='eAMJOgF4ve63-stroke-0' offset='0%25' stop-color='rgb(255,255,255)'/%3E%3Cstop id='eAMJOgF4ve63-stroke-1' offset='48%25' stop-color='rgb(53,159,173)'/%3E%3Cstop id='eAMJOgF4ve63-stroke-2' offset='100%25' stop-color='rgb(175,172,122)'/%3E%3C/linearGradient%3E%3ClinearGradient id='eAMJOgF4ve64-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%3E%3Cstop id='eAMJOgF4ve64-stroke-0' offset='0%25' stop-color='rgb(174,59,212)'/%3E%3Cstop id='eAMJOgF4ve64-stroke-1' offset='48%25' stop-color='rgb(43,196,195)'/%3E%3Cstop id='eAMJOgF4ve64-stroke-2' offset='100%25' stop-color='rgb(255,0,246)'/%3E%3C/linearGradient%3E%3ClinearGradient id='eAMJOgF4ve65-stroke' x1='0' y1='0.5' x2='1' y2='0.5' spreadMethod='pad' gradientUnits='objectBoundingBox'%3E%3Cstop id='eAMJOgF4ve65-stroke-0' offset='0%25' stop-color='rgb(255,255,255)'/%3E%3Cstop id='eAMJOgF4ve65-stroke-1' offset='48%25' stop-color='rgba(255,176,195,0.77)'/%3E%3Cstop id='eAMJOgF4ve65-stroke-2' offset='100%25' stop-color='rgba(255,255,255,0.52)'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath id='eAMJOgF4ve62' d='M-28.184069,236.782402C-22.416319,115.994587,38.36794,34.85463,85.69268,12.37538C108.26693,1.65261,173.97045,-28.611139,211.0966,56.92678C233.149683,107.736648,222.30834,173.14729,192.94603,209.55655C180.87628,224.52304,153.37119,253.70863,131.0691,242.55758C101.64318,227.84462,116.11517,176.6412,126.11895,154.27982C147.51903,106.44435,210.91994,48.61763,268.02338,67.65211C341.23469,92.05588,235.732082,215.216436,272.97353,252.45789C329.075282,308.559651,352.0863,178.50731,396.72739,173.25542C431.40946,169.17518,433.482921,234.616969,512.23102,253.28292C599.246683,273.908562,661.790667,187.658672,640,147.67962C596.380836,67.65211,512.53453,103.63856,480.88002,147.67962C424.67957,225.87155,486.667172,336.323752,395.07734,403.4376C337.65606,445.51392,251.977514,417.583961,192.94603,366.31145C94.894284,281.147418,16.936504,270.279162,-54.962907,480' opacity='0.25' fill='none' stroke='url(%23eAMJOgF4ve62-stroke)' stroke-width='40' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,300'/%3E%3Cpath id='eAMJOgF4ve63' d='M396.72739,-4.304194C420.88375,-42.954374,585.244446,-26.551229,584.00825,77.55242C583.56083,115.230987,523.444062,140.787676,524.60639,187.28085C526.25644,253.282922,571.59109,279.36741,561.73255,315.98488C556.17101,336.64202,498.41773,385.89287,483.3551,366.31145C468.45238,346.93792,495.81252,341.05431,508.9309,344.03575C548.39828,353.00561,543.77554,402.23247,518.83121,423.23822C502.06494,437.35718,482.69094,444.53157,461.07941,445.51392C449.73791,446.02944,435.51289,445.52413,427.25335,436.43864C414.28693,422.17557,417.2577,394.76786,413.22791,377.03678C405.27593,342.04805,363.11233,316.78273,329.07528,326.71021C284.5875,339.68581,282.76889,421.48323,310.92471,449.63905C324.58467,463.29901,350.01171,460.68992,356.30113,440.56377C358.10767,434.78283,353.59627,428.00948,351.35098,423.23823C337.9788,394.82234,321.36838,372.83261,287.82399,370.43658C258.37375,368.33299,224.53122,374.89214,196.24613,382.81197C155.3483,394.26336,90.98727,441.7813,50.21657,405.08767C22.95809,380.55504,61.55718,322.53284,85.69268,308.55965C114.32654,291.98215,149.71689,304.32619,180.57064,301.13442C226.99826,296.33156,317.86146,243.80578,322.47507,193.05604C324.95336,165.79479,298.66113,148.92717,274.62358,144.37952C215.32272,133.16044,151.16094,142.17429,93.11791,121.2788C58.91504,108.96577,75.205588,61.180899,103.410878,47.861739C186.880648,8.445459,279.13896,62.98071,353.82606,92.4029C382.8255,103.82692,475.92988,92.4029,422.936361,-15.839694' fill='none' stroke='url(%23eAMJOgF4ve63-stroke)' stroke-width='4' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,72'/%3E%3Cpath id='eAMJOgF4ve64' d='M-28.184069,160.488657C-19.493039,108.342477,109.34716,30.07385,136.84428,75.90237C162.16007,118.09535,66.12632,202.7843,93.94294,236.7824C102.8133,247.62395,182.09019,231.25226,197.07116,230.18219C279.99924,224.25875,360.83785,241.38077,428.07838,292.88415C451.91037,311.13844,493.12496,347.59677,475.92988,381.98693C469.25479,395.33711,451.77057,401.96044,438.80372,406.7377C374.56781,430.40356,264.68068,427.71352,240.79753,346.51082C232.99567,319.9845,234.38033,295.92804,250.69784,273.08353C283.5518,227.08799,347.80165,219.41818,378.57684,173.25541C419.06886,112.51739,369.59554,47.24183,301.02442,52.80165C263.08117,55.87813,229.93217,127.44909,273.79857,145.20454C335.04087,169.99309,400.1067,133.91001,463.5545,182.3307C502.27689,211.882,475.01255,274.09139,512.23102,303.60949C532.68594,319.83236,594.83376,317.46556,584.00826,358.06119C565.54615,427.29409,488.39249,392.0697,442.10383,382.81196C385.73167,371.53753,363.89654,350.9891,321.65007,315.98487C306.66535,303.56896,290.10766,293.51774,276.27365,279.68374C263.80244,267.21253,254.15425,251.23953,238.32246,242.55758C209.06388,226.51255,165.91535,237.61377,138.49434,253.28292C43.29108,307.68478,89.63333,370.55854,173.97045,390.2372C220.75228,401.15296,301.024421,431.984879,356.30113,524.680857' opacity='0.2' fill='none' stroke='url(%23eAMJOgF4ve64-stroke)' stroke-width='20' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,500'/%3E%3Cpath id='eAMJOgF4ve65' d='M-48.371193,173.25542C24.64077,173.25542,32.53264,115.77056,35.3661,97.35304C38.63356,76.11456,34.22546,34.69538,49.39154,18.15056C55.84046,11.11538,58.44735,12.7887,68.36713,12.37538C107.56341,10.7422,135.30024,60.89528,139.31935,94.05293C140.8168,106.40691,133.486233,160.05502,160.915728,171.60537C205.012625,190.174235,287.05645,119.52971,305.14953,199.65623C320.05156,265.65094,183.921725,292.33601,136.01925,301.13442C95.59298,308.55965,72.363341,354.983711,95.59298,396.01236C118.481569,436.43864,180.57064,429.512986,217.357279,405.08767C246.525743,385.720612,280.12909,356.71284,280.39876,358.06118C282.61014,369.11807,220.01651,448.28793,251.52286,454.5892C275.67397,459.41942,315.18558,400.30219,323.3001,386.93709C359.95609,326.56252,368.47449,258.32159,395.07734,194.70608C403.55438,174.43489,420.73201,129.72802,446.22894,122.92884C481.08247,113.63457,487.90668,155.77563,490.78033,180.68064C492.96727,199.63411,493.89428,220.22682,492.43038,239.25747C489.86596,272.59496,456.51134,371.52049,486.6552,396.01237C497.79271,405.06159,512.73269,405.42639,526.25644,403.4376C584.52411,394.86883,561.9366,319.61191,589.78342,283.80886C599.31738,271.55091,653.452698,246.102803,652.822387,308.55965' fill='none' stroke='url(%23eAMJOgF4ve65-stroke)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='1' stroke-dasharray='0.01,72'/%3E%3C/svg%3E%0A");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: white;
+        }
+
+        .container {
+            width: 480px;
+            max-width: 95vw;
+            background: var(--glass);
+            border-radius: 28px;
+            padding: 24px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 2px;
+            margin: 0 0 20px 0;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .section-glass {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, rgba(79, 172, 254, 0.3), transparent);
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .flex-column {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        label {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-bottom: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: white;
+            padding: 7px 12px;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
+        }
+
+        .btn {
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            box-shadow: 0 8px 15px -5px rgba(0, 150, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        /* RSS Checkbox Grid */
+        .rss-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        /* Modern Checkbox Style */
+        .checkbox-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkbox-container:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .checkmark {
+            height: 18px;
+            width: 18px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+            border: 1px solid var(--glass-border);
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 5px;
+            top: 1px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-dim);
+            transition: color 0.2s;
+        }
+
+        .checkbox-container input:checked ~ .checkbox-label {
+            color: white;
+            font-weight: 600;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            margin: 20px 0;
+        }
+
+        .status-tag {
+            display: block;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 15px;
+            text-align: center;
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container { animation: fadeIn 0.5s ease-out; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>App Settings</h2>
+        <hr>
+
+        <!-- Binance Section -->
+        <div class="section-glass">
+            <div class="section-title">Cryptocurrency (Binance)</div>
+            
+            <style>
+                .token-grid {
+                    display: grid;
+                    grid-template-columns: 20px 1.5fr 0.5fr 1.5fr 1fr 1fr;
+                    gap: 6px;
+                    align-items: center;
+                    margin-bottom: 15px;
+                }
+                .token-grid input {
+                    padding: 8px 6px;
+                    font-size: 12px;
+                    text-align: center;
+                }
+                .token-header {
+                    display: grid;
+                    grid-template-columns: 20px 1.5fr 0.5fr 1.5fr 1fr 1fr;
+                    gap: 6px;
+                    margin-bottom: 5px;
+                    padding-left: 2px;
+                }
+                .token-header span {
+                    font-size: 9px;
+                    color: var(--text-dim);
+                    text-transform: uppercase;
+                    font-weight: 700;
+                    text-align: center;
+                }
+            </style>
+
+            <div class="token-header">
+                <span>#</span>
+                <span>Sym</span>
+                <span></span>
+                <span>Base</span>
+                <span>Low</span>
+                <span>High</span>
+            </div>
+
+            <!-- Token 1 -->
+            <div class="token-grid">
+                <span style="font-size: 12px; opacity: 0.5;">1</span>
+                <input type="text" id="token11" value="%TOKEN11%" maxlength="8" placeholder="BTC">
+                <span style="opacity: 0.3">/</span>
+                <input type="text" id="token12" value="%TOKEN12%" maxlength="8" placeholder="USDT">
+                <input type="text" id="token1l" value="%TOKEN1L%" maxlength="14" placeholder="Low">
+                <input type="text" id="token1h" value="%TOKEN1H%" maxlength="14" placeholder="High">
+            </div>
+
+            <!-- Token 2 -->
+            <div class="token-grid">
+                <span style="font-size: 12px; opacity: 0.5;">2</span>
+                <input type="text" id="token21" value="%TOKEN21%" maxlength="8" placeholder="ETH">
+                <span style="opacity: 0.3">/</span>
+                <input type="text" id="token22" value="%TOKEN22%" maxlength="8" placeholder="USDT">
+                <input type="text" id="token2l" value="%TOKEN2L%" maxlength="14" placeholder="Low">
+                <input type="text" id="token2h" value="%TOKEN2H%" maxlength="14" placeholder="High">
+            </div>
+
+            <!-- Token 3 -->
+            <div class="token-grid">
+                <span style="font-size: 12px; opacity: 0.5;">3</span>
+                <input type="text" id="token31" value="%TOKEN31%" maxlength="8" placeholder="BNB">
+                <span style="opacity: 0.3">/</span>
+                <input type="text" id="token32" value="%TOKEN32%" maxlength="8" placeholder="USDT">
+                <input type="text" id="token3l" value="%TOKEN3L%" maxlength="14" placeholder="Low">
+                <input type="text" id="token3h" value="%TOKEN3H%" maxlength="14" placeholder="High">
+            </div>
+
+            <div class="flex-column" style="gap: 15px; margin-top: 10px;">
+                <div class="flex-row">
+                    <div class="flex-column">
+                        <label>Chart Period</label>
+                        <select id="tchart">
+                            <option value="0" %TCHAR0%>1m</option>
+                            <option value="1" %TCHAR1%>3m</option>
+                            <option value="2" %TCHAR2%>5m</option>
+                            <option value="3" %TCHAR3%>15m</option>
+                            <option value="4" %TCHAR4%>30m</option>
+                            <option value="5" %TCHAR5%>1h</option>
+                            <option value="6" %TCHAR6%>2h</option>
+                            <option value="7" %TCHAR7%>4h</option>
+                            <option value="8" %TCHAR8%>6h</option>
+                            <option value="9" %TCHAR9%>8h</option>
+                            <option value="10" %TCHAR10%>12h</option>
+                            <option value="11" %TCHAR11%>1d</option>
+                            <option value="12" %TCHAR12%>3d</option>
+                            <option value="13" %TCHAR13%>1w</option>
+                            <option value="14" %TCHAR14%>1M</option>
+                        </select>
+                    </div>
+                    <div class="flex-column">
+                        <label>View Time (sec)</label>
+                        <input type="number" id="tchartime" value="%TTIME%" min="0" max="255">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Section -->
+        <div class="section-glass">
+            <div class="section-title">Stock Market</div>
+            <div class="flex-column" style="gap: 10px;">
+                <div>
+                    <label>Stock 1</label>
+                    <input type="text" id="stock1" value="%ST1%" maxlength="3" placeholder="Symbol">
+                </div>
+                <div>
+                    <label>Stock 2</label>
+                    <input type="text" id="stock2" value="%ST2%" maxlength="3" placeholder="Symbol">
+                </div>
+                <div>
+                    <label>Stock 3</label>
+                    <input type="text" id="stock3" value="%ST3%" maxlength="3" placeholder="Symbol">
+                </div>
+            </div>
+        </div>
+
+        <!-- RSS Section -->
+        <div class="section-glass">
+            <div class="section-title">RSS News Subscription</div>
+            <div class="rss-grid">
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS0% id="box-1">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Latest</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS1% id="box-2">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">World</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS2% id="box-3">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">General</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS3% id="box-4">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Health</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS4% id="box-5">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Lifestyle</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS5% id="box-6">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Business</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS6% id="box-7">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Tech</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS7% id="box-8">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Entertainment</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS8% id="box-9">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Sports</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RSS9% id="box-10">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Legal</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RS10% id="box-11">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Featured</span>
+                </label>
+                <label class="checkbox-container">
+                    <input type="checkbox" %RS11% id="box-12">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Education</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Weather Section -->
+        <div class="section-glass">
+            <div class="section-title">Weather (Coordinates)</div>
+            <div class="flex-column" style="gap: 10px;">
+                <div class="flex-row">
+                    <div class="flex-column">
+                        <label>Latitude</label>
+                        <input type="text" id="thoitiet0" value="%LAT%" maxlength="64" placeholder="0.000">
+                    </div>
+                    <div class="flex-column">
+                        <label>Longitude</label>
+                        <input type="text" id="thoitiet1" value="%LON%" maxlength="64" placeholder="0.000">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-row" style="gap: 10px; margin-top: 10px;">
+            <button class="btn btn-primary" id="save-all">Save Settings</button>
+            <button class="btn btn-secondary home-img">Home</button>
+        </div>
+        <div class="status-tag" id="conet">Wait...</div>
+    </div>
+
+    <script>
+        var websocket;
+        var buttonconect = document.getElementById('conet');
+        const saveBtn = document.getElementById('save-all');
+
+        // Mapping helper to fill form
+        function fillForm(dataStr) {
+            const parts = dataStr.split(':');
+            if (parts.length < 20) return; // Basic validation
+
+            // Tokens (1, 2, 3) -> 4 fields each = 12 fields
+            document.getElementById('token11').value = parts[1];
+            document.getElementById('token12').value = parts[2];
+            document.getElementById('token1l').value = parts[3];
+            document.getElementById('token1h').value = parts[4];
+            
+            document.getElementById('token21').value = parts[5];
+            document.getElementById('token22').value = parts[6];
+            document.getElementById('token2l').value = parts[7];
+            document.getElementById('token2h').value = parts[8];
+            
+            document.getElementById('token31').value = parts[9];
+            document.getElementById('token32').value = parts[10];
+            document.getElementById('token3l').value = parts[11];
+            document.getElementById('token3h').value = parts[12];
+            
+            // Chart & Time
+            document.getElementById('tchart').value = parts[13];
+            document.getElementById('tchartime').value = parts[14];
+            
+            // Stocks
+            document.getElementById('stock1').value = parts[15];
+            document.getElementById('stock2').value = parts[16];
+            document.getElementById('stock3').value = parts[17];
+            
+            // Weather
+            document.getElementById('thoitiet0').value = parts[18];
+            document.getElementById('thoitiet1').value = parts[19];
+            
+            // RSS (Index 20 to 31)
+            for (let i = 0; i < 12; i++) {
+                const box = document.getElementById('box-' + (i + 1));
+                if (box) box.checked = (parts[20 + i] === '1');
+            }
+        }
+
+        // Save logic
+        saveBtn.addEventListener('click', () => {
+            if (!websocket || websocket.readyState !== WebSocket.OPEN) return;
+            
+            let cmd = "#APP_SAVE$";
+            const fields = [
+                'token11', 'token12', 'token1l', 'token1h',
+                'token21', 'token22', 'token2l', 'token2h',
+                'token31', 'token32', 'token3l', 'token3h',
+                'tchart', 'tchartime', 'stock1', 'stock2', 'stock3',
+                'thoitiet0', 'thoitiet1'
+            ];
+            
+            const vals = fields.map(id => document.getElementById(id).value);
+            cmd += vals.join(':');
+            
+            // RSS check boxes
+            for (let i = 1; i <= 12; i++) {
+                const box = document.getElementById('box-' + i);
+                cmd += ":" + (box.checked ? "1" : "0");
+            }
+            
+            websocket.send(cmd);
+            buttonconect.innerHTML = "Saving...";
+        });
+
+        // Home button
+        document.querySelector(".home-img").addEventListener("click", () => {
+            window.open("/", "_self");
+        });
+
+        // WebSocket core logic
+        function initWebSocket() {
+            websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
+            websocket.onopen = onOpen;
+            websocket.onclose = onClose;
+            websocket.onmessage = onMessage;
+            buttonconect.innerHTML = "Connecting...";
+        }
+
+        function onOpen() {
+            buttonconect.innerHTML = "Connected";
+            buttonconect.style.color = "#4facfe";
+            websocket.send("#APP_CONNECT$");
+        }
+
+        function onClose() {
+            buttonconect.innerHTML = "Disconnected - Retrying...";
+            buttonconect.style.color = "#ff4d4d";
+            setTimeout(initWebSocket, 2000);
+        }
+
+        function onMessage(event) {
+            if (event.data.startsWith("APP_DATA:")) {
+                fillForm(event.data);
+            } else if (event.data === "SAVEOK") {
+                buttonconect.innerHTML = "Saved OK";
+                buttonconect.style.color = "#4facfe";
+                setTimeout(() => {
+                    buttonconect.innerHTML = "Connected";
+                }, 2000);
+            }
+        }
+
+        window.addEventListener('load', initWebSocket);
+    </script>
+</body>
+</html>
