@@ -50,7 +50,7 @@
         h2 {
             text-align: center;
             font-weight: 700;
-            font-size: 22px;
+            font-size: 20px;
             letter-spacing: 2px;
             margin: 0 0 20px 0;
             background: linear-gradient(to right, #818cf8, #c084fc);
@@ -69,23 +69,27 @@
         }
 
         .section-title {
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 13px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            color: var(--primary);
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .section-title::after {
             content: "";
             flex: 1;
             height: 1px;
-            background: linear-gradient(to right, rgba(79, 172, 254, 0.3), transparent);
+            background: rgba(255, 255, 255, 0.1);
         }
+
+        .title-binance { color: #f3ba2f; }
+        .title-stock   { color: #22c55e; }
+        .title-rss     { color: #a855f7; }
+        .title-weather { color: #0ea5e9; }
 
         .flex-row {
             display: flex;
@@ -275,7 +279,7 @@
 
         <!-- Binance Section -->
         <div class="section-glass">
-            <div class="section-title">Cryptocurrency (Binance)</div>
+            <div class="section-title title-binance">Cryptocurrency (Binance)</div>
             
             <style>
                 .token-grid {
@@ -377,7 +381,7 @@
 
         <!-- Stock Section -->
         <div class="section-glass">
-            <div class="section-title">Stock Market</div>
+            <div class="section-title title-stock">Stock Market</div>
             <div class="flex-column" style="gap: 10px;">
                 <div>
                     <label>Stock 1</label>
@@ -396,7 +400,7 @@
 
         <!-- RSS Section -->
         <div class="section-glass">
-            <div class="section-title">RSS News Subscription</div>
+            <div class="section-title title-rss">RSS News Subscription</div>
             <div class="rss-grid">
                 <label class="checkbox-container">
                     <input type="checkbox" id="box-1">
@@ -463,7 +467,7 @@
 
         <!-- Weather Section -->
         <div class="section-glass">
-            <div class="section-title">Weather (Coordinates)</div>
+            <div class="section-title title-weather">Weather (Coordinates)</div>
             <div class="flex-column" style="gap: 10px;">
                 <div class="flex-row">
                     <div class="flex-column">
