@@ -1,0 +1,91 @@
+export default {
+  async fetch(request, env, ctx) {
+    const { searchParams } = new URL(request.url);
+    const targetUrl = searchParams.get('url');
+
+    if (!targetUrl) {
+      return new Response("Thiếu tham số ?url=", { status: 400 });
+    }
+
+    // 1. Kiểm tra bộ nhớ đệm (Cache) của Cloudflare
+    const cache = caches.default;
+    let response = await cache.match(request);
+
+    if (!response) {
+      console.log("Cache miss - Đang tải từ GitHub...");
+      
+      // 2. Tải dữ liệu từ gốc với tùy chọn tối ưu
+      const originalResponse = await fetch(targetUrl, {
+        headers: {
+          'User-Agent': 'ESP32-Audio-Player',
+          'Range': request.headers.get('Range') || 'bytes=0-'
+        }
+      });
+
+      // 3. Tạo Response mới hỗ trợ Streaming và ép kiểu Audio
+      const newHeaders = new Headers(originalResponse.headers);
+      newHeaders.set("Access-Control-Allow-Origin", "*");
+      newHeaders.set("Cache-Control", "public, max-age=86400"); // Lưu cache 1 ngày
+      newHeaders.set("Content-Type", "audio/mpeg");
+
+      response = new Response(originalResponse.body, {
+        status: originalResponse.status,
+        headers: newHeaders
+      });
+
+      // 4. Lưu vào Cache trong lúc đang truyền dữ liệu cho ESP32 (không làm chậm tốc độ)
+      ctx.waitUntil(cache.put(request, response.clone()));
+    } else {
+      console.log("Cache hit - Đang tải từ máy chủ Cloudflare gần nhất!");
+    }
+
+    return response;
+  }
+};
+
+
+export default {
+  async fetch(request, env, ctx) {
+    const { searchParams } = new URL(request.url);
+    const targetUrl = searchParams.get('url');
+
+    if (!targetUrl) {
+      return new Response("Thiếu tham số ?url=", { status: 400 });
+    }
+
+    // 1. Kiểm tra bộ nhớ đệm (Cache) của Cloudflare
+    const cache = caches.default;
+    let response = await cache.match(request);
+
+    if (!response) {
+      console.log("Cache miss - Đang tải từ GitHub...");
+      
+      // 2. Tải dữ liệu từ gốc với tùy chọn tối ưu
+      const originalResponse = await fetch(targetUrl, {
+        headers: {
+          'User-Agent': 'ESP32-Audio-Player',
+          'Range': request.headers.get('Range') || 'bytes=0-'
+        }
+      });
+
+      // 3. Tạo Response mới hỗ trợ Streaming và ép kiểu Audio
+      const newHeaders = new Headers(originalResponse.headers);
+      newHeaders.set("Access-Control-Allow-Origin", "*");
+      newHeaders.set("Cache-Control", "public, max-age=86400"); // Lưu cache 1 ngày
+      newHeaders.set("Content-Type", "audio/mpeg");
+
+      response = new Response(originalResponse.body, {
+        status: originalResponse.status,
+        headers: newHeaders
+      });
+
+      // 4. Lưu vào Cache trong lúc đang truyền dữ liệu cho ESP32 (không làm chậm tốc độ)
+      ctx.waitUntil(cache.put(request, response.clone()));
+    } else {
+      console.log("Cache hit - Đang tải từ máy chủ Cloudflare gần nhất!");
+    }
+
+    return response;
+  }
+};
+
