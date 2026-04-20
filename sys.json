@@ -1,14 +1,4 @@
 {
-  "media": {
-    "zingmp3.dat": 29529567,
-    "radio.dat": 29529568,
-    "truyen.dat": 29529566,
-    "nghesy.dat": 29526874,
-    "chude.dat": 29527648,
-    "top100.dat": 29527667,
-    "bangxh.dat": 29527655,
-    "newchar.dat": 29527657
-  },
   "sys": {
     "melody.dat": 29597038,
     "quota.dat": 29529568,
@@ -24,9 +14,6 @@
     "listzing.zin": 29610325,
     "listtruyen.try": 29611367,
     "listradio.rao": 29611373
-  },
-  "data": {
-    "001.dat": 29544882
   },
   "url_music": {
     "url_find": "http://zing.ledienbien.edu.vn/api/get_stream_by_id?id=",
