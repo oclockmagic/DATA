@@ -7,7 +7,6 @@
     "colorpk.dat": 29589486,
     "bass.dat": 29589486,
     "back.dat": 29602354,
-    "listdata.lst": 29594066,
     "listclock.lst": 29611467,
     "listalarm.lst": 29611467,
     "listmusic.lst": 29611467,
@@ -16,7 +15,6 @@
     "listradio.rao": 29611373
   },
   "url_music": {
-    "url_find": "http://zing.ledienbien.edu.vn/api/get_stream_by_id?id=",
     "url_play": "http://171.244.40.218:5006/proxy_audio?id="
   }
 }
