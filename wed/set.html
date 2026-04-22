@@ -334,15 +334,16 @@
     <!-- WiFi Configuration -->
     <div class="section-card">
         <span class="section-label">Hostspot Config (AP)</span>
-        <div class="grid-2">
-            <div class="input-group">
+        <div class="input-row" style="align-items: flex-end; gap: 10px;">
+            <div class="input-group" style="flex: 1; margin-bottom: 0;">
                 <label>SSID Name</label>
                 <input type='text' id='wifi0' value='%WIFI0%' placeholder="Name">
             </div>
-            <div class="input-group">
+            <div class="input-group" style="flex: 1; margin-bottom: 0;">
                 <label>Password</label>
                 <input type='text' id='wifi1' value='%WIFI1%' placeholder="Pass">
             </div>
+            <button class="btn btn-primary" id="save-ap" style="margin-bottom: 0; height: 42px; padding: 0 15px;">Save</button>
         </div>
     </div>
 
@@ -359,7 +360,6 @@
                 </tr>
             </thead>
             <tbody id="wifi-list-body">
-                %DS_WIFI%
             </tbody>
         </table>
 
@@ -369,7 +369,6 @@
                 <div class="input-group" style="margin-bottom:0;">
                     <select id='module'>
                         <option value="" disabled selected>Select WiFi...</option>
-                        %LIST_WIFI%
                     </select>
                 </div>
                 <div class="input-row" style="margin-top: 0;">
@@ -608,22 +607,42 @@
                 document.getElementById('canbang').value = parts[16];
                 document.getElementById('bluetooth').value = parts[17];
                 
-                // Cập nhật danh sách WiFi STA
+                // Cập nhật danh sách WiFi (Saved & Scan)
                 var wifiTbody = document.getElementById('wifi-list-body');
-                if (wifiTbody) {
-                    var html = "";
-                    for (var i = 18; i < parts.length; i++) {
-                        var wifi = parts[i].split(',');
+                var wifiSelect = document.getElementById('module');
+                var html = "";
+                var scanEntries = [];
+                var staIdx = 0;
+                
+                for (var i = 18; i < parts.length; i++) {
+                    if (parts[i].startsWith("STA:")) {
+                        var wifi = parts[i].substring(4).split(',');
                         if (wifi.length >= 2) {
-                            var ssid = wifi[0];
-                            var pass = wifi[1];
-                            var idx = i - 18;
-                            html += `<tr><td>${ssid}</td><td>${pass}</td><td style="text-align:center"><button class="buttondel" value="${idx}">Delete</button></td></tr>`;
+                            html += `<tr><td>${wifi[0]}</td><td>${wifi[1]}</td><td style="text-align:center"><button class="buttondel" value="${staIdx}">Delete</button></td></tr>`;
+                            staIdx++;
                         }
+                    } else if (parts[i].startsWith("SCAN:")) {
+                        scanEntries.push(parts[i].substring(5));
                     }
-                    if (html !== "") {
-                        wifiTbody.innerHTML = html;
-                        attachWifiListEvents();
+                }
+                
+                if (wifiTbody) {
+                    wifiTbody.innerHTML = html;
+                    attachWifiListEvents();
+                }
+                
+                if (wifiSelect) {
+                    var selectHtml = `<option value="" disabled ${scanEntries.length === 0 ? "selected" : ""}>Select WiFi...</option>`;
+                    for (var j = 0; j < scanEntries.length; j++) {
+                        var ssid = scanEntries[j];
+                        var sel = (j === 0) ? "selected" : "";
+                        selectHtml += `<option value="${ssid}" ${sel}>${ssid}</option>`;
+                    }
+                    wifiSelect.innerHTML = selectHtml;
+                    
+                    // Nếu có danh sách quét được, tự động chọn cái đầu tiên và báo cho ESP32
+                    if (scanEntries.length > 0) {
+                        websocket.send("#WWN$" + scanEntries[0]);
                     }
                 }
             }
