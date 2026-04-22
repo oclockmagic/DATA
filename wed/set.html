@@ -144,13 +144,16 @@
             border: 1px solid var(--glass-border);
             border-radius: 12px;
             color: white;
-            padding: 10px 14px;
+            padding: 0 14px;
             font-size: 14px;
             outline: none;
             transition: all 0.3s;
             width: 100%;
+            height: 38px;
             cursor: pointer;
             box-sizing: border-box;
+            display: flex;
+            align-items: center;
         }
 
         input[type=number]::-webkit-inner-spin-button,
@@ -173,7 +176,8 @@
         }
 
         .btn {
-            padding: 10px;
+            height: 38px;
+            padding: 0 16px;
             border-radius: 14px;
             border: none;
             color: white;
@@ -186,6 +190,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            box-sizing: border-box;
         }
 
         .btn-primary {
@@ -343,7 +348,7 @@
                 <label>Password</label>
                 <input type='text' id='wifi1' value='%WIFI1%' placeholder="Pass">
             </div>
-            <button class="btn btn-primary" id="save-ap" style="margin-bottom: 0; height: 42px; padding: 0 15px;">Save</button>
+            <button class="btn btn-primary" id="save-ap" style="margin-bottom: 0;">Save</button>
         </div>
     </div>
 
@@ -482,7 +487,12 @@
     <!-- Bluetooth -->
     <div class="section-card">
         <span class="section-label">Bluetooth NAME</span>
-        <input type='text' id='bluetooth' value='%BLUE%' placeholder="Enter Bluetooth name...">
+        <div class="input-row" style="align-items: center; gap: 10px;">
+            <div style="flex: 1;">
+                <input type='text' id='bluetooth' value='%BLUE%' placeholder="Enter Bluetooth name...">
+            </div>
+            <button class="btn btn-primary" id="save-blue" style="margin-bottom: 0;">Save</button>
+        </div>
     </div>
 
     <!-- System Actions -->
@@ -536,6 +546,8 @@
     document.getElementById('updata').addEventListener("click", e => { window.open("/up", "_self") });
     document.getElementById('module').addEventListener("change", e => { websocket.send("#WWN$" + e.target.value) });
     document.getElementById('pass0').addEventListener("input", e => { websocket.send("#WWP$" + e.target.value) });
+    document.getElementById('save-ap').addEventListener("click", () => { websocket.send("#SAV_AP$") });
+    document.getElementById('save-blue').addEventListener("click", () => { websocket.send("#SAV_BLU$") });
 
     // Handle "Add" and "Delete" buttons in WiFi list
     // The %DS_WIFI% might contain buttons with class "buttondel"
@@ -586,6 +598,11 @@
     }
 
     function onMessage(event) {
+        console.log("WS Data:", event.data);
+        if (event.data === "SAVEOK") {
+            alert("Settings saved successfully!");
+            return;
+        }
         if (event.data.startsWith("SET_INFO|")) {
             var parts = event.data.split('|');
             if (parts.length >= 18) {
