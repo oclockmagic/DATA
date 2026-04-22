@@ -247,6 +247,42 @@
             font-weight: 500;
         }
         
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 700;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            opacity: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .toast-success { color: #10b981; border: 2px solid #10b981 !important; }
+        .toast-error { color: #f43f5e; border: 2px solid #f43f5e !important; }
+        .toast-info { color: var(--primary); border: 2px solid var(--primary) !important; }
+
         .wifi-list-table tr td:last-child { 
             border-radius: 0 12px 12px 0; 
             border-right: 1px solid rgba(255, 255, 255, 0.02);
@@ -510,6 +546,8 @@
     <div class="status-tag" id="conet">Disconnected</div>
 </div>
 
+<div id="toast" class="toast">Message here</div>
+
 <script>
     var connectt = 0;
     var buttonconect = document.getElementById('conet');
@@ -546,8 +584,29 @@
     document.getElementById('updata').addEventListener("click", e => { window.open("/up", "_self") });
     document.getElementById('module').addEventListener("change", e => { websocket.send("#WWN$" + e.target.value) });
     document.getElementById('pass0').addEventListener("input", e => { websocket.send("#WWP$" + e.target.value) });
-    document.getElementById('save-ap').addEventListener("click", () => { websocket.send("#SAV_AP$") });
-    document.getElementById('save-blue').addEventListener("click", () => { websocket.send("#SAV_BLU$") });
+    
+    function showToast(msg, type = "info") {
+        const toast = document.getElementById("toast");
+        toast.innerHTML = msg;
+        toast.className = `toast toast-${type} show`;
+        setTimeout(() => {
+            toast.className = "toast";
+        }, 3000);
+    }
+
+    document.getElementById('save-ap').addEventListener("click", () => { 
+        const s = document.getElementById('wifi0').value;
+        const p = document.getElementById('wifi1').value;
+        if(s.length < 3) { showToast("SSID TOO SHORT (MIN 3)", "error"); return; }
+        if(p.length < 8) { showToast("PASSWORD TOO SHORT (MIN 8)", "error"); return; }
+        websocket.send("#SAV_AP$"); 
+    });
+    
+    document.getElementById('save-blue').addEventListener("click", () => { 
+        const b = document.getElementById('bluetooth').value;
+        if(b.length < 3) { showToast("NAME TOO SHORT (MIN 3)", "error"); return; }
+        websocket.send("#SAV_BLU$"); 
+    });
 
     // Handle "Add" and "Delete" buttons in WiFi list
     // The %DS_WIFI% might contain buttons with class "buttondel"
@@ -600,7 +659,7 @@
     function onMessage(event) {
         console.log("WS Data:", event.data);
         if (event.data === "SAVEOK") {
-            alert("Settings saved successfully!");
+            showToast("SETTINGS SAVED!", "success");
             return;
         }
         if (event.data.startsWith("SET_INFO|")) {
