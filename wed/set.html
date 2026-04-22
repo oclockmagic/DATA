@@ -358,7 +358,7 @@
                     <th style="width: 50px; text-align: center;">Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="wifi-list-body">
                 %DS_WIFI%
             </tbody>
         </table>
@@ -607,6 +607,25 @@
                 document.getElementById('mucsang').value = parts[15];
                 document.getElementById('canbang').value = parts[16];
                 document.getElementById('bluetooth').value = parts[17];
+                
+                // Cập nhật danh sách WiFi STA
+                var wifiTbody = document.getElementById('wifi-list-body');
+                if (wifiTbody) {
+                    var html = "";
+                    for (var i = 18; i < parts.length; i++) {
+                        var wifi = parts[i].split(',');
+                        if (wifi.length >= 2) {
+                            var ssid = wifi[0];
+                            var pass = wifi[1];
+                            var idx = i - 18;
+                            html += `<tr><td>${ssid}</td><td>${pass}</td><td style="text-align:center"><button class="buttondel" value="${idx}">Delete</button></td></tr>`;
+                        }
+                    }
+                    if (html !== "") {
+                        wifiTbody.innerHTML = html;
+                        attachWifiListEvents();
+                    }
+                }
             }
         }
         else if (event.data == "SAVEOK") {
