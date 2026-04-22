@@ -329,15 +329,40 @@
             transition: all 0.2s;
         }
 
-        .btn-confirm { background: var(--primary); color: white; flex: 1; }
-        .btn-cancel { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; flex: 1; }
-        .btn-close { background: rgba(255,255,255,0.1); color: white; width: 100%; }
+        .btn-confirm {
+            background: var(--primary);
+            color: white;
+            flex: 1;
+        }
 
-        .modal-btn:active { transform: scale(0.95); }
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            flex: 1;
+        }
 
-        .type-success { border-top: 4px solid #10b981; }
-        .type-error { border-top: 4px solid #f43f5e; }
-        .type-info { border-top: 4px solid var(--primary); }
+        .btn-close {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 100%;
+        }
+
+        .modal-btn:active {
+            transform: scale(0.95);
+        }
+
+        .type-success {
+            border-top: 4px solid #10b981;
+        }
+
+        .type-error {
+            border-top: 4px solid #f43f5e;
+        }
+
+        .type-info {
+            border-top: 4px solid var(--primary);
+        }
 
         .wifi-list-table tr td:last-child {
             border-radius: 0 12px 12px 0;
@@ -435,22 +460,24 @@
 
 <body>
     <div class="container">
-        <h2>SYSTEM SETTINGS</h2>
+        <h2>System Settings</h2>
         <hr>
 
         <!-- WiFi Configuration -->
         <div class="section-card">
             <span class="section-label">Hostspot Config (AP)</span>
-            <div class="input-row" style="align-items: flex-end; gap: 10px;">
-                <div class="input-group" style="flex: 1; margin-bottom: 0;">
+            <div class="grid-2" style="align-items: flex-end;">
+                <div class="input-group" style="margin-bottom: 0;">
                     <label>SSID Name</label>
                     <input type='text' id='wifi0' value='Name' placeholder="Name">
                 </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>Password</label>
-                    <input type='text' id='wifi1' value='Pass' placeholder="Pass">
+                <div class="input-row" style="align-items: flex-end;">
+                    <div class="input-group" style="flex: 1; margin-bottom: 0;">
+                        <label>Password</label>
+                        <input type='text' id='wifi1' value='Pass' placeholder="Pass">
+                    </div>
+                    <button class="btn btn-primary" id="save-ap">Save</button>
                 </div>
-                <button class="btn btn-primary" id="save-ap">Save</button>
             </div>
         </div>
 
@@ -698,11 +725,11 @@
             const overlay = document.getElementById("modal-overlay");
             const card = document.getElementById("modal-card");
             const footer = document.getElementById("modal-footer");
-            
+
             document.getElementById("modal-title").innerText = "Notification";
             document.getElementById("modal-msg").innerText = msg;
             card.className = `modal-card type-${type}`;
-            
+
             if (autoClose) {
                 footer.innerHTML = `<button class="modal-btn btn-close" onclick="closeModal()">CLOSE</button>`;
                 overlay.classList.add("show");
@@ -717,18 +744,18 @@
             const overlay = document.getElementById("modal-overlay");
             const card = document.getElementById("modal-card");
             const footer = document.getElementById("modal-footer");
-            
+
             document.getElementById("modal-title").innerText = "Confirm Action";
             document.getElementById("modal-msg").innerText = msg;
             card.className = `modal-card type-info`;
-            
+
             footer.innerHTML = `
                 <button class="modal-btn btn-cancel" id="m-cancel">NO</button>
                 <button class="modal-btn btn-confirm" id="m-confirm">YES</button>
             `;
-            
+
             overlay.classList.add("show");
-            
+
             document.getElementById("m-confirm").onclick = () => { onConfirm(); closeModal(); };
             document.getElementById("m-cancel").onclick = closeModal;
         }
