@@ -574,6 +574,9 @@
         buttonconect.innerHTML = "CONNECTED";
         buttonconect.style.color = "var(--primary)";
         attachWifiListEvents();
+        
+        // Request current settings immediately
+        websocket.send("#GET_SET$");
     }
 
     function onClose(event) {
@@ -584,7 +587,29 @@
     }
 
     function onMessage(event) {
-        if (event.data == "SAVEOK") {
+        if (event.data.startsWith("SET_INFO|")) {
+            var parts = event.data.split('|');
+            if (parts.length >= 18) {
+                document.getElementById('wifi0').value = parts[1];
+                document.getElementById('wifi1').value = parts[2];
+                document.getElementById('tgio').value = parts[3];
+                document.getElementById('tphut').value = parts[4];
+                document.getElementById('tngay').value = parts[5];
+                document.getElementById('tthang').value = parts[6];
+                document.getElementById('tnam').value = parts[7];
+                document.getElementById('f24').value = parts[8];
+                document.getElementById('online').value = parts[9];
+                document.getElementById('tzone').value = parts[10];
+                document.getElementById('tgio0').value = parts[11];
+                document.getElementById('tphut0').value = parts[12];
+                document.getElementById('tgio1').value = parts[13];
+                document.getElementById('tphut1').value = parts[14];
+                document.getElementById('mucsang').value = parts[15];
+                document.getElementById('canbang').value = parts[16];
+                document.getElementById('bluetooth').value = parts[17];
+            }
+        }
+        else if (event.data == "SAVEOK") {
             window.open("/setsys", "_self");
         }
     }
