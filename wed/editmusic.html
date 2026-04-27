@@ -956,15 +956,15 @@
             console.log("Updating Bass Upload State Index:", index);
 
             if (canvas && hint) {
-                if (index === 1) {
-                    // Custom Upload mode
+                // Thứ tự mới: 0:none, 1:file, 2:image (upload), 3:random, 4+:items
+                if (index === 2) { 
+                    // Chế độ Upload thủ công (image.png)
                     canvas.parentElement.classList.remove('disabled-upload');
-                    // We don't reset hasUploadedBass here in case they already uploaded one
                 } else {
                     canvas.parentElement.classList.add('disabled-upload');
-                    hasUploadedBass = false; // Reset for None (0) or until Auto-draw (>=2) finishes
+                    hasUploadedBass = false; 
 
-                    if (index >= 2) {
+                    if (index >= 4) { // Các item hình ảnh thực tế bắt đầu từ index 4
                         const images = state['sel-bass'] || [];
                         if (images[index]) {
                             const imgUrl = RAW_BASE + "bass/" + images[index];
@@ -974,7 +974,6 @@
                             img.src = imgUrl;
                             img.onload = () => {
                                 if (bassCtx) {
-                                    console.log("Drawing Bass to Canvas...");
                                     bassCtx.clearRect(0, 0, 44, 44);
                                     let s, dx, dy, dw, dh;
                                     if (img.width > img.height) {
@@ -986,8 +985,7 @@
                                     }
                                     bassCtx.drawImage(img, dx, dy, dw, dh);
                                     hint.style.display = 'none';
-                                    hasUploadedBass = true; // Set flag ONLY after successful draw
-                                    console.log("hasUploadedBass set to TRUE");
+                                    hasUploadedBass = true; 
                                 }
                             };
                             img.onerror = (e) => {
@@ -995,12 +993,11 @@
                                 hasUploadedBass = false;
                             };
                         }
-                    } else if (index === 0) {
-                        // None selected - clear canvas and hide hint
+                    } else {
+                        // None (0), File (1), hoặc Random (3) - xóa canvas và hiện hint
                         if (bassCtx) bassCtx.clearRect(0, 0, 44, 44);
                         hint.style.display = 'block';
                         hasUploadedBass = false;
-                        console.log("hasUploadedBass set to FALSE (None)");
                     }
                 }
             }
