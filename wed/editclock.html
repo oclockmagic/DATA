@@ -352,6 +352,72 @@
             pointer-events: none;
             filter: blur(1px);
         }
+
+        /* Loading Overlay */
+        #init-overlay {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        #init-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-content {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 30px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            width: 240px;
+            animation: modalFadeIn 0.5s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .loading-text {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 
@@ -360,24 +426,13 @@
         <h2>CUSTOM EDITOR</h2>
         <hr>
 
-        <div id="init-overlay"
-            style="position: absolute; inset: 0; background: rgba(6, 2, 29, 0.9); z-index: 100; border-radius: 28px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
-            <div style="text-align: center; color: white;">
-                <div
-                    style="pointer-events: none; width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px auto;">
-                </div>
-                <div style="font-size: 14px; font-weight: bold; letter-spacing: 1px; color: var(--primary);">LOADING
-                    EDITOR...</div>
-                <div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 5px;">Connecting to Clock</div>
-            </div>
-            <style>
-                @keyframes spin {
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-            </style>
+    <div id="init-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3 class="loading-title">INITIALIZING</h3>
+            <p class="loading-text">Fetching clock data...</p>
         </div>
+    </div>
 
         <div id="section-image" style="display: none;">
             <div class="section-glass">
@@ -1319,7 +1374,7 @@
                     // Retry tự động nếu 3 giây chưa nhận được data
                     setTimeout(() => {
                         const ov = document.getElementById('init-overlay');
-                        if (ov && ov.style.display !== 'none') {
+                        if (ov && !ov.classList.contains('hidden')) {
                             console.warn('[editclock] No DOWNLOAD_EDIT_CLOCK after 3s, retrying #CGET$...');
                             if (websocket && websocket.readyState === WebSocket.OPEN) websocket.send("#CGET$");
                         }
@@ -1451,7 +1506,7 @@
                             console.error('[editclock] Error processing DOWNLOAD_EDIT_CLOCK:', err);
                         } finally {
                             // Luôn tắt overlay dù có lỗi hay không
-                            if (overlay) overlay.style.display = 'none';
+                            if (overlay) overlay.classList.add('hidden');
                         }
                     }
                 };
