@@ -1644,12 +1644,12 @@
                 const octx2 = out2.getContext('2d'); octx2.filter = filterStr;
                 octx2.drawImage(editorImgOrig, crop.x, crop.y, crop.width, crop.height, 0, 0, targetW, targetH);
                 if (editorTarget === 'BG') {
-                    bgGifFrames = []; bgEditorChanged = true; lastEditorTarget = "BG";
+                    bgGifFrames = [getRGB565Hex(out2, 72, 72)]; bgEditorChanged = true; lastEditorTarget = "BG";
                     bgCtx.clearRect(0, 0, 72, 72);
                     bgCtx.drawImage(out2, 0, 0, 72, 72); hasUploadedBG = true;
                     document.getElementById('bg-hint').style.display = 'none';
                 } else {
-                    bassGifFrames = []; bassEditorChanged = true; lastEditorTarget = "BASS";
+                    bassGifFrames = [getRGB565Hex(out2, 44, 44)]; bassEditorChanged = true; lastEditorTarget = "BASS";
                     bassCtx.clearRect(0, 0, 44, 44);
                     bassCtx.drawImage(out2, 0, 0, 44, 44); hasUploadedBass = true;
                     document.getElementById('bass-hint').style.display = 'none';
