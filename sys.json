@@ -7,12 +7,14 @@
     "colorpk.dat": 29589486,
     "bass.dat": 29621422,
     "back.dat": 29602354,
-    "listclock.lst": 29621422,
-    "listalarm.lst": 29621422,
-    "listmusic.lst": 29621422,
+    "listclock.lst": 29621428,
+    "listalarm.lst": 29621428,
+    "listmusic.lst": 29621428,
     "listzing.zin": 29618496,
     "listtruyen.try": 29612597,
-    "listradio.rao": 29612597
+    "listradio.rao": 29612597,
+    "wed": 29621427,
+    "listdata.lst": 29621427
   },
   "url_music": {
     "url_play": "http://171.244.40.218:5006/proxy_audio?id="
