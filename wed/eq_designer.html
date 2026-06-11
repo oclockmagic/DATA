@@ -255,10 +255,21 @@
         .save-btn:hover {
             filter: brightness(1.1);
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Overlay nạp cấu hình từ thiết bị -->
+    <div id="eqSyncOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;justify-content:center;align-items:center;color:#fff;font-family:sans-serif;font-size:18px;font-weight:500;backdrop-filter:blur(2px);transition:opacity 0.3s ease;">
+        <div style="background:#1e293b;padding:24px 40px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);border:1px solid #334155;text-align:center;">
+            <div style="width:24px;height:24px;border:3px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px auto;"></div>
+            <div>Đang kết nối & nạp cấu hình EQ từ thiết bị...</div>
+        </div>
+    </div>
 
     <div class="container">
         <h2>10-Band EQ Designer</h2>
@@ -806,10 +817,6 @@
 
                 syncInputs(dragBand);
                 console.log(`[EQ Drag] Band ${dragBand + 1} updated: { type: "${FILTER_TYPES[bands[dragBand].type]}", freq: ${bands[dragBand].freq} Hz, gain: ${bands[dragBand].gain} dB, q: ${bands[dragBand].q} }`);
-                
-                if (typeof window.throttleSendEQ === 'function') {
-                    window.throttleSendEQ(activeProfileIndex, dragBand);
-                }
             } else {
                 const b = hitTest(x, y);
                 if (b !== hoverBand) {
@@ -895,10 +902,6 @@
 
                 syncInputs(dragBand);
                 console.log(`[EQ Drag] Band ${dragBand + 1} updated: { type: "${FILTER_TYPES[bands[dragBand].type]}", freq: ${bands[dragBand].freq} Hz, gain: ${bands[dragBand].gain} dB, q: ${bands[dragBand].q} }`);
-                
-                if (typeof window.throttleSendEQ === 'function') {
-                    window.throttleSendEQ(activeProfileIndex, dragBand);
-                }
                 e.preventDefault();
                 drawGraph();
             }
@@ -1093,24 +1096,8 @@
         };
 
         function initEQSync() {
-            // 1. Tạo overlay modal đen 50%
-            const overlay = document.createElement('div');
-            overlay.id = 'eqSyncOverlay';
-            overlay.style = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;justify-content:center;align-items:center;color:#fff;font-family:sans-serif;font-size:18px;font-weight:500;backdrop-filter:blur(2px);transition:opacity 0.3s ease;';
-            overlay.innerHTML = '<div style="background:#1e293b;padding:24px 40px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);border:1px solid #334155;text-align:center;">' +
-                                '  <div style="width:24px;height:24px;border:3px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px auto;"></div>' +
-                                '  <div>Đang kết nối & nạp cấu hình EQ từ thiết bị...</div>' +
-                                '</div>';
-            
-            // Thêm animation spin vào head nếu chưa có
-            if (!document.getElementById('spinStyle')) {
-                const style = document.createElement('style');
-                style.id = 'spinStyle';
-                style.innerHTML = '@keyframes spin { to { transform: rotate(360deg); } }';
-                document.head.appendChild(style);
-            }
-            
-            document.body.appendChild(overlay);
+            // Lấy phần tử overlay tĩnh đã vẽ sẵn
+            const overlay = document.getElementById('eqSyncOverlay');
 
             // 2. Kết nối WebSocket
             const wsUrl = `ws://${window.location.host}/ws`;
