@@ -806,6 +806,10 @@
 
                 syncInputs(dragBand);
                 console.log(`[EQ Drag] Band ${dragBand + 1} updated: { type: "${FILTER_TYPES[bands[dragBand].type]}", freq: ${bands[dragBand].freq} Hz, gain: ${bands[dragBand].gain} dB, q: ${bands[dragBand].q} }`);
+                
+                if (typeof window.throttleSendEQ === 'function') {
+                    window.throttleSendEQ(activeProfileIndex, dragBand);
+                }
             } else {
                 const b = hitTest(x, y);
                 if (b !== hoverBand) {
@@ -818,9 +822,13 @@
 
         window.addEventListener('mouseup', () => {
             if (isDragging) {
+                const finishedBand = dragBand;
                 isDragging = false;
                 dragBand = -1;
                 canvas.style.cursor = hoverBand >= 0 ? 'grab' : 'crosshair';
+                if (finishedBand >= 0 && typeof window.sendEQUpdate === 'function') {
+                    window.sendEQUpdate(activeProfileIndex, finishedBand);
+                }
             }
         });
 
@@ -831,6 +839,10 @@
                 bands[b].gain = 0.0;
                 syncInputs(b);
                 console.log(`[EQ DblClick] Band ${b + 1} gain reset: { type: "${FILTER_TYPES[bands[b].type]}", freq: ${bands[b].freq} Hz, gain: 0.0 dB, q: ${bands[b].q} }`);
+                
+                if (typeof window.sendEQUpdate === 'function') {
+                    window.sendEQUpdate(activeProfileIndex, b);
+                }
                 drawGraph();
             }
         });
@@ -845,6 +857,10 @@
             bands[b].q = Math.max(0.1, Math.min(10.0, Math.round((bands[b].q + delta) * 100) / 100));
             syncInputs(b);
             console.log(`[EQ Scroll] Band ${b + 1} Q updated: { type: "${FILTER_TYPES[bands[b].type]}", freq: ${bands[b].freq} Hz, gain: ${bands[b].gain} dB, q: ${bands[b].q} }`);
+            
+            if (typeof window.sendEQUpdate === 'function') {
+                window.sendEQUpdate(activeProfileIndex, b);
+            }
             drawGraph();
         }, { passive: false });
 
@@ -879,6 +895,10 @@
 
                 syncInputs(dragBand);
                 console.log(`[EQ Drag] Band ${dragBand + 1} updated: { type: "${FILTER_TYPES[bands[dragBand].type]}", freq: ${bands[dragBand].freq} Hz, gain: ${bands[dragBand].gain} dB, q: ${bands[dragBand].q} }`);
+                
+                if (typeof window.throttleSendEQ === 'function') {
+                    window.throttleSendEQ(activeProfileIndex, dragBand);
+                }
                 e.preventDefault();
                 drawGraph();
             }
@@ -886,8 +906,12 @@
 
         canvas.addEventListener('touchend', (e) => {
             if (isDragging) {
+                const finishedBand = dragBand;
                 isDragging = false;
                 dragBand = -1;
+                if (finishedBand >= 0 && typeof window.sendEQUpdate === 'function') {
+                    window.sendEQUpdate(activeProfileIndex, finishedBand);
+                }
             }
         });
 
@@ -956,6 +980,10 @@
                         }
 
                         console.log(`[EQ Input] Band ${index + 1} manually set: { type: "${FILTER_TYPES[bands[index].type]}", freq: ${bands[index].freq} Hz, gain: ${bands[index].gain} dB, q: ${bands[index].q} }`);
+                        
+                        if (typeof window.sendEQUpdate === 'function') {
+                            window.sendEQUpdate(activeProfileIndex, index);
+                        }
                         drawGraph();
                     });
                 });
@@ -965,6 +993,10 @@
                     const val = parseInt(e.target.value);
                     bands[index].type = val;
                     console.log(`[EQ Type] Band ${index + 1} type updated: { type: "${FILTER_TYPES[val]}", freq: ${bands[index].freq} Hz, gain: ${bands[index].gain} dB, q: ${bands[index].q} }`);
+                    
+                    if (typeof window.sendEQUpdate === 'function') {
+                        window.sendEQUpdate(activeProfileIndex, index);
+                    }
                     drawGraph();
                 });
 
@@ -1037,6 +1069,115 @@
                 saveBtn.innerHTML = originalHTML;
             }, 1500);
         });
+
+        // --- WebSocket Sync ---
+        let lastSendTime = 0;
+        window.throttleSendEQ = function(profileIdx, filterIdx) {
+            const now = Date.now();
+            if (now - lastSendTime > 50) { // 50ms throttle
+                window.sendEQUpdate(profileIdx, filterIdx);
+                lastSendTime = now;
+            }
+        };
+
+        window.sendEQUpdate = function(profileIdx, filterIdx) {
+            if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                const prof = profiles[profileIdx];
+                const filter = prof.bands[filterIdx];
+                if (!filter) return;
+                // Format: #EQ_SET$profile_idx,preamp,filter_idx,type,fc,q,gain
+                const preampVal = prof.preamp !== undefined ? prof.preamp : -6.0;
+                const msg = `#EQ_SET$${profileIdx},${preampVal.toFixed(1)},${filterIdx},${filter.type},${filter.freq.toFixed(1)},${filter.q.toFixed(2)},${filter.gain.toFixed(1)}`;
+                window.eqWebSocket.send(msg);
+            }
+        };
+
+        function initEQSync() {
+            // 1. Tạo overlay modal đen 50%
+            const overlay = document.createElement('div');
+            overlay.id = 'eqSyncOverlay';
+            overlay.style = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;justify-content:center;align-items:center;color:#fff;font-family:sans-serif;font-size:18px;font-weight:500;backdrop-filter:blur(2px);transition:opacity 0.3s ease;';
+            overlay.innerHTML = '<div style="background:#1e293b;padding:24px 40px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);border:1px solid #334155;text-align:center;">' +
+                                '  <div style="width:24px;height:24px;border:3px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px auto;"></div>' +
+                                '  <div>Đang kết nối & nạp cấu hình EQ từ thiết bị...</div>' +
+                                '</div>';
+            
+            // Thêm animation spin vào head nếu chưa có
+            if (!document.getElementById('spinStyle')) {
+                const style = document.createElement('style');
+                style.id = 'spinStyle';
+                style.innerHTML = '@keyframes spin { to { transform: rotate(360deg); } }';
+                document.head.appendChild(style);
+            }
+            
+            document.body.appendChild(overlay);
+
+            // 2. Kết nối WebSocket
+            const wsUrl = `ws://${window.location.host}/ws`;
+            console.log(`[EQ Sync] Connecting to WebSocket: ${wsUrl}`);
+            const ws = new WebSocket(wsUrl);
+            window.eqWebSocket = ws;
+
+            ws.onopen = () => {
+                console.log('[EQ Sync] WebSocket connected. Requesting profiles...');
+                ws.send('#EQ_GET$');
+            };
+
+            ws.onmessage = (event) => {
+                if (event.data.startsWith('EQ_PROFILES:')) {
+                    console.log('[EQ Sync] Received profiles data from ESP32');
+                    const dataStr = event.data.substring(12);
+                    if (!dataStr) {
+                        overlay.remove();
+                        return;
+                    }
+                    const vals = dataStr.split(',').map(Number);
+                    if (vals.length < 123) {
+                        console.error('[EQ Sync] Invalid profiles data length:', vals.length);
+                        overlay.remove();
+                        return;
+                    }
+                    
+                    let idx = 0;
+                    for (let p = 0; p < 3; p++) {
+                        profiles[p].preamp = vals[idx++];
+                        for (let f = 0; f < 10; f++) {
+                            profiles[p].bands[f].type = vals[idx++];
+                            profiles[p].bands[f].freq = vals[idx++];
+                            profiles[p].bands[f].q = vals[idx++];
+                            profiles[p].bands[f].gain = vals[idx++];
+                        }
+                    }
+
+                    // Đồng bộ biến bands toàn cục với profile đang kích hoạt
+                    bands = profiles[activeProfileIndex].bands;
+
+                    // Vẽ lại đồ thị & bảng thông số
+                    buildTable();
+                    updateSelectedRowHighlight();
+                    drawGraph();
+
+                    // Ẩn/Xóa overlay
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.remove(), 300);
+                }
+            };
+
+            ws.onerror = (err) => {
+                console.error('[EQ Sync] WebSocket error:', err);
+            };
+
+            ws.onclose = () => {
+                console.warn('[EQ Sync] WebSocket connection closed.');
+                // Tự động đóng overlay để không khóa màn hình nếu mất kết nối
+                if (document.getElementById('eqSyncOverlay')) {
+                    document.getElementById('eqSyncOverlay').remove();
+                }
+            };
+        }
+
+        // Khởi động đồng bộ hóa
+        initEQSync();
     </script>
 </body>
 
