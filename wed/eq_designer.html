@@ -332,6 +332,119 @@
             accent-color: var(--primary);
             cursor: pointer;
         }
+    
+        /* Smart Features Container (Smart Bass & DRC) */
+        .smart-features-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .smart-features-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .smart-card {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 12px 16px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-sizing: border-box;
+        }
+
+        .smart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .smart-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .smart-control-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .smart-slider {
+            flex: 1;
+            height: 5px;
+            border-radius: 3px;
+            background: var(--bg-card);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .smart-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        /* Toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-round {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.15);
+            transition: .3s;
+            border-radius: 20px;
+        }
+
+        .slider-round:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-round {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider-round:before {
+            transform: translateX(14px);
+        }
     </style>
 </head>
 
@@ -383,6 +496,39 @@
         <div class="preamp-container">
             <span class="preamp-label">Preamp: <strong id="preampVal">-6.0</strong> dB</span>
             <input type="range" id="inputPreamp" class="preamp-slider" min="-20" max="20" step="0.1" value="-6.0">
+        </div>
+
+        <!-- Smart Features Container (Smart Bass & DRC) -->
+        <div class="smart-features-container">
+            <!-- Smart Bass Card -->
+            <div class="smart-card">
+                <div class="smart-header">
+                    <span class="smart-title">🔊 Smart Bass (Dynamic)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="chkSmartBass">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+                <div class="smart-control-row">
+                    <span style="min-width: 65px;">Strength: <strong id="lblSmartBassStr">5</strong></span>
+                    <input type="range" id="sliderSmartBassStr" class="smart-slider" min="1" max="10" step="1" value="5">
+                </div>
+            </div>
+
+            <!-- DRC Limiter Card -->
+            <div class="smart-card">
+                <div class="smart-header">
+                    <span class="smart-title">🛡️ Safe-Volume Limiter (DRC)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="chkDrc">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+                <div class="smart-control-row">
+                    <span style="min-width: 75px;">Sensitivity: <strong id="lblDrcSens">5</strong></span>
+                    <input type="range" id="sliderDrcSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                </div>
+            </div>
         </div>
 
         <!-- EQ Bands Table List -->
@@ -2470,14 +2616,26 @@
         let profiles = [
             {
                 name: "Profile 1",
+                smartBassEn: 0,
+                smartBassStr: 5,
+                drcEn: 0,
+                drcSens: 5,
                 bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
             },
             {
                 name: "Profile 2",
+                smartBassEn: 0,
+                smartBassStr: 5,
+                drcEn: 0,
+                drcSens: 5,
                 bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
             },
             {
                 name: "Profile 3",
+                smartBassEn: 0,
+                smartBassStr: 5,
+                drcEn: 0,
+                drcSens: 5,
                 bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
             }
         ];
@@ -3053,6 +3211,81 @@
         // --- Build Bands Table Interface ---
         const tableBody = document.getElementById('bandsTableBody');
 
+        // --- Smart Bass & DRC UI Sync ---
+        function updateSmartBassDrcUI() {
+            const chkSmartBass = document.getElementById('chkSmartBass');
+            const sliderSmartBassStr = document.getElementById('sliderSmartBassStr');
+            const lblSmartBassStr = document.getElementById('lblSmartBassStr');
+
+            const chkDrc = document.getElementById('chkDrc');
+            const sliderDrcSens = document.getElementById('sliderDrcSens');
+            const lblDrcSens = document.getElementById('lblDrcSens');
+
+            const prof = profiles[activeProfileIndex];
+            
+            if (chkSmartBass) chkSmartBass.checked = prof.smartBassEn === 1;
+            if (sliderSmartBassStr) {
+                sliderSmartBassStr.value = prof.smartBassStr !== undefined ? prof.smartBassStr : 5;
+                if (lblSmartBassStr) lblSmartBassStr.textContent = sliderSmartBassStr.value;
+            }
+
+            if (chkDrc) chkDrc.checked = prof.drcEn === 1;
+            if (sliderDrcSens) {
+                sliderDrcSens.value = prof.drcSens !== undefined ? prof.drcSens : 5;
+                if (lblDrcSens) lblDrcSens.textContent = sliderDrcSens.value;
+            }
+        }
+
+        function initSmartSettingsListeners() {
+            const chkSmartBass = document.getElementById('chkSmartBass');
+            const sliderSmartBassStr = document.getElementById('sliderSmartBassStr');
+            const lblSmartBassStr = document.getElementById('lblSmartBassStr');
+
+            const chkDrc = document.getElementById('chkDrc');
+            const sliderDrcSens = document.getElementById('sliderDrcSens');
+            const lblDrcSens = document.getElementById('lblDrcSens');
+
+            const sendSmartBassSettings = () => {
+                const en = chkSmartBass.checked ? 1 : 0;
+                const str = parseInt(sliderSmartBassStr.value);
+                profiles[activeProfileIndex].smartBassEn = en;
+                profiles[activeProfileIndex].smartBassStr = str;
+                if (lblSmartBassStr) lblSmartBassStr.textContent = str;
+                
+                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                    window.eqWebSocket.send(`#EQ_SET_SMART_BASS$${activeProfileIndex},${en},${str}`);
+                }
+            };
+
+            const sendDrcSettings = () => {
+                const en = chkDrc.checked ? 1 : 0;
+                const sens = parseInt(sliderDrcSens.value);
+                profiles[activeProfileIndex].drcEn = en;
+                profiles[activeProfileIndex].drcSens = sens;
+                if (lblDrcSens) lblDrcSens.textContent = sens;
+
+                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                    window.eqWebSocket.send(`#EQ_SET_DRC$${activeProfileIndex},${en},${sens}`);
+                }
+            };
+
+            if (chkSmartBass) chkSmartBass.addEventListener('change', sendSmartBassSettings);
+            if (sliderSmartBassStr) {
+                sliderSmartBassStr.addEventListener('input', () => {
+                    if (lblSmartBassStr) lblSmartBassStr.textContent = sliderSmartBassStr.value;
+                });
+                sliderSmartBassStr.addEventListener('change', sendSmartBassSettings);
+            }
+
+            if (chkDrc) chkDrc.addEventListener('change', sendDrcSettings);
+            if (sliderDrcSens) {
+                sliderDrcSens.addEventListener('input', () => {
+                    if (lblDrcSens) lblDrcSens.textContent = sliderDrcSens.value;
+                });
+                sliderDrcSens.addEventListener('change', sendDrcSettings);
+            }
+        }
+
         function buildTable() {
             tableBody.innerHTML = '';
             bands.forEach((band, index) => {
@@ -3179,6 +3412,9 @@
                     window.eqWebSocket.send(`#EQ_SELECT_PROFILE$${activeProfileIndex}`);
                 }
 
+                // Cập nhật Smart Bass & DRC UI của Profile mới
+                updateSmartBassDrcUI();
+
                 // Cập nhật preamp slider
                 const preampInput = document.getElementById('inputPreamp');
                 const preampValText = document.getElementById('preampVal');
@@ -3278,6 +3514,8 @@
 
         // Khởi tạo các Dropdowns
         initPresetDropdowns();
+        initSmartSettingsListeners();
+        updateSmartBassDrcUI();
 
                 // --- Preamp Slider Interaction ---
         const preampInput = document.getElementById('inputPreamp');
@@ -3389,6 +3627,22 @@
                         const initOverlay = document.getElementById('eqSyncOverlay');
                         initOverlay.style.opacity = '0';
                         setTimeout(() => initOverlay.remove(), 300);
+                    }
+                }
+                
+                if (event.data.startsWith('EQ_SMART_SETTINGS:')) {
+                    console.log('[EQ Sync] Received Smart Bass & DRC settings');
+                    const dataStr = event.data.substring(18);
+                    const vals = dataStr.split(',').map(Number);
+                    if (vals.length === 12) {
+                        let idx = 0;
+                        for (let p = 0; p < 3; p++) {
+                            profiles[p].smartBassEn = vals[idx++];
+                            profiles[p].smartBassStr = vals[idx++];
+                            profiles[p].drcEn = vals[idx++];
+                            profiles[p].drcSens = vals[idx++];
+                        }
+                        updateSmartBassDrcUI();
                     }
                 }
             };
