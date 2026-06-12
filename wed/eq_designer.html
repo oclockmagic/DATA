@@ -3279,15 +3279,19 @@
         const preampValText = document.getElementById('preampVal');
 
         if (preampInput && preampValText) {
+            // Cập nhật giá trị hiển thị mượt mà khi đang kéo
             preampInput.addEventListener('input', (e) => {
                 const val = parseFloat(e.target.value);
                 profiles[activeProfileIndex].preamp = val;
                 preampValText.textContent = val > 0 ? `+${val.toFixed(1)}` : val.toFixed(1);
+            });
 
-                // Gửi cập nhật preamp qua WebSocket (dùng throttle để tránh overload)
-                if (typeof window.throttleSendEQ === 'function') {
-                    window.throttleSendEQ(activeProfileIndex, 0);
+            // Chỉ gửi lên ESP32 và lưu NVS khi thả tay ra (change event)
+            preampInput.addEventListener('change', (e) => {
+                if (typeof window.sendEQUpdate === 'function') {
+                    window.sendEQUpdate(activeProfileIndex, 0);
                 }
+                console.log(`[EQ Preamp Change] Final preamp value set to: ${profiles[activeProfileIndex].preamp} dB`);
             });
         }
 
