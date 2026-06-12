@@ -299,6 +299,39 @@
                 transform: rotate(360deg);
             }
         }
+        .preamp-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 10px 14px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            font-size: 12px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .preamp-label {
+            min-width: 95px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .preamp-label strong {
+            color: var(--primary);
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .preamp-slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -344,6 +377,12 @@
         <!-- Main EQ Canvas Graph -->
         <div class="canvas-container">
             <canvas id="eqCanvas"></canvas>
+        </div>
+
+                <!-- Preamp Control Slider -->
+        <div class="preamp-container">
+            <span class="preamp-label">Preamp: <strong id="preampVal">-6.0</strong> dB</span>
+            <input type="range" id="inputPreamp" class="preamp-slider" min="-20" max="20" step="0.1" value="-6.0">
         </div>
 
         <!-- EQ Bands Table List -->
@@ -3135,6 +3174,15 @@
                 activeProfileIndex = idx;
                 bands = profiles[activeProfileIndex].bands;
 
+                // Cập nhật preamp slider
+                const preampInput = document.getElementById('inputPreamp');
+                const preampValText = document.getElementById('preampVal');
+                if (preampInput && preampValText) {
+                    const pa = profiles[activeProfileIndex].preamp !== undefined ? profiles[activeProfileIndex].preamp : -6.0;
+                    preampInput.value = pa;
+                    preampValText.textContent = pa > 0 ? `+${pa.toFixed(1)}` : pa.toFixed(1);
+                }
+
                 // Reset selection
                 selectedBand = -1;
 
@@ -3226,6 +3274,23 @@
         // Khởi tạo các Dropdowns
         initPresetDropdowns();
 
+                // --- Preamp Slider Interaction ---
+        const preampInput = document.getElementById('inputPreamp');
+        const preampValText = document.getElementById('preampVal');
+
+        if (preampInput && preampValText) {
+            preampInput.addEventListener('input', (e) => {
+                const val = parseFloat(e.target.value);
+                profiles[activeProfileIndex].preamp = val;
+                preampValText.textContent = val > 0 ? `+${val.toFixed(1)}` : val.toFixed(1);
+
+                // Gửi cập nhật preamp qua WebSocket (dùng throttle để tránh overload)
+                if (typeof window.throttleSendEQ === 'function') {
+                    window.throttleSendEQ(activeProfileIndex, 0);
+                }
+            });
+        }
+
         // --- WebSocket Sync ---
         let lastSendTime = 0;
         window.throttleSendEQ = function (profileIdx, filterIdx) {
@@ -3291,6 +3356,15 @@
 
                     // Đồng bộ biến bands toàn cục với profile đang kích hoạt
                     bands = profiles[activeProfileIndex].bands;
+
+                    // Cập nhật hiển thị preamp cho profile đang kích hoạt
+                    const preampInput = document.getElementById('inputPreamp');
+                    const preampValText = document.getElementById('preampVal');
+                    if (preampInput && preampValText) {
+                        const pa = profiles[activeProfileIndex].preamp !== undefined ? profiles[activeProfileIndex].preamp : -6.0;
+                        preampInput.value = pa;
+                        preampValText.textContent = pa > 0 ? `+${pa.toFixed(1)}` : pa.toFixed(1);
+                    }
 
                     // Vẽ lại đồ thị & bảng thông số
                     buildTable();
