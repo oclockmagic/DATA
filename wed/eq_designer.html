@@ -329,30 +329,84 @@
             height: 6px;
             border-radius: 3px;
             outline: none;
-            accent-color: var(--primary);
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.15);
             cursor: pointer;
         }
+
+        .preamp-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 8px rgba(79, 172, 254, 0.5);
+            transition: transform 0.1s;
+        }
+        
+        .preamp-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
     
-        /* Smart Features Container (Smart Bass & DRC) */
-        .smart-features-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* Smart Audio Processor Layout */
+        .smart-processor-container {
+            display: flex;
+            flex-direction: column;
             gap: 16px;
             width: 100%;
             box-sizing: border-box;
             margin-top: 4px;
         }
 
-        @media (max-width: 600px) {
-            .smart-features-container {
-                grid-template-columns: 1fr;
-            }
+        .section-card {
+            background: rgba(15, 23, 42, 0.15);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-sizing: border-box;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            color: #818cf8;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 6px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .smart-card-single {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .drc-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .smart-card {
             background: rgba(0, 0, 0, 0.25);
-            padding: 12px 16px;
-            border-radius: 16px;
+            padding: 10px 12px;
+            border-radius: 14px;
             border: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
@@ -386,21 +440,28 @@
 
         .smart-slider {
             flex: 1;
-            height: 5px;
+            height: 6px;
             border-radius: 3px;
-            background: var(--bg-card);
+            background: rgba(255, 255, 255, 0.15);
             outline: none;
             -webkit-appearance: none;
+            cursor: pointer;
         }
 
         .smart-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--primary);
             cursor: pointer;
             border: 2px solid #fff;
+            box-shadow: 0 0 8px rgba(79, 172, 254, 0.5);
+            transition: transform 0.1s;
+        }
+        
+        .smart-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
         }
 
         /* Toggle switch */
@@ -498,69 +559,6 @@
             <input type="range" id="inputPreamp" class="preamp-slider" min="-20" max="20" step="0.1" value="-6.0">
         </div>
 
-        <!-- Smart Features Container (Smart Bass & DRC) -->
-        <div class="smart-features-container">
-            <!-- Smart Bass Card -->
-            <div class="smart-card">
-                <div class="smart-header">
-                    <span class="smart-title">🔊 Smart Bass (Dynamic)</span>
-                    <label class="switch">
-                        <input type="checkbox" id="chkSmartBass">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="smart-control-row">
-                    <span style="min-width: 65px;">Strength: <strong id="lblSmartBassStr">5</strong></span>
-                    <input type="range" id="sliderSmartBassStr" class="smart-slider" min="1" max="10" step="1" value="5">
-                </div>
-            </div>
-
-            <!-- Low DRC Card -->
-            <div class="smart-card">
-                <div class="smart-header">
-                    <span class="smart-title">🛡️ Low DRC (Bass Limiter)</span>
-                    <label class="switch">
-                        <input type="checkbox" id="chkDrcLow">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="smart-control-row">
-                    <span style="min-width: 75px;">Sens: <strong id="lblDrcLowSens">5</strong></span>
-                    <input type="range" id="sliderDrcLowSens" class="smart-slider" min="1" max="10" step="1" value="5">
-                </div>
-            </div>
-
-            <!-- Mid DRC Card -->
-            <div class="smart-card">
-                <div class="smart-header">
-                    <span class="smart-title">🗣️ Mid DRC (Vocal Limiter)</span>
-                    <label class="switch">
-                        <input type="checkbox" id="chkDrcMid">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="smart-control-row">
-                    <span style="min-width: 75px;">Sens: <strong id="lblDrcMidSens">5</strong></span>
-                    <input type="range" id="sliderDrcMidSens" class="smart-slider" min="1" max="10" step="1" value="5">
-                </div>
-            </div>
-
-            <!-- High DRC Card -->
-            <div class="smart-card">
-                <div class="smart-header">
-                    <span class="smart-title">⚡ High DRC (Treble Limiter)</span>
-                    <label class="switch">
-                        <input type="checkbox" id="chkDrcHigh">
-                        <span class="slider-round"></span>
-                    </label>
-                </div>
-                <div class="smart-control-row">
-                    <span style="min-width: 75px;">Sens: <strong id="lblDrcHighSens">5</strong></span>
-                    <input type="range" id="sliderDrcHighSens" class="smart-slider" min="1" max="10" step="1" value="5">
-                </div>
-            </div>
-        </div>
-
         <!-- EQ Bands Table List -->
         <div class="table-container">
             <table>
@@ -577,6 +575,78 @@
                     <!-- Filled by JS -->
                 </tbody>
             </table>
+        </div>
+
+        <!-- Smart Audio Processor Container -->
+        <div class="smart-processor-container">
+            <!-- Smart Bass Card -->
+            <div class="section-card">
+                <div class="section-title">🔊 Smart Bass (Dynamic Boost)</div>
+                <div class="smart-card-single">
+                    <div class="smart-header">
+                        <span class="smart-title">Enable Dynamic Bass Tracking</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkSmartBass">
+                            <span class="slider-round"></span>
+                        </label>
+                    </div>
+                    <div class="smart-control-row">
+                        <span style="min-width: 80px;">Strength: <strong id="lblSmartBassStr">5</strong></span>
+                        <input type="range" id="sliderSmartBassStr" class="smart-slider" min="1" max="10" step="1" value="5">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multi-band DRC Card -->
+            <div class="section-card">
+                <div class="section-title">🛡️ Multi-Band DRC (Limiter)</div>
+                <div class="drc-grid">
+                    <!-- Low DRC Card -->
+                    <div class="smart-card">
+                        <div class="smart-header">
+                            <span class="smart-title">Low DRC (Bass)</span>
+                            <label class="switch">
+                                <input type="checkbox" id="chkDrcLow">
+                                <span class="slider-round"></span>
+                            </label>
+                        </div>
+                        <div class="smart-control-row">
+                            <span style="min-width: 60px;">Sens: <strong id="lblDrcLowSens">5</strong></span>
+                            <input type="range" id="sliderDrcLowSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                        </div>
+                    </div>
+
+                    <!-- Mid DRC Card -->
+                    <div class="smart-card">
+                        <div class="smart-header">
+                            <span class="smart-title">Mid DRC (Vocal)</span>
+                            <label class="switch">
+                                <input type="checkbox" id="chkDrcMid">
+                                <span class="slider-round"></span>
+                            </label>
+                        </div>
+                        <div class="smart-control-row">
+                            <span style="min-width: 60px;">Sens: <strong id="lblDrcMidSens">5</strong></span>
+                            <input type="range" id="sliderDrcMidSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                        </div>
+                    </div>
+
+                    <!-- High DRC Card -->
+                    <div class="smart-card">
+                        <div class="smart-header">
+                            <span class="smart-title">High DRC (Treble)</span>
+                            <label class="switch">
+                                <input type="checkbox" id="chkDrcHigh">
+                                <span class="slider-round"></span>
+                            </label>
+                        </div>
+                        <div class="smart-control-row">
+                            <span style="min-width: 60px;">Sens: <strong id="lblDrcHighSens">5</strong></span>
+                            <input type="range" id="sliderDrcHighSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div
