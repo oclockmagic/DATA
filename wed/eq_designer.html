@@ -235,28 +235,69 @@
             color: #fff;
         }
 
-        .save-btn {
-            background: linear-gradient(135deg, #BA68C8, #9b59b6);
+        .preset-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 8px 12px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .preset-container select {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: #fff;
+            padding: 6px 8px;
+            font-family: var(--font-main);
+            font-size: 11px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            max-width: 180px;
+        }
+
+        .preset-container select:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .set-btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
             color: #fff;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 14px;
             border-radius: 8px;
             font-family: var(--font-main);
             font-size: 11px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 4px 12px rgba(186, 104, 200, 0.25);
+            box-shadow: 0 4px 12px rgba(0, 242, 254, 0.25);
         }
 
-        .save-btn:hover {
+        .set-btn:hover:not(:disabled) {
             filter: brightness(1.1);
+            transform: translateY(-1px);
         }
+
+        .set-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .set-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -264,9 +305,13 @@
 <body>
 
     <!-- Overlay nạp cấu hình từ thiết bị -->
-    <div id="eqSyncOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;justify-content:center;align-items:center;color:#fff;font-family:sans-serif;font-size:18px;font-weight:500;backdrop-filter:blur(2px);transition:opacity 0.3s ease;">
-        <div style="background:#1e293b;padding:24px 40px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);border:1px solid #334155;text-align:center;">
-            <div style="width:24px;height:24px;border:3px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px auto;"></div>
+    <div id="eqSyncOverlay"
+        style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;justify-content:center;align-items:center;color:#fff;font-family:sans-serif;font-size:18px;font-weight:500;backdrop-filter:blur(2px);transition:opacity 0.3s ease;">
+        <div
+            style="background:#1e293b;padding:24px 40px;border-radius:12px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3);border:1px solid #334155;text-align:center;">
+            <div
+                style="width:24px;height:24px;border:3px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px auto;">
+            </div>
             <div>Đang kết nối & nạp cấu hình EQ từ thiết bị...</div>
         </div>
     </div>
@@ -274,21 +319,25 @@
     <div class="container">
         <h2>10-Band EQ Designer</h2>
 
-        <!-- Tab Profiles and Save Profiles button -->
+        <!-- Tab Profiles -->
         <div class="tabs-container">
-            <div class="profile-tabs">
-                <button class="tab-btn active" data-index="0">Prof 1</button>
-                <button class="tab-btn" data-index="1">Prof 2</button>
-                <button class="tab-btn" data-index="2">Prof 3</button>
+            <div class="profile-tabs" style="width: 100%; justify-content: space-around; display: flex;">
+                <button class="tab-btn active" data-index="0" style="flex: 1; text-align: center;">Prof 1</button>
+                <button class="tab-btn" data-index="1" style="flex: 1; text-align: center;">Prof 2</button>
+                <button class="tab-btn" data-index="2" style="flex: 1; text-align: center;">Prof 3</button>
             </div>
-            <button class="save-btn" id="btnSaveProfiles">
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                    <polyline points="7 3 7 8 15 8"></polyline>
-                </svg>
-                Save
+        </div>
+
+        <!-- Preset Selector Row -->
+        <div class="preset-container">
+            <select id="selectBrand" style="flex: 1; min-width: 110px;">
+                <option value="">-- Brand --</option>
+            </select>
+            <select id="selectModel" style="flex: 1.5; min-width: 150px;" disabled>
+                <option value="">-- Model --</option>
+            </select>
+            <button class="set-btn" id="btnSetPreset" disabled>
+                Set
             </button>
         </div>
 
@@ -304,8 +353,8 @@
                     <tr>
                         <th>Band</th>
                         <th>Type</th>
-                        <th>Freq</th>
-                        <th>Gain</th>
+                        <th>Freq (Hz)</th>
+                        <th>Gain (dB)</th>
                         <th>Q</th>
                     </tr>
                 </thead>
@@ -322,6 +371,2050 @@
     </div>
 
     <script>
+        const EQ_PRESETS_DATA = {
+  "1MORE": [
+    "MK801",
+    "SonoFlow",
+    "Triple Driver Over Ear"
+  ],
+  "A-Audio": [
+    "Elite (ANC on)",
+    "Elite (bass mode)",
+    "Elite (passive)"
+  ],
+  "Abyss": [
+    "AB-1266",
+    "AB-1266 Phi",
+    "AB1-266 Phi TC",
+    "Diana MR"
+  ],
+  "Accidentally": [
+    "Extraordinary 51st Studios"
+  ],
+  "Acoustic": [
+    "Research AR-H1"
+  ],
+  "Adam": [
+    "SP-5"
+  ],
+  "Advanced": [
+    "Alpha (shallow earpads)",
+    "GT-R"
+  ],
+  "Aedle": [
+    "VK1"
+  ],
+  "Aiaiai": [
+    "TMA-1",
+    "TMA-1 Studio",
+    "TMA-2 HD Wireless"
+  ],
+  "Akai": [
+    "MPC"
+  ],
+  "AKG": [
+    "K1000",
+    "K167 Tiesto",
+    "K240 MKII",
+    "K240 Monitor",
+    "K240 Sextett",
+    "K240 Sextett (Dekoni Choice Leather DT earpads)",
+    "K240 Studio",
+    "K240DF",
+    "K250",
+    "K267",
+    "K267 Tiesto (club)",
+    "K267 Tiesto (stage)",
+    "K267 Tiesto (studio)",
+    "K271 MKII",
+    "K272HD",
+    "K280 Parabolic",
+    "K340",
+    "K361",
+    "K371",
+    "K371 (Brainwavz oval earpads)",
+    "K450",
+    "K501",
+    "K518LE",
+    "K52",
+    "K550",
+    "K553",
+    "K601",
+    "K601 (2007)",
+    "K601 (Dekoni sheepskin earpads)",
+    "K601 (K701 earpads)",
+    "K612",
+    "K612 Pro",
+    "K619",
+    "K67 Tiesto",
+    "K701",
+    "K701 (sample A)",
+    "K701 (sample B)",
+    "K702",
+    "K702 (Brainwavz XL earpads)",
+    "K702 (Geekria earpads)",
+    "K702 65th Anniversary Edition",
+    "K712",
+    "K712 (Dekoni sheepskin earpads)",
+    "K712 PRO",
+    "K72",
+    "K7XX",
+    "K81 DJ",
+    "K812",
+    "K812 (serial number 001130)",
+    "K872",
+    "K92",
+    "N60 NC (wired, passive)",
+    "N60 NC Wireless",
+    "N700NC M2",
+    "N700NC M2 (ANC on)",
+    "N700NC M2 (passive)",
+    "N9 Hybrid",
+    "N9 Hybrid (ANC on)",
+    "N9 Hybrid (ANC on, studio preset)",
+    "N9 Hybrid (passive)",
+    "N90Q",
+    "Q460 Quincy Jones",
+    "Q701",
+    "Q701 Quincy Jones",
+    "Y50BT"
+  ],
+  "Allen & Heath": [
+    "XD-53"
+  ],
+  "Alpha": [
+    "Design Labs H128"
+  ],
+  "Andover Audio": [
+    "PM-50 (medium squared earpads)",
+    "PM-50 (small rounded earpads)"
+  ],
+  "Anker": [
+    "Soundcore Life Q30",
+    "Soundcore Life Q30 (ANC off)",
+    "Soundcore Life Q30 (ANC on)",
+    "Soundcore Life Q35 (ANC off)",
+    "Soundcore Life Q35 (ANC on)",
+    "Soundcore Life Q35 (wired, passive)",
+    "Soundcore Space One",
+    "Soundcore Space Q45",
+    "Soundcore Space Q45 (ANC on)",
+    "Soundcore Space Q45 (wired, passive)"
+  ],
+  "Apple": [
+    "AirPods Max",
+    "AirPods Max (3rd party pleather earpads)"
+  ],
+  "ASTRO": [
+    "Gaming A50 X"
+  ],
+  "ASUS": [
+    "ROG Delta S Core (fabric earpads)",
+    "ROG Delta S Core (leather earpads)"
+  ],
+  "Audeze": [
+    "CRBN",
+    "EL-8 Closed Back",
+    "EL-8 Open Back",
+    "LCD-1",
+    "LCD-1 (2009)",
+    "LCD-2",
+    "LCD-2 (Fazor)",
+    "LCD-2 (pre-2017)",
+    "LCD-2 (Rev 2)",
+    "LCD-2 (sample 1)",
+    "LCD-2 (serial number 5312123)",
+    "LCD-2 (serial number 53211704)",
+    "LCD-2 (serial number 5325928)",
+    "LCD-2 Classic",
+    "LCD-2 Closed Back",
+    "LCD-24",
+    "LCD-3",
+    "LCD-3 (Fazor)",
+    "LCD-3 (Rev 2)",
+    "LCD-3 (serial number 2312260)",
+    "LCD-3 (serial number 2312341)",
+    "LCD-3 (serial number 2312454)",
+    "LCD-3 (serial number 2312488)",
+    "LCD-3 (serial number 2717210)",
+    "LCD-4",
+    "LCD-4z",
+    "LCD-5",
+    "LCD-GX",
+    "LCD-MX4",
+    "LCD-R",
+    "LCD-R (bass boost)",
+    "LCD-X",
+    "LCD-X (2021)",
+    "LCD-X (Dekoni sheepskin Earpads)",
+    "LCD-X (pre-2021)",
+    "LCD-X (sample 3)",
+    "LCD-X (serial number 7454971)",
+    "LCD-X (serial number 7456406)",
+    "LCD-XC",
+    "LCD-XC (pre-2021)",
+    "LCD-XC (sample 1)",
+    "LCD-XC (sample 2)",
+    "Maxwell (Audeze preset)",
+    "Maxwell (bass boost preset)",
+    "Maxwell (competition preset)",
+    "Maxwell (footsteps preset)",
+    "Maxwell (immersive preset)",
+    "Maxwell (review eq)",
+    "Maxwell (treble boost preset)",
+    "MM-100",
+    "MM-500",
+    "Mobius (default preset)",
+    "SINE",
+    "SINE (Cipher cable)",
+    "SINE (MSR-7 earpads)",
+    "SINE DX"
+  ],
+  "Audient": [
+    "EVO SR2000"
+  ],
+  "Audio": [
+    "Zenith PMx2 (v1)",
+    "Zenith PMx2 (v2)"
+  ],
+  "Audio-Technica": [
+    "ATH-A1000X",
+    "ATH-A2000Z",
+    "ATH-A55",
+    "ATH-A700",
+    "ATH-A900",
+    "ATH-A900X",
+    "ATH-AD2000X",
+    "ATH-AD500",
+    "ATH-AD500X",
+    "ATH-AD700",
+    "ATH-AD700X",
+    "ATH-AD900",
+    "ATH-ADX5000",
+    "ATH-ANC50iS (passive)",
+    "ATH-ANC7b",
+    "ATH-ANC9",
+    "ATH-AWKT",
+    "ATH-ES55",
+    "ATH-ESW9",
+    "ATH-ESW9A",
+    "ATH-FC700",
+    "ATH-FC700A",
+    "ATH-HL7BT",
+    "ATH-M10",
+    "ATH-M20x",
+    "ATH-M40x",
+    "ATH-M50",
+    "ATH-M50x",
+    "ATH-M50x (Dekoni sheepskin earpads)",
+    "ATH-M50x (Massdrop velours earpads)",
+    "ATH-M60x",
+    "ATH-M70x",
+    "ATH-MSR7",
+    "ATH-MSR7b",
+    "ATH-MSR7NC (ANC on)",
+    "ATH-MSR7NC (passive)",
+    "ATH-PRO700",
+    "ATH-R50x",
+    "ATH-R70x",
+    "ATH-R70xa",
+    "ATH-W1000X",
+    "ATH-W5000",
+    "ATH-W5000 2013",
+    "ATH-WS55",
+    "ATH-WS99",
+    "BPHS1"
+  ],
+  "AudioQuest": [
+    "NightHawk",
+    "NightOwl"
+  ],
+  "AUNE": [
+    "AR5000"
+  ],
+  "Aurex": [
+    "HR V9"
+  ],
+  "Auribus": [
+    "Acoustics Everest",
+    "Acoustics Sierra Open"
+  ],
+  "Aurorus": [
+    "Borealis"
+  ],
+  "Austrian Audio": [
+    "Hi-X15",
+    "Hi-X20",
+    "Hi-X55",
+    "Hi-X60",
+    "Hi-X65",
+    "The Composer",
+    "The Composer (minimal setting)",
+    "The Composer (standard setting)"
+  ],
+  "Avantone": [
+    "Planar"
+  ],
+  "Bang & Olufsen": [
+    "Beoplay H6",
+    "Beoplay H6 (2nd Gen)",
+    "Beoplay H9",
+    "Beoplay H95",
+    "Beoplay H9i"
+  ],
+  "Baseus": [
+    "AeQur GH02 (active)",
+    "AeQur GH02 (passive)",
+    "Bowie D05"
+  ],
+  "Beats": [
+    "Mixr",
+    "Powerbeats 2 Wireless",
+    "Pro",
+    "Solo",
+    "Solo (sample 1)",
+    "Solo (sample 2)",
+    "Solo HD",
+    "Solo Pro",
+    "Solo2 (2014)",
+    "Solo3 (2016, wired)",
+    "Solo3 (2016, wireless)",
+    "Studio",
+    "Studio 2 (2014)",
+    "Studio 2 (Bluetooth)",
+    "Studio3 Wireless"
+  ],
+  "Behringer": [
+    "HC 200",
+    "HPS5000"
+  ],
+  "Beyerdynamic": [
+    "Amiron Home",
+    "Amiron Wireless (Bluetooth)",
+    "Amiron Wireless (wired)",
+    "Aventho Wireless",
+    "Custom One Pro (step 1)",
+    "Custom One Pro (step 2)",
+    "Custom One Pro (step 3)",
+    "Custom One Pro (step 4)",
+    "Custom One Pro Plus (step 3)",
+    "DJX-1",
+    "DT 100 (2x 2k Ohm)",
+    "DT 1350",
+    "DT 150 (250 Ohm)",
+    "DT 1770 (leatherette earpads)",
+    "DT 1770 (velour earpads)",
+    "DT 177X Go (leather earpads)",
+    "DT 177X Go (velour earpads)",
+    "DT 1990 (analytic earpads)",
+    "DT 1990 (balanced earpads)",
+    "DT 231",
+    "DT 235",
+    "DT 240",
+    "DT 240 Pro",
+    "DT 250 (250 Ohm)",
+    "DT 250 (80 Ohm)",
+    "DT 48",
+    "DT 48 (loose)",
+    "DT 48 E (120 Ohm)",
+    "DT 48 E (earpad holes covered)",
+    "DT 48 S (5 Ohm)",
+    "DT 700 Pro X",
+    "DT 770 (Alpha earpads)",
+    "DT 770 M",
+    "DT 770 Pro",
+    "DT 770 Pro (250 Ohm)",
+    "DT 770 Pro (32 ohm Limited Edition, pleather earpads)",
+    "DT 770 Pro (32 Ohm)",
+    "DT 770 Pro (600 Ohm)",
+    "DT 770 Pro (80 Ohm)",
+    "DT 770 Pro (Dekoni hybrid earpads)",
+    "DT 770 Pro (worn earpads)",
+    "DT 880",
+    "DT 880 (250 Ohm)",
+    "DT 880 (32 Ohm)",
+    "DT 880 (600 Ohm)",
+    "DT 880 (worn earpads)",
+    "DT 880 2003 Edition",
+    "DT 880 Black Edition",
+    "DT 880 Edition (600 Ohm)",
+    "DT 900 Pro X",
+    "DT 990 (600 Ohm)",
+    "DT 990 (fresh earpads)",
+    "DT 990 (worn earpads)",
+    "DT 990 Pro",
+    "DT 990 Pro (250 Ohm)",
+    "DT 990 Pro Black Edition",
+    "DT1990 (Dekoni Elite velour earpads)",
+    "DT770 Pro X Limited Edition",
+    "DTX 300p",
+    "DTX 350m",
+    "DTX 350p",
+    "ET1000",
+    "Lagoon",
+    "MMX 300",
+    "MMX 300 (Dekoni Choice leather earpads)",
+    "MMX100",
+    "MMX150",
+    "T1",
+    "T1 (2nd Gen)",
+    "T1 (3rd Gen)",
+    "T1 (sample 1)",
+    "T1 (serial number 3964)",
+    "T5 (3rd Gen)",
+    "T50p",
+    "T50p (sample A)",
+    "T50p (sample B)",
+    "T50p (serial number 16912)",
+    "T51i",
+    "T5p",
+    "T5p (sample 1)",
+    "T5p (serial number 2866)",
+    "T70",
+    "T70 (sample 1)",
+    "T70 (serial number 01111)",
+    "T70p",
+    "T90",
+    "TYGR 300"
+  ],
+  "BKHC": [
+    "BK9"
+  ],
+  "Bloc": [
+    "Roc Galvanize S2"
+  ],
+  "Blue": [
+    "Lola",
+    "MOFI (active)",
+    "MOFI (passive)"
+  ],
+  "BlueAnt": [
+    "Embrace"
+  ],
+  "Bluedio": [
+    "R2-WH"
+  ],
+  "Bose": [
+    "AE2",
+    "Noise Cancelling Headphones 700",
+    "QuietComfort",
+    "QuietComfort 15",
+    "QuietComfort 20",
+    "QuietComfort 20 (passive)",
+    "QuietComfort 25",
+    "QuietComfort 25 (passive)",
+    "QuietComfort 3",
+    "QuietComfort 35 (wired, active)",
+    "QuietComfort 35 (wired, passive)",
+    "QuietComfort 35 (wireless)",
+    "QuietComfort 35 II (passive)",
+    "QuietComfort 45",
+    "QuietComfort 45 (ANC on)",
+    "QuietComfort 45 (passive)",
+    "QuietComfort SE (ANC on)",
+    "QuietComfort SE (passive)",
+    "QuietComfort Ultra (ANC on)",
+    "QuietComfort Ultra Headphones"
+  ],
+  "Bowers & Wilkins": [
+    "P3",
+    "P5",
+    "P5 Series 2",
+    "P7",
+    "P7 Wireless (wired)",
+    "P7 Wireless (wireless)",
+    "Px7 S2",
+    "Px7 S2e",
+    "Px7 S2e (ANC off)",
+    "Px7 S2e (ANC on)",
+    "PX7 S3 (ANC off, position1)",
+    "PX7 S3 (ANC on, position 1)",
+    "PX7 S3 (ANC on, position 2)",
+    "PX7 S3 (ANC on, position 3)",
+    "PX7 S3 (ANC on, position 4)",
+    "Px8"
+  ],
+  "Caeden": [
+    "Linea No 10 (wired, active)",
+    "Linea No 10 (wired, passive)"
+  ],
+  "California": [
+    "Headphone Company Lorado",
+    "Headphone Company Silverado"
+  ],
+  "Cambridge": [
+    "Audio Melomania P100 (ANC off)",
+    "Audio Melomania P100 (ANC on)"
+  ],
+  "Cleer": [
+    "Next"
+  ],
+  "Cooler": [
+    "Master MH752"
+  ],
+  "Corsair": [
+    "HS70 Pro"
+  ],
+  "Cowin": [
+    "E7 (wired, ANC off)"
+  ],
+  "Creative": [
+    "Aurvana",
+    "Aurvana Live!",
+    "Aurvana Live! (Brainwavz PU leather earpads)",
+    "Aurvana Live! (Brainwavz sheepskin earpads)",
+    "Aurvana Live! (Brainwavz small oval perforated earpads)",
+    "Aurvana Live! 2",
+    "Fatal1ty",
+    "Sound Blasterx H6 (analog input)",
+    "Zen Hybrid (ANC off)",
+    "Zen Hybrid (ANC on)",
+    "Zen Hybrid (passive)",
+    "Zen Hybrid Pro (ANC off)",
+    "Zen Hybrid Pro (ANC on)",
+    "Zen Hybrid Pro SXFI"
+  ],
+  "Dali": [
+    "IO-4",
+    "IO-6"
+  ],
+  "Dan Clark Audio": [
+    "Aeon 2 Closed",
+    "Aeon 2 Closed (perforated earpads)",
+    "Aeon 2 Noire",
+    "Aeon 2 Open",
+    "Aeon Closed RT",
+    "Aeon Flow Closed",
+    "Aeon Flow Closed (filters)",
+    "Aeon Flow Open (white filter with one notch)",
+    "Aeon Open",
+    "Aeon X Closed",
+    "Aeon X Open",
+    "Alpha Dog (2014)",
+    "Alpha Prime",
+    "E3",
+    "Ether 2",
+    "Ether C",
+    "Ether C (1 black filter)",
+    "Ether C (2 black filters)",
+    "Ether C Flow",
+    "Ether C Flow 1.1",
+    "Ether CX",
+    "Ether Flow",
+    "Ether Flow 1.1",
+    "EXPANSE",
+    "Mad Dog",
+    "Mad Dog (2014)",
+    "Noire X",
+    "Stealth"
+  ],
+  "Dark": [
+    "Project HS4 Wireless (breathable earpads, passive)",
+    "Project HS4 Wireless (breathable earpads, wireless)",
+    "Project HS4 Wireless (leather earpads, passive)",
+    "Project HS4 Wireless (leather earpads, wireless)",
+    "Project Sono"
+  ],
+  "Defunc": [
+    "Mondo Freestyle"
+  ],
+  "Denon": [
+    "AH-D1001",
+    "AH-D1001K Silver",
+    "AH-D1100",
+    "AH-D2000",
+    "AH-D2000 (2012)",
+    "AH-D2000 (JMoney earpads)",
+    "AH-D310R",
+    "AH-D400",
+    "AH-D5000",
+    "AH-D5000 (JMoney earpads)",
+    "AH-D5200",
+    "AH-D600",
+    "AH-D7000",
+    "AH-D7000 (2012)",
+    "AH-D7100",
+    "AH-D7200",
+    "AH-D9200",
+    "AH-NC732K"
+  ],
+  "DMS": [
+    "Project Omega"
+  ],
+  "DubsLabs": [
+    "Bedphones"
+  ],
+  "Dyson": [
+    "OnTrac (ANC off, enhanced)",
+    "OnTrac (ANC off, neutral)",
+    "OnTrac (bass boost)",
+    "OnTrac (enhanced)",
+    "OnTrac (neutral)",
+    "Zone"
+  ],
+  "E-Mu": [
+    "Purpleheart",
+    "Teak",
+    "Teak (2016)",
+    "Teak (mahogany)",
+    "Teak (rosewood)",
+    "Walnut"
+  ],
+  "EarFun": [
+    "Wave",
+    "Wave Pro (ANC off)",
+    "Wave Pro (ANC on)"
+  ],
+  "Edifier": [
+    "Stax Spirit S3 (fabric earpads)",
+    "Stax Spirit S3 (leather earpads)",
+    "W820NB (ANC off)",
+    "W820NB (ANC on)",
+    "W820NB (passive)",
+    "W820NB Plus",
+    "W820NB Plus (ANC off)",
+    "W820NB Plus (ANC on)",
+    "WH700NB",
+    "WH950NB (ANC off, customized EQ flat)",
+    "WH950NB (ANC on, classic EQ)",
+    "WH950NB (ANC on, classic mode)",
+    "WH950NB (ANC on, customized EQ flat)",
+    "WH950NB (ANC on, dynamic mode)",
+    "WH950NB (passive)"
+  ],
+  "Emotiva": [
+    "Airmotiv GR1"
+  ],
+  "Endorfy": [
+    "Viro Infra"
+  ],
+  "ENIGMAcoustics": [
+    "Dharma Production 2015"
+  ],
+  "Enigmatic": [
+    "Audio Paradox"
+  ],
+  "EPOS": [
+    "Sennheiser Game Zero"
+  ],
+  "Eskuche": [
+    "33 1 3 B"
+  ],
+  "ETA": [
+    "Mini Closed",
+    "Mini Semi-Closed",
+    "Mini Semi-Closed (with ring dampeners installed)",
+    "O2"
+  ],
+  "Fairphone": [
+    "Fairbuds XL"
+  ],
+  "Fifine": [
+    "Ampligame H3",
+    "Ampligame H6 (game)",
+    "Ampligame H6 (movie)",
+    "Ampligame H6 (music)"
+  ],
+  "FiiO": [
+    "FT1",
+    "FT1 Pro",
+    "FT3 (pleather earpads)",
+    "FT3 (suede earpads)",
+    "FT5 (pleather earpads)",
+    "FT5 (suede earpads)",
+    "FT7 (fabric earpads)",
+    "FT7 (leather earpads)",
+    "Snowsky Wind"
+  ],
+  "Final Audio": [
+    "D7000",
+    "D8000 Pro Edition",
+    "Pandora Hope 4",
+    "Sonorous III",
+    "Sonorous IV (A-type earpads)",
+    "Sonorous X",
+    "UX3000",
+    "UX3000 (Bluetooth, ANC on)",
+    "UX3000 SV (analog connection)",
+    "UX3000 SV (ANC off)",
+    "UX3000 SV (ANC on)"
+  ],
+  "Fischer": [
+    "Audio FA-003",
+    "Audio FA-011 LE"
+  ],
+  "Flare": [
+    "Audio Reference R1"
+  ],
+  "Focal": [
+    "Azurys",
+    "Bathys",
+    "Bathys (USB)",
+    "Bathys (wired)",
+    "Bathys (wireless)",
+    "Bathys MG",
+    "Bathys MG (dynamic preset)",
+    "Celestee",
+    "Clear",
+    "Clear Mg",
+    "Clear MG Professional",
+    "Elear",
+    "Elear (Utopia earpads)",
+    "Elegia",
+    "Elex",
+    "Elex (worn earpads)",
+    "Hadenys",
+    "Listen",
+    "Listen Professional",
+    "Radiance",
+    "Spirit Classic",
+    "Spirit One",
+    "Spirit One S",
+    "Spirit Professional",
+    "Stellia",
+    "Utopia",
+    "Utopia (Dekoni fenestrated Sheepskin Earpads)",
+    "Utopia (Dekoni sheepskin Earpads)",
+    "Utopia (Elear earpads)",
+    "Utopia 2022"
+  ],
+  "Focusrite": [
+    "HP60 (Scarlett Studio)"
+  ],
+  "Fosi": [
+    "Audio i5"
+  ],
+  "Fostex": [
+    "T-X0",
+    "T20RP Mk3",
+    "T40RP Mk3",
+    "T50",
+    "T50RP",
+    "T50RP (sample 1)",
+    "T50RP (sample 2)",
+    "T50RP 50th Anniversary",
+    "T50RP Mk2",
+    "T50RP Mk3",
+    "T50RP Mk4",
+    "TH-X00",
+    "TH-X00 (ebony)",
+    "TH-X00 (mahogany)",
+    "TH-X00 (mahogany) (sample 1)",
+    "TH-X00 (mahogany) (serial number 1927)",
+    "TH-X00 (purpleheart)",
+    "TH-X00 (ZMF Universe perforated lambskin earpads)",
+    "TH-X00 (ZMF Universe perforated suede earpads)",
+    "TH500RP",
+    "TH600",
+    "TH610",
+    "TH610 (Dekoni fenestrated Sheepskin Earpads)",
+    "TH616",
+    "TH900",
+    "TH900mk2",
+    "TH900mk2 (anniversary tuning)",
+    "TH900mk2 (TH610 earpads)",
+    "TH909"
+  ],
+  "Genesis": [
+    "Neon 613",
+    "Radon 800 (farbic earpads)",
+    "Radon 800 (leather earpads)",
+    "Toron 301",
+    "Toron 531 (breathable earpads)",
+    "Toron 531 (hybrid earpads)"
+  ],
+  "Gold Planar": [
+    "GL2000"
+  ],
+  "Grado": [
+    "GS1000",
+    "GS3000e",
+    "GW100",
+    "GW100 (bluetooth)",
+    "GW100 (wired)",
+    "Hemp",
+    "HF1",
+    "HF1 Prototype",
+    "HF2",
+    "PS1000",
+    "PS2000e",
+    "PS500",
+    "RS1",
+    "RS1e",
+    "RS1e (bowl earpads)",
+    "RS1e (flat earpads)",
+    "RS1e (S earpads)",
+    "RS1e (yellow earpads)",
+    "RS1x",
+    "RS2",
+    "SR125e",
+    "SR125i",
+    "SR225",
+    "SR225i",
+    "SR225i (comfy earpads)",
+    "SR225i (G earpads)",
+    "SR225i (goo bowl earpads)",
+    "SR225i (reverse bowl earpads)",
+    "SR225i (small flat earpads)",
+    "SR225i (TTVJ flat earpads)",
+    "SR325",
+    "SR325e",
+    "SR325i",
+    "SR325x",
+    "SR60",
+    "SR60e",
+    "SR60i",
+    "SR60x",
+    "SR80",
+    "SR80 (L-Cush earpads)",
+    "SR80 (S-Cush earpads)",
+    "SR80e"
+  ],
+  "HarmonicDyne": [
+    "Black Hole",
+    "G200 (velour earpads)",
+    "Poseidon",
+    "Zeus",
+    "Zeus Elite"
+  ],
+  "Haylou": [
+    "S30 (ANC on)",
+    "S35",
+    "S35 (ANC off)"
+  ],
+  "Heavys": [
+    "H1H (AUX power off)",
+    "H1H (Hell Blocker off)",
+    "H1H (Hell Blocker on)"
+  ],
+  "HEDD": [
+    "Audio HEDDphone Two GT (leather earpads)",
+    "HEDDphone",
+    "Heddphone 2",
+    "HEDDphone Two GT (leather earpads)",
+    "HEDDphone Two GT (suede earpads)"
+  ],
+  "HIFI": [
+    "FOR ALL Dahlia (balanced resonator)",
+    "FOR ALL Dahlia (dynamic resonator)"
+  ],
+  "HIFIMAN": [
+    "Ananda",
+    "Ananda (V1)",
+    "Ananda Nano",
+    "Ananda Stealth",
+    "Arya",
+    "Arya Organic",
+    "Arya Stealth Magnet Version",
+    "Arya Unveiled",
+    "Audivina",
+    "Deva (wired)",
+    "Deva (wireless)",
+    "Deva Pro",
+    "Deva Pro-wired",
+    "Edition S (closed back)",
+    "Edition S (open back)",
+    "Edition X",
+    "Edition X V2",
+    "Edition XS",
+    "Edition XX",
+    "HE-300",
+    "HE-300 Rev 2",
+    "HE-4",
+    "HE-400",
+    "HE-5",
+    "HE-500",
+    "HE-5LE",
+    "HE-6 (6-screw, HIFIMAN FocusPad earpads)",
+    "HE-6 (6-screw, pleather earpads)",
+    "HE-R9",
+    "HE-X4",
+    "HE1000",
+    "HE1000 Stealth",
+    "HE1000 Unveiled",
+    "HE1000 V2",
+    "HE1000se",
+    "HE1000se (Dekoni fenestrated sheepskin earpads)",
+    "HE350",
+    "HE35X",
+    "HE400i",
+    "HE400i (2016)",
+    "HE400i (2020)",
+    "HE400S",
+    "HE400se",
+    "HE400se (non-stealth magnet)",
+    "HE400se (stealth magnet)",
+    "HE4XX",
+    "HE560",
+    "HE560 2014",
+    "HE5XX",
+    "HE6",
+    "HE6se",
+    "HE6se V2",
+    "Isvarna",
+    "Jade II",
+    "Shangri-La",
+    "Shangri-La Jr",
+    "Sundara",
+    "Sundara (2018)",
+    "Sundara (Dekoni sheepskin Earpads)",
+    "Sundara (post-2020 earpads)",
+    "Sundara (pre-2020 earpads)",
+    "Sundara Closed-Back",
+    "Sundara Silver",
+    "Susvara",
+    "Susvara Unveiled"
+  ],
+  "House of Marley": [
+    "Exodus Second Pair",
+    "Liberate XLBT Wired",
+    "Positive Vibration 2",
+    "Stir It Up"
+  ],
+  "Howard": [
+    "Leight Sync"
+  ],
+  "HyperX": [
+    "Cloud",
+    "Cloud Alpha",
+    "Cloud II"
+  ],
+  "I-Mego": [
+    "Throne"
+  ],
+  "iKF": [
+    "Y3"
+  ],
+  "iSK": [
+    "HD-9999 (thick earpads)",
+    "HD-9999 (thin earpads)"
+  ],
+  "Jabra": [
+    "Evolve 40",
+    "Move (wired)"
+  ],
+  "JAYS": [
+    "u-JAYS",
+    "v-JAYS"
+  ],
+  "JBL": [
+    "Duet NC (ANC Off)",
+    "Duet NC (ANC On)",
+    "Everest Elite 700 (wired, active)",
+    "Everest Elite 700 (wired, passive)",
+    "Everest Elite 700 (wireless)",
+    "J55i",
+    "J88i",
+    "Live 770NC (ANC on)",
+    "Live 770NC (passive)",
+    "T450BT",
+    "Tour One M2 (ANC on)",
+    "Tour One M2 (ANC on, studio EQ)",
+    "Tour One M2 (passive)",
+    "Tune 720BT",
+    "Tune 720BT (passive)",
+    "Tune 720BT (wireless)",
+    "Tune 770NC (ANC on)",
+    "Tune 770NC (ANC on, bass EQ)",
+    "Tune 770NC (passive)"
+  ],
+  "JM": [
+    "Audio Editions XTC^2.5 Closed"
+  ],
+  "JVC": [
+    "HA-S500-Z"
+  ],
+  "Kaiku": [
+    "Tone",
+    "Tone (passive)",
+    "Tone (wireless)"
+  ],
+  "KEF": [
+    "M500"
+  ],
+  "Kennerton": [
+    "Magister"
+  ],
+  "KFA2": [
+    "SONAR-04"
+  ],
+  "Kingsound": [
+    "KS-H04"
+  ],
+  "Kiwi": [
+    "Ears Ardor (ANC off)",
+    "Ears Ardor (ANC on)",
+    "Ears Atheia",
+    "Ears Aventus (ANC off)",
+    "Ears Aventus (ANC off, double foam)",
+    "Ears Aventus (ANC off, thick foam)",
+    "Ears Aventus (ANC off, thin foam)",
+    "Ears Aventus (ANC on)",
+    "Ears Aventus (ANC on, double foam)",
+    "Ears Aventus (ANC on, thick foam)",
+    "Ears Aventus (ANC on, thin foam)",
+    "Ears Aventus (passive, double foam)",
+    "Ears Aventus (passive, thick foam)",
+    "Ears Aventus (passive, thin foam)",
+    "Ears Division",
+    "Ears Ellipse",
+    "Ears KE4"
+  ],
+  "KLH": [
+    "Ultimate One"
+  ],
+  "Klipsch": [
+    "Image One",
+    "Image One B",
+    "Mode M40",
+    "Reference On Ear",
+    "Reference ONE"
+  ],
+  "Koss": [
+    "BT540i (wired)",
+    "BT540i (wireless)",
+    "ESP950",
+    "ESP950 (sample 1)",
+    "ESP950 (sample 2)",
+    "ESP95X",
+    "ESP95X (Vesper earpads)",
+    "KDE250",
+    "KPH30i",
+    "KPH30i (Grado G Cushion earpads)",
+    "KPH30i (Grado GS1000 earpads)",
+    "KPH40",
+    "KPH7",
+    "KSC75",
+    "KSC75 (Venture Electronics earpads)",
+    "KSC75X (Yaxi earpads)",
+    "Porta Pro",
+    "Porta Pro (Dekoni earpads)",
+    "Porta Pro (sample 1)",
+    "Porta Pro (sample 2)",
+    "Porta Pro (Yaxi earpads)",
+    "Porta Pro Aniv Ed",
+    "Porta Pro Wireless",
+    "PRO DJ 100",
+    "Pro4AA 1975",
+    "Pro4AA 2014",
+    "Pro4AAA",
+    "Pro4S",
+    "SP330",
+    "SP540",
+    "SportaPro",
+    "Tony Bennett",
+    "UR 20",
+    "UR 29"
+  ],
+  "KRK": [
+    "SYSTEMS KNS 6400",
+    "SYSTEMS KNS 8400"
+  ],
+  "LAMAX": [
+    "HighComfort ANC (ANC off)",
+    "HighComfort ANC (ANC on)"
+  ],
+  "Lindy": [
+    "HF-100"
+  ],
+  "Lioncast": [
+    "X55"
+  ],
+  "Logitech": [
+    "G PRO 2 (fabric earpads)",
+    "G PRO 2 (leather earpads)",
+    "G Pro X (3.5mm jack)",
+    "G Pro X (USB)",
+    "G PRO X 2 LIGHTSPEED",
+    "G PRO X 2 LIGHTSPEED (fabric earpads)",
+    "G PRO X 2 LIGHTSPEED (leather earpads)",
+    "G433",
+    "G733 LIGHTSPEED",
+    "G930",
+    "UE 6000 passive",
+    "UE 9000",
+    "UE4000 2012",
+    "Zone Vibe 100"
+  ],
+  "Mackie": [
+    "MC-250"
+  ],
+  "Mark": [
+    "Levinson No 5909"
+  ],
+  "Marshall": [
+    "Major",
+    "Major III"
+  ],
+  "Massdrop": [
+    "+ Grell OAE1 Signature",
+    "Panda"
+  ],
+  "Master & Dynamic": [
+    "MH30",
+    "MH40"
+  ],
+  "Mayflower": [
+    "Electronics T50RP Version 2"
+  ],
+  "MEE": [
+    "Audio Air-Fi Matrix2 AF62 (wired)",
+    "Audio Air-Fi Matrix2 AF62 (wireless)"
+  ],
+  "Meze": [
+    "105 Aer",
+    "109 Pro",
+    "109 Pro (ZMF Acoustic Titan Mesh)",
+    "66 Classics",
+    "88 Classics",
+    "99 Classics",
+    "99 Classics (Brainwavz memory foam hybrid earpads)",
+    "99 Neo",
+    "99 Neo (99 Classics earpads)",
+    "99 Noir",
+    "Elite (alcantara earpads)",
+    "Elite (hybrid earpads)",
+    "Elite (leather earpads)",
+    "Empyrean",
+    "Empyrean (alcantara earpads)",
+    "Empyrean (leather earpads)",
+    "Empyrean 2",
+    "Empyrean 2 (Duo earpads)",
+    "Empyrean II (alcantara earpads)",
+    "Empyrean II (duo earpads)",
+    "Liric",
+    "Liric 2",
+    "Liric II",
+    "Poet"
+  ],
+  "Microsoft": [
+    "Surface Headphones",
+    "Xbox Wireless Headset"
+  ],
+  "Modhouse": [
+    "Audio Argon Mk3 (ZMF oval pleather earpads)",
+    "Audio T60RP Argon (Xenon suede earpads)",
+    "Audio T60RP Argon (Xenon suede earpads, baffle upgrade)",
+    "Audio Tungsten (hybrid earpads)",
+    "Audio Tungsten (perforated earpads)",
+    "Audio Tungsten Double Sided (ZMF Caldera hybrid earpads)",
+    "Audio Tungsten Double Sided (ZMF Caldera Ultra-Perf earpads)",
+    "Audio Tungsten Single Sided (ZMF Caldera Hybrid earpads)",
+    "Audio Tungsten Single Sided (ZMF Caldera Ultra-Perf earpads)"
+  ],
+  "Monoprice": [
+    "8323",
+    "M1060",
+    "M1570",
+    "M1570 (leather earpads)",
+    "M1570 (velour earpads)",
+    "M1570C (leather earpads)",
+    "M1570C (velours earpads)",
+    "M650",
+    "Modern Retro",
+    "Modern Retro (Dekoni elite hybrid earpads)"
+  ],
+  "Monster": [
+    "DNA Pro2",
+    "Inspiration",
+    "Solo"
+  ],
+  "Moondrop": [
+    "Cosmo",
+    "Edge (ANC on, reference)",
+    "Horizon",
+    "Joker",
+    "Para",
+    "Para (fenestrated PU earpads)",
+    "Para (hybrid earpads)",
+    "Para (ZMF Auteur perforated lambskin earpads)",
+    "Para (ZMF Eikon perforated suede earpads)",
+    "Para (ZMF Universeperforated suede earpads)",
+    "Para II",
+    "Venus",
+    "Void",
+    "Void (Poyatu hybrid perforated fabric earpads)",
+    "x Singer Edge (ANC off)",
+    "x Singer Edge (ANC on)"
+  ],
+  "Mpow": [
+    "HC6"
+  ],
+  "MUNITIO": [
+    "Pro40"
+  ],
+  "Music": [
+    "Hall Audio DeBe"
+  ],
+  "Musical": [
+    "Fidelity MF100",
+    "Fidelity MF200"
+  ],
+  "MyST": [
+    "IzoPhones-60"
+  ],
+  "NAD": [
+    "RP18 Bass Light Version",
+    "VISO HP50"
+  ],
+  "Nectar": [
+    "Hive"
+  ],
+  "Neumann": [
+    "NDH20",
+    "NDH30"
+  ],
+  "Nixon": [
+    "RPM"
+  ],
+  "Noble": [
+    "Audio Fokus Apollo (ANC off)",
+    "Audio Fokus Apollo (ANC on)",
+    "Audio Fokus Apollo (ANC on, review eq)",
+    "Audio Fokus Apollo (passive)"
+  ],
+  "Nocs": [
+    "NS300",
+    "NS700"
+  ],
+  "Noontec": [
+    "Hammo S",
+    "Zoro",
+    "Zoro HD",
+    "Zoro II HD",
+    "Zoro II Wireless (active)",
+    "Zoro II Wireless (passive)"
+  ],
+  "NuForce": [
+    "HP-800"
+  ],
+  "NVX": [
+    "XPT100",
+    "XPT100 (flat earpads)"
+  ],
+  "oBravo": [
+    "HAMT1"
+  ],
+  "OLLO": [
+    "S4R",
+    "S4R 1.1"
+  ],
+  "OLLO Audio": [
+    "S5X"
+  ],
+  "OneOdio": [
+    "A10",
+    "A71D"
+  ],
+  "Onkyo": [
+    "A800",
+    "ES-FC300"
+  ],
+  "Oppo": [
+    "PM1",
+    "PM1 (alternative earpads)",
+    "PM1 (PM2 earpads)",
+    "PM1 (velour earpads)",
+    "PM2",
+    "PM2 (PM1 alternative earpads)",
+    "PM2 (PM1 leather earpads)",
+    "PM2 (PM1 velour pads)",
+    "PM3",
+    "PM3 (Aliexpress earpads)",
+    "PM3 (Aliexpress leather earpads)",
+    "PM3 (sample A)",
+    "PM3 (sample C)"
+  ],
+  "ORA": [
+    "GrapheneQ"
+  ],
+  "Ortofon": [
+    "0-One",
+    "1",
+    "2"
+  ],
+  "Palma": [
+    "DHS-1 (closed)",
+    "DHS-1 (open)"
+  ],
+  "Panasonic": [
+    "RP HT600 S"
+  ],
+  "Parrot": [
+    "Zik 2.0"
+  ],
+  "Peerless": [
+    "MB PMB 85 Double Action"
+  ],
+  "Pendulumic": [
+    "Stance S1 Bluetooth"
+  ],
+  "Phiaton": [
+    "Bridge MS 500",
+    "Chord MS 530",
+    "Chord MS 530 (ANC on)",
+    "Chord MS 530 (wireless)",
+    "MS 300",
+    "MS 400",
+    "PS 300 NC",
+    "PS 320",
+    "PS 500"
+  ],
+  "Philips": [
+    "ActionFit SHQ5200",
+    "Cityscape Downtown",
+    "Construct",
+    "Fidelio L1",
+    "Fidelio L2",
+    "Fidelio M1",
+    "Fidelio M2L",
+    "Fidelio NC1",
+    "Fidelio X1",
+    "Fidelio X2",
+    "Fidelio X2HR",
+    "Fidelio X3",
+    "L2",
+    "O'Neil Bend",
+    "O'Neil Crash",
+    "SBC HP910",
+    "SHP9500",
+    "TAH2005BK00"
+  ],
+  "Phonon": [
+    "SMB2"
+  ],
+  "Pioneer": [
+    "HDJ-1000",
+    "HDJ-1000 Gold",
+    "HDJ-2000",
+    "HDJ-500",
+    "Monitor 10 II",
+    "Monitor 10 II (sample 1)",
+    "Monitor 10 II (sample 2)",
+    "SE-A1000",
+    "SE-M290",
+    "SE-Master1",
+    "SE-MJ31"
+  ],
+  "Plantronics": [
+    "325T",
+    "BackBeat 500 (wired)",
+    "BackBeat Go 600 (wired, pad swap)",
+    "BackBeat Go 600 (wireless, pad swap)"
+  ],
+  "Ploopy": [
+    "Ploopy Headphones"
+  ],
+  "Plugged": [
+    "Crown"
+  ],
+  "Polk": [
+    "Audio Buckle",
+    "Audio Hinge",
+    "Audio Melee",
+    "Audio UltraFit 2000",
+    "Audio UltraFit 2000 (sample A)",
+    "Audio UltraFit 2000 (sample B)",
+    "Audio UltraFocus 8000",
+    "Audio UltraFocus 8000 NC"
+  ],
+  "PSB": [
+    "M4U 1",
+    "M4U 2",
+    "M4U 2 (passive)",
+    "M4U 8",
+    "M4U 8 (wired, passive)"
+  ],
+  "QCY": [
+    "H3",
+    "H3 (ANC on)",
+    "H3 Pro (ANC off)",
+    "H3 Pro (ANC on)"
+  ],
+  "QUAD": [
+    "Era-1",
+    "ERA-1 (angled leather earpads)",
+    "ERA-1 (hybrid earpads)"
+  ],
+  "RAAL": [
+    "CA1a (open earpads)",
+    "SR1a",
+    "SR1a (ear contact, OBC off)",
+    "SR1a (ear contact, OBC on)",
+    "SR1a (no ear contact, OBC off)",
+    "SR1a (no ear contact, OBC on)"
+  ],
+  "Razer": [
+    "Barracuda X (2022)",
+    "BlackShark V2",
+    "Kraken V3 Pro",
+    "Opus 2020 (ANC off)",
+    "Opus 2020 (ANC on)",
+    "Opus 2020 (passive)"
+  ],
+  "Redragon": [
+    "Arrow H858",
+    "Diomedes H386",
+    "H510 Zeus Pro",
+    "H510 Zeus-X",
+    "H848 IRE PRO"
+  ],
+  "RHA": [
+    "SA-850",
+    "SA950i"
+  ],
+  "Ritmix": [
+    "RH-508"
+  ],
+  "Rose": [
+    "Technics North Forest"
+  ],
+  "Rosson Audio Design": [
+    "RAD-0"
+  ],
+  "RØDE": [
+    "NTH-100",
+    "NTH-100 (front dampening removed)",
+    "NTH-100M"
+  ],
+  "Samsung": [
+    "Level On"
+  ],
+  "Sansui": [
+    "SS100",
+    "SS35"
+  ],
+  "Sash": [
+    "Tres 45",
+    "Tres 45 (closed back, leather earpads)",
+    "Tres 45 (open back, leather earpads)",
+    "Tres 45 (perforated leather earpads)",
+    "Tres 45 (velour earpads)",
+    "Tres SE Exclusive (leather earpads)",
+    "Tres Second Edition (closed cups, hybrid earpads)",
+    "Tres Second Edition (closed cups, leather earpads)",
+    "Tres Second Edition (closed cups, suede earpads)",
+    "Tres Second Edition (honeycomb grill)",
+    "Tres Second Edition (hybrid earpads)",
+    "Tres Second Edition (leather earpads)",
+    "Tres Second Edition (S-style grill)",
+    "Tres Second Edition (suede earpads)"
+  ],
+  "Scosche": [
+    "RH1060 Bluetooth"
+  ],
+  "Sendy": [
+    "Aiva",
+    "Peacock"
+  ],
+  "Sennheiser": [
+    "ACCENTUM",
+    "ACCENTUM Plus",
+    "Amperior",
+    "EH 150",
+    "EH 250",
+    "EH 350",
+    "GAME ONE",
+    "HD 201",
+    "HD 202",
+    "HD 203",
+    "HD 205",
+    "HD 205 II",
+    "HD 212 PRO",
+    "HD 218",
+    "HD 219",
+    "HD 228",
+    "HD 229",
+    "HD 229 Black",
+    "HD 238",
+    "HD 239",
+    "HD 25 Aluminum",
+    "HD 25-1",
+    "HD 25-1 II",
+    "HD 25-1 II B (2012)",
+    "HD 25-SP",
+    "HD 250 II",
+    "HD 280 Pro",
+    "HD 280 Pro (SPC Gear velour earpads)",
+    "HD 380 Pro",
+    "HD 4",
+    "HD 4.50 BTNC",
+    "HD 400 Pro",
+    "HD 414",
+    "HD 419",
+    "HD 424",
+    "HD 424-X",
+    "HD 428",
+    "HD 429",
+    "HD 438",
+    "HD 439",
+    "HD 448",
+    "HD 449",
+    "HD 450BT",
+    "HD 471i",
+    "HD 490 Pro (mixing earpads)",
+    "HD 490 Pro (producing earpads)",
+    "HD 505",
+    "HD 505 Copper Edition",
+    "HD 515",
+    "HD 518",
+    "HD 540 reference-II",
+    "HD 545 Reference",
+    "HD 550",
+    "HD 555",
+    "HD 558",
+    "HD 559",
+    "HD 560 Ovation II",
+    "HD 560S",
+    "HD 560S (worn earpads)",
+    "HD 565 Ovation",
+    "HD 569",
+    "HD 575",
+    "HD 580",
+    "HD 580 precision",
+    "HD 58X",
+    "HD 58X (Brainwavz microsuede oval earpads)",
+    "HD 595",
+    "HD 598",
+    "HD 598 CS",
+    "HD 599",
+    "HD 600",
+    "HD 600 (2020)",
+    "HD 620S",
+    "HD 630VB",
+    "HD 650",
+    "HD 650 (balanced)",
+    "HD 660 S",
+    "HD 660S (Dekoni Fenestrated Sheepskin Earpads)",
+    "HD 660S2",
+    "HD 6XX",
+    "HD 700",
+    "HD 700 (Dekoni elite velours earpads)",
+    "HD 800",
+    "HD 800 (sample 1)",
+    "HD 800 (sample 2)",
+    "HD 800 (SDR mod)",
+    "HD 800 (SDR mod, Dekoni fenestrated sheepskin earpads)",
+    "HD 800 S",
+    "HD 800 S (Dekoni fenestrated sheepskin earpads)",
+    "HD 800 S (sample 1)",
+    "HD 800 S (serial number 01067)",
+    "HD 800 S (serial number 01070)",
+    "HD 800 S (ZMF sheepskin earpads)",
+    "HD 820",
+    "HD 8XX",
+    "HD R 130",
+    "HD25-1 II",
+    "HD25-1 II (bad seal)",
+    "HD490 Pro (mixing earpads)",
+    "HD490 Pro (producing earpads)",
+    "HE 1 Orpheus 2",
+    "HE 60",
+    "HE 90 Orpheus",
+    "MM 550",
+    "Momentum",
+    "Momentum 2.0",
+    "Momentum 2.0 (wired, active)",
+    "Momentum 2.0 (wired, passive)",
+    "Momentum 2.0 (wireless)",
+    "Momentum 3 Wireless",
+    "Momentum 4 Wireless",
+    "Momentum 4 Wireless (passive)",
+    "Momentum On-Ear",
+    "Momentum Wireless (wired, active)",
+    "Momentum Wireless (wired, passive)",
+    "Momentum Wireless (wireless)",
+    "PC 373D",
+    "PC37X",
+    "PC38X",
+    "PC38X (velour earpads)",
+    "PMX 100",
+    "PX 100",
+    "PX 100 II",
+    "PX 100-IIi",
+    "PX 200",
+    "PX 200 II",
+    "PX 200-IIi",
+    "PX 360",
+    "PXC 150",
+    "PXC 300",
+    "PXC 350",
+    "PXC 450",
+    "PXC 550 Wireless (wired, ANC on)",
+    "PXC 550 Wireless (wired, power on)",
+    "PXC 550 Wireless (wireless, ANC on)",
+    "PXC 550-II Wireless",
+    "RS 130",
+    "RS 160",
+    "RS 170",
+    "RS 175",
+    "RS 180",
+    "RS 220",
+    "Urbanite",
+    "Urbanite XL"
+  ],
+  "Shure": [
+    "AONIC 50",
+    "SRH1440",
+    "SRH1540",
+    "SRH1840",
+    "SRH240",
+    "SRH440",
+    "SRH440A",
+    "SRH750DJ",
+    "SRH840",
+    "SRH840A",
+    "SRH940"
+  ],
+  "Silver": [
+    "Monkey Arago"
+  ],
+  "Simgot": [
+    "Audio EP5"
+  ],
+  "Sineaptic": [
+    "SE-1 (passive, pleather earpads)",
+    "SE-1 (wireless, pleather earpads)"
+  ],
+  "Sivga": [
+    "Anser",
+    "Audio Phoenix",
+    "Audio Robin",
+    "Luan",
+    "Oriole",
+    "P2 Pro"
+  ],
+  "Skullcandy": [
+    "Aviators",
+    "Aviators no Lens",
+    "Crusher",
+    "Crusher Wireless",
+    "Crusher Wireless (bass boost)",
+    "Crusher Wireless (wired, sub off)",
+    "Grind",
+    "Grind Wireless",
+    "Hesh",
+    "Hesh 2",
+    "Hesh NBA",
+    "Mix Master",
+    "Navigator",
+    "Roc Nation Aviator",
+    "SkullCrushers Max Bass"
+  ],
+  "SMS": [
+    "Audio DJ Pro",
+    "Audio Over Ear ANC",
+    "Audio Street by 50 Cent",
+    "Audio Sync by 50 Cent"
+  ],
+  "SOL": [
+    "REPUBLIC Master Tracks XC",
+    "REPUBLIC Tracks",
+    "REPUBLIC Tracks B"
+  ],
+  "Somic": [
+    "V2"
+  ],
+  "Sonos": [
+    "Ace (ANC off)",
+    "Ace (ANC on)",
+    "Ace (ANC on, loudness on)"
+  ],
+  "Sony": [
+    "DR-Z7",
+    "MDR-1000X",
+    "MDR-1000X (wired, ANC off)",
+    "MDR-1000X (wired, ANC on)",
+    "MDR-1000X (wireless, ANC off)",
+    "MDR-1000X (wireless, ANC on)",
+    "MDR-1R",
+    "MDR-1RBT",
+    "MDR-7502",
+    "MDR-7505",
+    "MDR-7506",
+    "MDR-7509HD",
+    "MDR-7520",
+    "MDR-CD3000",
+    "MDR-CD900ST",
+    "MDR-D77 Eggo",
+    "MDR-DS3000",
+    "MDR-DS6000",
+    "MDR-F1",
+    "MDR-G75",
+    "MDR-M1",
+    "MDR-MA900",
+    "MDR-MV1",
+    "MDR-Q68LW",
+    "MDR-R10",
+    "MDR-SA3000",
+    "MDR-SA5000",
+    "MDR-V500",
+    "MDR-V6",
+    "MDR-V6 (Yaxi earpads)",
+    "MDR-V600",
+    "MDR-V700",
+    "MDR-XB1000",
+    "MDR-XB300",
+    "MDR-XB500",
+    "MDR-XB700",
+    "MDR-Z1000",
+    "MDR-Z1R",
+    "MDR-Z7",
+    "MDR-Z7M2",
+    "MDR-ZX1000",
+    "MDR-ZX110",
+    "MDR-ZX310",
+    "MDR-ZX700",
+    "PULSE 3D",
+    "Pulse Elite",
+    "ULT WEAR",
+    "ULT WEAR (passive)",
+    "WH-1000XM2",
+    "WH-1000XM3",
+    "WH-1000XM3 (ANC off)",
+    "WH-1000XM3 (ANC on)",
+    "WH-1000XM4",
+    "WH-1000XM4 (ANC Off)",
+    "WH-1000XM4 (ANC on)",
+    "WH-1000XM5",
+    "WH-1000XM6",
+    "WH-1000XM6 (analog cable)",
+    "WH-CH510",
+    "WH-H900N"
+  ],
+  "Soul": [
+    "by Ludacris SL100",
+    "by Ludacris SL150",
+    "by Ludacris SL300",
+    "Combat",
+    "Jet Pro ANC Off",
+    "Jet Pro ANC On"
+  ],
+  "SoundMAGIC": [
+    "HP100",
+    "HP200"
+  ],
+  "SoundPeats": [
+    "Space (ANC on)"
+  ],
+  "SPC": [
+    "Gear Viro (breathable earpads)",
+    "Gear Viro (leather earpads)",
+    "Gear Viro (velour earpads)"
+  ],
+  "Spider": [
+    "Moonlight",
+    "PowerForce"
+  ],
+  "Spirit": [
+    "Torino Centauri",
+    "Torino Pulsar",
+    "Torino Superleggera"
+  ],
+  "Status": [
+    "Audio BT One (wired)",
+    "Audio BT One (wireless)",
+    "Audio SM-CB1",
+    "Audio SM-OB1"
+  ],
+  "Stax": [
+    "4070",
+    "Lambda Nova Basic",
+    "Lambda Nova Signature",
+    "SR Lambda Pro Classic (bad seal)",
+    "SR-007",
+    "SR-007A v2.9",
+    "SR-007A v2.9 (blu-tac mod)",
+    "SR-009",
+    "SR-009 (sample 1)",
+    "SR-009 (serial number SZ9-1278)",
+    "SR-009S",
+    "SR-1",
+    "SR-207",
+    "SR-207 (EP-507 leather earpads)",
+    "SR-3",
+    "SR-40 Electret SR4 Adapter",
+    "SR-404",
+    "SR-404 (with perfect seal)",
+    "SR-404 Ltd SSL-0670",
+    "SR-404 S 2742",
+    "SR-404LE",
+    "SR-404LE (with perfect seal)",
+    "SR-5 Gold",
+    "SR-507",
+    "SR-Gamma Pro",
+    "SR-L300",
+    "SR-L300 LTD",
+    "SR-L300 LTD (L700 earpads)",
+    "SR-L500",
+    "SR-L500 (blu-tac mod)",
+    "SR-L500 (Vesper earpads)",
+    "SR-L700",
+    "SR-L700 (blu-tac mod)",
+    "SR-Lambda Pro",
+    "SR-Lambda Pro Classic",
+    "SR-Lambda Signature",
+    "SR-Lambda Spirit",
+    "SR-Sigma 07381",
+    "SR-X Mk3 Pro",
+    "SR-X1",
+    "SR-X1 (weak seal)",
+    "SR-X9000"
+  ],
+  "SteelSeries": [
+    "Arctis Nova Pro Wireless (Bluetooth, ANC off)",
+    "Arctis Nova Pro Wireless (Bluetooth, ANC on)",
+    "Arctis Nova Pro Wireless (wired)"
+  ],
+  "Sterling": [
+    "TE-400"
+  ],
+  "Steven": [
+    "Slate Audio VSX (passive plugin inactive))"
+  ],
+  "Superlux": [
+    "HD 651",
+    "HD 660",
+    "HD 660 Pro 150 Ohm",
+    "HD 662F",
+    "HD 662F (Brainwavz round XL pleather earpads)",
+    "HD 668B",
+    "HD 668B (velour earpads)",
+    "HD 681",
+    "HD 681 (velour earpads)",
+    "Hd 681B (Brainwavz round hybrid earpads)",
+    "HD 681B (pleather earpads)",
+    "HD 681B (velour earpads)"
+  ],
+  "T+A": [
+    "Solitaire P",
+    "Solitaire PSE",
+    "Solitaire T (ANC on)",
+    "Solitaire T (passive)"
+  ],
+  "Takstar": [
+    "Pro 80",
+    "Pro 82"
+  ],
+  "Teac": [
+    "CT-H02"
+  ],
+  "Teknmotion": [
+    "London Underground"
+  ],
+  "Teufel": [
+    "CAGE (active)",
+    "CAGE (passive)",
+    "Real Blue NC (ANC on)",
+    "Real Blue NC (ANC on, classic EQ)",
+    "Real Blue NC (passive)",
+    "Real Blue Pro (ANC on)",
+    "Real Blue Pro (passive)",
+    "Real Z",
+    "Zola (passive)",
+    "Zola (USB)"
+  ],
+  "ThieAudio": [
+    "ghost"
+  ],
+  "Thinksound": [
+    "On1",
+    "ov21"
+  ],
+  "Torque": [
+    "t402v (around-ear earpads, black vent)",
+    "t402v (around-ear earpads, blue vent)",
+    "t402v (around-ear earpads, red vent)",
+    "t402v (around-ear earpads, yellow vent)",
+    "t402v (on-ear earpads, black vent)",
+    "t402v (on-ear earpads, blue vent)",
+    "t402v (on-ear earpads, red vent)",
+    "t402v (on-ear earpads, yellow vent)"
+  ],
+  "Toshiba": [
+    "HR-810 Low Gain"
+  ],
+  "Ultrasone": [
+    "Edition 10",
+    "Edition 8",
+    "Edition 8 Palladium",
+    "HFI-2400",
+    "HFI-450",
+    "HFI-580",
+    "HFI-780",
+    "PRO 2900",
+    "PRO 550",
+    "PRO 650",
+    "PRO 900",
+    "PROline 550",
+    "PROline 650",
+    "Signature Pro",
+    "Signature Pure",
+    "Tribute 7",
+    "Zino"
+  ],
+  "Urbanears": [
+    "Plattan"
+  ],
+  "V-MODA": [
+    "Crossfade LP",
+    "Crossfade LP2",
+    "Crossfade M-100",
+    "Crossfade M-80",
+    "Crossfade Wireless (wired)",
+    "Crossfade Wireless (wireless)",
+    "LP2",
+    "M-200",
+    "V-80 True Blood",
+    "XS"
+  ],
+  "Valco": [
+    "VMK20",
+    "VMK20 (ANC off)",
+    "VMK20 (ANC on)",
+    "VMK20 (passive)",
+    "VMK20 (wired, ANC on)",
+    "VMK20 (wireled, power off)",
+    "VMK20 (wireless, ANC off)",
+    "VMK20 (wireless, ANC on)",
+    "VMK25 (ANC off)",
+    "VMK25 (ANC on)",
+    "VMK25 (passive)",
+    "VMK25 (wired, ANC off)",
+    "VMK25 (wired, ANC on)",
+    "VMK25 (wired, power off)",
+    "VMK25 (wireless, ANC off)",
+    "VMK25 (wireless, ANC on)"
+  ],
+  "Verum": [
+    "One",
+    "One (leather earpads)",
+    "One (ZMF Ori earpads)"
+  ],
+  "Warwick Acoustics": [
+    "Aperio",
+    "Bravura",
+    "Sonoma Model One"
+  ],
+  "Wiss": [
+    "Audio On Ear Force 1 HP P244"
+  ],
+  "XK-Audio": [
+    "Avalon mk2",
+    "Avalon mk2 (alternative earpads)"
+  ],
+  "XPG": [
+    "PRECOG S"
+  ],
+  "Yamaha": [
+    "HP1",
+    "HP1 (sample 1)",
+    "HP1 (serial number 051712)",
+    "HP3",
+    "HPH-200",
+    "HPH-MT220",
+    "PRO 300",
+    "PRO 400",
+    "PRO 500",
+    "RH5Ma",
+    "YH-100",
+    "YH-3",
+    "YH-5000SE",
+    "YH-5000SE (leather earpads)",
+    "YH-5000SE (suede earpads)",
+    "YH-E700A (ANC on)"
+  ],
+  "Yuin": [
+    "G1A",
+    "G2A"
+  ],
+  "ZMF": [
+    "Aeolus (ZMF BE2 perforated suede earpads)",
+    "Aeolus (ZMF Universe perforated leather earpads)",
+    "Aeolus (ZMF Universe perforated suede earpads)",
+    "Atrium (solid mesh, perforated lambskin earpads)",
+    "Atrium (solid mesh, perforated suede earpads)",
+    "Atrium (ZMF Auteur perforated leather earpads)",
+    "Atrium (ZMF BE2 perforated suede earpads)",
+    "Atrium (ZMF Universe perforated leather earpads)",
+    "Atrium (ZMF Universe perforated suede earpads)",
+    "Atrium Closed (ZMF Caldera thin lambskin earpads)",
+    "Atticus",
+    "Atticus (ZMF Eikon suede earpads)",
+    "Atticus (ZMF Ori leather earpads)",
+    "Auteur (ZMF Auteur perforated hybrid earpads)",
+    "Auteur (ZMF Auteur perforated leather earpads)",
+    "Auteur (ZMF Auteur perforated suede earpads)",
+    "Auteur (ZMF Eikon perforated leather earpads)",
+    "Auteur (ZMF Eikon perforated suede earpads)",
+    "Auteur (ZMF Universe perforated leather earpads)",
+    "Auteur (ZMF Universe perforated suede earpads)",
+    "Auteur Classic",
+    "Auteur Classic (ZMF Auteur perforated hybrid earpads)",
+    "Auteur Classic (ZMF Auteur perforated lambskin earpads)",
+    "Auteur Classic (ZMF Auteur perforated leather earpads)",
+    "Auteur Classic (ZMF Auteur perforated suede earpads)",
+    "Auteur Classic (ZMF BE2 perforated suede earpads)",
+    "Auteur Classic (ZMF Caldera hybrid earpads)",
+    "Auteur Classic (ZMF Caldera lambskin earpads)",
+    "Auteur Classic (ZMF Caldera suede earpads)",
+    "Auteur Classic (ZMF Eikon perforated leather earpads)",
+    "Auteur Classic (ZMF Eikon perforated suede earpads)",
+    "Auteur Classic (ZMF Universe perforated lambskin earpads)",
+    "Auteur Classic (ZMF Universe perforated leather earpads)",
+    "Auteur Classic (ZMF Universe perforated suede earpads)",
+    "Bokeh",
+    "Bokeh (hybrid earpads, burst mesh)",
+    "Bokeh (hybrid earpads, no mesh)",
+    "Bokeh (hybrid earpads, solid mesh)",
+    "Bokeh (protein earpads, burst mesh)",
+    "Bokeh (protein earpads, no mesh)",
+    "Bokeh (suede earpads, no mesh)",
+    "Bokeh Closed (hybrid earpads, black mesh)",
+    "Bokeh Closed (hybrid earpads, burst mesh)",
+    "Bokeh Closed (hybrid earpads, green mesh)",
+    "Bokeh Closed (hybrid earpads, no mesh)",
+    "Bokeh Closed (hybrid earpads, red mesh)",
+    "Bokeh Closed (hybrid earpads, solid mesh)",
+    "Bokeh Closed (lambskin earpads, red mesh)",
+    "Bokeh Closed (protein earpads, burst mesh)",
+    "Bokeh Closed (protein earpads, red mesh)",
+    "Bokeh Closed (suede earpads, burst mesh)",
+    "Bokeh Closed (suede earpads, red mesh)",
+    "Bokeh S2 (suede earpads)",
+    "Bokeh S2 (thin hybrid earpads)",
+    "Bokeh S2 (thin protein earpads)",
+    "Caldera (cowhide earpads)",
+    "Caldera (lambskin earpads)",
+    "Caldera (suede earpads)",
+    "Caldera (thick earpads)",
+    "Caldera (thin lambskin earpads)",
+    "Eikon",
+    "Eikon (Protein earpads)",
+    "Eikon (ZMF Auteur leather earpads)",
+    "Eikon (ZMF Eikon leather earpads)",
+    "Eikon (ZMF Eikon suede earpads)",
+    "Eikon (ZMF Universe leather earpads)",
+    "Verite",
+    "Verite (ZMF Auteur perforated hybrid earpads)",
+    "Verite (ZMF BE2 perforated hybrid earpads)",
+    "Verite (ZMF BE2 perforated leather earpads)",
+    "Verite (ZMF Universe perforated leather earpads)",
+    "Verite (ZMF Universe perforated suede earpads)",
+    "Verite Closed (ZMF Auteur hybrid earpads)",
+    "Verite Closed (ZMF Auteur leather earpads)",
+    "Verite Closed (ZMF Eikon leather earpads)",
+    "Verite Closed (ZMF Eikon suede earpads)",
+    "Verite Closed (ZMF Universe hybrid earpads)",
+    "Verite Closed (ZMF Universe leather earpads)"
+  ],
+  "écoute": [
+    "Audio TH1 (ANC off, Harman curve)",
+    "Audio TH1 (ANC on, Harman curve)",
+    "Audio TH1 (passive)"
+  ]
+};
+
         // --- 10 Pre-loaded ISO octave bands ---
         const ISO_OCTAVES = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 
@@ -846,7 +2939,7 @@
                 bands[b].gain = 0.0;
                 syncInputs(b);
                 console.log(`[EQ DblClick] Band ${b + 1} gain reset: { type: "${FILTER_TYPES[bands[b].type]}", freq: ${bands[b].freq} Hz, gain: 0.0 dB, q: ${bands[b].q} }`);
-                
+
                 if (typeof window.sendEQUpdate === 'function') {
                     window.sendEQUpdate(activeProfileIndex, b);
                 }
@@ -864,7 +2957,7 @@
             bands[b].q = Math.max(0.1, Math.min(10.0, Math.round((bands[b].q + delta) * 100) / 100));
             syncInputs(b);
             console.log(`[EQ Scroll] Band ${b + 1} Q updated: { type: "${FILTER_TYPES[bands[b].type]}", freq: ${bands[b].freq} Hz, gain: ${bands[b].gain} dB, q: ${bands[b].q} }`);
-            
+
             if (typeof window.sendEQUpdate === 'function') {
                 window.sendEQUpdate(activeProfileIndex, b);
             }
@@ -945,10 +3038,10 @@
                         </select>
                     </td>
                     <td>
-                        <input type="number" id="input-freq-${index}" value="${band.freq}" min="20" max="20000" step="1"> Hz
+                        <input type="number" id="input-freq-${index}" value="${band.freq}" min="20" max="20000" step="1">
                     </td>
                     <td>
-                        <input type="number" id="input-gain-${index}" value="${band.gain}" min="-24" max="24" step="0.1"> dB
+                        <input type="number" id="input-gain-${index}" value="${band.gain}" min="-24" max="24" step="0.1">
                     </td>
                     <td>
                         <input type="number" id="input-q-${index}" value="${band.q}" min="0.1" max="10" step="0.01">
@@ -983,7 +3076,7 @@
                         }
 
                         console.log(`[EQ Input] Band ${index + 1} manually set: { type: "${FILTER_TYPES[bands[index].type]}", freq: ${bands[index].freq} Hz, gain: ${bands[index].gain} dB, q: ${bands[index].q} }`);
-                        
+
                         if (typeof window.sendEQUpdate === 'function') {
                             window.sendEQUpdate(activeProfileIndex, index);
                         }
@@ -996,7 +3089,7 @@
                     const val = parseInt(e.target.value);
                     bands[index].type = val;
                     console.log(`[EQ Type] Band ${index + 1} type updated: { type: "${FILTER_TYPES[val]}", freq: ${bands[index].freq} Hz, gain: ${bands[index].gain} dB, q: ${bands[index].q} }`);
-                    
+
                     if (typeof window.sendEQUpdate === 'function') {
                         window.sendEQUpdate(activeProfileIndex, index);
                     }
@@ -1054,28 +3147,88 @@
             });
         });
 
-        // --- Save Profiles to LocalStorage ---
-        document.getElementById('btnSaveProfiles').addEventListener('click', () => {
-            localStorage.setItem('eq_profiles', JSON.stringify(profiles));
-            console.log('[EQ Save] All 3 profiles saved to localStorage successfully.');
+        // --- Preset Selector Logic ---
+        const selectBrand = document.getElementById('selectBrand');
+        const selectModel = document.getElementById('selectModel');
+        const btnSetPreset = document.getElementById('btnSetPreset');
 
-            // Visual feedback: animate save button
-            const saveBtn = document.getElementById('btnSaveProfiles');
-            const originalHTML = saveBtn.innerHTML;
-            saveBtn.style.backgroundColor = '#059669';
-            saveBtn.innerHTML = `
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Saved!
-            `;
-            setTimeout(() => {
-                saveBtn.style.backgroundColor = '';
-                saveBtn.innerHTML = originalHTML;
-            }, 1500);
-        });
+        function initPresetDropdowns() {
+            // Đổ danh sách Brand (sắp xếp theo alphabet)
+            const brands = Object.keys(EQ_PRESETS_DATA).sort();
+            brands.forEach(brand => {
+                const opt = document.createElement('option');
+                opt.value = brand;
+                opt.textContent = brand;
+                selectBrand.appendChild(opt);
+            });
+
+            // Lắng nghe sự thay đổi của Brand
+            selectBrand.addEventListener('change', () => {
+                const brand = selectBrand.value;
+                selectModel.innerHTML = '<option value="">-- Model --</option>';
+                
+                if (brand && EQ_PRESETS_DATA[brand]) {
+                    selectModel.disabled = false;
+                    EQ_PRESETS_DATA[brand].forEach((model, idx) => {
+                        const opt = document.createElement('option');
+                        opt.value = idx;
+                        opt.textContent = model;
+                        selectModel.appendChild(opt);
+                    });
+                } else {
+                    selectModel.disabled = true;
+                }
+                updateSetButtonState();
+            });
+
+            // Lắng nghe sự thay đổi của Model
+            selectModel.addEventListener('change', updateSetButtonState);
+            
+            // Xử lý nút Set
+            btnSetPreset.addEventListener('click', () => {
+                const brand = selectBrand.value;
+                const modelIdx = selectModel.value;
+                if (!brand || modelIdx === "") return;
+
+                // Index Brand trong thứ tự khai báo của C++ chính là thứ tự key gốc của EQ_PRESETS_DATA
+                const brandIndex = Object.keys(EQ_PRESETS_DATA).indexOf(brand);
+                if (brandIndex === -1) {
+                    console.error("Brand not found in presets mapping:", brand);
+                    return;
+                }
+
+                console.log(`[EQ Preset Apply] Applying preset: ${brand} (idx=${brandIndex}), ${EQ_PRESETS_DATA[brand][modelIdx]} (idx=${modelIdx}) to Profile ${activeProfileIndex + 1}`);
+
+                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                    // Tạo overlay chờ tạm thời
+                    const overlay = document.createElement('div');
+                    overlay.id = "eqPresetOverlay";
+                    overlay.style = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:9999;display:flex;justify-content:center;align-items:center;color:#fff;font-family:sans-serif;font-size:16px;backdrop-filter:blur(1px);";
+                    overlay.innerHTML = '<div style="background:#1e293b;padding:16px 28px;border-radius:10px;border:1px solid #334155;text-align:center;">Applying Preset...</div>';
+                    document.body.appendChild(overlay);
+
+                    // Gửi bản tin: #EQ_APPLY_PRESET$<profile_idx>,<brand_idx>,<model_idx>
+                    window.eqWebSocket.send(`#EQ_APPLY_PRESET$${activeProfileIndex},${brandIndex},${modelIdx}`);
+
+                    // Timeout tự xóa overlay sau 2 giây nếu không nhận được phản hồi
+                    setTimeout(() => {
+                        const ov = document.getElementById('eqPresetOverlay');
+                        if (ov) ov.remove();
+                    }, 2000);
+                }
+            });
+        }
+
+        function updateSetButtonState() {
+            btnSetPreset.disabled = !(selectBrand.value && selectModel.value !== "");
+        }
+
+        // Khởi tạo các Dropdowns
+        initPresetDropdowns();
 
         // --- WebSocket Sync ---
         let lastSendTime = 0;
-        window.throttleSendEQ = function(profileIdx, filterIdx) {
+        window.throttleSendEQ = function (profileIdx, filterIdx) {
             const now = Date.now();
             if (now - lastSendTime > 50) { // 50ms throttle
                 window.sendEQUpdate(profileIdx, filterIdx);
@@ -1083,7 +3236,7 @@
             }
         };
 
-        window.sendEQUpdate = function(profileIdx, filterIdx) {
+        window.sendEQUpdate = function (profileIdx, filterIdx) {
             if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
                 const prof = profiles[profileIdx];
                 const filter = prof.bands[filterIdx];
@@ -1124,7 +3277,7 @@
                         overlay.remove();
                         return;
                     }
-                    
+
                     let idx = 0;
                     for (let p = 0; p < 3; p++) {
                         profiles[p].preamp = vals[idx++];
@@ -1144,9 +3297,16 @@
                     updateSelectedRowHighlight();
                     drawGraph();
 
-                    // Ẩn/Xóa overlay
-                    overlay.style.opacity = '0';
-                    setTimeout(() => overlay.remove(), 300);
+                    // Xóa preset loading overlay nếu có
+                    const presetOverlay = document.getElementById('eqPresetOverlay');
+                    if (presetOverlay) presetOverlay.remove();
+
+                    // Ẩn/Xóa overlay nạp cấu hình ban đầu
+                    if (document.getElementById('eqSyncOverlay')) {
+                        const initOverlay = document.getElementById('eqSyncOverlay');
+                        initOverlay.style.opacity = '0';
+                        setTimeout(() => initOverlay.remove(), 300);
+                    }
                 }
             };
 
