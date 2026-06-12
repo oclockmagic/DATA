@@ -3174,6 +3174,11 @@
                 activeProfileIndex = idx;
                 bands = profiles[activeProfileIndex].bands;
 
+                // Gửi lệnh chọn active profile lên ESP32
+                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                    window.eqWebSocket.send(`#EQ_SELECT_PROFILE$${activeProfileIndex}`);
+                }
+
                 // Cập nhật preamp slider
                 const preampInput = document.getElementById('inputPreamp');
                 const preampValText = document.getElementById('preampVal');
