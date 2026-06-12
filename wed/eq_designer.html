@@ -506,6 +506,141 @@
         input:checked + .slider-round:before {
             transform: translateX(14px);
         }
+    
+        /* Professional DRC styling */
+        .drc-tab-container {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .drc-tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 8px 12px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .drc-tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .drc-tab-btn.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+        }
+        .drc-content-layout {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .drc-canvas-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            margin: 0 auto;
+        }
+        #drcCanvas {
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .drc-controls-container {
+            flex: 1;
+            min-width: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+    
+        /* Professional Smart Bass styling */
+        .sb-content-layout {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .sb-canvas-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            margin: 0 auto;
+        }
+        #sbCanvas {
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        .sb-controls-container {
+            flex: 1;
+            min-width: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+    
+        /* Professional Clipper styling */
+        .clipper-content-layout {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .clipper-canvas-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            margin: 0 auto;
+        }
+        #clipperCanvas {
+            cursor: ns-resize;
+            border-radius: 8px;
+        }
+        .clipper-controls-container {
+            flex: 1;
+            min-width: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
     </style>
 </head>
 
@@ -582,67 +717,140 @@
             <!-- Smart Bass Card -->
             <div class="section-card">
                 <div class="section-title">🔊 Smart Bass (Dynamic Boost)</div>
-                <div class="smart-card-single">
-                    <div class="smart-header">
-                        <span class="smart-title">Enable Dynamic Bass Tracking</span>
-                        <label class="switch">
-                            <input type="checkbox" id="chkSmartBass">
-                            <span class="slider-round"></span>
-                        </label>
+                
+                <div class="sb-content-layout">
+                    <!-- Left Column: Interactive Canvas -->
+                    <div class="sb-canvas-container">
+                        <canvas id="sbCanvas" width="260" height="260"></canvas>
                     </div>
-                    <div class="smart-control-row">
-                        <span style="min-width: 80px;">Strength: <strong id="lblSmartBassStr">5</strong></span>
-                        <input type="range" id="sliderSmartBassStr" class="smart-slider" min="1" max="10" step="1" value="5">
+                    
+                    <!-- Right Column: Settings Controls -->
+                    <div class="sb-controls-container">
+                        <div class="smart-header" style="margin-bottom: 12px;">
+                            <span class="smart-title" style="font-size: 15px; color: #00e676; font-weight: 600;">Bass Tracking Settings</span>
+                            <label class="switch">
+                                <input type="checkbox" id="chkSmartBass" onchange="onSbStateChange()">
+                                <span class="slider-round"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Max Boost Gain</span>
+                                <span id="lblSmartBassBst" style="color: #00e676; font-weight: 600;">6.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderSmartBassBst" class="smart-slider" min="0" max="12" step="0.5" value="6" oninput="onSbSliderInput('bst')" onchange="onSbSliderChange('bst')">
+                        </div>
+                        
+                        <div class="control-group" style="margin-top: 12px;">
+                            <div class="control-label">
+                                <span>Low Threshold</span>
+                                <span id="lblSmartBassLth" style="color: #ff9100;">-10.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderSmartBassLth" class="smart-slider" min="-40" max="0" step="0.5" value="-10" oninput="onSbSliderInput('lth')" onchange="onSbSliderChange('lth')">
+                        </div>
+                        
+                        <div class="control-group" style="margin-top: 12px;">
+                            <div class="control-label">
+                                <span>High Threshold</span>
+                                <span id="lblSmartBassHth" style="color: #00e5ff;">0.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderSmartBassHth" class="smart-slider" min="-20" max="10" step="0.5" value="0" oninput="onSbSliderInput('hth')" onchange="onSbSliderChange('hth')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Output Clipper Card -->
+            <div class="section-card" style="margin-top: 20px;">
+                <div class="section-title">✂️ Output Clipper (Hard Limit)</div>
+                
+                <div class="clipper-content-layout">
+                    <!-- Left Column: Waveform clipping simulation -->
+                    <div class="clipper-canvas-container">
+                        <canvas id="clipperCanvas" width="260" height="150"></canvas>
+                    </div>
+                    
+                    <!-- Right Column: Controls -->
+                    <div class="clipper-controls-container">
+                        <div class="smart-header" style="margin-bottom: 12px;">
+                            <span class="smart-title" style="font-size: 15px; color: #ff1744; font-weight: 600;">Hardware Limit Settings</span>
+                            <label class="switch">
+                                <input type="checkbox" id="chkClipper" onchange="onClipStateChange()">
+                                <span class="slider-round" style="background-color: #555;"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Clipper Threshold</span>
+                                <span id="lblClipperThr" style="color: #ff1744; font-weight: 600;">0.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onClipSliderInput()" onchange="onClipSliderChange()">
+                        </div>
+                        
+                        <div style="margin-top: 15px; font-size: 12px; color: rgba(255, 255, 255, 0.4); line-height: 1.5;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Output Amplitude Limit:</span>
+                                <strong id="lblClipAmplitude" style="color: #fff;">100%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                                <span>TAS5825M Register Val:</span>
+                                <strong id="lblClipRegVal" style="color: #00e5ff;">0xFF (255)</strong>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Multi-band DRC Card -->
             <div class="section-card">
-                <div class="section-title">🛡️ Multi-Band DRC (Limiter)</div>
-                <div class="drc-grid">
-                    <!-- Low DRC Card -->
-                    <div class="smart-card">
-                        <div class="smart-header">
-                            <span class="smart-title">Low DRC (Bass)</span>
-                            <label class="switch">
-                                <input type="checkbox" id="chkDrcLow">
-                                <span class="slider-round"></span>
-                            </label>
-                        </div>
-                        <div class="smart-control-row">
-                            <span style="min-width: 60px;">Sens: <strong id="lblDrcLowSens">5</strong></span>
-                            <input type="range" id="sliderDrcLowSens" class="smart-slider" min="1" max="10" step="1" value="5">
-                        </div>
+                <div class="section-title">🛡️ Multi-Band DRC (Limiter / AGL)</div>
+                
+                <!-- Tab Selector -->
+                <div class="drc-tab-container">
+                    <button class="drc-tab-btn active" id="btnTabDrcLow" onclick="switchDrcTab('low')">Bass (Low)</button>
+                    <button class="drc-tab-btn" id="btnTabDrcMid" onclick="switchDrcTab('mid')">Vocal (Mid)</button>
+                    <button class="drc-tab-btn" id="btnTabDrcHigh" onclick="switchDrcTab('high')">Treble (High)</button>
+                </div>
+                
+                <div class="drc-content-layout">
+                    <!-- Left Column: Interactive Canvas -->
+                    <div class="drc-canvas-container">
+                        <canvas id="drcCanvas" width="260" height="260"></canvas>
                     </div>
-
-                    <!-- Mid DRC Card -->
-                    <div class="smart-card">
-                        <div class="smart-header">
-                            <span class="smart-title">Mid DRC (Vocal)</span>
+                    
+                    <!-- Right Column: Settings Controls -->
+                    <div class="drc-controls-container">
+                        <div class="smart-header" style="margin-bottom: 12px;">
+                            <span class="smart-title" id="drcBandTitle" style="font-size: 15px; color: #ff9100; font-weight: 600;">Bass DRC Settings</span>
                             <label class="switch">
-                                <input type="checkbox" id="chkDrcMid">
+                                <input type="checkbox" id="chkDrcActive" onchange="onDrcStateChange()">
                                 <span class="slider-round"></span>
                             </label>
                         </div>
-                        <div class="smart-control-row">
-                            <span style="min-width: 60px;">Sens: <strong id="lblDrcMidSens">5</strong></span>
-                            <input type="range" id="sliderDrcMidSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                        
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Threshold</span>
+                                <span id="lblDrcThreshold" style="color: #ff9100; font-weight: 600;">-12.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderDrcThreshold" class="smart-slider" min="-40" max="0" step="0.5" value="-12" oninput="onDrcSliderInput('thr')" onchange="onDrcSliderChange('thr')">
                         </div>
-                    </div>
-
-                    <!-- High DRC Card -->
-                    <div class="smart-card">
-                        <div class="smart-header">
-                            <span class="smart-title">High DRC (Treble)</span>
-                            <label class="switch">
-                                <input type="checkbox" id="chkDrcHigh">
-                                <span class="slider-round"></span>
-                            </label>
+                        
+                        <div class="control-group" style="margin-top: 12px;">
+                            <div class="control-label">
+                                <span>Attack Time</span>
+                                <span id="lblDrcAttack" style="color: #00e5ff;">10 ms</span>
+                            </div>
+                            <input type="range" id="sliderDrcAttack" class="smart-slider" min="1" max="100" step="1" value="10" oninput="onDrcSliderInput('att')" onchange="onDrcSliderChange('att')">
                         </div>
-                        <div class="smart-control-row">
-                            <span style="min-width: 60px;">Sens: <strong id="lblDrcHighSens">5</strong></span>
-                            <input type="range" id="sliderDrcHighSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                        
+                        <div class="control-group" style="margin-top: 12px;">
+                            <div class="control-label">
+                                <span>Release Time</span>
+                                <span id="lblDrcRelease" style="color: #00e5ff;">500 ms</span>
+                            </div>
+                            <input type="range" id="sliderDrcRelease" class="smart-slider" min="10" max="2000" step="10" value="500" oninput="onDrcSliderInput('rel')" onchange="onDrcSliderChange('rel')">
                         </div>
                     </div>
                 </div>
@@ -3325,145 +3533,29 @@
 
         // --- Smart Bass & DRC UI Sync ---
         function updateSmartBassDrcUI() {
-            const chkSmartBass = document.getElementById('chkSmartBass');
-            const sliderSmartBassStr = document.getElementById('sliderSmartBassStr');
-            const lblSmartBassStr = document.getElementById('lblSmartBassStr');
-
-            const chkDrcLow = document.getElementById('chkDrcLow');
-            const sliderDrcLowSens = document.getElementById('sliderDrcLowSens');
-            const lblDrcLowSens = document.getElementById('lblDrcLowSens');
-
-            const chkDrcMid = document.getElementById('chkDrcMid');
-            const sliderDrcMidSens = document.getElementById('sliderDrcMidSens');
-            const lblDrcMidSens = document.getElementById('lblDrcMidSens');
-
-            const chkDrcHigh = document.getElementById('chkDrcHigh');
-            const sliderDrcHighSens = document.getElementById('sliderDrcHighSens');
-            const lblDrcHighSens = document.getElementById('lblDrcHighSens');
-
-            const prof = profiles[activeProfileIndex];
+            // Sync Smart Bass cache to active profile
+            if (window.sbProfilesCache && window.sbProfilesCache[activeProfileIndex]) {
+                sbState = JSON.parse(JSON.stringify(window.sbProfilesCache[activeProfileIndex]));
+            }
+            // Sync Clipper cache to active profile
+            if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
+                clipperState = JSON.parse(JSON.stringify(window.clipProfilesCache[activeProfileIndex]));
+            }
+            // Sync DRC cache to active profile
+            if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
+                drcState = JSON.parse(JSON.stringify(window.drcProfilesCache[activeProfileIndex]));
+            }
             
-            if (chkSmartBass) chkSmartBass.checked = prof.smartBassEn === 1;
-            if (sliderSmartBassStr) {
-                sliderSmartBassStr.value = prof.smartBassStr !== undefined ? prof.smartBassStr : 5;
-                if (lblSmartBassStr) lblSmartBassStr.textContent = sliderSmartBassStr.value;
-            }
-
-            if (chkDrcLow) chkDrcLow.checked = prof.drcLowEn === 1;
-            if (sliderDrcLowSens) {
-                sliderDrcLowSens.value = prof.drcLowSens !== undefined ? prof.drcLowSens : 5;
-                if (lblDrcLowSens) lblDrcLowSens.textContent = sliderDrcLowSens.value;
-            }
-
-            if (chkDrcMid) chkDrcMid.checked = prof.drcMidEn === 1;
-            if (sliderDrcMidSens) {
-                sliderDrcMidSens.value = prof.drcMidSens !== undefined ? prof.drcMidSens : 5;
-                if (lblDrcMidSens) lblDrcMidSens.textContent = sliderDrcMidSens.value;
-            }
-
-            if (chkDrcHigh) chkDrcHigh.checked = prof.drcHighEn === 1;
-            if (sliderDrcHighSens) {
-                sliderDrcHighSens.value = prof.drcHighSens !== undefined ? prof.drcHighSens : 5;
-                if (lblDrcHighSens) lblDrcHighSens.textContent = sliderDrcHighSens.value;
-            }
+            syncSbUi();
+            syncClipUi();
+            syncDrcUi();
         }
 
         function initSmartSettingsListeners() {
-            const chkSmartBass = document.getElementById('chkSmartBass');
-            const sliderSmartBassStr = document.getElementById('sliderSmartBassStr');
-            const lblSmartBassStr = document.getElementById('lblSmartBassStr');
-
-            const chkDrcLow = document.getElementById('chkDrcLow');
-            const sliderDrcLowSens = document.getElementById('sliderDrcLowSens');
-            const lblDrcLowSens = document.getElementById('lblDrcLowSens');
-
-            const chkDrcMid = document.getElementById('chkDrcMid');
-            const sliderDrcMidSens = document.getElementById('sliderDrcMidSens');
-            const lblDrcMidSens = document.getElementById('lblDrcMidSens');
-
-            const chkDrcHigh = document.getElementById('chkDrcHigh');
-            const sliderDrcHighSens = document.getElementById('sliderDrcHighSens');
-            const lblDrcHighSens = document.getElementById('lblDrcHighSens');
-
-            const sendSmartBassSettings = () => {
-                const en = chkSmartBass.checked ? 1 : 0;
-                const str = parseInt(sliderSmartBassStr.value);
-                profiles[activeProfileIndex].smartBassEn = en;
-                profiles[activeProfileIndex].smartBassStr = str;
-                if (lblSmartBassStr) lblSmartBassStr.textContent = str;
-                
-                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
-                    window.eqWebSocket.send(`#EQ_SET_SMART_BASS$${activeProfileIndex},${en},${str}`);
-                }
-            };
-
-            const sendDrcLowSettings = () => {
-                const en = chkDrcLow.checked ? 1 : 0;
-                const sens = parseInt(sliderDrcLowSens.value);
-                profiles[activeProfileIndex].drcLowEn = en;
-                profiles[activeProfileIndex].drcLowSens = sens;
-                if (lblDrcLowSens) lblDrcLowSens.textContent = sens;
-
-                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
-                    window.eqWebSocket.send(`#EQ_SET_DRC_LOW$${activeProfileIndex},${en},${sens}`);
-                }
-            };
-
-            const sendDrcMidSettings = () => {
-                const en = chkDrcMid.checked ? 1 : 0;
-                const sens = parseInt(sliderDrcMidSens.value);
-                profiles[activeProfileIndex].drcMidEn = en;
-                profiles[activeProfileIndex].drcMidSens = sens;
-                if (lblDrcMidSens) lblDrcMidSens.textContent = sens;
-
-                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
-                    window.eqWebSocket.send(`#EQ_SET_DRC_MID$${activeProfileIndex},${en},${sens}`);
-                }
-            };
-
-            const sendDrcHighSettings = () => {
-                const en = chkDrcHigh.checked ? 1 : 0;
-                const sens = parseInt(sliderDrcHighSens.value);
-                profiles[activeProfileIndex].drcHighEn = en;
-                profiles[activeProfileIndex].drcHighSens = sens;
-                if (lblDrcHighSens) lblDrcHighSens.textContent = sens;
-
-                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
-                    window.eqWebSocket.send(`#EQ_SET_DRC_HIGH$${activeProfileIndex},${en},${sens}`);
-                }
-            };
-
-            if (chkSmartBass) chkSmartBass.addEventListener('change', sendSmartBassSettings);
-            if (sliderSmartBassStr) {
-                sliderSmartBassStr.addEventListener('input', () => {
-                    if (lblSmartBassStr) lblSmartBassStr.textContent = sliderSmartBassStr.value;
-                });
-                sliderSmartBassStr.addEventListener('change', sendSmartBassSettings);
-            }
-
-            if (chkDrcLow) chkDrcLow.addEventListener('change', sendDrcLowSettings);
-            if (sliderDrcLowSens) {
-                sliderDrcLowSens.addEventListener('input', () => {
-                    if (lblDrcLowSens) lblDrcLowSens.textContent = sliderDrcLowSens.value;
-                });
-                sliderDrcLowSens.addEventListener('change', sendDrcLowSettings);
-            }
-
-            if (chkDrcMid) chkDrcMid.addEventListener('change', sendDrcMidSettings);
-            if (sliderDrcMidSens) {
-                sliderDrcMidSens.addEventListener('input', () => {
-                    if (lblDrcMidSens) lblDrcMidSens.textContent = sliderDrcMidSens.value;
-                });
-                sliderDrcMidSens.addEventListener('change', sendDrcMidSettings);
-            }
-
-            if (chkDrcHigh) chkDrcHigh.addEventListener('change', sendDrcHighSettings);
-            if (sliderDrcHighSens) {
-                sliderDrcHighSens.addEventListener('input', () => {
-                    if (lblDrcHighSens) lblDrcHighSens.textContent = sliderDrcHighSens.value;
-                });
-                sliderDrcHighSens.addEventListener('change', sendDrcHighSettings);
-            }
+            // Init canvas events for professional DRC, Smart Bass and Clipper
+            initDrcCanvasEvents();
+            initSbCanvasEvents();
+            initClipCanvasEvents();
         }
 
         function buildTable() {
@@ -3811,22 +3903,58 @@
                 }
                 
                 if (event.data.startsWith('EQ_SMART_SETTINGS:')) {
-                    console.log('[EQ Sync] Received Multi-band Smart Bass & DRC settings');
-                    const dataStr = event.data.substring(18);
-                    const vals = dataStr.split(',').map(Number);
-                    if (vals.length === 24) {
-                        let idx = 0;
+                    const vals = data.substring(18).split(',');
+                    if (vals.length >= 54) {
                         for (let p = 0; p < 3; p++) {
-                            profiles[p].smartBassEn = vals[idx++];
-                            profiles[p].smartBassStr = vals[idx++];
-                            profiles[p].drcLowEn = vals[idx++];
-                            profiles[p].drcLowSens = vals[idx++];
-                            profiles[p].drcMidEn = vals[idx++];
-                            profiles[p].drcMidSens = vals[idx++];
-                            profiles[p].drcHighEn = vals[idx++];
-                            profiles[p].drcHighSens = vals[idx++];
+                            const offset = p * 18;
+                            const sb_en = parseInt(vals[offset + 0]);
+                            const sb_bst = parseFloat(vals[offset + 1]) / 10.0;
+                            const sb_lth = -parseFloat(vals[offset + 2]) / 10.0;
+                            const sb_hth = (parseFloat(vals[offset + 3]) / 10.0) - 50.0;
+                            
+                            const dl_en = parseInt(vals[offset + 4]);
+                            const dl_thr = -parseFloat(vals[offset + 5]);
+                            const dl_att = parseInt(vals[offset + 6]);
+                            const dl_rel = parseInt(vals[offset + 7]);
+                            
+                            const dm_en = parseInt(vals[offset + 8]);
+                            const dm_thr = -parseFloat(vals[offset + 9]);
+                            const dm_att = parseInt(vals[offset + 10]);
+                            const dm_rel = parseInt(vals[offset + 11]);
+                            
+                            const dh_en = parseInt(vals[offset + 12]);
+                            const dh_thr = -parseFloat(vals[offset + 13]);
+                            const dh_att = parseInt(vals[offset + 14]);
+                            const dh_rel = parseInt(vals[offset + 15]);
+
+                            const cp_en = parseInt(vals[offset + 16]);
+                            const cp_thr = -parseFloat(vals[offset + 17]) / 10.0;
+                            
+                            if (p === activeProfileIndex) {
+                                sbState = { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth };
+                                clipperState = { en: cp_en, thr: cp_thr };
+                                
+                                drcState.low = { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel };
+                                drcState.mid = { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel };
+                                drcState.high = { en: dh_en, thr: dh_thr, att: dh_att, rel: dh_rel };
+                            }
+                            
+                            if (!window.sbProfilesCache) window.sbProfilesCache = [];
+                            window.sbProfilesCache[p] = { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth };
+
+                            if (!window.clipProfilesCache) window.clipProfilesCache = [];
+                            window.clipProfilesCache[p] = { en: cp_en, thr: cp_thr };
+                            
+                            if (!window.drcProfilesCache) window.drcProfilesCache = [];
+                            window.drcProfilesCache[p] = {
+                                low: { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel },
+                                mid: { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel },
+                                high: { en: dh_en, thr: dh_thr, att: dh_att, rel: dh_rel }
+                            };
                         }
-                        updateSmartBassDrcUI();
+                        syncSbUi();
+                        syncClipUi();
+                        syncDrcUi();
                     }
                 }
             };
@@ -3846,7 +3974,916 @@
 
         // Khởi động đồng bộ hóa
         initEQSync();
-    </script>
+    
+    // --- Professional DRC Canvas & Controls State ---
+    let drcState = {
+        low: { en: 0, thr: -12.0, att: 10, rel: 500 },
+        mid: { en: 0, thr: -12.0, att: 10, rel: 500 },
+        high: { en: 0, thr: -12.0, att: 10, rel: 500 }
+    };
+    let activeDrcTab = 'low'; // 'low', 'mid', 'high'
+    let isDraggingDrc = false;
+
+    const drcBandColors = {
+        low: '#ff9100',
+        mid: '#00e5ff',
+        high: '#00e676'
+    };
+
+    function switchDrcTab(band) {
+        activeDrcTab = band;
+        
+        // Update tab buttons
+        document.querySelectorAll('.drc-tab-btn').forEach(btn => btn.classList.remove('active'));
+        if (band === 'low') document.getElementById('btnTabDrcLow').classList.add('active');
+        if (band === 'mid') document.getElementById('btnTabDrcMid').classList.add('active');
+        if (band === 'high') document.getElementById('btnTabDrcHigh').classList.add('active');
+        
+        // Update Band Title
+        const titleSpan = document.getElementById('drcBandTitle');
+        titleSpan.innerText = band.toUpperCase() + ' DRC Settings';
+        titleSpan.style.color = drcBandColors[band];
+        
+        // Sync values from cache
+        if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
+            drcState = JSON.parse(JSON.stringify(window.drcProfilesCache[activeProfileIndex]));
+        }
+        
+        syncDrcUi();
+    }
+
+    function syncDrcUi() {
+        const currentDrc = drcState[activeDrcTab];
+        
+        document.getElementById('chkDrcActive').checked = currentDrc.en === 1;
+        document.getElementById('sliderDrcThreshold').value = currentDrc.thr;
+        document.getElementById('lblDrcThreshold').innerText = currentDrc.thr.toFixed(1) + ' dB';
+        
+        document.getElementById('sliderDrcAttack').value = currentDrc.att;
+        document.getElementById('lblDrcAttack').innerText = currentDrc.att + ' ms';
+        
+        document.getElementById('sliderDrcRelease').value = currentDrc.rel;
+        document.getElementById('lblDrcRelease').innerText = currentDrc.rel + ' ms';
+        
+        // Redraw Canvas
+        drawDrcCurve();
+    }
+
+    function drawDrcCurve() {
+        const canvas = document.getElementById('drcCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        
+        ctx.clearRect(0, 0, w, h);
+        
+        const padding = 35;
+        const graphW = w - padding - 15;
+        const graphH = h - padding - 15;
+        const startX = padding;
+        const startY = 15;
+        
+        // Background
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(startX, startY, graphW, graphH);
+        
+        // Draw grid lines every 10dB (from -80dB to 0dB)
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        ctx.font = '9px sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.textAlign = 'center';
+        
+        for (let db = -80; db <= 0; db += 10) {
+            const pct = (db + 80) / 80;
+            const x = startX + pct * graphW;
+            ctx.beginPath();
+            ctx.moveTo(x, startY);
+            ctx.lineTo(x, startY + graphH);
+            ctx.stroke();
+            
+            if (db % 20 === 0) {
+                ctx.fillText(db, x, startY + graphH + 12);
+            }
+            
+            const y = startY + (1 - pct) * graphH;
+            ctx.beginPath();
+            ctx.moveTo(startX, y);
+            ctx.lineTo(startX + graphW, y);
+            ctx.stroke();
+            
+            if (db % 20 === 0) {
+                ctx.save();
+                ctx.textAlign = 'right';
+                ctx.fillText(db, startX - 6, y + 3);
+                ctx.restore();
+            }
+        }
+        
+        // Label Axis
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.font = '10px sans-serif';
+        ctx.fillText('Input (dB)', startX + graphW / 2, startY + graphH + 25);
+        
+        ctx.save();
+        ctx.translate(10, startY + graphH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.textAlign = 'center';
+        ctx.fillText('Output (dB)', 0, 0);
+        ctx.restore();
+        
+        // 1:1 Reference Diagonal Line
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(startX, startY + graphH);
+        ctx.lineTo(startX + graphW, startY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        // Current tab info
+        const currentDrc = drcState[activeDrcTab];
+        const isEnabled = currentDrc.en === 1;
+        const threshPct = (currentDrc.thr + 80) / 80;
+        const threshX = startX + threshPct * graphW;
+        const threshY = startY + (1 - threshPct) * graphH;
+        
+        // Main DRC Curve
+        const activeColor = drcBandColors[activeDrcTab];
+        ctx.strokeStyle = isEnabled ? activeColor : 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 2.5;
+        if (isEnabled) {
+            ctx.shadowColor = activeColor;
+            ctx.shadowBlur = 6;
+        }
+        
+        ctx.beginPath();
+        ctx.moveTo(startX, startY + graphH);
+        ctx.lineTo(threshX, threshY);
+        ctx.lineTo(startX + graphW, threshY); // Limiter (flat)
+        ctx.stroke();
+        ctx.shadowBlur = 0; // reset
+        
+        // Handle Point
+        ctx.fillStyle = isEnabled ? '#fff' : '#555';
+        ctx.beginPath();
+        ctx.arc(threshX, threshY, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = activeColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    function initDrcCanvasEvents() {
+        const canvas = document.getElementById('drcCanvas');
+        if (!canvas) return;
+        
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+        
+        function handleMove(pos) {
+            const padding = 35;
+            const graphW = canvas.width - padding - 15;
+            const startX = padding;
+            
+            let pct = (pos.x - startX) / graphW;
+            if (pct < 0) pct = 0;
+            if (pct > 1) pct = 1;
+            
+            let db = -80 + pct * 80;
+            if (db < -40) db = -40;
+            if (db > 0) db = 0;
+            
+            db = Math.round(db * 2) / 2; // Step 0.5dB
+            
+            drcState[activeDrcTab].thr = db;
+            document.getElementById('sliderDrcThreshold').value = db;
+            document.getElementById('lblDrcThreshold').innerText = db.toFixed(1) + ' dB';
+            
+            // Sync cache
+            if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
+                window.drcProfilesCache[activeProfileIndex][activeDrcTab].thr = db;
+            }
+            
+            drawDrcCurve();
+        }
+        
+        canvas.addEventListener('mousedown', function(evt) {
+            const pos = getMousePos(evt);
+            const padding = 35;
+            const graphW = canvas.width - padding - 15;
+            const graphH = canvas.height - padding - 15;
+            const startX = padding;
+            const startY = 15;
+            
+            const threshPct = (drcState[activeDrcTab].thr + 80) / 80;
+            const threshX = startX + threshPct * graphW;
+            const threshY = startY + (1 - threshPct) * graphH;
+            
+            const dist = Math.sqrt((pos.x - threshX)**2 + (pos.y - threshY)**2);
+            if (dist < 15) {
+                isDraggingDrc = true;
+            }
+        });
+        
+        window.addEventListener('mousemove', function(evt) {
+            if (!isDraggingDrc) return;
+            const pos = getMousePos(evt);
+            handleMove(pos);
+        });
+        
+        window.addEventListener('mouseup', function() {
+            if (isDraggingDrc) {
+                isDraggingDrc = false;
+                sendDrcSettings(activeDrcTab);
+            }
+        });
+        
+        // Touch support
+        canvas.addEventListener('touchstart', function(evt) {
+            const touch = evt.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+        
+        canvas.addEventListener('touchmove', function(evt) {
+            if (!isDraggingDrc) return;
+            const touch = evt.touches[0];
+            const pos = getMousePos(touch);
+            handleMove(pos);
+            evt.preventDefault();
+        }, { passive: false });
+        
+        canvas.addEventListener('touchend', function() {
+            const mouseEvent = new MouseEvent('mouseup', {});
+            window.dispatchEvent(mouseEvent);
+        });
+    }
+
+    function onDrcStateChange() {
+        const en = document.getElementById('chkDrcActive').checked ? 1 : 0;
+        drcState[activeDrcTab].en = en;
+        
+        if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
+            window.drcProfilesCache[activeProfileIndex][activeDrcTab].en = en;
+        }
+        
+        drawDrcCurve();
+        sendDrcSettings(activeDrcTab);
+    }
+
+    function onDrcSliderInput(param) {
+        const val = parseFloat(document.getElementById('sliderDrc' + (param === 'thr' ? 'Threshold' : param === 'att' ? 'Attack' : 'Release')).value);
+        
+        if (param === 'thr') {
+            drcState[activeDrcTab].thr = val;
+            document.getElementById('lblDrcThreshold').innerText = val.toFixed(1) + ' dB';
+            drawDrcCurve();
+        } else if (param === 'att') {
+            drcState[activeDrcTab].att = parseInt(val);
+            document.getElementById('lblDrcAttack').innerText = parseInt(val) + ' ms';
+        } else if (param === 'rel') {
+            drcState[activeDrcTab].rel = parseInt(val);
+            document.getElementById('lblDrcRelease').innerText = parseInt(val) + ' ms';
+        }
+        
+        // Sync cache
+        if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
+            window.drcProfilesCache[activeProfileIndex][activeDrcTab][param] = val;
+        }
+    }
+
+    function onDrcSliderChange(param) {
+        sendDrcSettings(activeDrcTab);
+    }
+
+    function sendDrcSettings(band) {
+        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
+        const currentDrc = drcState[band];
+        const cmdName = '#EQ_SET_DRC_' + band.toUpperCase() + '$';
+        window.eqWebSocket.send(`${cmdName}${activeProfileIndex},${currentDrc.en},${currentDrc.thr},${currentDrc.att},${currentDrc.rel}`);
+        console.log(`Sent DRC [${band}]:`, currentDrc);
+    }
+
+
+    // --- Professional Smart Bass Canvas & Controls State ---
+    let sbState = { en: 0, bst: 6.0, lth: -10.0, hth: 0.0 };
+    let isDraggingSb = null; // 'lth', 'hth', 'bst' (drag Low Threshold, High Threshold or both)
+
+    function syncSbUi() {
+        document.getElementById('chkSmartBass').checked = sbState.en === 1;
+        
+        document.getElementById('sliderSmartBassBst').value = sbState.bst;
+        document.getElementById('lblSmartBassBst').innerText = sbState.bst.toFixed(1) + ' dB';
+        
+        document.getElementById('sliderSmartBassLth').value = sbState.lth;
+        document.getElementById('lblSmartBassLth').innerText = sbState.lth.toFixed(1) + ' dB';
+        
+        document.getElementById('sliderSmartBassHth').value = sbState.hth;
+        document.getElementById('lblSmartBassHth').innerText = sbState.hth.toFixed(1) + ' dB';
+        
+        // Redraw Canvas
+        drawSbCurve();
+    }
+
+    function drawSbCurve() {
+        const canvas = document.getElementById('sbCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        
+        ctx.clearRect(0, 0, w, h);
+        
+        const padding = 35;
+        const graphW = w - padding - 15;
+        const graphH = h - padding - 15;
+        const startX = padding;
+        const startY = 15;
+        
+        // Background
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(startX, startY, graphW, graphH);
+        
+        // Draw grid lines X (Input Level: -60dB to 0dB)
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        ctx.font = '9px sans-serif';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.textAlign = 'center';
+        
+        for (let db = -60; db <= 0; db += 10) {
+            const pct = (db + 60) / 60;
+            const x = startX + pct * graphW;
+            ctx.beginPath();
+            ctx.moveTo(x, startY);
+            ctx.lineTo(x, startY + graphH);
+            ctx.stroke();
+            ctx.fillText(db, x, startY + graphH + 12);
+        }
+        
+        // Draw grid lines Y (Bass Boost: 0dB to +12dB)
+        ctx.textAlign = 'right';
+        for (let db = 0; db <= 12; db += 2) {
+            const pct = db / 12;
+            const y = startY + (1 - pct) * graphH;
+            ctx.beginPath();
+            ctx.moveTo(startX, y);
+            ctx.lineTo(startX + graphW, y);
+            ctx.stroke();
+            ctx.fillText('+' + db, startX - 6, y + 3);
+        }
+        
+        // Label Axis
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Input Level (dB)', startX + graphW / 2, startY + graphH + 25);
+        
+        ctx.save();
+        ctx.translate(10, startY + graphH / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Bass Boost (dB)', 0, 0);
+        ctx.restore();
+        
+        // Smart Bass Curve
+        const isEnabled = sbState.en === 1;
+        
+        // Map values to coordinates
+        const lthPct = (sbState.lth + 60) / 60;
+        const hthPct = (sbState.hth + 60) / 60;
+        const bstPct = sbState.bst / 12;
+        
+        const lthX = startX + lthPct * graphW;
+        const lthY = startY + (1 - bstPct) * graphH;
+        
+        const hthX = startX + hthPct * graphW;
+        const hthY = startY + graphH;
+        
+        ctx.strokeStyle = isEnabled ? '#00e676' : 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 2.5;
+        if (isEnabled) {
+            ctx.shadowColor = '#00e676';
+            ctx.shadowBlur = 6;
+        }
+        
+        ctx.beginPath();
+        ctx.moveTo(startX, lthY); // Constant Max Boost at very low level
+        ctx.lineTo(lthX, lthY); // Constant to Low Threshold
+        ctx.lineTo(hthX, hthY); // Slanted down to High Threshold (0dB)
+        ctx.lineTo(startX + graphW, hthY); // Zero boost above High Threshold
+        ctx.stroke();
+        ctx.shadowBlur = 0; // reset
+        
+        // Handle Point 1: Low Threshold & Max Boost
+        ctx.fillStyle = isEnabled ? '#fff' : '#555';
+        ctx.beginPath();
+        ctx.arc(lthX, lthY, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#ff9100';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Handle Point 2: High Threshold
+        ctx.beginPath();
+        ctx.arc(hthX, hthY, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#00e5ff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    function initSbCanvasEvents() {
+        const canvas = document.getElementById('sbCanvas');
+        if (!canvas) return;
+        
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+        
+        function handleMove(pos) {
+            const padding = 35;
+            const graphW = canvas.width - padding - 15;
+            const graphH = canvas.height - padding - 15;
+            const startX = padding;
+            const startY = 15;
+            
+            // X coordinate mapping (input db from -60 to 0)
+            let xPct = (pos.x - startX) / graphW;
+            xPct = Math.max(0, Math.min(1, xPct));
+            let dbX = -60 + xPct * 60;
+            dbX = Math.round(dbX * 2) / 2; // Step 0.5dB
+            
+            // Y coordinate mapping (boost db from 0 to 12)
+            let yPct = (graphH - (pos.y - startY)) / graphH;
+            yPct = Math.max(0, Math.min(1, yPct));
+            let dbY = yPct * 12;
+            dbY = Math.round(dbY * 2) / 2; // Step 0.5dB
+            
+            if (isDraggingSb === 'lth') {
+                // Drag Low Threshold and Boost Gain
+                sbState.lth = dbX;
+                sbState.bst = dbY;
+                
+                // Low Threshold must be less than High Threshold
+                if (sbState.lth > sbState.hth - 2) sbState.lth = sbState.hth - 2;
+                
+                document.getElementById('sliderSmartBassLth').value = sbState.lth;
+                document.getElementById('lblSmartBassLth').innerText = sbState.lth.toFixed(1) + ' dB';
+                document.getElementById('sliderSmartBassBst').value = sbState.bst;
+                document.getElementById('lblSmartBassBst').innerText = sbState.bst.toFixed(1) + ' dB';
+            } else if (isDraggingSb === 'hth') {
+                // Drag High Threshold
+                sbState.hth = dbX;
+                
+                // High Threshold must be greater than Low Threshold
+                if (sbState.hth < sbState.lth + 2) sbState.hth = sbState.lth + 2;
+                
+                document.getElementById('sliderSmartBassHth').value = sbState.hth;
+                document.getElementById('lblSmartBassHth').innerText = sbState.hth.toFixed(1) + ' dB';
+            }
+            
+            // Sync cache
+            if (window.sbProfilesCache && window.sbProfilesCache[activeProfileIndex]) {
+                window.sbProfilesCache[activeProfileIndex].bst = sbState.bst;
+                window.sbProfilesCache[activeProfileIndex].lth = sbState.lth;
+                window.sbProfilesCache[activeProfileIndex].hth = sbState.hth;
+            }
+            
+            drawSbCurve();
+        }
+        
+        canvas.addEventListener('mousedown', function(evt) {
+            const pos = getMousePos(evt);
+            const padding = 35;
+            const graphW = canvas.width - padding - 15;
+            const graphH = canvas.height - padding - 15;
+            const startX = padding;
+            const startY = 15;
+            
+            // Map current points
+            const lthPct = (sbState.lth + 60) / 60;
+            const hthPct = (sbState.hth + 60) / 60;
+            const bstPct = sbState.bst / 12;
+            
+            const lthX = startX + lthPct * graphW;
+            const lthY = startY + (1 - bstPct) * graphH;
+            
+            const hthX = startX + hthPct * graphW;
+            const hthY = startY + graphH;
+            
+            // Distance check
+            const distLth = Math.sqrt((pos.x - lthX)**2 + (pos.y - lthY)**2);
+            const distHth = Math.sqrt((pos.x - hthX)**2 + (pos.y - hthY)**2);
+            
+            if (distLth < 15) {
+                isDraggingSb = 'lth';
+            } else if (distHth < 15) {
+                isDraggingSb = 'hth';
+            }
+        });
+        
+        window.addEventListener('mousemove', function(evt) {
+            if (!isDraggingSb) return;
+            const pos = getMousePos(evt);
+            handleMove(pos);
+        });
+        
+        window.addEventListener('mouseup', function() {
+            if (isDraggingSb) {
+                isDraggingSb = null;
+                sendSmartBassSettings();
+            }
+        });
+        
+            // Touch support
+        canvas.addEventListener('touchstart', function(evt) {
+            const touch = evt.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+        
+        canvas.addEventListener('touchmove', function(evt) {
+            if (!isDraggingSb) return;
+            const touch = evt.touches[0];
+            const pos = getMousePos(touch);
+            handleMove(pos);
+            evt.preventDefault();
+        }, { passive: false });
+        
+        canvas.addEventListener('touchend', function() {
+            const mouseEvent = new MouseEvent('mouseup', {});
+            window.dispatchEvent(mouseEvent);
+        });
+    }
+
+    function onSbStateChange() {
+        const en = document.getElementById('chkSmartBass').checked ? 1 : 0;
+        sbState.en = en;
+        
+        if (window.sbProfilesCache && window.sbProfilesCache[activeProfileIndex]) {
+            window.sbProfilesCache[activeProfileIndex].en = en;
+        }
+        
+        drawSbCurve();
+        sendSmartBassSettings();
+    }
+
+    function onSbSliderInput(param) {
+        const val = parseFloat(document.getElementById('sliderSmartBass' + (param === 'bst' ? 'Bst' : param === 'lth' ? 'Lth' : 'Hth')).value);
+        
+        if (param === 'bst') {
+            sbState.bst = val;
+            document.getElementById('lblSmartBassBst').innerText = val.toFixed(1) + ' dB';
+        } else if (param === 'lth') {
+            sbState.lth = val;
+            // Low Threshold must be less than High Threshold
+            if (sbState.lth > sbState.hth - 2) {
+                sbState.lth = sbState.hth - 2;
+                document.getElementById('sliderSmartBassLth').value = sbState.lth;
+            }
+            document.getElementById('lblSmartBassLth').innerText = sbState.lth.toFixed(1) + ' dB';
+        } else if (param === 'hth') {
+            sbState.hth = val;
+            // High Threshold must be greater than Low Threshold
+            if (sbState.hth < sbState.lth + 2) {
+                sbState.hth = sbState.lth + 2;
+                document.getElementById('sliderSmartBassHth').value = sbState.hth;
+            }
+            document.getElementById('lblSmartBassHth').innerText = sbState.hth.toFixed(1) + ' dB';
+        }
+        
+        if (window.sbProfilesCache && window.sbProfilesCache[activeProfileIndex]) {
+            window.sbProfilesCache[activeProfileIndex][param] = sbState[param];
+        }
+        
+        drawSbCurve();
+    }
+
+    function onSbSliderChange(param) {
+        sendSmartBassSettings();
+    }
+
+    function sendSmartBassSettings() {
+        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
+        window.eqWebSocket.send(`#EQ_SET_SMART_BASS$${activeProfileIndex},${sbState.en},${sbState.bst},${sbState.lth},${sbState.hth}`);
+        console.log("Sent Smart Bass Settings:", sbState);
+    }
+
+
+    // --- Professional Output Clipper Canvas & Controls State ---
+    let clipperState = { en: 0, thr: 0.0 };
+    let isDraggingClipper = false;
+
+    function syncClipUi() {
+        document.getElementById('chkClipper').checked = clipperState.en === 1;
+        document.getElementById('sliderClipperThr').value = clipperState.thr;
+        document.getElementById('lblClipperThr').innerText = clipperState.thr.toFixed(1) + ' dB';
+        
+        // Cập nhật thông số phụ
+        const factor = Math.pow(10, clipperState.thr / 20);
+        document.getElementById('lblClipAmplitude').innerText = Math.round(factor * 100) + ' %';
+        
+        const regVal = Math.round(255 * factor);
+        const hexVal = '0x' + regVal.toString(16).toUpperCase().padStart(2, '0');
+        document.getElementById('lblClipRegVal').innerText = hexVal + ' (' + regVal + ')';
+        
+        // Redraw Canvas
+        drawClipperCurve();
+    }
+
+    function drawClipperCurve() {
+        const canvas = document.getElementById('clipperCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+        
+        ctx.clearRect(0, 0, w, h);
+        
+        // Background
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillRect(0, 0, w, h);
+        
+        // Lưới dB Y (từ +3dB xuống -12dB)
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.lineWidth = 1;
+        for (let db = -12; db <= 3; db += 3) {
+            // map db to Y: 0dB ở Y=h/2, +3dB ở Y=10%, -12dB ở Y=90%
+            const y = h/2 - (db / 12) * (h * 0.4);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.stroke();
+        }
+        
+        const isEnabled = clipperState.en === 1;
+        const factor = Math.pow(10, clipperState.thr / 20);
+        const limitY = h/2 - (clipperState.thr / 12) * (h * 0.4);
+        
+        // 1. Vẽ đường giới hạn Clipper (nét đứt màu đỏ nếu bật, màu xám nếu tắt)
+        ctx.strokeStyle = isEnabled ? 'rgba(255, 23, 68, 0.7)' : 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 4]);
+        
+        // Ngưỡng trên
+        const topClipY = h/2 - (factor * (h * 0.35));
+        ctx.beginPath();
+        ctx.moveTo(0, topClipY);
+        ctx.lineTo(w, topClipY);
+        ctx.stroke();
+        
+        // Ngưỡng dưới
+        const bottomClipY = h/2 + (factor * (h * 0.35));
+        ctx.beginPath();
+        ctx.moveTo(0, bottomClipY);
+        ctx.lineTo(w, bottomClipY);
+        ctx.stroke();
+        
+        ctx.setLineDash([]); // reset
+        
+        // 2. Vẽ sóng sin mô phỏng
+        // Sóng sin gốc có biên độ lớn hơn ngưỡng Clipper để thấy phần bị xén
+        const waveAmp = h * 0.42; // Biên độ sóng sin ban đầu (mô phỏng tín hiệu quá mức)
+        
+        ctx.lineWidth = 2.5;
+        
+        // Vẽ phần sóng sin không bị xén (hoặc bị xén)
+        ctx.beginPath();
+        for (let x = 0; x < w; x++) {
+            const rad = (x / w) * Math.PI * 2;
+            const originalY = h/2 + Math.sin(rad) * waveAmp;
+            
+            let drawY = originalY;
+            if (isEnabled) {
+                if (originalY < topClipY) drawY = topClipY;
+                else if (originalY > bottomClipY) drawY = bottomClipY;
+            }
+            
+            if (x === 0) ctx.moveTo(x, drawY);
+            else ctx.lineTo(x, drawY);
+        }
+        
+        ctx.strokeStyle = '#00e5ff'; // Xanh cyan của tín hiệu an toàn
+        if (isEnabled) {
+            ctx.shadowColor = '#00e5ff';
+            ctx.shadowBlur = 4;
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0; // reset
+        
+        // 3. Vẽ phần đỉnh sóng bị xén (Màu đỏ neon cảnh báo)
+        if (isEnabled && waveAmp > (h/2 - topClipY)) {
+            ctx.strokeStyle = '#ff1744';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#ff1744';
+            ctx.shadowBlur = 6;
+            
+            // Vẽ đỉnh trên bị xén
+            ctx.beginPath();
+            let drawing = false;
+            for (let x = 0; x < w; x++) {
+                const rad = (x / w) * Math.PI * 2;
+                const originalY = h/2 + Math.sin(rad) * waveAmp;
+                if (originalY <= topClipY) {
+                    if (!drawing) {
+                        ctx.moveTo(x, topClipY);
+                        drawing = true;
+                    } else {
+                        ctx.lineTo(x, topClipY);
+                    }
+                } else {
+                    drawing = false;
+                }
+            }
+            ctx.stroke();
+            
+            // Vẽ đỉnh dưới bị xén
+            ctx.beginPath();
+            drawing = false;
+            for (let x = 0; x < w; x++) {
+                const rad = (x / w) * Math.PI * 2;
+                const originalY = h/2 + Math.sin(rad) * waveAmp;
+                if (originalY >= bottomClipY) {
+                    if (!drawing) {
+                        ctx.moveTo(x, bottomClipY);
+                        drawing = true;
+                    } else {
+                        ctx.lineTo(x, bottomClipY);
+                    }
+                } else {
+                    drawing = false;
+                }
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+        
+        // Nhãn Threshold kéo thả
+        ctx.fillStyle = isEnabled ? '#ff1744' : 'rgba(255, 255, 255, 0.4)';
+        ctx.font = '10px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('Limit Threshold: ' + clipperState.thr.toFixed(1) + ' dB', w - 10, topClipY - 5);
+        
+        // Vẽ nút kéo trượt ở ngưỡng trên (màu đỏ)
+        ctx.fillStyle = isEnabled ? '#fff' : '#555';
+        ctx.beginPath();
+        ctx.arc(w / 2, topClipY, 5, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = '#ff1744';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    function initClipCanvasEvents() {
+        const canvas = document.getElementById('clipperCanvas');
+        if (!canvas) return;
+        
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+        
+        function handleMove(pos) {
+            const h = canvas.height;
+            // map Y coordinate to DB factor: topClipY = h/2 - factor * h * 0.35
+            // factor = (h/2 - pos.y) / (h * 0.35)
+            let factor = (h/2 - pos.y) / (h * 0.35);
+            factor = Math.max(Math.pow(10, -10/20), Math.min(1.0, factor)); // giới hạn -10dB đến 0dB
+            
+            let db = 20 * Math.log10(factor);
+            db = Math.round(db * 10) / 10; // làm tròn 0.1dB
+            
+            clipperState.thr = db;
+            
+            document.getElementById('sliderClipperThr').value = clipperState.thr;
+            document.getElementById('lblClipperThr').innerText = clipperState.thr.toFixed(1) + ' dB';
+            
+            const ampFactor = Math.pow(10, clipperState.thr / 20);
+            document.getElementById('lblClipAmplitude').innerText = Math.round(ampFactor * 100) + ' %';
+            
+            const regVal = Math.round(255 * ampFactor);
+            const hexVal = '0x' + regVal.toString(16).toUpperCase().padStart(2, '0');
+            document.getElementById('lblClipRegVal').innerText = hexVal + ' (' + regVal + ')';
+            
+            if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
+                window.clipProfilesCache[activeProfileIndex].thr = clipperState.thr;
+            }
+            
+            drawClipperCurve();
+        }
+        
+        canvas.addEventListener('mousedown', function(evt) {
+            const pos = getMousePos(evt);
+            const h = canvas.height;
+            const factor = Math.pow(10, clipperState.thr / 20);
+            const topClipY = h/2 - (factor * (h * 0.35));
+            
+            // Kiểm tra khoảng cách chuột đến điểm kéo Y
+            const distY = Math.abs(pos.y - topClipY);
+            if (distY < 15) {
+                isDraggingClipper = true;
+            }
+        });
+        
+        window.addEventListener('mousemove', function(evt) {
+            if (!isDraggingClipper) return;
+            const pos = getMousePos(evt);
+            handleMove(pos);
+        });
+        
+        window.addEventListener('mouseup', function() {
+            if (isDraggingClipper) {
+                isDraggingClipper = false;
+                sendClipperSettings();
+            }
+        });
+        
+        // Touch support
+        canvas.addEventListener('touchstart', function(evt) {
+            const touch = evt.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+        
+        canvas.addEventListener('touchmove', function(evt) {
+            if (!isDraggingClipper) return;
+            const touch = evt.touches[0];
+            const pos = getMousePos(touch);
+            handleMove(pos);
+            evt.preventDefault();
+        }, { passive: false });
+        
+        canvas.addEventListener('touchend', function() {
+            const mouseEvent = new MouseEvent('mouseup', {});
+            window.dispatchEvent(mouseEvent);
+        });
+    }
+
+    function onClipStateChange() {
+        const en = document.getElementById('chkClipper').checked ? 1 : 0;
+        clipperState.en = en;
+        
+        if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
+            window.clipProfilesCache[activeProfileIndex].en = en;
+        }
+        
+        drawClipperCurve();
+        sendClipperSettings();
+    }
+
+    function onClipSliderInput() {
+        const val = parseFloat(document.getElementById('sliderClipperThr').value);
+        clipperState.thr = val;
+        
+        const factor = Math.pow(10, clipperState.thr / 20);
+        document.getElementById('lblClipperThr').innerText = clipperState.thr.toFixed(1) + ' dB';
+        document.getElementById('lblClipAmplitude').innerText = Math.round(factor * 100) + ' %';
+        
+        const regVal = Math.round(255 * factor);
+        const hexVal = '0x' + regVal.toString(16).toUpperCase().padStart(2, '0');
+        document.getElementById('lblClipRegVal').innerText = hexVal + ' (' + regVal + ')';
+        
+        if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
+            window.clipProfilesCache[activeProfileIndex].thr = clipperState.thr;
+        }
+        
+        drawClipperCurve();
+    }
+
+    function onClipSliderChange() {
+        sendClipperSettings();
+    }
+
+    function sendClipperSettings() {
+        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
+        window.eqWebSocket.send(`#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${clipperState.thr}`);
+        console.log("Sent Clipper Settings:", clipperState);
+    }
+
+</script>
 </body>
 
 </html>
