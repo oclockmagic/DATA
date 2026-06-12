@@ -515,18 +515,48 @@
                 </div>
             </div>
 
-            <!-- DRC Limiter Card -->
+            <!-- Low DRC Card -->
             <div class="smart-card">
                 <div class="smart-header">
-                    <span class="smart-title">🛡️ Safe-Volume Limiter (DRC)</span>
+                    <span class="smart-title">🛡️ Low DRC (Bass Limiter)</span>
                     <label class="switch">
-                        <input type="checkbox" id="chkDrc">
+                        <input type="checkbox" id="chkDrcLow">
                         <span class="slider-round"></span>
                     </label>
                 </div>
                 <div class="smart-control-row">
-                    <span style="min-width: 75px;">Sensitivity: <strong id="lblDrcSens">5</strong></span>
-                    <input type="range" id="sliderDrcSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                    <span style="min-width: 75px;">Sens: <strong id="lblDrcLowSens">5</strong></span>
+                    <input type="range" id="sliderDrcLowSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                </div>
+            </div>
+
+            <!-- Mid DRC Card -->
+            <div class="smart-card">
+                <div class="smart-header">
+                    <span class="smart-title">🗣️ Mid DRC (Vocal Limiter)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="chkDrcMid">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+                <div class="smart-control-row">
+                    <span style="min-width: 75px;">Sens: <strong id="lblDrcMidSens">5</strong></span>
+                    <input type="range" id="sliderDrcMidSens" class="smart-slider" min="1" max="10" step="1" value="5">
+                </div>
+            </div>
+
+            <!-- High DRC Card -->
+            <div class="smart-card">
+                <div class="smart-header">
+                    <span class="smart-title">⚡ High DRC (Treble Limiter)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="chkDrcHigh">
+                        <span class="slider-round"></span>
+                    </label>
+                </div>
+                <div class="smart-control-row">
+                    <span style="min-width: 75px;">Sens: <strong id="lblDrcHighSens">5</strong></span>
+                    <input type="range" id="sliderDrcHighSens" class="smart-slider" min="1" max="10" step="1" value="5">
                 </div>
             </div>
         </div>
@@ -2618,24 +2648,36 @@
                 name: "Profile 1",
                 smartBassEn: 0,
                 smartBassStr: 5,
-                drcEn: 0,
-                drcSens: 5,
+                drcLowEn: 0,
+                drcLowSens: 5,
+                drcMidEn: 0,
+                drcMidSens: 5,
+                drcHighEn: 0,
+                drcHighSens: 5,
                 bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
             },
             {
                 name: "Profile 2",
                 smartBassEn: 0,
                 smartBassStr: 5,
-                drcEn: 0,
-                drcSens: 5,
+                drcLowEn: 0,
+                drcLowSens: 5,
+                drcMidEn: 0,
+                drcMidSens: 5,
+                drcHighEn: 0,
+                drcHighSens: 5,
                 bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
             },
             {
                 name: "Profile 3",
                 smartBassEn: 0,
                 smartBassStr: 5,
-                drcEn: 0,
-                drcSens: 5,
+                drcLowEn: 0,
+                drcLowSens: 5,
+                drcMidEn: 0,
+                drcMidSens: 5,
+                drcHighEn: 0,
+                drcHighSens: 5,
                 bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
             }
         ];
@@ -3217,9 +3259,17 @@
             const sliderSmartBassStr = document.getElementById('sliderSmartBassStr');
             const lblSmartBassStr = document.getElementById('lblSmartBassStr');
 
-            const chkDrc = document.getElementById('chkDrc');
-            const sliderDrcSens = document.getElementById('sliderDrcSens');
-            const lblDrcSens = document.getElementById('lblDrcSens');
+            const chkDrcLow = document.getElementById('chkDrcLow');
+            const sliderDrcLowSens = document.getElementById('sliderDrcLowSens');
+            const lblDrcLowSens = document.getElementById('lblDrcLowSens');
+
+            const chkDrcMid = document.getElementById('chkDrcMid');
+            const sliderDrcMidSens = document.getElementById('sliderDrcMidSens');
+            const lblDrcMidSens = document.getElementById('lblDrcMidSens');
+
+            const chkDrcHigh = document.getElementById('chkDrcHigh');
+            const sliderDrcHighSens = document.getElementById('sliderDrcHighSens');
+            const lblDrcHighSens = document.getElementById('lblDrcHighSens');
 
             const prof = profiles[activeProfileIndex];
             
@@ -3229,10 +3279,22 @@
                 if (lblSmartBassStr) lblSmartBassStr.textContent = sliderSmartBassStr.value;
             }
 
-            if (chkDrc) chkDrc.checked = prof.drcEn === 1;
-            if (sliderDrcSens) {
-                sliderDrcSens.value = prof.drcSens !== undefined ? prof.drcSens : 5;
-                if (lblDrcSens) lblDrcSens.textContent = sliderDrcSens.value;
+            if (chkDrcLow) chkDrcLow.checked = prof.drcLowEn === 1;
+            if (sliderDrcLowSens) {
+                sliderDrcLowSens.value = prof.drcLowSens !== undefined ? prof.drcLowSens : 5;
+                if (lblDrcLowSens) lblDrcLowSens.textContent = sliderDrcLowSens.value;
+            }
+
+            if (chkDrcMid) chkDrcMid.checked = prof.drcMidEn === 1;
+            if (sliderDrcMidSens) {
+                sliderDrcMidSens.value = prof.drcMidSens !== undefined ? prof.drcMidSens : 5;
+                if (lblDrcMidSens) lblDrcMidSens.textContent = sliderDrcMidSens.value;
+            }
+
+            if (chkDrcHigh) chkDrcHigh.checked = prof.drcHighEn === 1;
+            if (sliderDrcHighSens) {
+                sliderDrcHighSens.value = prof.drcHighSens !== undefined ? prof.drcHighSens : 5;
+                if (lblDrcHighSens) lblDrcHighSens.textContent = sliderDrcHighSens.value;
             }
         }
 
@@ -3241,9 +3303,17 @@
             const sliderSmartBassStr = document.getElementById('sliderSmartBassStr');
             const lblSmartBassStr = document.getElementById('lblSmartBassStr');
 
-            const chkDrc = document.getElementById('chkDrc');
-            const sliderDrcSens = document.getElementById('sliderDrcSens');
-            const lblDrcSens = document.getElementById('lblDrcSens');
+            const chkDrcLow = document.getElementById('chkDrcLow');
+            const sliderDrcLowSens = document.getElementById('sliderDrcLowSens');
+            const lblDrcLowSens = document.getElementById('lblDrcLowSens');
+
+            const chkDrcMid = document.getElementById('chkDrcMid');
+            const sliderDrcMidSens = document.getElementById('sliderDrcMidSens');
+            const lblDrcMidSens = document.getElementById('lblDrcMidSens');
+
+            const chkDrcHigh = document.getElementById('chkDrcHigh');
+            const sliderDrcHighSens = document.getElementById('sliderDrcHighSens');
+            const lblDrcHighSens = document.getElementById('lblDrcHighSens');
 
             const sendSmartBassSettings = () => {
                 const en = chkSmartBass.checked ? 1 : 0;
@@ -3257,15 +3327,39 @@
                 }
             };
 
-            const sendDrcSettings = () => {
-                const en = chkDrc.checked ? 1 : 0;
-                const sens = parseInt(sliderDrcSens.value);
-                profiles[activeProfileIndex].drcEn = en;
-                profiles[activeProfileIndex].drcSens = sens;
-                if (lblDrcSens) lblDrcSens.textContent = sens;
+            const sendDrcLowSettings = () => {
+                const en = chkDrcLow.checked ? 1 : 0;
+                const sens = parseInt(sliderDrcLowSens.value);
+                profiles[activeProfileIndex].drcLowEn = en;
+                profiles[activeProfileIndex].drcLowSens = sens;
+                if (lblDrcLowSens) lblDrcLowSens.textContent = sens;
 
                 if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
-                    window.eqWebSocket.send(`#EQ_SET_DRC$${activeProfileIndex},${en},${sens}`);
+                    window.eqWebSocket.send(`#EQ_SET_DRC_LOW$${activeProfileIndex},${en},${sens}`);
+                }
+            };
+
+            const sendDrcMidSettings = () => {
+                const en = chkDrcMid.checked ? 1 : 0;
+                const sens = parseInt(sliderDrcMidSens.value);
+                profiles[activeProfileIndex].drcMidEn = en;
+                profiles[activeProfileIndex].drcMidSens = sens;
+                if (lblDrcMidSens) lblDrcMidSens.textContent = sens;
+
+                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                    window.eqWebSocket.send(`#EQ_SET_DRC_MID$${activeProfileIndex},${en},${sens}`);
+                }
+            };
+
+            const sendDrcHighSettings = () => {
+                const en = chkDrcHigh.checked ? 1 : 0;
+                const sens = parseInt(sliderDrcHighSens.value);
+                profiles[activeProfileIndex].drcHighEn = en;
+                profiles[activeProfileIndex].drcHighSens = sens;
+                if (lblDrcHighSens) lblDrcHighSens.textContent = sens;
+
+                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                    window.eqWebSocket.send(`#EQ_SET_DRC_HIGH$${activeProfileIndex},${en},${sens}`);
                 }
             };
 
@@ -3277,12 +3371,28 @@
                 sliderSmartBassStr.addEventListener('change', sendSmartBassSettings);
             }
 
-            if (chkDrc) chkDrc.addEventListener('change', sendDrcSettings);
-            if (sliderDrcSens) {
-                sliderDrcSens.addEventListener('input', () => {
-                    if (lblDrcSens) lblDrcSens.textContent = sliderDrcSens.value;
+            if (chkDrcLow) chkDrcLow.addEventListener('change', sendDrcLowSettings);
+            if (sliderDrcLowSens) {
+                sliderDrcLowSens.addEventListener('input', () => {
+                    if (lblDrcLowSens) lblDrcLowSens.textContent = sliderDrcLowSens.value;
                 });
-                sliderDrcSens.addEventListener('change', sendDrcSettings);
+                sliderDrcLowSens.addEventListener('change', sendDrcLowSettings);
+            }
+
+            if (chkDrcMid) chkDrcMid.addEventListener('change', sendDrcMidSettings);
+            if (sliderDrcMidSens) {
+                sliderDrcMidSens.addEventListener('input', () => {
+                    if (lblDrcMidSens) lblDrcMidSens.textContent = sliderDrcMidSens.value;
+                });
+                sliderDrcMidSens.addEventListener('change', sendDrcMidSettings);
+            }
+
+            if (chkDrcHigh) chkDrcHigh.addEventListener('change', sendDrcHighSettings);
+            if (sliderDrcHighSens) {
+                sliderDrcHighSens.addEventListener('input', () => {
+                    if (lblDrcHighSens) lblDrcHighSens.textContent = sliderDrcHighSens.value;
+                });
+                sliderDrcHighSens.addEventListener('change', sendDrcHighSettings);
             }
         }
 
@@ -3631,16 +3741,20 @@
                 }
                 
                 if (event.data.startsWith('EQ_SMART_SETTINGS:')) {
-                    console.log('[EQ Sync] Received Smart Bass & DRC settings');
+                    console.log('[EQ Sync] Received Multi-band Smart Bass & DRC settings');
                     const dataStr = event.data.substring(18);
                     const vals = dataStr.split(',').map(Number);
-                    if (vals.length === 12) {
+                    if (vals.length === 24) {
                         let idx = 0;
                         for (let p = 0; p < 3; p++) {
                             profiles[p].smartBassEn = vals[idx++];
                             profiles[p].smartBassStr = vals[idx++];
-                            profiles[p].drcEn = vals[idx++];
-                            profiles[p].drcSens = vals[idx++];
+                            profiles[p].drcLowEn = vals[idx++];
+                            profiles[p].drcLowSens = vals[idx++];
+                            profiles[p].drcMidEn = vals[idx++];
+                            profiles[p].drcMidSens = vals[idx++];
+                            profiles[p].drcHighEn = vals[idx++];
+                            profiles[p].drcHighSens = vals[idx++];
                         }
                         updateSmartBassDrcUI();
                     }
