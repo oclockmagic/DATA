@@ -3926,7 +3926,7 @@
                 }
                 
                 if (event.data.startsWith('EQ_SMART_SETTINGS:')) {
-                    const vals = data.substring(18).split(',');
+                    const vals = event.data.substring(18).split(',');
                     if (vals.length >= 54) {
                         for (let p = 0; p < 3; p++) {
                             const offset = p * 18;
