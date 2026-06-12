@@ -2919,6 +2919,29 @@
 
         const FILTER_TYPES = ['Peak', 'Low Shelf', 'High Shelf', 'Low Pass', 'High Pass', 'Band Pass', 'Notch'];
 
+    // --- Professional DRC State ---
+    let drcState = {
+        low: { en: 0, thr: -12.0, att: 10, rel: 500 },
+        mid: { en: 0, thr: -12.0, att: 10, rel: 500 },
+        high: { en: 0, thr: -12.0, att: 10, rel: 500 }
+    };
+    let activeDrcTab = 'low'; // 'low', 'mid', 'high'
+    let isDraggingDrc = false;
+
+    const drcBandColors = {
+        low: '#ff9100',
+        mid: '#00e5ff',
+        high: '#00e676'
+    };
+
+    // --- Professional Smart Bass State ---
+    let sbState = { en: 0, bst: 6.0, lth: -10.0, hth: 0.0 };
+    let isDraggingSb = null;
+
+    // --- Professional Output Clipper State ---
+    let clipperState = { en: 0, thr: 0.0 };
+    let isDraggingClipper = false;
+
         // --- Multi-Profile State Management ---
         let activeProfileIndex = 0;
         let profiles = [
@@ -3975,20 +3998,7 @@
         // Khởi động đồng bộ hóa
         initEQSync();
     
-    // --- Professional DRC Canvas & Controls State ---
-    let drcState = {
-        low: { en: 0, thr: -12.0, att: 10, rel: 500 },
-        mid: { en: 0, thr: -12.0, att: 10, rel: 500 },
-        high: { en: 0, thr: -12.0, att: 10, rel: 500 }
-    };
-    let activeDrcTab = 'low'; // 'low', 'mid', 'high'
-    let isDraggingDrc = false;
-
-    const drcBandColors = {
-        low: '#ff9100',
-        mid: '#00e5ff',
-        high: '#00e676'
-    };
+    // --- Professional DRC Canvas & Controls Functions ---
 
     function switchDrcTab(band) {
         activeDrcTab = band;
@@ -4275,9 +4285,7 @@
     }
 
 
-    // --- Professional Smart Bass Canvas & Controls State ---
-    let sbState = { en: 0, bst: 6.0, lth: -10.0, hth: 0.0 };
-    let isDraggingSb = null; // 'lth', 'hth', 'bst' (drag Low Threshold, High Threshold or both)
+    // --- Professional Smart Bass Canvas & Controls Functions ---
 
     function syncSbUi() {
         document.getElementById('chkSmartBass').checked = sbState.en === 1;
@@ -4587,9 +4595,7 @@
     }
 
 
-    // --- Professional Output Clipper Canvas & Controls State ---
-    let clipperState = { en: 0, thr: 0.0 };
-    let isDraggingClipper = false;
+    // --- Professional Output Clipper Canvas & Controls Functions ---
 
     function syncClipUi() {
         document.getElementById('chkClipper').checked = clipperState.en === 1;
