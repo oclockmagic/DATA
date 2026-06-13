@@ -2908,13 +2908,14 @@
   ]
 };
 
-        // --- 10 Pre-loaded ISO octave bands ---
-        const ISO_OCTAVES = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
+        // --- 15 Pre-loaded ISO octave bands ---
+        const ISO_OCTAVES = [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000];
 
         const BAND_COLORS = [
             '#ff6b6b', '#ffa06b', '#ffd93d', '#6bcb77',
             '#4ecdc4', '#45b7d1', '#96c4ff', '#a78bfa',
-            '#f472b6', '#fb923c'
+            '#f472b6', '#fb923c', '#2dd4bf', '#fb7185',
+            '#a3e635', '#38bdf8', '#818cf8'
         ];
 
         const FILTER_TYPES = ['Peak', 'Low Shelf', 'High Shelf', 'Low Pass', 'High Pass', 'Band Pass', 'Notch'];
@@ -2955,7 +2956,7 @@
                 drcMidSens: 5,
                 drcHighEn: 0,
                 drcHighSens: 5,
-                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
+                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: i < 10 }))
             },
             {
                 name: "Profile 2",
@@ -2967,7 +2968,7 @@
                 drcMidSens: 5,
                 drcHighEn: 0,
                 drcHighSens: 5,
-                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
+                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: i < 10 }))
             },
             {
                 name: "Profile 3",
@@ -2979,7 +2980,7 @@
                 drcMidSens: 5,
                 drcHighEn: 0,
                 drcHighSens: 5,
-                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }))
+                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: i < 10 }))
             }
         ];
 
@@ -3154,7 +3155,9 @@
 
         function computeCombinedResponse(freqs) {
             const combined = new Float32Array(freqs.length);
-            const biquads = bands.map(b => designBiquad(b.type, b.freq, b.q, b.gain, FS));
+            // Chỉ tính toán response của các band được bật (enabled !== false)
+            const activeBands = bands.filter(b => b.enabled !== false);
+            const biquads = activeBands.map(b => designBiquad(b.type, b.freq, b.q, b.gain, FS));
 
             for (let f = 0; f < freqs.length; f++) {
                 let sumDb = 0;
@@ -3281,6 +3284,7 @@
 
             // Individual Band Curves (shows Q Factor shape)
             bands.forEach((band, index) => {
+                if (band.enabled === false) return;
                 if (Math.abs(band.gain) < 0.05 && index !== selectedBand) return;
 
                 const curve = computeSingleBandResponse(band, FREQS);
@@ -3336,6 +3340,7 @@
 
             // Band Nodes
             bands.forEach((band, index) => {
+                if (band.enabled === false) return;
                 const x = freqToX(band.freq, metrics);
                 const y = dbToY(band.gain, metrics);
                 const color = BAND_COLORS[index % BAND_COLORS.length];
@@ -3590,6 +3595,7 @@
                 tr.id = `band-row-${index}`;
                 tr.innerHTML = `
                     <td>
+                        <input type="checkbox" id="chk-band-${index}" ${band.enabled !== false ? 'checked' : ''} style="margin-right: 6px; width: 14px; height: 14px; cursor: pointer; vertical-align: middle;">
                         <span class="band-color-dot" style="color: ${color}; background-color: ${color}"></span>
                         <strong>${index + 1}</strong>
                     </td>
@@ -3614,6 +3620,17 @@
                         <input type="number" id="input-q-${index}" value="${band.q}" min="0.1" max="10" step="0.01">
                     </td>
                 `;
+
+                // Listen to checkbox enable/disable
+                const chk = tr.querySelector(`#chk-band-${index}`);
+                chk.addEventListener('change', (e) => {
+                    bands[index].enabled = e.target.checked;
+                    console.log(`[EQ Check] Band ${index + 1} set to: ${bands[index].enabled ? 'Enabled' : 'Bypassed'}`);
+                    if (typeof window.sendEQUpdate === 'function') {
+                        window.sendEQUpdate(activeProfileIndex, index);
+                    }
+                    drawGraph();
+                });
 
                 // Select band on row click
                 tr.addEventListener('click', (e) => {
@@ -3848,9 +3865,10 @@
                 const prof = profiles[profileIdx];
                 const filter = prof.bands[filterIdx];
                 if (!filter) return;
-                // Format: #EQ_SET$profile_idx,preamp,filter_idx,type,fc,q,gain
+                // Format: #EQ_SET$profile_idx,preamp,filter_idx,type,fc,q,gain,enabled
                 const preampVal = prof.preamp !== undefined ? prof.preamp : -6.0;
-                const msg = `#EQ_SET$${profileIdx},${preampVal.toFixed(1)},${filterIdx},${filter.type},${filter.freq.toFixed(1)},${filter.q.toFixed(2)},${filter.gain.toFixed(1)}`;
+                const enabledVal = (filter.enabled === false) ? 0 : 1;
+                const msg = `#EQ_SET$${profileIdx},${preampVal.toFixed(1)},${filterIdx},${filter.type},${filter.freq.toFixed(1)},${filter.q.toFixed(2)},${filter.gain.toFixed(1)},${enabledVal}`;
                 window.eqWebSocket.send(msg);
             }
         };
@@ -3879,7 +3897,7 @@
                         return;
                     }
                     const vals = dataStr.split(',').map(Number);
-                    if (vals.length < 123) {
+                    if (vals.length < 228) {
                         console.error('[EQ Sync] Invalid profiles data length:', vals.length);
                         overlay.remove();
                         return;
@@ -3888,11 +3906,12 @@
                     let idx = 0;
                     for (let p = 0; p < 3; p++) {
                         profiles[p].preamp = vals[idx++];
-                        for (let f = 0; f < 10; f++) {
+                        for (let f = 0; f < 15; f++) {
                             profiles[p].bands[f].type = vals[idx++];
                             profiles[p].bands[f].freq = vals[idx++];
                             profiles[p].bands[f].q = vals[idx++];
                             profiles[p].bands[f].gain = vals[idx++];
+                            profiles[p].bands[f].enabled = vals[idx++] === 1;
                         }
                     }
 
