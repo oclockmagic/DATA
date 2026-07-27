@@ -791,19 +791,19 @@
                             </div>
                         </div>
 
-                        <!-- Group 1: Midbass IC (0x4D) -->
+                        <!-- Group 1: Midbass IC (0x4C) -->
                         <div class="control-group" style="margin-top: 10px; border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
-                                <span style="color: #00e676; font-weight: 600;">🔊 Midbass IC (0x4D) Trim</span>
+                                <span style="color: #00e676; font-weight: 600;">🔊 Midbass IC (0x4C) Trim</span>
                                 <span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
 
-                        <!-- Group 2: Treble IC (0x4C) -->
+                        <!-- Group 2: Treble IC (0x4E) -->
                         <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
-                                <span style="color: #ff4081; font-weight: 600;">📻 Treble IC (0x4C) Trim</span>
+                                <span style="color: #ff4081; font-weight: 600;">📻 Treble IC (0x4E) Trim</span>
                                 <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
@@ -2995,6 +2995,9 @@
     let clipperState = { en: 0, thr: 0.0 };
     let isDraggingClipper = false;
 
+    // --- 2-Way Crossover State ---
+    let crossoverState = { en: 1, fc: 2500, slope: 1, treb_trim: 0.0, mid_trim: 0.0 };
+
         // --- Multi-Profile State Management ---
         let activeProfileIndex = 0;
         let profiles = [
@@ -5000,8 +5003,7 @@
         console.log("Sent Clipper Settings:", clipperState);
     }
 
-    // --- 2-Way Crossover State & Functions ---
-    let crossoverState = { en: 1, fc: 2500, slope: 1, treb_trim: 0.0, mid_trim: 0.0 };
+    // --- 2-Way Crossover Functions ---
 
     function syncCrossoverUi() {
         if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
