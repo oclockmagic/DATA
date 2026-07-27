@@ -709,7 +709,7 @@
         <div class="smart-processor-container">
             <!-- Smart Bass Card -->
             <div class="section-card">
-                <div class="section-title">🔊 Smart Bass (Midbass IC 0x4C Only)</div>
+                <div class="section-title">🔊 Smart Bass (Dynamic Boost)</div>
                 
                 <div class="sb-content-layout">
                     <!-- Left Column: Interactive Canvas -->
@@ -720,7 +720,7 @@
                     <!-- Right Column: Settings Controls -->
                     <div class="sb-controls-container">
                         <div class="smart-header" style="margin-bottom: 12px;">
-                            <span class="smart-title" style="font-size: 15px; color: #00e676; font-weight: 600;">JBL Bass Tracking (0x4C)</span>
+                            <span class="smart-title" style="font-size: 15px; color: #00e676; font-weight: 600;">JBL Bass Tracking</span>
                             <label class="switch">
                                 <input type="checkbox" id="chkSmartBass" onchange="onSbStateChange()">
                                 <span class="slider-round"></span>
@@ -756,7 +756,7 @@
             <!-- Dual TAS5825M 2-Way Crossover & Channel Trim Card -->
             <div class="section-card" style="margin-top: 20px; border: 1px solid rgba(0, 242, 254, 0.25); background: rgba(10, 15, 30, 0.4);">
                 <div class="section-title" style="color: #00f2fe; border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding-bottom: 8px;">
-                    🎛️ DUAL TAS5825M CROSSOVER & TRIM GAIN
+                    🎛️ DUAL TAS CROSSOVER & TRIM GAIN
                 </div>
                 <div class="clipper-content-layout" style="margin-top: 10px;">
                     <!-- Left Column: Crossover Response Graph -->
@@ -791,19 +791,19 @@
                             </div>
                         </div>
 
-                        <!-- Group 1: Midbass IC (0x4C) -->
+                        <!-- Group 1: Midbass IC -->
                         <div class="control-group" style="margin-top: 10px; border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
-                                <span style="color: #00e676; font-weight: 600;">🔊 Midbass IC (0x4C) Trim</span>
+                                <span style="color: #00e676; font-weight: 600;">🔊 Midbass Channel Trim</span>
                                 <span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
 
-                        <!-- Group 2: Treble IC (0x4E) -->
+                        <!-- Group 2: Treble IC -->
                         <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
-                                <span style="color: #ff4081; font-weight: 600;">📻 Treble IC (0x4E) Trim</span>
+                                <span style="color: #ff4081; font-weight: 600;">📻 Treble Channel Trim</span>
                                 <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">-2.0 dB</span>
                             </div>
                             <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="-2.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
@@ -814,7 +814,7 @@
 
             <!-- Output Clipper Card (Dual IC Hard Limit) -->
             <div class="section-card" style="margin-top: 20px;">
-                <div class="section-title">✂️ Dual TAS5825M Output Clipper (Hard Limit)</div>
+                <div class="section-title">✂️ Output Clipper (Hard Limit)</div>
                 
                 <div class="clipper-content-layout">
                     <!-- Left Column: Waveform clipping simulation -->
@@ -834,7 +834,7 @@
                         
                         <div class="control-group" style="border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
-                                <span style="color: #00e676;">🔊 Midbass Clipper (0x4C)</span>
+                                <span style="color: #00e676;">🔊 Midbass Clipper</span>
                                 <span id="lblClipperThr" style="color: #00e676; font-weight: 600;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onClipSliderInput()" onchange="onClipSliderChange()">
@@ -842,7 +842,7 @@
 
                         <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
-                                <span style="color: #ff4081;">📻 Treble Clipper (0x4E Protection)</span>
+                                <span style="color: #ff4081;">📻 Treble Protection Clipper</span>
                                 <span id="lblTrebleClipperThr" style="color: #ff4081; font-weight: 600;">-2.5 dB</span>
                             </div>
                             <input type="range" id="sliderTrebleClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="-2.5" oninput="onClipSliderInput()" onchange="onClipSliderChange()">
