@@ -709,7 +709,7 @@
         <div class="smart-processor-container">
             <!-- Smart Bass Card -->
             <div class="section-card">
-                <div class="section-title">🔊 Smart Bass (Dynamic Boost)</div>
+                <div class="section-title">🔊 Smart Bass (Midbass IC 0x4C Only)</div>
                 
                 <div class="sb-content-layout">
                     <!-- Left Column: Interactive Canvas -->
@@ -720,7 +720,7 @@
                     <!-- Right Column: Settings Controls -->
                     <div class="sb-controls-container">
                         <div class="smart-header" style="margin-bottom: 12px;">
-                            <span class="smart-title" style="font-size: 15px; color: #00e676; font-weight: 600;">Bass Tracking Settings</span>
+                            <span class="smart-title" style="font-size: 15px; color: #00e676; font-weight: 600;">JBL Bass Tracking (0x4C)</span>
                             <label class="switch">
                                 <input type="checkbox" id="chkSmartBass" onchange="onSbStateChange()">
                                 <span class="slider-round"></span>
@@ -804,17 +804,17 @@
                         <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
                                 <span style="color: #ff4081; font-weight: 600;">📻 Treble IC (0x4E) Trim</span>
-                                <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">0.0 dB</span>
+                                <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">-2.0 dB</span>
                             </div>
-                            <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                            <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="-2.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Output Clipper Card -->
+            <!-- Output Clipper Card (Dual IC Hard Limit) -->
             <div class="section-card" style="margin-top: 20px;">
-                <div class="section-title">✂️ Output Clipper (Hard Limit)</div>
+                <div class="section-title">✂️ Dual TAS5825M Output Clipper (Hard Limit)</div>
                 
                 <div class="clipper-content-layout">
                     <!-- Left Column: Waveform clipping simulation -->
@@ -825,29 +825,37 @@
                     <!-- Right Column: Controls -->
                     <div class="clipper-controls-container">
                         <div class="smart-header" style="margin-bottom: 12px;">
-                            <span class="smart-title" style="font-size: 15px; color: #ff1744; font-weight: 600;">Hardware Limit Settings</span>
+                            <span class="smart-title" style="font-size: 15px; color: #ff1744; font-weight: 600;">Hardware Protection Limit</span>
                             <label class="switch">
                                 <input type="checkbox" id="chkClipper" onchange="onClipStateChange()">
                                 <span class="slider-round" style="background-color: #555;"></span>
                             </label>
                         </div>
                         
-                        <div class="control-group">
+                        <div class="control-group" style="border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
-                                <span>Clipper Threshold</span>
-                                <span id="lblClipperThr" style="color: #ff1744; font-weight: 600;">0.0 dB</span>
+                                <span style="color: #00e676;">🔊 Midbass Clipper (0x4C)</span>
+                                <span id="lblClipperThr" style="color: #00e676; font-weight: 600;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onClipSliderInput()" onchange="onClipSliderChange()">
+                        </div>
+
+                        <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
+                            <div class="control-label">
+                                <span style="color: #ff4081;">📻 Treble Clipper (0x4E Protection)</span>
+                                <span id="lblTrebleClipperThr" style="color: #ff4081; font-weight: 600;">-2.5 dB</span>
+                            </div>
+                            <input type="range" id="sliderTrebleClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="-2.5" oninput="onClipSliderInput()" onchange="onClipSliderChange()">
                         </div>
                         
                         <div style="margin-top: 15px; font-size: 12px; color: rgba(255, 255, 255, 0.4); line-height: 1.5;">
                             <div style="display: flex; justify-content: space-between;">
-                                <span>Output Amplitude Limit:</span>
-                                <strong id="lblClipAmplitude" style="color: #fff;">100%</strong>
+                                <span>Treble Safety Protection:</span>
+                                <strong id="lblClipAmplitude" style="color: #ff4081;">75% (-2.5 dB)</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-top: 4px;">
                                 <span>TAS5825M Register Val:</span>
-                                <strong id="lblClipRegVal" style="color: #00e5ff;">0xFF (255)</strong>
+                                <strong id="lblClipRegVal" style="color: #00e5ff;">0xBF (191)</strong>
                             </div>
                         </div>
                     </div>
