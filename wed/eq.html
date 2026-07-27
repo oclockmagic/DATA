@@ -753,6 +753,65 @@
                     </div>
                 </div>
             </div>
+            <!-- Dual TAS5825M 2-Way Crossover & Channel Trim Card -->
+            <div class="section-card" style="margin-top: 20px; border: 1px solid rgba(0, 242, 254, 0.25); background: rgba(10, 15, 30, 0.4);">
+                <div class="section-title" style="color: #00f2fe; border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding-bottom: 8px;">
+                    🎛️ DUAL TAS5825M CROSSOVER & TRIM GAIN
+                </div>
+                <div class="clipper-content-layout" style="margin-top: 10px;">
+                    <!-- Left Column: Crossover Response Graph -->
+                    <div class="clipper-canvas-container">
+                        <canvas id="crossoverCanvas" width="260" height="185"></canvas>
+                    </div>
+                    <!-- Right Column: Dual Amp Group Controls -->
+                    <div class="clipper-controls-container">
+                        <div class="smart-header" style="margin-bottom: 8px; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 8px;">
+                            <span class="smart-title" style="font-size: 13px; color: #00f2fe; font-weight: 600;">Active 2-Way DSP Crossover</span>
+                            <label class="switch">
+                                <input type="checkbox" id="chkCrossover" onchange="onCrossoverStateChange()">
+                                <span class="slider-round" style="background-color: #555;"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Crossover Frequency (fc)</span>
+                                <span id="lblCrossoverFc" style="color: #00f2fe; font-weight: 600;">2500 Hz</span>
+                            </div>
+                            <input type="range" id="sliderCrossoverFc" class="smart-slider" min="500" max="8000" step="50" value="2500" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                        </div>
+                        
+                        <div class="control-group" style="margin-top: 6px;">
+                            <div class="control-label">
+                                <span>Filter Slope</span>
+                                <select id="selCrossoverSlope" style="background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 2px 6px; font-size: 11px;" onchange="onCrossoverSlopeChange()">
+                                    <option value="1">12 dB/Oct (Butterworth)</option>
+                                    <option value="2">24 dB/Oct (Linkwitz-Riley)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Group 1: Midbass IC (0x4D) -->
+                        <div class="control-group" style="margin-top: 10px; border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
+                            <div class="control-label">
+                                <span style="color: #00e676; font-weight: 600;">🔊 Midbass IC (0x4D) Trim</span>
+                                <span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                        </div>
+
+                        <!-- Group 2: Treble IC (0x4C) -->
+                        <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
+                            <div class="control-label">
+                                <span style="color: #ff4081; font-weight: 600;">📻 Treble IC (0x4C) Trim</span>
+                                <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">0.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Output Clipper Card -->
             <div class="section-card" style="margin-top: 20px;">
                 <div class="section-title">✂️ Output Clipper (Hard Limit)</div>
@@ -2901,14 +2960,14 @@
   ]
 };
 
-        // --- 15 Pre-loaded ISO octave bands ---
-        const ISO_OCTAVES = [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000, 16000];
+        // --- 14 Pre-loaded ISO octave bands (Band 15 reserved for Crossover) ---
+        const ISO_OCTAVES = [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000];
 
         const BAND_COLORS = [
             '#ff6b6b', '#ffa06b', '#ffd93d', '#6bcb77',
             '#4ecdc4', '#45b7d1', '#96c4ff', '#a78bfa',
             '#f472b6', '#fb923c', '#2dd4bf', '#fb7185',
-            '#a3e635', '#38bdf8', '#818cf8'
+            '#a3e635', '#38bdf8'
         ];
 
         const FILTER_TYPES = ['Peak', 'Low Shelf', 'High Shelf', 'Low Pass', 'High Pass', 'Band Pass', 'Notch'];
@@ -3566,10 +3625,15 @@
             if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
                 drcState = JSON.parse(JSON.stringify(window.drcProfilesCache[activeProfileIndex]));
             }
+            // Sync Crossover cache to active profile
+            if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
+                crossoverState = JSON.parse(JSON.stringify(window.crossoverProfilesCache[activeProfileIndex]));
+            }
             
             syncSbUi();
             syncClipUi();
             syncDrcUi();
+            syncCrossoverUi();
         }
 
         function initSmartSettingsListeners() {
@@ -3900,11 +3964,18 @@
                     for (let p = 0; p < 3; p++) {
                         profiles[p].preamp = vals[idx++];
                         for (let f = 0; f < 15; f++) {
-                            profiles[p].bands[f].type = vals[idx++];
-                            profiles[p].bands[f].freq = vals[idx++];
-                            profiles[p].bands[f].q = vals[idx++];
-                            profiles[p].bands[f].gain = vals[idx++];
-                            profiles[p].bands[f].enabled = vals[idx++] === 1;
+                            const b_type = vals[idx++];
+                            const b_freq = vals[idx++];
+                            const b_q = vals[idx++];
+                            const b_gain = vals[idx++];
+                            const b_en = vals[idx++] === 1;
+                            if (f < 14 && profiles[p].bands[f]) {
+                                profiles[p].bands[f].type = b_type;
+                                profiles[p].bands[f].freq = b_freq;
+                                profiles[p].bands[f].q = b_q;
+                                profiles[p].bands[f].gain = b_gain;
+                                profiles[p].bands[f].enabled = b_en;
+                            }
                         }
                     }
 
@@ -3990,6 +4061,34 @@
                         syncSbUi();
                         syncClipUi();
                         syncDrcUi();
+                    }
+                }
+
+                if (event.data.startsWith('EQ_CROSSOVER:')) {
+                    const vals = event.data.substring(13).split(',');
+                    if (vals.length >= 15) {
+                        if (!window.crossoverProfilesCache) window.crossoverProfilesCache = [];
+                        for (let p = 0; p < 3; p++) {
+                            const offset = p * 5;
+                            const cr_en = parseInt(vals[offset + 0]);
+                            const cr_fc = parseInt(vals[offset + 1]);
+                            const cr_slp = parseInt(vals[offset + 2]);
+                            const tr_trim = (parseFloat(vals[offset + 3]) / 10.0) - 10.0;
+                            const mb_trim = (parseFloat(vals[offset + 4]) / 10.0) - 10.0;
+
+                            window.crossoverProfilesCache[p] = {
+                                en: cr_en,
+                                fc: cr_fc,
+                                slope: cr_slp,
+                                treb_trim: tr_trim,
+                                mid_trim: mb_trim
+                            };
+
+                            if (p === activeProfileIndex) {
+                                crossoverState = { en: cr_en, fc: cr_fc, slope: cr_slp, treb_trim: tr_trim, mid_trim: mb_trim };
+                            }
+                        }
+                        syncCrossoverUi();
                     }
                 }
             };
@@ -4899,6 +4998,162 @@
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
         window.eqWebSocket.send(`#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${clipperState.thr}`);
         console.log("Sent Clipper Settings:", clipperState);
+    }
+
+    // --- 2-Way Crossover State & Functions ---
+    let crossoverState = { en: 1, fc: 2500, slope: 1, treb_trim: 0.0, mid_trim: 0.0 };
+
+    function syncCrossoverUi() {
+        if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
+            crossoverState = JSON.parse(JSON.stringify(window.crossoverProfilesCache[activeProfileIndex]));
+        }
+
+        const chk = document.getElementById('chkCrossover');
+        if (chk) chk.checked = crossoverState.en === 1;
+
+        const sliderFc = document.getElementById('sliderCrossoverFc');
+        if (sliderFc) sliderFc.value = crossoverState.fc;
+        const lblFc = document.getElementById('lblCrossoverFc');
+        if (lblFc) lblFc.innerText = crossoverState.fc + ' Hz';
+
+        const selSlp = document.getElementById('selCrossoverSlope');
+        if (selSlp) selSlp.value = crossoverState.slope;
+
+        const sliderTr = document.getElementById('sliderTrebleTrim');
+        if (sliderTr) sliderTr.value = crossoverState.treb_trim;
+        const lblTr = document.getElementById('lblTrebleTrim');
+        if (lblTr) lblTr.innerText = (crossoverState.treb_trim > 0 ? '+' : '') + crossoverState.treb_trim.toFixed(1) + ' dB';
+
+        const sliderMb = document.getElementById('sliderMidbassTrim');
+        if (sliderMb) sliderMb.value = crossoverState.mid_trim;
+        const lblMb = document.getElementById('lblMidbassTrim');
+        if (lblMb) lblMb.innerText = (crossoverState.mid_trim > 0 ? '+' : '') + crossoverState.mid_trim.toFixed(1) + ' dB';
+
+        drawCrossoverCurve();
+    }
+
+    function onCrossoverStateChange() {
+        crossoverState.en = document.getElementById('chkCrossover').checked ? 1 : 0;
+        if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
+            window.crossoverProfilesCache[activeProfileIndex].en = crossoverState.en;
+        }
+        drawCrossoverCurve();
+        sendCrossoverSettings();
+    }
+
+    function onCrossoverSlopeChange() {
+        crossoverState.slope = parseInt(document.getElementById('selCrossoverSlope').value);
+        if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
+            window.crossoverProfilesCache[activeProfileIndex].slope = crossoverState.slope;
+        }
+        drawCrossoverCurve();
+        sendCrossoverSettings();
+    }
+
+    function onCrossoverSliderInput() {
+        crossoverState.fc = parseInt(document.getElementById('sliderCrossoverFc').value);
+        crossoverState.treb_trim = parseFloat(document.getElementById('sliderTrebleTrim').value);
+        crossoverState.mid_trim = parseFloat(document.getElementById('sliderMidbassTrim').value);
+
+        document.getElementById('lblCrossoverFc').innerText = crossoverState.fc + ' Hz';
+        document.getElementById('lblTrebleTrim').innerText = (crossoverState.treb_trim > 0 ? '+' : '') + crossoverState.treb_trim.toFixed(1) + ' dB';
+        document.getElementById('lblMidbassTrim').innerText = (crossoverState.mid_trim > 0 ? '+' : '') + crossoverState.mid_trim.toFixed(1) + ' dB';
+
+        if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
+            window.crossoverProfilesCache[activeProfileIndex].fc = crossoverState.fc;
+            window.crossoverProfilesCache[activeProfileIndex].treb_trim = crossoverState.treb_trim;
+            window.crossoverProfilesCache[activeProfileIndex].mid_trim = crossoverState.mid_trim;
+        }
+
+        drawCrossoverCurve();
+    }
+
+    function onCrossoverSliderChange() {
+        sendCrossoverSettings();
+    }
+
+    function sendCrossoverSettings() {
+        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
+        window.eqWebSocket.send(`#EQ_SET_CROSS$${activeProfileIndex},${crossoverState.en},${crossoverState.fc},${crossoverState.slope},${crossoverState.treb_trim},${crossoverState.mid_trim}`);
+        console.log("Sent Crossover Settings:", crossoverState);
+    }
+
+    function drawCrossoverCurve() {
+        const canvas = document.getElementById('crossoverCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = "rgba(10, 15, 30, 0.9)";
+        ctx.fillRect(0, 0, w, h);
+
+        // Grid lines
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+        ctx.lineWidth = 1;
+        for (let db = -24; db <= 12; db += 12) {
+            let y = h / 2 - (db / 36) * (h * 0.4);
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(w, y);
+            ctx.stroke();
+        }
+
+        const isEnabled = crossoverState.en === 1;
+        const fc = crossoverState.fc;
+        const order = crossoverState.slope === 2 ? 4 : 2; // 2nd order (12dB/oct) or 4th order (24dB/oct)
+
+        // Draw Low Pass (Midbass) curve in Green (#00e676)
+        ctx.strokeStyle = isEnabled ? "#00e676" : "#666";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let x = 0; x < w; x++) {
+            let freq = 100 * Math.pow(100, x / w); // Logarithmic 100Hz - 10kHz
+            let ratio = freq / fc;
+            let gainDb = crossoverState.mid_trim;
+            if (isEnabled) {
+                let mag = 1 / Math.sqrt(1 + Math.pow(ratio, order));
+                gainDb += 20 * Math.log10(mag);
+            }
+            let y = h / 2 - (gainDb / 36) * (h * 0.4);
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Draw High Pass (Treble) curve in Pink (#ff4081)
+        ctx.strokeStyle = isEnabled ? "#ff4081" : "#666";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let x = 0; x < w; x++) {
+            let freq = 100 * Math.pow(100, x / w);
+            let ratio = fc / freq;
+            let gainDb = crossoverState.treb_trim;
+            if (isEnabled) {
+                let mag = 1 / Math.sqrt(1 + Math.pow(ratio, order));
+                gainDb += 20 * Math.log10(mag);
+            }
+            let y = h / 2 - (gainDb / 36) * (h * 0.4);
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Marker line for Crossover Frequency
+        let xCross = (Math.log10(fc / 100) / Math.log10(100)) * w;
+        ctx.strokeStyle = "rgba(0, 242, 254, 0.7)";
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(xCross, 0);
+        ctx.lineTo(xCross, h);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = "#00f2fe";
+        ctx.font = "10px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`fc: ${fc} Hz`, xCross, 15);
     }
 
 </script>
