@@ -4772,37 +4772,36 @@
         }
         
         const isEnabled = clipperState.en === 1;
-        const factor = Math.pow(10, clipperState.thr / 20);
-        const limitY = h/2 - (clipperState.thr / 12) * (h * 0.4);
+        const mbFactor = Math.pow(10, clipperState.thr / 20);
+        const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5;
+        const trFactor = Math.pow(10, trVal / 20);
         
-        // 1. Vẽ đường giới hạn Clipper (nét đứt màu đỏ nếu bật, màu xám nếu tắt)
-        ctx.strokeStyle = isEnabled ? 'rgba(255, 23, 68, 0.7)' : 'rgba(255, 255, 255, 0.2)';
-        ctx.lineWidth = 1.5;
+        const topClipY = h/2 - (mbFactor * (h * 0.35));
+        const bottomClipY = h/2 + (mbFactor * (h * 0.35));
+
+        const topTrClipY = h/2 - (trFactor * (h * 0.35));
+        const bottomTrClipY = h/2 + (trFactor * (h * 0.35));
+        
         ctx.setLineDash([4, 4]);
-        
-        // Ngưỡng trên
-        const topClipY = h/2 - (factor * (h * 0.35));
-        ctx.beginPath();
-        ctx.moveTo(0, topClipY);
-        ctx.lineTo(w, topClipY);
-        ctx.stroke();
-        
-        // Ngưỡng dưới
-        const bottomClipY = h/2 + (factor * (h * 0.35));
-        ctx.beginPath();
-        ctx.moveTo(0, bottomClipY);
-        ctx.lineTo(w, bottomClipY);
-        ctx.stroke();
+
+        // 1. Vẽ đường giới hạn Midbass Clipper (màu Xanh)
+        ctx.strokeStyle = isEnabled ? 'rgba(0, 230, 118, 0.8)' : 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, topClipY); ctx.lineTo(w, topClipY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, bottomClipY); ctx.lineTo(w, bottomClipY); ctx.stroke();
+
+        // 2. Vẽ đường giới hạn Treble Protection Clipper (màu Hồng)
+        ctx.strokeStyle = isEnabled ? 'rgba(255, 64, 129, 0.8)' : 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0, topTrClipY); ctx.lineTo(w, topTrClipY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, bottomTrClipY); ctx.lineTo(w, bottomTrClipY); ctx.stroke();
         
         ctx.setLineDash([]); // reset
         
-        // 2. Vẽ sóng sin mô phỏng
-        // Sóng sin gốc có biên độ lớn hơn ngưỡng Clipper để thấy phần bị xén
-        const waveAmp = h * 0.42; // Biên độ sóng sin ban đầu (mô phỏng tín hiệu quá mức)
-        
+        // 3. Vẽ sóng sin mô phỏng
+        const waveAmp = h * 0.42;
         ctx.lineWidth = 2.5;
         
-        // Vẽ phần sóng sin không bị xén (hoặc bị xén)
         ctx.beginPath();
         for (let x = 0; x < w; x++) {
             const rad = (x / w) * Math.PI * 2;
@@ -4818,66 +4817,23 @@
             else ctx.lineTo(x, drawY);
         }
         
-        ctx.strokeStyle = '#00e5ff'; // Xanh cyan của tín hiệu an toàn
+        ctx.strokeStyle = '#00e5ff';
         if (isEnabled) {
             ctx.shadowColor = '#00e5ff';
             ctx.shadowBlur = 4;
         }
         ctx.stroke();
-        ctx.shadowBlur = 0; // reset
+        ctx.shadowBlur = 0;
         
-        // 3. Vẽ phần đỉnh sóng bị xén (Màu đỏ neon cảnh báo)
-        if (isEnabled && waveAmp > (h/2 - topClipY)) {
-            ctx.strokeStyle = '#ff1744';
-            ctx.lineWidth = 3;
-            ctx.shadowColor = '#ff1744';
-            ctx.shadowBlur = 6;
-            
-            // Vẽ đỉnh trên bị xén
-            ctx.beginPath();
-            let drawing = false;
-            for (let x = 0; x < w; x++) {
-                const rad = (x / w) * Math.PI * 2;
-                const originalY = h/2 + Math.sin(rad) * waveAmp;
-                if (originalY <= topClipY) {
-                    if (!drawing) {
-                        ctx.moveTo(x, topClipY);
-                        drawing = true;
-                    } else {
-                        ctx.lineTo(x, topClipY);
-                    }
-                } else {
-                    drawing = false;
-                }
-            }
-            ctx.stroke();
-            
-            // Vẽ đỉnh dưới bị xén
-            ctx.beginPath();
-            drawing = false;
-            for (let x = 0; x < w; x++) {
-                const rad = (x / w) * Math.PI * 2;
-                const originalY = h/2 + Math.sin(rad) * waveAmp;
-                if (originalY >= bottomClipY) {
-                    if (!drawing) {
-                        ctx.moveTo(x, bottomClipY);
-                        drawing = true;
-                    } else {
-                        ctx.lineTo(x, bottomClipY);
-                    }
-                } else {
-                    drawing = false;
-                }
-            }
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-        }
-        
-        // Nhãn Threshold kéo thả
-        ctx.fillStyle = isEnabled ? '#ff1744' : 'rgba(255, 255, 255, 0.4)';
+        // 4. Nhãn Threshold
         ctx.font = '10px sans-serif';
         ctx.textAlign = 'right';
-        ctx.fillText('Limit Threshold: ' + clipperState.thr.toFixed(1) + ' dB', w - 10, topClipY - 5);
+
+        ctx.fillStyle = isEnabled ? '#00e676' : 'rgba(255, 255, 255, 0.4)';
+        ctx.fillText('Midbass Limit: ' + clipperState.thr.toFixed(1) + ' dB', w - 10, topClipY - 4);
+
+        ctx.fillStyle = isEnabled ? '#ff4081' : 'rgba(255, 255, 255, 0.4)';
+        ctx.fillText('Treble Limit: ' + trVal.toFixed(1) + ' dB', w - 10, topTrClipY - 4);
         
         // Vẽ nút kéo trượt ở ngưỡng trên (màu đỏ)
         ctx.fillStyle = isEnabled ? '#fff' : '#555';
