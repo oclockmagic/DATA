@@ -4716,18 +4716,25 @@
     // --- Professional Output Clipper Canvas & Controls Functions ---
 
     function syncClipUi() {
-        document.getElementById('chkClipper').checked = clipperState.en === 1;
-        document.getElementById('sliderClipperThr').value = clipperState.thr;
-        document.getElementById('lblClipperThr').innerText = clipperState.thr.toFixed(1) + ' dB';
-        
+        const chk = document.getElementById('chkClipper');
+        if (chk) chk.checked = (clipperState.en === 1);
+
+        const slider = document.getElementById('sliderClipperThr');
+        if (slider) slider.value = clipperState.thr;
+
+        const lblThr = document.getElementById('lblClipperThr');
+        if (lblThr) lblThr.innerText = clipperState.thr.toFixed(1) + ' dB';
+
         // Cập nhật thông số phụ
         const factor = Math.pow(10, clipperState.thr / 20);
-        document.getElementById('lblClipAmplitude').innerText = Math.round(factor * 100) + ' %';
-        
+        const lblAmp = document.getElementById('lblClipAmplitude');
+        if (lblAmp) lblAmp.innerText = Math.round(factor * 100) + ' %';
+
         const regVal = Math.round(255 * factor);
         const hexVal = '0x' + regVal.toString(16).toUpperCase().padStart(2, '0');
-        document.getElementById('lblClipRegVal').innerText = hexVal + ' (' + regVal + ')';
-        
+        const lblReg = document.getElementById('lblClipRegVal');
+        if (lblReg) lblReg.innerText = hexVal + ' (' + regVal + ')';
+
         // Redraw Canvas
         drawClipperCurve();
     }
