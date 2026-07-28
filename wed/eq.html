@@ -837,7 +837,7 @@
                                 <span style="color: #00e676;">🔊 Midbass Clipper</span>
                                 <span id="lblClipperThr" style="color: #00e676; font-weight: 600;">0.0 dB</span>
                             </div>
-                            <input type="range" id="sliderClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onClipSliderInput()" onchange="onClipSliderChange()">
+                            <input type="range" id="sliderClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onMidbassClipSliderInput()" onchange="onClipSliderChange()">
                         </div>
 
                         <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
@@ -845,7 +845,7 @@
                                 <span style="color: #ff4081;">📻 Treble Protection Clipper</span>
                                 <span id="lblTrebleClipperThr" style="color: #ff4081; font-weight: 600;">-2.5 dB</span>
                             </div>
-                            <input type="range" id="sliderTrebleClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="-2.5" oninput="onClipSliderInput()" onchange="onClipSliderChange()">
+                            <input type="range" id="sliderTrebleClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="-2.5" oninput="onTrebleClipSliderInput()" onchange="onClipSliderChange()">
                         </div>
                         
                         <div style="margin-top: 15px; font-size: 12px; color: rgba(255, 255, 255, 0.4); line-height: 1.5;">
@@ -4992,20 +4992,30 @@
         sendClipperSettings();
     }
 
-    function onClipSliderInput() {
+    function onMidbassClipSliderInput() {
         const valMb = parseFloat(document.getElementById('sliderClipperThr').value);
         clipperState.thr = valMb;
 
+        const lblThr = document.getElementById('lblClipperThr');
+        if (lblThr) lblThr.innerText = clipperState.thr.toFixed(1) + ' dB';
+
+        if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
+            window.clipProfilesCache[activeProfileIndex].thr = clipperState.thr;
+        }
+
+        drawClipperCurve();
+    }
+
+    function onTrebleClipSliderInput() {
         const sliderTr = document.getElementById('sliderTrebleClipperThr');
         if (sliderTr) {
             clipperState.tr_thr = parseFloat(sliderTr.value);
         }
 
-        const lblThr = document.getElementById('lblClipperThr');
-        if (lblThr) lblThr.innerText = clipperState.thr.toFixed(1) + ' dB';
-
         const lblTrThr = document.getElementById('lblTrebleClipperThr');
-        if (lblTrThr && clipperState.tr_thr !== undefined) lblTrThr.innerText = clipperState.tr_thr.toFixed(1) + ' dB';
+        if (lblTrThr && clipperState.tr_thr !== undefined) {
+            lblTrThr.innerText = clipperState.tr_thr.toFixed(1) + ' dB';
+        }
 
         const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5;
         const factor = Math.pow(10, trVal / 20);
@@ -5013,7 +5023,6 @@
         if (lblAmp) lblAmp.innerText = Math.round(factor * 100) + ' % (' + trVal.toFixed(1) + ' dB)';
 
         if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
-            window.clipProfilesCache[activeProfileIndex].thr = clipperState.thr;
             window.clipProfilesCache[activeProfileIndex].tr_thr = clipperState.tr_thr;
         }
 
@@ -5026,9 +5035,11 @@
 
     function sendClipperSettings() {
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
-        const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5;
-        window.eqWebSocket.send(`#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${clipperState.thr},${trVal}`);
-        console.log("Sent Clipper Settings:", clipperState);
+        const mbVal = clipperState.thr !== undefined ? clipperState.thr.toFixed(1) : '-1.5';
+        const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr.toFixed(1) : '-2.5';
+        const msg = `#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${mbVal},${trVal}`;
+        window.eqWebSocket.send(msg);
+        console.log("Sent Clipper WebSocket Command:", msg);
     }
 
     // --- 2-Way Crossover Functions ---
