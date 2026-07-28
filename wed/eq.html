@@ -848,10 +848,24 @@
                             <input type="range" id="sliderTrebleClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="-2.5" oninput="onTrebleClipSliderInput()" onchange="onClipSliderChange()">
                         </div>
                         
-                        <div style="margin-top: 15px; font-size: 12px; color: rgba(255, 255, 255, 0.4); line-height: 1.5;">
+                        <div style="margin-top: 10px; font-size: 12px; color: rgba(255, 255, 255, 0.4); line-height: 1.5;">
                             <div style="display: flex; justify-content: space-between;">
                                 <span>Treble Safety Protection:</span>
                                 <strong id="lblClipAmplitude" style="color: #ff4081;">75% (-2.5 dB)</strong>
+                            </div>
+                        </div>
+
+                        <!-- Hybrid Modulation Mode Toggle -->
+                        <div class="control-group" style="margin-top: 12px; border-left: 3px solid #ff9100; padding-left: 8px; background: rgba(255, 145, 0, 0.05); border-radius: 0 6px 6px 0;">
+                            <div class="control-label" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #ff9100; font-size: 13px;">⚡ Hybrid Modulation Mode</span>
+                                <label class="switch" style="transform: scale(0.8);">
+                                    <input type="checkbox" id="chkHybridMode" checked onchange="onHybridModeToggle()">
+                                    <span class="slider-round" style="background-color: #ff9100;"></span>
+                                </label>
+                            </div>
+                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 4px;">
+                                Mode: <strong id="lblHybridModeStatus" style="color: #ff9100;">ON (Mát IC / Hybrid)</strong>
                             </div>
                         </div>
                     </div>
@@ -4996,6 +5010,20 @@
         const msg = `#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${mbVal},${trVal}`;
         window.eqWebSocket.send(msg);
         console.log("Sent Clipper WebSocket Command:", msg);
+    }
+
+    function onHybridModeToggle() {
+        const isChecked = document.getElementById('chkHybridMode').checked;
+        const mode = isChecked ? 1 : 0;
+        const lbl = document.getElementById('lblHybridModeStatus');
+        if (lbl) {
+            lbl.innerText = isChecked ? 'ON (Mát IC / Hybrid)' : 'OFF (BD 1SPW Low Distortion)';
+            lbl.style.color = isChecked ? '#ff9100' : '#00e676';
+        }
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send(`#EQ_SET_HYBRID$${mode}`);
+            console.log("Sent Hybrid Modulation Mode:", mode);
+        }
     }
 
     // --- 2-Way Crossover Functions ---
