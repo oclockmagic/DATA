@@ -855,17 +855,19 @@
                             </div>
                         </div>
 
-                        <!-- Hybrid Modulation Mode Toggle -->
+                        <!-- TAS5825M PWM Modulation & Power Control Dropdown -->
                         <div class="control-group" style="margin-top: 12px; border-left: 3px solid #ff9100; padding-left: 8px; background: rgba(255, 145, 0, 0.05); border-radius: 0 6px 6px 0;">
-                            <div class="control-label" style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="color: #ff9100; font-size: 13px;">⚡ Hybrid Modulation Mode</span>
-                                <label class="switch" style="transform: scale(0.8);">
-                                    <input type="checkbox" id="chkHybridMode" checked onchange="onHybridModeToggle()">
-                                    <span class="slider-round" style="background-color: #ff9100;"></span>
-                                </label>
+                            <div class="control-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <span style="color: #ff9100; font-size: 13px; font-weight: 600;">⚡ TAS5825M Modulation & Output</span>
                             </div>
-                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 4px;">
-                                Mode: <strong id="lblHybridModeStatus" style="color: #ff9100;">ON (Mát IC / Hybrid)</strong>
+                            <select id="selectHybridMode" onchange="onHybridModeChange()" style="width: 100%; background: #121826; color: #ff9100; border: 1px solid #ff9100; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; outline: none;">
+                                <option value="0">0: BD Mode (Low Distortion - Ít Méos Tiếng)</option>
+                                <option value="1">1: 1SPW Standard (Low Loss - Tiết Kiệm Điện)</option>
+                                <option value="2" selected>2: Hybrid Modulation (Cooling - Mát IC Tự Động)</option>
+                                <option value="3">3: OFF / Hi-Z (Tắt Công Suất / Ngắt Ngõ Ra)</option>
+                            </select>
+                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 5px;">
+                                Trạng thái: <strong id="lblHybridModeStatus" style="color: #ff9100;">2: Hybrid Modulation (Cooling)</strong>
                             </div>
                         </div>
                     </div>
@@ -4040,17 +4042,17 @@
                             const sb_hth = (parseFloat(vals[offset + 3]) / 10.0) - 50.0;
                             
                             const dl_en = parseInt(vals[offset + 4]);
-                            const dl_thr = -parseFloat(vals[offset + 5]);
+                            const dl_thr = -parseFloat(vals[offset + 5]) / 10.0;
                             const dl_att = parseInt(vals[offset + 6]);
                             const dl_rel = parseInt(vals[offset + 7]);
                             
                             const dm_en = parseInt(vals[offset + 8]);
-                            const dm_thr = -parseFloat(vals[offset + 9]);
+                            const dm_thr = -parseFloat(vals[offset + 9]) / 10.0;
                             const dm_att = parseInt(vals[offset + 10]);
                             const dm_rel = parseInt(vals[offset + 11]);
                             
                             const dh_en = parseInt(vals[offset + 12]);
-                            const dh_thr = -parseFloat(vals[offset + 13]);
+                            const dh_thr = -parseFloat(vals[offset + 13]) / 10.0;
                             const dh_att = parseInt(vals[offset + 14]);
                             const dh_rel = parseInt(vals[offset + 15]);
 
@@ -4108,6 +4110,14 @@
 
                             if (p === activeProfileIndex) {
                                 crossoverState = { en: cr_en, fc: cr_fc, slope: cr_slp, treb_trim: tr_trim, mid_trim: mb_trim };
+                            }
+                        }
+                        if (vals.length >= 16) {
+                            const hbMode = parseInt(vals[15]);
+                            const sel = document.getElementById('selectHybridMode');
+                            if (sel && !isNaN(hbMode)) {
+                                sel.value = hbMode;
+                                onHybridModeChange();
                             }
                         }
                         syncCrossoverUi();
@@ -5012,17 +5022,29 @@
         console.log("Sent Clipper WebSocket Command:", msg);
     }
 
-    function onHybridModeToggle() {
-        const isChecked = document.getElementById('chkHybridMode').checked;
-        const mode = isChecked ? 1 : 0;
+    function onHybridModeChange() {
+        const sel = document.getElementById('selectHybridMode');
+        if (!sel) return;
+        const mode = parseInt(sel.value);
         const lbl = document.getElementById('lblHybridModeStatus');
-        if (lbl) {
-            lbl.innerText = isChecked ? 'ON (Mát IC / Hybrid)' : 'OFF (BD 1SPW Low Distortion)';
-            lbl.style.color = isChecked ? '#ff9100' : '#00e676';
+        
+        const modeLabels = [
+            { text: '0: BD Mode (Low Distortion)', color: '#00e676' },
+            { text: '1: 1SPW Standard (Low Loss)', color: '#00f2fe' },
+            { text: '2: Hybrid Modulation (Cooling)', color: '#ff9100' },
+            { text: '3: OFF / Hi-Z (Mute Output)', color: '#ff1744' }
+        ];
+
+        if (lbl && modeLabels[mode]) {
+            lbl.innerText = modeLabels[mode].text;
+            lbl.style.color = modeLabels[mode].color;
+            sel.style.color = modeLabels[mode].color;
+            sel.style.borderColor = modeLabels[mode].color;
         }
+
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_HYBRID$${mode}`);
-            console.log("Sent Hybrid Modulation Mode:", mode);
+            console.log("Sent TAS5825M Modulation Mode:", mode);
         }
     }
 
