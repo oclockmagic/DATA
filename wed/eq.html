@@ -4042,10 +4042,11 @@
 
                             const cp_en = parseInt(vals[offset + 16]);
                             const cp_thr = -parseFloat(vals[offset + 17]) / 10.0;
+                            const cp_tr_thr = (vals.length > offset + 18 && vals[offset + 18] !== undefined) ? (-parseFloat(vals[offset + 18]) / 10.0) : (cp_thr - 1.0);
                             
                             if (p === activeProfileIndex) {
                                 sbState = { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth };
-                                clipperState = { en: cp_en, thr: cp_thr };
+                                clipperState = { en: cp_en, thr: cp_thr, tr_thr: cp_tr_thr };
                                 
                                 drcState.low = { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel };
                                 drcState.mid = { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel };
@@ -4056,7 +4057,7 @@
                             window.sbProfilesCache[p] = { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth };
 
                             if (!window.clipProfilesCache) window.clipProfilesCache = [];
-                            window.clipProfilesCache[p] = { en: cp_en, thr: cp_thr };
+                            window.clipProfilesCache[p] = { en: cp_en, thr: cp_thr, tr_thr: cp_tr_thr };
                             
                             if (!window.drcProfilesCache) window.drcProfilesCache = [];
                             window.drcProfilesCache[p] = {
@@ -4716,6 +4717,10 @@
     // --- Professional Output Clipper Canvas & Controls Functions ---
 
     function syncClipUi() {
+        if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
+            clipperState = JSON.parse(JSON.stringify(window.clipProfilesCache[activeProfileIndex]));
+        }
+
         const chk = document.getElementById('chkClipper');
         if (chk) chk.checked = (clipperState.en === 1);
 
@@ -4725,15 +4730,17 @@
         const lblThr = document.getElementById('lblClipperThr');
         if (lblThr) lblThr.innerText = clipperState.thr.toFixed(1) + ' dB';
 
-        // Cập nhật thông số phụ
-        const factor = Math.pow(10, clipperState.thr / 20);
-        const lblAmp = document.getElementById('lblClipAmplitude');
-        if (lblAmp) lblAmp.innerText = Math.round(factor * 100) + ' %';
+        const sliderTr = document.getElementById('sliderTrebleClipperThr');
+        if (sliderTr) sliderTr.value = clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5;
 
-        const regVal = Math.round(255 * factor);
-        const hexVal = '0x' + regVal.toString(16).toUpperCase().padStart(2, '0');
-        const lblReg = document.getElementById('lblClipRegVal');
-        if (lblReg) lblReg.innerText = hexVal + ' (' + regVal + ')';
+        const lblTrThr = document.getElementById('lblTrebleClipperThr');
+        if (lblTrThr) lblTrThr.innerText = (clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5).toFixed(1) + ' dB';
+
+        // Cập nhật thông số phụ
+        const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5;
+        const factor = Math.pow(10, trVal / 20);
+        const lblAmp = document.getElementById('lblClipAmplitude');
+        if (lblAmp) lblAmp.innerText = Math.round(factor * 100) + ' % (' + trVal.toFixed(1) + ' dB)';
 
         // Redraw Canvas
         drawClipperCurve();
@@ -4986,17 +4993,30 @@
     }
 
     function onClipSliderInput() {
-        const val = parseFloat(document.getElementById('sliderClipperThr').value);
-        clipperState.thr = val;
-        
-        const factor = Math.pow(10, clipperState.thr / 20);
+        const valMb = parseFloat(document.getElementById('sliderClipperThr').value);
+        clipperState.thr = valMb;
+
+        const sliderTr = document.getElementById('sliderTrebleClipperThr');
+        if (sliderTr) {
+            clipperState.tr_thr = parseFloat(sliderTr.value);
+        }
+
+        const lblThr = document.getElementById('lblClipperThr');
+        if (lblThr) lblThr.innerText = clipperState.thr.toFixed(1) + ' dB';
+
+        const lblTrThr = document.getElementById('lblTrebleClipperThr');
+        if (lblTrThr && clipperState.tr_thr !== undefined) lblTrThr.innerText = clipperState.tr_thr.toFixed(1) + ' dB';
+
+        const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5;
+        const factor = Math.pow(10, trVal / 20);
         const lblAmp = document.getElementById('lblClipAmplitude');
-        if (lblAmp) lblAmp.innerText = Math.round(factor * 100) + ' %';
-        
+        if (lblAmp) lblAmp.innerText = Math.round(factor * 100) + ' % (' + trVal.toFixed(1) + ' dB)';
+
         if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
             window.clipProfilesCache[activeProfileIndex].thr = clipperState.thr;
+            window.clipProfilesCache[activeProfileIndex].tr_thr = clipperState.tr_thr;
         }
-        
+
         drawClipperCurve();
     }
 
@@ -5006,7 +5026,8 @@
 
     function sendClipperSettings() {
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
-        window.eqWebSocket.send(`#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${clipperState.thr}`);
+        const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5;
+        window.eqWebSocket.send(`#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${clipperState.thr},${trVal}`);
         console.log("Sent Clipper Settings:", clipperState);
     }
 
