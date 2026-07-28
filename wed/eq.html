@@ -855,19 +855,17 @@
                             </div>
                         </div>
 
-                        <!-- TAS5825M PWM Modulation & Power Control Dropdown -->
+                        <!-- Hybrid Modulation Mode Toggle -->
                         <div class="control-group" style="margin-top: 12px; border-left: 3px solid #ff9100; padding-left: 8px; background: rgba(255, 145, 0, 0.05); border-radius: 0 6px 6px 0;">
-                            <div class="control-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <span style="color: #ff9100; font-size: 13px; font-weight: 600;">⚡ TAS5825M Modulation & Output</span>
+                            <div class="control-label" style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="color: #ff9100; font-size: 13px;">⚡ Hybrid Modulation Mode</span>
+                                <label class="switch" style="transform: scale(0.8);">
+                                    <input type="checkbox" id="chkHybridMode" checked onchange="onHybridModeToggle()">
+                                    <span class="slider-round" style="background-color: #ff9100;"></span>
+                                </label>
                             </div>
-                            <select id="selectHybridMode" onchange="onHybridModeChange()" style="width: 100%; background: #121826; color: #ff9100; border: 1px solid #ff9100; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; outline: none;">
-                                <option value="0">0: BD Mode (Low Distortion - Ít Méos Tiếng)</option>
-                                <option value="1">1: 1SPW Standard (Low Loss - Tiết Kiệm Điện)</option>
-                                <option value="2" selected>2: Hybrid Modulation (Cooling - Mát IC Tự Động)</option>
-                                <option value="3">3: OFF / Hi-Z (Tắt Công Suất / Ngắt Ngõ Ra)</option>
-                            </select>
-                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 5px;">
-                                Trạng thái: <strong id="lblHybridModeStatus" style="color: #ff9100;">2: Hybrid Modulation (Cooling)</strong>
+                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 4px;">
+                                Mode: <strong id="lblHybridModeStatus" style="color: #ff9100;">ON (Mát IC / Hybrid)</strong>
                             </div>
                         </div>
                     </div>
@@ -4114,10 +4112,15 @@
                         }
                         if (vals.length >= 16) {
                             const hbMode = parseInt(vals[15]);
-                            const sel = document.getElementById('selectHybridMode');
-                            if (sel && !isNaN(hbMode)) {
-                                sel.value = hbMode;
-                                onHybridModeChange();
+                            const chk = document.getElementById('chkHybridMode');
+                            const lbl = document.getElementById('lblHybridModeStatus');
+                            if (chk && !isNaN(hbMode)) {
+                                const isHybrid = (hbMode !== 0);
+                                chk.checked = isHybrid;
+                                if (lbl) {
+                                    lbl.innerText = isHybrid ? 'ON (Mát IC / Hybrid)' : 'OFF (BD 1SPW Low Distortion)';
+                                    lbl.style.color = isHybrid ? '#ff9100' : '#00e676';
+                                }
                             }
                         }
                         syncCrossoverUi();
@@ -5022,29 +5025,17 @@
         console.log("Sent Clipper WebSocket Command:", msg);
     }
 
-    function onHybridModeChange() {
-        const sel = document.getElementById('selectHybridMode');
-        if (!sel) return;
-        const mode = parseInt(sel.value);
+    function onHybridModeToggle() {
+        const isChecked = document.getElementById('chkHybridMode').checked;
+        const mode = isChecked ? 2 : 0;
         const lbl = document.getElementById('lblHybridModeStatus');
-        
-        const modeLabels = [
-            { text: '0: BD Mode (Low Distortion)', color: '#00e676' },
-            { text: '1: 1SPW Standard (Low Loss)', color: '#00f2fe' },
-            { text: '2: Hybrid Modulation (Cooling)', color: '#ff9100' },
-            { text: '3: OFF / Hi-Z (Mute Output)', color: '#ff1744' }
-        ];
-
-        if (lbl && modeLabels[mode]) {
-            lbl.innerText = modeLabels[mode].text;
-            lbl.style.color = modeLabels[mode].color;
-            sel.style.color = modeLabels[mode].color;
-            sel.style.borderColor = modeLabels[mode].color;
+        if (lbl) {
+            lbl.innerText = isChecked ? 'ON (Mát IC / Hybrid)' : 'OFF (BD 1SPW Low Distortion)';
+            lbl.style.color = isChecked ? '#ff9100' : '#00e676';
         }
-
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_HYBRID$${mode}`);
-            console.log("Sent TAS5825M Modulation Mode:", mode);
+            console.log("Sent Hybrid Modulation Mode:", mode);
         }
     }
 
