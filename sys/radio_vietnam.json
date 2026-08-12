@@ -1,212 +1,112 @@
 ﻿[
   {
     "id": "radio_1",
-    "title": "VOV 1",
-    "stream_url": "https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8"
-  },
-  {
-    "id": "radio_2",
-    "title": "VOH FM 87.7 Nhịp sống 77",
-    "stream_url": "https://strm.voh.com.vn/radio/channel5/playlist.m3u8"
-  },
-  {
-    "id": "radio_3",
-    "title": "Lstv Lạng Sơn Radio",
-    "stream_url": "https://stream.langsontv.vn/live/285c78da0c246524c90917842f8de03bd21/playlist.m3u8"
-  },
-  {
-    "id": "radio_4",
-    "title": "VOV Giao thông Hà Nội",
-    "stream_url": "https://play.vovgiaothong.vn/live/gthn/playlist.m3u8"
-  },
-  {
-    "id": "radio_5",
     "title": "NTV Ninh Bình Radio",
     "stream_url": "http://kythuatphatthanhtruyenhinh.vov.gov.vn:8001/;"
   },
   {
-    "id": "radio_6",
-    "title": "Thtpct Thơ City Radio",
-    "stream_url": "https://live.canthotv.vn/live/radio/playlist.m3u8"
-  },
-  {
-    "id": "radio_7",
-    "title": "TTV Tuyên Quang Radio",
-    "stream_url": "https://streaming.tuyenquangtv.vn/channel/tuyenquang_radio/playlist.m3u8"
-  },
-  {
-    "id": "radio_8",
+    "id": "radio_2",
     "title": "FM Hanoi 90 MHz",
     "stream_url": "http://14.162.146.90:8000/HANOI90"
   },
   {
-    "id": "radio_9",
-    "title": "QNR1 Quảng Ninh Radio",
-    "stream_url": "https://live.baoquangninh.vn/qtvlive/qnr1.m3u8"
-  },
-  {
-    "id": "radio_10",
-    "title": "STV Sơn La Radio",
-    "stream_url": "https://cdn.sonlatv.vn/live/285bfb76d0d7a3c4615b853fe7a698e150c/playlist.m3u8"
-  },
-  {
-    "id": "radio_11",
-    "title": "Thdt Đồng Tháp Radio",
-    "stream_url": "https://64d0d74b76158.streamlock.net/THDTR/thdtradio/playlist.m3u8"
-  },
-  {
-    "id": "radio_12",
-    "title": "QNR2 Quảng Ninh Radio",
-    "stream_url": "https://live.baoquangninh.vn/qtvlive/qnr2.m3u8"
-  },
-  {
-    "id": "radio_13",
+    "id": "radio_3",
     "title": "VOV Mekong FM",
     "stream_url": "http://media.kythuatvov.vn:7059/;"
   },
   {
-    "id": "radio_14",
+    "id": "radio_4",
     "title": "99.8 Radio",
     "stream_url": "https://stream.zeno.fm/jxniabwipmhtv"
   },
   {
-    "id": "radio_15",
+    "id": "radio_5",
     "title": "Bình Định FM 97",
     "stream_url": "http://14.224.130.186:8000/binhdinh"
   },
   {
-    "id": "radio_16",
-    "title": "CHẠM Radio",
-    "stream_url": "https://vnno-ne-2-tf-multi-playlist-zmp3.zmdcdn.me/j20SDlO5EQk/zhls/playback-realtime/audio/59a2ee0ed24b3b15625a/audio.m3u8"
-  },
-  {
-    "id": "radio_17",
+    "id": "radio_6",
     "title": "FM Hanoi 96 MHz",
     "stream_url": "http://222.252.21.96:8000/HANOI96"
   },
   {
-    "id": "radio_18",
+    "id": "radio_7",
     "title": "Há Nội Community Radio",
     "stream_url": "https://ha-noi-community-radio.radiocult.fm/stream"
   },
   {
-    "id": "radio_19",
-    "title": "Hanoi TV2",
-    "stream_url": "https://cloudstreamhntv.tek4tv.vn/live/smil:HN2.smil/playlist.m3u8"
-  },
-  {
-    "id": "radio_20",
+    "id": "radio_8",
     "title": "Little Saigon Radio",
     "stream_url": "https://stream.zeno.fm/yvzaxu2qe7duv"
   },
   {
-    "id": "radio_21",
+    "id": "radio_9",
     "title": "Phat thanh LSTV",
     "stream_url": "https://stream.zeno.fm/xsct365wra0uv"
   },
   {
-    "id": "radio_22",
+    "id": "radio_10",
     "title": "Quran in Vietnamese",
     "stream_url": "https://qurantranslations.net/sound/English/AbdulBaset_AbdulSamad/002.mp3"
   },
   {
-    "id": "radio_23",
+    "id": "radio_11",
     "title": "Saigoner",
     "stream_url": "https://stream.zeno.fm/5cyfrgpebkhvv"
   },
   {
-    "id": "radio_24",
+    "id": "radio_12",
     "title": "Sakar murli - Bkwsu VN Radio",
     "stream_url": "https://stream.zeno.fm/u4fzlxveibcuv"
   },
   {
-    "id": "radio_25",
+    "id": "radio_13",
     "title": "Scientific Sound Asia Radio",
     "stream_url": "http://carol.epichosts.co.uk:8270/live.mp3"
   },
   {
-    "id": "radio_26",
+    "id": "radio_14",
     "title": "Vietnamese National People",
     "stream_url": "https://c13.radioboss.fm:8127/autodj"
   },
   {
-    "id": "radio_27",
+    "id": "radio_15",
     "title": "Vietnam War Rock",
     "stream_url": "https://stream.zeno.fm/g91qxch7gv8uv"
   },
   {
-    "id": "radio_28",
-    "title": "VOH AM 610 Nông thôn",
-    "stream_url": "https://strm.voh.com.vn/radio/channel2/playlist.m3u8"
-  },
-  {
-    "id": "radio_29",
-    "title": "VOH FM 95.6 Đêm thành phố",
-    "stream_url": "https://strm.voh.com.vn/radio/channel1/playlist.m3u8"
-  },
-  {
-    "id": "radio_30",
-    "title": "VOH FM 99.9 Không giới hạn",
-    "stream_url": "https://strm.voh.com.vn/radio/channel3/playlist.m3u8"
-  },
-  {
-    "id": "radio_31",
-    "title": "VOV 6",
-    "stream_url": "https://str.vov.gov.vn/vovlive/vov2.sdp_aac/playlist.m3u8"
-  },
-  {
-    "id": "radio_32",
+    "id": "radio_16",
     "title": "Zeno FM - Mien Tay",
     "stream_url": "https://stream.zeno.fm/pmagmhzfy38uv"
   },
   {
-    "id": "radio_33",
+    "id": "radio_17",
     "title": "Zeno FM - M Radio Việt Nam",
     "stream_url": "https://stream.zeno.fm/4q7y9hvkp2zuv"
   },
   {
-    "id": "radio_34",
+    "id": "radio_18",
     "title": "Zeno FM - nhac remix",
     "stream_url": "https://stream.zeno.fm/38paz80m268uv"
   },
   {
-    "id": "radio_35",
+    "id": "radio_19",
     "title": "Zeno FM - Nhac Tre",
     "stream_url": "https://stream.zeno.fm/kdvw4dznx38uv"
   },
   {
-    "id": "radio_36",
+    "id": "radio_20",
     "title": "Zeno FM - Nhac Vang",
     "stream_url": "https://stream.zeno.fm/vgsusc7kw38uv"
   },
   {
-    "id": "radio_37",
+    "id": "radio_21",
     "title": "Zeno FM - Nhung ban Acoustic Cover",
     "stream_url": "https://stream.zeno.fm/tk8atfbgtg8uv"
   },
   {
-    "id": "radio_38",
+    "id": "radio_22",
     "title": "Zeno FM - VOZ FM",
     "stream_url": "https://stream.zeno.fm/ojnttdbhgr7tv"
-  },
-  {
-    "id": "radio_39",
-    "title": "Zing Bolero",
-    "stream_url": "https://vnno-ne-3-tf-multi-playlist-zmp3.zmdcdn.me/BJ7DyJjfG_E/zhls/playback-realtime/audio/5bace800d4453d1b6454/audio.m3u8"
-  },
-  {
-    "id": "radio_40",
-    "title": "Đài Phát thanh và Truyền hình Đắk Lắk",
-    "stream_url": "https://cdn.drt.vn/live/285a27750861b964c27af22091662a74f2f/playlist.m3u8"
-  },
-  {
-    "id": "radio_41",
-    "title": "",
-    "stream_url": "https://live.mediatech.vn/live/285bfb777e354ec43038aa68950adbac3a4/playlist.m3u8"
-  },
-  {
-    "id": "radio_42",
-    "title": "",
-    "stream_url": "https://str.vov.gov.vn/vovlive/vovGTHCM.sdp_aac/playlist.m3u8"
   }
 ]
