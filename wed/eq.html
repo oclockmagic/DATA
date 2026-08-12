@@ -769,7 +769,7 @@
                             <span class="smart-title" style="font-size: 13px; color: #00f2fe; font-weight: 600;">Active 2-Way DSP Crossover</span>
                             <label class="switch" style="display: none;">
                                 <input type="checkbox" id="chkCrossover" onchange="onCrossoverStateChange()" checked>
-                                <span class="slider-round" style="background-color: #555;"></span>
+                                <span class="slider-round"></span>
                             </label>
                         </div>
                         
@@ -797,7 +797,7 @@
                                 <span style="color: #00e676; font-weight: 600;">🔊 Midbass Channel Trim</span>
                                 <span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span>
                             </div>
-                            <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                            <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="0.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
 
                         <!-- Group 2: Treble IC -->
@@ -806,7 +806,7 @@
                                 <span style="color: #ff4081; font-weight: 600;">📻 Treble Channel Trim</span>
                                 <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">-2.0 dB</span>
                             </div>
-                            <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="-2.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                            <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="0.0" step="0.5" value="-2.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
                     </div>
                 </div>
@@ -828,7 +828,7 @@
                             <span class="smart-title" style="font-size: 15px; color: #ff1744; font-weight: 600;">Hardware Protection Limit</span>
                             <label class="switch">
                                 <input type="checkbox" id="chkClipper" onchange="onClipStateChange()">
-                                <span class="slider-round" style="background-color: #555;"></span>
+                                <span class="slider-round"></span>
                             </label>
                         </div>
                         
