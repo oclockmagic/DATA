@@ -19,5 +19,10 @@
   },
   "url_music": {
     "url_play": "http://171.244.40.218:5006/proxy_audio?id="
+  },
+  "zing": {
+    "apiKey": "X5BM3w8N7MKozC0B85o4KMlzLZKhV00y",
+    "secret": "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW",
+    "version": "1.20.1"
   }
 }
