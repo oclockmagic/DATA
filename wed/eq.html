@@ -681,10 +681,47 @@
             <canvas id="eqCanvas"></canvas>
         </div>
 
-                <!-- Preamp Control Slider -->
+        <!-- Preamp Control Slider -->
         <div class="preamp-container">
             <span class="preamp-label">Preamp: <strong id="preampVal">-6.0</strong> dB</span>
             <input type="range" id="inputPreamp" class="preamp-slider" min="-20" max="0" step="0.1" value="-6.0">
+        </div>
+
+        <!-- Global Bass / Mid / Treble Tone Control Card -->
+        <div class="tone-control-container" style="display: flex; gap: 12px; background: rgba(15, 23, 42, 0.35); padding: 14px 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px; margin-bottom: 10px; width: 100%; box-sizing: border-box; flex-wrap: wrap;">
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 6px; margin-bottom: 8px;">
+                <span style="font-size: 13px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;">
+                    🎛️ BASS / MID / TREBLE TONE CONTROL
+                </span>
+                <button id="btnResetTone" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #cbd5e1; border-radius: 6px; padding: 3px 10px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onclick="resetToneControls()">Reset to 0dB</button>
+            </div>
+
+            <!-- Bass Slider -->
+            <div style="flex: 1; min-width: 130px; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.25);">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ff6b6b; font-weight: 600;">
+                    <span>🔊 BASS</span>
+                    <span id="lblBassVal">0.0 dB</span>
+                </div>
+                <input type="range" id="sliderBass" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('bass')" onchange="onToneSliderChange('bass')">
+            </div>
+
+            <!-- Mid Slider -->
+            <div style="flex: 1; min-width: 130px; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255, 217, 61, 0.25);">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ffd93d; font-weight: 600;">
+                    <span>🎚️ MID</span>
+                    <span id="lblMidVal">0.0 dB</span>
+                </div>
+                <input type="range" id="sliderMid" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('mid')" onchange="onToneSliderChange('mid')">
+            </div>
+
+            <!-- Treble Slider -->
+            <div style="flex: 1; min-width: 130px; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.25);">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #38bdf8; font-weight: 600;">
+                    <span>📻 TREBLE</span>
+                    <span id="lblTrebleVal">0.0 dB</span>
+                </div>
+                <input type="range" id="sliderTreble" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('treble')" onchange="onToneSliderChange('treble')">
+            </div>
         </div>
 
         <!-- EQ Bands Table List -->
@@ -2996,15 +3033,22 @@
   ]
 };
 
-        // --- 14 Pre-loaded ISO octave bands (Band 15 reserved for Crossover) ---
-        const ISO_OCTAVES = [25, 40, 63, 100, 160, 250, 400, 630, 1000, 1600, 2500, 4000, 6300, 10000];
+        // --- 12 ISO octave bands for main EQ profile + 3 dedicated Tone bands (Bass, Mid, Treble) ---
+        const ISO_OCTAVES = [31, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 12000, 16000, 20000];
 
         const BAND_COLORS = [
             '#ff6b6b', '#ffa06b', '#ffd93d', '#6bcb77',
             '#4ecdc4', '#45b7d1', '#96c4ff', '#a78bfa',
-            '#f472b6', '#fb923c', '#2dd4bf', '#fb7185',
-            '#a3e635', '#38bdf8'
+            '#f472b6', '#fb923c', '#2dd4bf', '#fb7185'
         ];
+
+        function createDefaultBands() {
+            const b = ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: i < 10 }));
+            b.push({ id: 12, type: 1, freq: 100, gain: 0.0, q: 0.707, enabled: true });   // Bass (Low Shelf 100Hz)
+            b.push({ id: 13, type: 0, freq: 1000, gain: 0.0, q: 0.707, enabled: true });  // Mid (Peaking 1kHz)
+            b.push({ id: 14, type: 2, freq: 10000, gain: 0.0, q: 0.707, enabled: true }); // Treble (High Shelf 10kHz)
+            return b;
+        }
 
         const FILTER_TYPES = ['Peak', 'Low Shelf', 'High Shelf', 'Low Pass', 'High Pass', 'Band Pass', 'Notch'];
 
@@ -3037,53 +3081,35 @@
         // --- Multi-Profile State Management ---
         let activeProfileIndex = 0;
         let profiles = [
-            {
-                name: "Profile 1",
-                smartBassEn: 0,
-                smartBassStr: 5,
-                drcLowEn: 0,
-                drcLowSens: 5,
-                drcMidEn: 0,
-                drcMidSens: 5,
-                drcHighEn: 0,
-                drcHighSens: 5,
-                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: i < 10 }))
-            },
-            {
-                name: "Profile 2",
-                smartBassEn: 0,
-                smartBassStr: 5,
-                drcLowEn: 0,
-                drcLowSens: 5,
-                drcMidEn: 0,
-                drcMidSens: 5,
-                drcHighEn: 0,
-                drcHighSens: 5,
-                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: i < 10 }))
-            },
-            {
-                name: "Profile 3",
-                smartBassEn: 0,
-                smartBassStr: 5,
-                drcLowEn: 0,
-                drcLowSens: 5,
-                drcMidEn: 0,
-                drcMidSens: 5,
-                drcHighEn: 0,
-                drcHighSens: 5,
-                bands: ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: i < 10 }))
-            }
+            { name: "Profile 1", preamp: -6.2, bands: createDefaultBands() },
+            { name: "Profile 2", preamp: -6.1, bands: createDefaultBands() },
+            { name: "Profile 3", preamp: -2.1, bands: createDefaultBands() }
         ];
 
         // Load saved profiles from localStorage
         const savedProfiles = localStorage.getItem('eq_profiles');
         if (savedProfiles) {
             try {
-                profiles = JSON.parse(savedProfiles);
+                const parsed = JSON.parse(savedProfiles);
+                if (Array.isArray(parsed) && parsed.length >= 3) {
+                    profiles = parsed;
+                }
             } catch (e) {
                 console.warn('Failed to parse saved profiles, using defaults');
             }
         }
+
+        // Validate profiles have 15 bands
+        profiles.forEach(p => {
+            if (!p.bands) p.bands = createDefaultBands();
+            while (p.bands.length < 15) {
+                const idx = p.bands.length;
+                if (idx === 12) p.bands.push({ id: 12, type: 1, freq: 100, gain: 0, q: 0.707, enabled: true });
+                else if (idx === 13) p.bands.push({ id: 13, type: 0, freq: 1000, gain: 0, q: 0.707, enabled: true });
+                else if (idx === 14) p.bands.push({ id: 14, type: 2, freq: 10000, gain: 0, q: 0.707, enabled: true });
+                else p.bands.push({ id: idx, type: 0, freq: 1000, gain: 0, q: 0.707, enabled: false });
+            }
+        });
 
         let bands = profiles[activeProfileIndex].bands;
 
@@ -3682,9 +3708,88 @@
             initClipCanvasEvents();
         }
 
+        function syncToneUi() {
+            if (!profiles[activeProfileIndex] || !profiles[activeProfileIndex].bands) return;
+            const bBass = profiles[activeProfileIndex].bands[12];
+            const bMid = profiles[activeProfileIndex].bands[13];
+            const bTreb = profiles[activeProfileIndex].bands[14];
+
+            const gBass = bBass ? bBass.gain : 0;
+            const gMid = bMid ? bMid.gain : 0;
+            const gTreb = bTreb ? bTreb.gain : 0;
+
+            const sb = document.getElementById('sliderBass');
+            const sm = document.getElementById('sliderMid');
+            const st = document.getElementById('sliderTreble');
+
+            if (sb) sb.value = gBass;
+            if (sm) sm.value = gMid;
+            if (st) st.value = gTreb;
+
+            const lb = document.getElementById('lblBassVal');
+            const lm = document.getElementById('lblMidVal');
+            const lt = document.getElementById('lblTrebleVal');
+
+            if (lb) lb.textContent = (gBass > 0 ? '+' : '') + gBass.toFixed(1) + ' dB';
+            if (lm) lm.textContent = (gMid > 0 ? '+' : '') + gMid.toFixed(1) + ' dB';
+            if (lt) lt.textContent = (gTreb > 0 ? '+' : '') + gTreb.toFixed(1) + ' dB';
+        }
+
+        function onToneSliderInput(type) {
+            const val = parseFloat(document.getElementById(`slider${type.charAt(0).toUpperCase() + type.slice(1)}`).value);
+            document.getElementById(`lbl${type.charAt(0).toUpperCase() + type.slice(1)}Val`).textContent = (val > 0 ? '+' : '') + val.toFixed(1) + ' dB';
+
+            let filterIdx = 12;
+            if (type === 'mid') filterIdx = 13;
+            if (type === 'treble') filterIdx = 14;
+
+            const prof = profiles[activeProfileIndex];
+            if (prof && prof.bands[filterIdx]) {
+                prof.bands[filterIdx].gain = val;
+                prof.bands[filterIdx].enabled = true;
+            }
+            drawGraph();
+        }
+
+        function onToneSliderChange(type) {
+            let filterIdx = 12;
+            if (type === 'mid') filterIdx = 13;
+            if (type === 'treble') filterIdx = 14;
+
+            onToneSliderInput(type);
+            if (typeof window.sendEQUpdate === 'function') {
+                window.sendEQUpdate(activeProfileIndex, filterIdx);
+            }
+            console.log(`[Tone Control] ${type.toUpperCase()} gain set to ${profiles[activeProfileIndex].bands[filterIdx].gain} dB`);
+        }
+
+        function resetToneControls() {
+            const prof = profiles[activeProfileIndex];
+            if (!prof || !prof.bands) return;
+
+            prof.bands[12].gain = 0.0;
+            prof.bands[12].enabled = true;
+
+            prof.bands[13].gain = 0.0;
+            prof.bands[13].enabled = true;
+
+            prof.bands[14].gain = 0.0;
+            prof.bands[14].enabled = true;
+
+            syncToneUi();
+            drawGraph();
+
+            if (typeof window.sendEQUpdate === 'function') {
+                window.sendEQUpdate(activeProfileIndex, 12);
+                window.sendEQUpdate(activeProfileIndex, 13);
+                window.sendEQUpdate(activeProfileIndex, 14);
+            }
+            console.log(`[Tone Control] Reset Bass, Mid, Treble to 0.0 dB for Profile ${activeProfileIndex + 1}`);
+        }
+
         function buildTable() {
             tableBody.innerHTML = '';
-            bands.forEach((band, index) => {
+            bands.slice(0, 12).forEach((band, index) => {
                 const color = BAND_COLORS[index % BAND_COLORS.length];
                 const tr = document.createElement('tr');
                 tr.className = 'band-row';
@@ -3798,8 +3903,9 @@
             });
         }
 
-        // Initialize Table
+        // Initialize Table & Tone UI
         buildTable();
+        syncToneUi();
 
         // --- Profile Tabs Interaction ---
         document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -3822,6 +3928,7 @@
 
                 // Cập nhật Smart Bass & DRC UI của Profile mới
                 updateSmartBassDrcUI();
+                syncToneUi();
 
                 // Cập nhật preamp slider
                 const preampInput = document.getElementById('inputPreamp');
@@ -3895,6 +4002,14 @@
                 }
 
                 console.log(`[EQ Preset Apply] Applying preset: ${brand} (idx=${brandIndex}), ${EQ_PRESETS_DATA[brand][modelIdx]} (idx=${modelIdx}) to Profile ${activeProfileIndex + 1}`);
+
+                // Reset 3 dải Tone Control (Bass, Mid, Treble) về 0 dB khi áp dụng preset mới
+                if (profiles[activeProfileIndex] && profiles[activeProfileIndex].bands) {
+                    profiles[activeProfileIndex].bands[12].gain = 0.0;
+                    profiles[activeProfileIndex].bands[13].gain = 0.0;
+                    profiles[activeProfileIndex].bands[14].gain = 0.0;
+                    syncToneUi();
+                }
 
                 if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
                     // Tạo overlay chờ tạm thời
@@ -4008,7 +4123,7 @@
                             const b_q = vals[idx++];
                             const b_gain = vals[idx++];
                             const b_en = vals[idx++] === 1;
-                            if (f < 14 && profiles[p].bands[f]) {
+                            if (f < 15 && profiles[p].bands[f]) {
                                 profiles[p].bands[f].type = b_type;
                                 profiles[p].bands[f].freq = b_freq;
                                 profiles[p].bands[f].q = b_q;
@@ -4032,6 +4147,7 @@
 
                     // Vẽ lại đồ thị & bảng thông số
                     buildTable();
+                    syncToneUi();
                     updateSelectedRowHighlight();
                     drawGraph();
 
