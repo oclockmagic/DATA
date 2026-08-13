@@ -652,7 +652,7 @@
     </div>
 
     <div class="container">
-        <h2>10-Band EQ Designer</h2>
+        <h2>DSP TOOL</h2>
 
         <!-- Tab Profiles -->
         <div class="tabs-container">
@@ -687,43 +687,6 @@
             <input type="range" id="inputPreamp" class="preamp-slider" min="-20" max="0" step="0.1" value="-6.0">
         </div>
 
-        <!-- Global Bass / Mid / Treble Tone Control Card -->
-        <div class="tone-control-container" style="display: flex; gap: 12px; background: rgba(15, 23, 42, 0.35); padding: 14px 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 10px; margin-bottom: 10px; width: 100%; box-sizing: border-box; flex-wrap: wrap;">
-            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 6px; margin-bottom: 8px;">
-                <span style="font-size: 13px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;">
-                    🎛️ BASS / MID / TREBLE TONE CONTROL
-                </span>
-                <button id="btnResetTone" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #cbd5e1; border-radius: 6px; padding: 3px 10px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onclick="resetToneControls()">Reset to 0dB</button>
-            </div>
-
-            <!-- Bass Slider -->
-            <div style="flex: 1; min-width: 130px; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.25);">
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ff6b6b; font-weight: 600;">
-                    <span>🔊 BASS</span>
-                    <span id="lblBassVal">0.0 dB</span>
-                </div>
-                <input type="range" id="sliderBass" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('bass')" onchange="onToneSliderChange('bass')">
-            </div>
-
-            <!-- Mid Slider -->
-            <div style="flex: 1; min-width: 130px; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255, 217, 61, 0.25);">
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ffd93d; font-weight: 600;">
-                    <span>🎚️ MID</span>
-                    <span id="lblMidVal">0.0 dB</span>
-                </div>
-                <input type="range" id="sliderMid" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('mid')" onchange="onToneSliderChange('mid')">
-            </div>
-
-            <!-- Treble Slider -->
-            <div style="flex: 1; min-width: 130px; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.25);">
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #38bdf8; font-weight: 600;">
-                    <span>📻 TREBLE</span>
-                    <span id="lblTrebleVal">0.0 dB</span>
-                </div>
-                <input type="range" id="sliderTreble" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('treble')" onchange="onToneSliderChange('treble')">
-            </div>
-        </div>
-
         <!-- EQ Bands Table List -->
         <div class="table-container">
             <table>
@@ -740,6 +703,43 @@
                     <!-- Filled by JS -->
                 </tbody>
             </table>
+        </div>
+
+        <!-- Global Bass / Mid / Treble Tone Control Card -->
+        <div class="tone-control-container" style="display: flex; flex-direction: column; gap: 10px; background: rgba(15, 23, 42, 0.35); padding: 14px 16px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1); margin-top: 15px; margin-bottom: 15px; width: 100%; box-sizing: border-box;">
+            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 6px; margin-bottom: 4px;">
+                <span style="font-size: 13px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px;">
+                    🎛️ BASS / MID / TREBLE TONE CONTROL
+                </span>
+                <button id="btnResetTone" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #cbd5e1; border-radius: 6px; padding: 3px 10px; font-size: 11px; cursor: pointer; transition: all 0.2s;" onclick="resetToneControls()">Reset to 0dB</button>
+            </div>
+
+            <!-- Row 1: Bass Slider -->
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.25); box-sizing: border-box;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ff6b6b; font-weight: 600;">
+                    <span>🔊 BASS (Low Shelf 100Hz)</span>
+                    <span id="lblBassVal">0.0 dB</span>
+                </div>
+                <input type="range" id="sliderBass" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('bass')" onchange="onToneSliderChange('bass')">
+            </div>
+
+            <!-- Row 2: Mid Slider -->
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 217, 61, 0.25); box-sizing: border-box;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ffd93d; font-weight: 600;">
+                    <span>🎚️ MID (Peaking 1kHz)</span>
+                    <span id="lblMidVal">0.0 dB</span>
+                </div>
+                <input type="range" id="sliderMid" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('mid')" onchange="onToneSliderChange('mid')">
+            </div>
+
+            <!-- Row 3: Treble Slider -->
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.25); box-sizing: border-box;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #38bdf8; font-weight: 600;">
+                    <span>📻 TREBLE (High Shelf 10kHz)</span>
+                    <span id="lblTrebleVal">0.0 dB</span>
+                </div>
+                <input type="range" id="sliderTreble" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('treble')" onchange="onToneSliderChange('treble')">
+            </div>
         </div>
 
         <!-- Smart Audio Processor Container -->
@@ -3399,8 +3399,8 @@
                 ctx.fillText(`${db > 0 ? '+' : ''}${db}`, metrics.gx - 10, y + 4);
             }
 
-            // Individual Band Curves (shows Q Factor shape)
-            bands.forEach((band, index) => {
+            // Individual Band Curves (shows Q Factor shape for 12 EQ bands)
+            bands.slice(0, 12).forEach((band, index) => {
                 if (band.enabled === false) return;
                 if (Math.abs(band.gain) < 0.05 && index !== selectedBand) return;
 
@@ -3423,7 +3423,7 @@
             });
             ctx.setLineDash([]); // reset
 
-            // Combined Response Curve
+            // Combined Response Curve (includes all 15 bands: 12 EQ profile bands + 3 Tone control bands)
             const combined = computeCombinedResponse(FREQS);
 
             // Curve Fill
@@ -3455,8 +3455,8 @@
             }
             ctx.stroke();
 
-            // Band Nodes
-            bands.forEach((band, index) => {
+            // Band Nodes (rendered ONLY for the 12 profile EQ bands, not for Tone Control bands 12-14)
+            bands.slice(0, 12).forEach((band, index) => {
                 if (band.enabled === false) return;
                 const x = freqToX(band.freq, metrics);
                 const y = dbToY(band.gain, metrics);
@@ -3532,7 +3532,7 @@
         function hitTest(x, y) {
             const metrics = getGraphMetrics();
             let closest = -1, minDist = 15;
-            bands.forEach((band, index) => {
+            bands.slice(0, 12).forEach((band, index) => {
                 const dist = Math.hypot(x - freqToX(band.freq, metrics), y - dbToY(band.gain, metrics));
                 if (dist < minDist) {
                     minDist = dist;
@@ -3739,14 +3739,27 @@
             const val = parseFloat(document.getElementById(`slider${type.charAt(0).toUpperCase() + type.slice(1)}`).value);
             document.getElementById(`lbl${type.charAt(0).toUpperCase() + type.slice(1)}Val`).textContent = (val > 0 ? '+' : '') + val.toFixed(1) + ' dB';
 
-            let filterIdx = 12;
-            if (type === 'mid') filterIdx = 13;
-            if (type === 'treble') filterIdx = 14;
-
             const prof = profiles[activeProfileIndex];
-            if (prof && prof.bands[filterIdx]) {
-                prof.bands[filterIdx].gain = val;
-                prof.bands[filterIdx].enabled = true;
+            if (prof && prof.bands) {
+                if (type === 'bass' && prof.bands[12]) {
+                    prof.bands[12].type = 1;      // Low Shelf (Cố định)
+                    prof.bands[12].freq = 100.0;  // 100 Hz (Cố định)
+                    prof.bands[12].q = 0.707;     // Q = 0.707 (Cố định)
+                    prof.bands[12].gain = val;
+                    prof.bands[12].enabled = true;
+                } else if (type === 'mid' && prof.bands[13]) {
+                    prof.bands[13].type = 0;      // Peaking (Cố định)
+                    prof.bands[13].freq = 1000.0; // 1000 Hz (Cố định)
+                    prof.bands[13].q = 0.707;     // Q = 0.707 (Cố định)
+                    prof.bands[13].gain = val;
+                    prof.bands[13].enabled = true;
+                } else if (type === 'treble' && prof.bands[14]) {
+                    prof.bands[14].type = 2;      // High Shelf (Cố định)
+                    prof.bands[14].freq = 10000.0;// 10000 Hz (Cố định)
+                    prof.bands[14].q = 0.707;     // Q = 0.707 (Cố định)
+                    prof.bands[14].gain = val;
+                    prof.bands[14].enabled = true;
+                }
             }
             drawGraph();
         }
@@ -3767,14 +3780,29 @@
             const prof = profiles[activeProfileIndex];
             if (!prof || !prof.bands) return;
 
-            prof.bands[12].gain = 0.0;
-            prof.bands[12].enabled = true;
+            if (prof.bands[12]) {
+                prof.bands[12].type = 1;
+                prof.bands[12].freq = 100.0;
+                prof.bands[12].q = 0.707;
+                prof.bands[12].gain = 0.0;
+                prof.bands[12].enabled = true;
+            }
 
-            prof.bands[13].gain = 0.0;
-            prof.bands[13].enabled = true;
+            if (prof.bands[13]) {
+                prof.bands[13].type = 0;
+                prof.bands[13].freq = 1000.0;
+                prof.bands[13].q = 0.707;
+                prof.bands[13].gain = 0.0;
+                prof.bands[13].enabled = true;
+            }
 
-            prof.bands[14].gain = 0.0;
-            prof.bands[14].enabled = true;
+            if (prof.bands[14]) {
+                prof.bands[14].type = 2;
+                prof.bands[14].freq = 10000.0;
+                prof.bands[14].q = 0.707;
+                prof.bands[14].gain = 0.0;
+                prof.bands[14].enabled = true;
+            }
 
             syncToneUi();
             drawGraph();
