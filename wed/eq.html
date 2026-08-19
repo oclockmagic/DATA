@@ -909,18 +909,12 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Power Output State (Reg 0x03 CTRL_STATE) -->
-                            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255, 255, 255, 0.1);">
-                                <div class="control-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                    <span style="color: #00e676; font-size: 13px; font-weight: 600;">🔌 TAS5825M Power Output State</span>
-                                </div>
-                                <select id="selectAmpState" onchange="onAmpStateUserChange()" style="width: 100%; background: #121826; color: #00e676; border: 1px solid #00e676; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; outline: none;">
-                                    <option value="1" selected>1: Active / Play Mode (Phát Âm Thanh)</option>
-                                    <option value="0">0: Power Muted / Hi-Z Mode (Tắt Công Suất Ngõ Ra)</option>
+                            <!-- 2. Power Output State (Reg 0x03 CTRL_STATE) - Hidden as requested -->
+                            <div style="display: none;">
+                                <select id="selectAmpState">
+                                    <option value="1" selected>1: Active / Play Mode</option>
                                 </select>
-                                <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 4px;">
-                                    Trạng thái Công Suất: <strong id="lblAmpStateStatus" style="color: #00e676;">1: Active / Play Mode</strong>
-                                </div>
+                                <strong id="lblAmpStateStatus">1: Active / Play Mode</strong>
                             </div>
                         </div>
                     </div>
