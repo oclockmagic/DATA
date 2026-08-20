@@ -794,90 +794,83 @@
             <div class="section-card" style="margin-top: 20px; border: 1px solid rgba(0, 242, 254, 0.25); background: rgba(10, 15, 30, 0.4); padding: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding-bottom: 8px;">
                     <div class="section-title" id="crossoverCardTitle" style="color: #00f2fe; margin: 0; padding: 0;">
-                        🎛️ CROSSOVER & CHANNEL GAIN ALIGNMENT
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span id="lblCrossoverModeTitle" style="font-size: 12px; color: #00f2fe; font-weight: 600; background: rgba(0,242,254,0.1); padding: 3px 8px; border-radius: 12px; border: 1px solid rgba(0,242,254,0.3);">
-                            Active 3-Way DSP Crossover
-                        </span>
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #aaa;">
-                            <span>Slope:</span>
-                            <select id="selCrossoverSlope" style="background: rgba(0,0,0,0.6); color: #00f2fe; border: 1px solid rgba(0,242,254,0.3); border-radius: 6px; padding: 2px 8px; font-size: 11px; outline: none;" onchange="onCrossoverSlopeChange()">
-                                <option value="1">12 dB/Oct (Butterworth)</option>
-                                <option value="2">24 dB/Oct (Linkwitz-Riley)</option>
-                            </select>
-                        </div>
+                        🎛️ CROSSOVER & TRIM GAIN
                     </div>
                 </div>
 
-                <!-- Main Full-Width Crossover Response Graph -->
+                <!-- Main Crossover Response Graph -->
                 <div style="width: 100%; margin-top: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                    <canvas id="crossoverCanvas" width="500" height="160" style="width: 100%; max-width: 550px; height: 160px;"></canvas>
+                    <canvas id="crossoverCanvas" width="500" height="150" style="width: 100%; max-width: 550px; height: 150px;"></canvas>
                 </div>
 
-                <!-- 3-Column Responsive Amp Channel Grid -->
-                <div id="crossoverControlGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px;">
+                <!-- 3 Clean Rows Layout (Sub, Mid, Treble) -->
+                <div id="crossoverControlGrid" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
                     
-                    <!-- Channel 1: Sub / Bass (0x4D PBTL Mono) - Hidden in 2-Way -->
-                    <div class="control-group" id="groupBassTrim" style="display: none; border: 1px solid rgba(255, 145, 0, 0.3); padding: 10px; background: rgba(255, 145, 0, 0.05); border-radius: 8px;">
-                        <div style="color: #ff9100; font-weight: 700; font-size: 12px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 145, 0, 0.2); padding-bottom: 4px;">
-                            🔈 SUB / BASS (0x4D MONO)
+                    <!-- Hàng 1: SUB / BASS (0x4D MONO) -->
+                    <div class="control-group" id="groupBassTrim" style="display: none; border: 1px solid rgba(255, 145, 0, 0.3); padding: 10px 14px; background: rgba(255, 145, 0, 0.05); border-radius: 8px;">
+                        <div style="color: #ff9100; font-weight: 700; font-size: 13px; margin-bottom: 8px;">
+                            🔈 SUB BASS (0x4D MONO)
                         </div>
-                        <div style="margin-bottom: 8px;">
-                            <div class="control-label" style="font-size: 11px;">
-                                <span style="color: #ccc;">Sub-Mid Cut (fc_low):</span>
-                                <span id="lblCrossoverFcLow" style="color: #ff9100; font-weight: 600;">250 Hz</span>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <div class="control-label" style="font-size: 11px;">
+                                    <span style="color: #ccc;">Cắt Tần Tốt (Sub-Mid Fc):</span>
+                                    <span id="lblCrossoverFcLow" style="color: #ff9100; font-weight: 600;">250 Hz</span>
+                                </div>
+                                <input type="range" id="sliderCrossoverFcLow" class="smart-slider" min="80" max="500" step="10" value="250" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                             </div>
-                            <input type="range" id="sliderCrossoverFcLow" class="smart-slider" min="80" max="500" step="10" value="250" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
-                        </div>
-                        <div>
-                            <div class="control-label" style="font-size: 11px;">
-                                <span style="color: #ccc;">Gain Trim:</span>
-                                <span id="lblBassTrim" style="color: #ff9100; font-weight: 600;">0.0 dB</span>
+                            <div>
+                                <div class="control-label" style="font-size: 11px;">
+                                    <span style="color: #ccc;">Âm Lượng Sub (Gain Trim):</span>
+                                    <span id="lblBassTrim" style="color: #ff9100; font-weight: 600;">0.0 dB</span>
+                                </div>
+                                <input type="range" id="sliderBassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                             </div>
-                            <input type="range" id="sliderBassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
                     </div>
 
-                    <!-- Channel 2: Midrange (0x4C Stereo) -->
-                    <div class="control-group" style="border: 1px solid rgba(0, 230, 118, 0.3); padding: 10px; background: rgba(0, 230, 118, 0.05); border-radius: 8px;">
-                        <div style="color: #00e676; font-weight: 700; font-size: 12px; margin-bottom: 8px; border-bottom: 1px solid rgba(0, 230, 118, 0.2); padding-bottom: 4px;">
+                    <!-- Hàng 2: MIDRANGE (0x4C STEREO) -->
+                    <div class="control-group" style="border: 1px solid rgba(0, 230, 118, 0.3); padding: 10px 14px; background: rgba(0, 230, 118, 0.05); border-radius: 8px;">
+                        <div style="color: #00e676; font-weight: 700; font-size: 13px; margin-bottom: 8px;">
                             🔊 MIDRANGE (0x4C STEREO)
                         </div>
-                        <div style="margin-bottom: 8px;">
-                            <div class="control-label" style="font-size: 11px;">
-                                <span id="lblFcTitle" style="color: #ccc;">Mid-Treble Cut (fc):</span>
-                                <span id="lblCrossoverFc" style="color: #00e676; font-weight: 600;">2500 Hz</span>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <div class="control-label" style="font-size: 11px;">
+                                    <span id="lblFcTitle" style="color: #ccc;">Cắt Tần Mid-Treble (Fc):</span>
+                                    <span id="lblCrossoverFc" style="color: #00e676; font-weight: 600;">2500 Hz</span>
+                                </div>
+                                <input type="range" id="sliderCrossoverFc" class="smart-slider" min="500" max="8000" step="50" value="2500" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                             </div>
-                            <input type="range" id="sliderCrossoverFc" class="smart-slider" min="500" max="8000" step="50" value="2500" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
-                        </div>
-                        <div>
-                            <div class="control-label" style="font-size: 11px;">
-                                <span id="lblMidTrimTitle" style="color: #ccc;">Gain Trim:</span>
-                                <span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span>
+                            <div>
+                                <div class="control-label" style="font-size: 11px;">
+                                    <span id="lblMidTrimTitle" style="color: #ccc;">Âm Lượng Mid (Gain Trim):</span>
+                                    <span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span>
+                                </div>
+                                <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                             </div>
-                            <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
                     </div>
 
-                    <!-- Channel 3: Treble (0x4E Stereo) -->
-                    <div class="control-group" style="border: 1px solid rgba(255, 64, 129, 0.3); padding: 10px; background: rgba(255, 64, 129, 0.05); border-radius: 8px;">
-                        <div style="color: #ff4081; font-weight: 700; font-size: 12px; margin-bottom: 8px; border-bottom: 1px solid rgba(255, 64, 129, 0.2); padding-bottom: 4px;">
+                    <!-- Hàng 3: TREBLE (0x4E STEREO) -->
+                    <div class="control-group" style="border: 1px solid rgba(255, 64, 129, 0.3); padding: 10px 14px; background: rgba(255, 64, 129, 0.05); border-radius: 8px;">
+                        <div style="color: #ff4081; font-weight: 700; font-size: 13px; margin-bottom: 8px;">
                             📻 TREBLE (0x4E STEREO)
                         </div>
-                        <div style="margin-bottom: 8px;">
-                            <div class="control-label" style="font-size: 11px;">
-                                <span style="color: #ccc;">High Pass:</span>
-                                <span style="color: #ff4081; font-weight: 600;">> fc</span>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center;">
+                            <div>
+                                <div class="control-label" style="font-size: 11px;">
+                                    <span style="color: #ccc;">Dải Tần Hoạt Động:</span>
+                                    <span style="color: #ff4081; font-weight: 600;">High-Pass (> Fc Mid)</span>
+                                </div>
                             </div>
-                            <div style="height: 18px; font-size: 10px; color: #888; display: flex; align-items: center;">Filtered by Mid-Treble Cut</div>
-                        </div>
-                        <div>
-                            <div class="control-label" style="font-size: 11px;">
-                                <span style="color: #ccc;">Gain Trim:</span>
-                                <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">-2.0 dB</span>
+                            <div>
+                                <div class="control-label" style="font-size: 11px;">
+                                    <span style="color: #ccc;">Âm Lượng Treble (Gain Trim):</span>
+                                    <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">-2.0 dB</span>
+                                </div>
+                                <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="-2.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                             </div>
-                            <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="-2.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
                     </div>
 
