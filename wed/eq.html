@@ -790,29 +790,38 @@
                     </div>
                 </div>
             </div>
-            <!-- Dual TAS5825M 2-Way Crossover & Channel Trim Card -->
+            <!-- Dual/Triple TAS5825M Crossover & Channel Trim Card -->
             <div class="section-card" style="margin-top: 20px; border: 1px solid rgba(0, 242, 254, 0.25); background: rgba(10, 15, 30, 0.4);">
-                <div class="section-title" style="color: #00f2fe; border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding-bottom: 8px;">
+                <div class="section-title" id="crossoverCardTitle" style="color: #00f2fe; border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding-bottom: 8px;">
                     🎛️ DUAL TAS CROSSOVER & TRIM GAIN
                 </div>
                 <div class="clipper-content-layout" style="margin-top: 10px;">
                     <!-- Left Column: Crossover Response Graph -->
                     <div class="clipper-canvas-container">
-                        <canvas id="crossoverCanvas" width="260" height="185"></canvas>
+                        <canvas id="crossoverCanvas" width="260" height="200"></canvas>
                     </div>
-                    <!-- Right Column: Dual Amp Group Controls -->
+                    <!-- Right Column: Dual/Triple Amp Group Controls -->
                     <div class="clipper-controls-container">
                         <div class="smart-header" style="margin-bottom: 8px; background: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 8px;">
-                            <span class="smart-title" style="font-size: 13px; color: #00f2fe; font-weight: 600;">Active 2-Way DSP Crossover</span>
+                            <span class="smart-title" id="lblCrossoverModeTitle" style="font-size: 13px; color: #00f2fe; font-weight: 600;">Active 2-Way DSP Crossover</span>
                             <label class="switch" style="display: none;">
                                 <input type="checkbox" id="chkCrossover" onchange="onCrossoverStateChange()" checked>
                                 <span class="slider-round"></span>
                             </label>
                         </div>
+
+                        <!-- 3-Way Sub-Mid Crossover Slider (Hidden in 2-Way) -->
+                        <div class="control-group" id="groupCrossoverFcLow" style="display: none; margin-bottom: 6px;">
+                            <div class="control-label">
+                                <span style="color: #ff9100; font-weight: 600;">Sub-Mid Crossover (fc_low)</span>
+                                <span id="lblCrossoverFcLow" style="color: #ff9100; font-weight: 600;">250 Hz</span>
+                            </div>
+                            <input type="range" id="sliderCrossoverFcLow" class="smart-slider" min="80" max="800" step="10" value="250" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                        </div>
                         
                         <div class="control-group">
                             <div class="control-label">
-                                <span>Crossover Frequency (fc)</span>
+                                <span id="lblFcTitle">Crossover Frequency (fc)</span>
                                 <span id="lblCrossoverFc" style="color: #00f2fe; font-weight: 600;">2500 Hz</span>
                             </div>
                             <input type="range" id="sliderCrossoverFc" class="smart-slider" min="500" max="8000" step="50" value="2500" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
@@ -828,16 +837,25 @@
                             </div>
                         </div>
 
-                        <!-- Group 1: Midbass IC -->
-                        <div class="control-group" style="margin-top: 10px; border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
+                        <!-- Group Sub Bass IC (0x4D PBTL Mono) - Hidden in 2-Way Mode -->
+                        <div class="control-group" id="groupBassTrim" style="display: none; margin-top: 8px; border-left: 3px solid #ff9100; padding-left: 8px; background: rgba(255, 145, 0, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
-                                <span style="color: #00e676; font-weight: 600;">🔊 Midbass Channel Trim</span>
+                                <span style="color: #ff9100; font-weight: 600;">🔈 Sub/Bass Channel Trim (0x4D)</span>
+                                <span id="lblBassTrim" style="color: #ff9100; font-weight: 600;">0.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderBassTrim" class="smart-slider" min="-6.0" max="0.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                        </div>
+
+                        <!-- Group Midbass / Mid IC (0x4C Stereo) -->
+                        <div class="control-group" style="margin-top: 8px; border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
+                            <div class="control-label">
+                                <span id="lblMidTrimTitle" style="color: #00e676; font-weight: 600;">🔊 Midbass Channel Trim</span>
                                 <span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="0.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
                         </div>
 
-                        <!-- Group 2: Treble IC -->
+                        <!-- Group Treble IC (0x4E Stereo) -->
                         <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
                                 <span style="color: #ff4081; font-weight: 600;">📻 Treble Channel Trim</span>
@@ -3069,8 +3087,9 @@
     let clipperState = { en: 0, thr: 0.0 };
     let isDraggingClipper = false;
 
-    // --- 2-Way Crossover State ---
-    let crossoverState = { en: 1, fc: 2500, slope: 1, treb_trim: 0.0, mid_trim: 0.0 };
+    // --- 2-Way / 3-Way Crossover State ---
+    let systemSpeakerMode = 2; // 2 = 2-Way, 3 = 3-Way Mode
+    let crossoverState = { en: 1, fc: 2500, slope: 1, treb_trim: 0.0, mid_trim: 0.0, fc_low: 250, bass_trim: 0.0 };
 
         // --- Multi-Profile State Management ---
         let activeProfileIndex = 0;
@@ -4246,33 +4265,51 @@
                     const vals = event.data.substring(13).split(',');
                     if (vals.length >= 15) {
                         if (!window.crossoverProfilesCache) window.crossoverProfilesCache = [];
+                        const is24Fields = vals.length >= 24;
                         for (let p = 0; p < 3; p++) {
-                            const offset = p * 5;
+                            const offset = is24Fields ? (p * 7) : (p * 5);
                             const cr_en = parseInt(vals[offset + 0]);
                             const cr_fc = parseInt(vals[offset + 1]);
                             const cr_slp = parseInt(vals[offset + 2]);
                             const tr_trim = (parseFloat(vals[offset + 3]) / 10.0) - 10.0;
                             const mb_trim = (parseFloat(vals[offset + 4]) / 10.0) - 10.0;
+                            let fc_low = 250;
+                            let bass_trim = 0.0;
+                            if (is24Fields) {
+                                fc_low = parseInt(vals[offset + 5]);
+                                bass_trim = (parseFloat(vals[offset + 6]) / 10.0) - 10.0;
+                            }
 
                             window.crossoverProfilesCache[p] = {
                                 en: cr_en,
                                 fc: cr_fc,
                                 slope: cr_slp,
                                 treb_trim: tr_trim,
-                                mid_trim: mb_trim
+                                mid_trim: mb_trim,
+                                fc_low: fc_low,
+                                bass_trim: bass_trim
                             };
 
                             if (p === activeProfileIndex) {
-                                crossoverState = { en: cr_en, fc: cr_fc, slope: cr_slp, treb_trim: tr_trim, mid_trim: mb_trim };
+                                crossoverState = { en: cr_en, fc: cr_fc, slope: cr_slp, treb_trim: tr_trim, mid_trim: mb_trim, fc_low: fc_low, bass_trim: bass_trim };
                             }
                         }
-                        if (vals.length >= 16) {
-                            const hbMode = parseInt(vals[15]);
+                        if (is24Fields) {
+                            const hbMode = parseInt(vals[21]);
                             if (!isNaN(hbMode)) updateHybridModeLabelPassive(hbMode);
-                        }
-                        if (vals.length >= 17) {
-                            const ampState = parseInt(vals[16]);
+                            const ampState = parseInt(vals[22]);
                             if (!isNaN(ampState)) updateAmpStateLabelPassive(ampState);
+                            const spkMode = parseInt(vals[23]);
+                            if (!isNaN(spkMode)) systemSpeakerMode = spkMode;
+                        } else {
+                            if (vals.length >= 16) {
+                                const hbMode = parseInt(vals[15]);
+                                if (!isNaN(hbMode)) updateHybridModeLabelPassive(hbMode);
+                            }
+                            if (vals.length >= 17) {
+                                const ampState = parseInt(vals[16]);
+                                if (!isNaN(ampState)) updateAmpStateLabelPassive(ampState);
+                            }
                         }
                         syncCrossoverUi();
                     }
@@ -5235,15 +5272,46 @@
         }
     }
 
-    // --- 2-Way Crossover Functions ---
+    // --- 2-Way / 3-Way Crossover Functions ---
 
     function syncCrossoverUi() {
         if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
             crossoverState = JSON.parse(JSON.stringify(window.crossoverProfilesCache[activeProfileIndex]));
         }
 
+        const is3Way = systemSpeakerMode === 3;
+
+        const cardTitle = document.getElementById('crossoverCardTitle');
+        if (cardTitle) {
+            cardTitle.innerText = is3Way ? "🎛️ TRIPLE TAS 3-WAY CROSSOVER & TRIM (MONO BASS + STEREO MID/TREBLE)" : "🎛️ DUAL TAS 2-WAY CROSSOVER & TRIM GAIN";
+        }
+        const modeTitle = document.getElementById('lblCrossoverModeTitle');
+        if (modeTitle) {
+            modeTitle.innerText = is3Way ? "Active 3-Way DSP Crossover (0x4D Sub, 0x4C Mid, 0x4E Treble)" : "Active 2-Way DSP Crossover (0x4C Midbass, 0x4E Treble)";
+        }
+
+        const groupFcLow = document.getElementById('groupCrossoverFcLow');
+        if (groupFcLow) groupFcLow.style.display = is3Way ? "block" : "none";
+
+        const groupBassTrim = document.getElementById('groupBassTrim');
+        if (groupBassTrim) groupBassTrim.style.display = is3Way ? "block" : "none";
+
+        const lblMidTrimTitle = document.getElementById('lblMidTrimTitle');
+        if (lblMidTrimTitle) {
+            lblMidTrimTitle.innerText = is3Way ? "🔉 Midrange Channel Trim (0x4C)" : "🔊 Midbass Channel Trim";
+        }
+        const lblFcTitle = document.getElementById('lblFcTitle');
+        if (lblFcTitle) {
+            lblFcTitle.innerText = is3Way ? "Mid-Treble Crossover (fc_high)" : "Crossover Frequency (fc)";
+        }
+
         const chk = document.getElementById('chkCrossover');
         if (chk) chk.checked = crossoverState.en === 1;
+
+        const sliderFcLow = document.getElementById('sliderCrossoverFcLow');
+        if (sliderFcLow) sliderFcLow.value = crossoverState.fc_low || 250;
+        const lblFcLow = document.getElementById('lblCrossoverFcLow');
+        if (lblFcLow) lblFcLow.innerText = (crossoverState.fc_low || 250) + ' Hz';
 
         const sliderFc = document.getElementById('sliderCrossoverFc');
         if (sliderFc) sliderFc.value = crossoverState.fc;
@@ -5252,6 +5320,11 @@
 
         const selSlp = document.getElementById('selCrossoverSlope');
         if (selSlp) selSlp.value = crossoverState.slope;
+
+        const sliderBass = document.getElementById('sliderBassTrim');
+        if (sliderBass) sliderBass.value = crossoverState.bass_trim || 0.0;
+        const lblBass = document.getElementById('lblBassTrim');
+        if (lblBass) lblBass.innerText = ((crossoverState.bass_trim || 0.0) > 0 ? '+' : '') + (crossoverState.bass_trim || 0.0).toFixed(1) + ' dB';
 
         const sliderTr = document.getElementById('sliderTrebleTrim');
         if (sliderTr) sliderTr.value = crossoverState.treb_trim;
@@ -5286,17 +5359,31 @@
 
     function onCrossoverSliderInput() {
         crossoverState.fc = parseInt(document.getElementById('sliderCrossoverFc').value);
+        if (document.getElementById('sliderCrossoverFcLow')) {
+            crossoverState.fc_low = parseInt(document.getElementById('sliderCrossoverFcLow').value);
+        }
         crossoverState.treb_trim = parseFloat(document.getElementById('sliderTrebleTrim').value);
         crossoverState.mid_trim = parseFloat(document.getElementById('sliderMidbassTrim').value);
+        if (document.getElementById('sliderBassTrim')) {
+            crossoverState.bass_trim = parseFloat(document.getElementById('sliderBassTrim').value);
+        }
 
         document.getElementById('lblCrossoverFc').innerText = crossoverState.fc + ' Hz';
+        if (document.getElementById('lblCrossoverFcLow')) {
+            document.getElementById('lblCrossoverFcLow').innerText = crossoverState.fc_low + ' Hz';
+        }
         document.getElementById('lblTrebleTrim').innerText = (crossoverState.treb_trim > 0 ? '+' : '') + crossoverState.treb_trim.toFixed(1) + ' dB';
         document.getElementById('lblMidbassTrim').innerText = (crossoverState.mid_trim > 0 ? '+' : '') + crossoverState.mid_trim.toFixed(1) + ' dB';
+        if (document.getElementById('lblBassTrim')) {
+            document.getElementById('lblBassTrim').innerText = (crossoverState.bass_trim > 0 ? '+' : '') + crossoverState.bass_trim.toFixed(1) + ' dB';
+        }
 
         if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
             window.crossoverProfilesCache[activeProfileIndex].fc = crossoverState.fc;
+            window.crossoverProfilesCache[activeProfileIndex].fc_low = crossoverState.fc_low;
             window.crossoverProfilesCache[activeProfileIndex].treb_trim = crossoverState.treb_trim;
             window.crossoverProfilesCache[activeProfileIndex].mid_trim = crossoverState.mid_trim;
+            window.crossoverProfilesCache[activeProfileIndex].bass_trim = crossoverState.bass_trim;
         }
 
         drawCrossoverCurve();
@@ -5308,7 +5395,7 @@
 
     function sendCrossoverSettings() {
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
-        window.eqWebSocket.send(`#EQ_SET_CROSS$${activeProfileIndex},${crossoverState.en},${crossoverState.fc},${crossoverState.slope},${crossoverState.treb_trim},${crossoverState.mid_trim}`);
+        window.eqWebSocket.send(`#EQ_SET_CROSS$${activeProfileIndex},${crossoverState.en},${crossoverState.fc},${crossoverState.slope},${crossoverState.treb_trim},${crossoverState.mid_trim},${crossoverState.fc_low || 250},${crossoverState.bass_trim || 0.0}`);
         console.log("Sent Crossover Settings:", crossoverState);
     }
 
@@ -5335,59 +5422,133 @@
         }
 
         const isEnabled = crossoverState.en === 1;
-        const fc = crossoverState.fc;
+        const fcHigh = crossoverState.fc;
+        const fcLow = crossoverState.fc_low || 250;
         const order = crossoverState.slope === 2 ? 4 : 2; // 2nd order (12dB/oct) or 4th order (24dB/oct)
+        const is3Way = systemSpeakerMode === 3;
 
-        // Draw Low Pass (Midbass) curve in Green (#00e676)
-        ctx.strokeStyle = isEnabled ? "#00e676" : "#666";
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        for (let x = 0; x < w; x++) {
-            let freq = 100 * Math.pow(100, x / w); // Logarithmic 100Hz - 10kHz
-            let ratio = freq / fc;
-            let gainDb = crossoverState.mid_trim;
-            if (isEnabled) {
-                let mag = 1 / Math.sqrt(1 + Math.pow(ratio, order));
-                gainDb += 20 * Math.log10(mag);
+        if (is3Way) {
+            // --- 3-WAY CURVES ---
+            // 1. Sub/Bass Low-Pass curve in Yellow (#ff9100)
+            ctx.strokeStyle = isEnabled ? "#ff9100" : "#666";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let x = 0; x < w; x++) {
+                let freq = 40 * Math.pow(250, x / w); // Log 40Hz - 10kHz
+                let ratio = freq / fcLow;
+                let gainDb = crossoverState.bass_trim || 0.0;
+                if (isEnabled) {
+                    let mag = 1 / Math.sqrt(1 + Math.pow(ratio, order));
+                    gainDb += 20 * Math.log10(mag);
+                }
+                let y = h / 2 - (gainDb / 36) * (h * 0.4);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
             }
-            let y = h / 2 - (gainDb / 36) * (h * 0.4);
-            if (x === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
+            ctx.stroke();
 
-        // Draw High Pass (Treble) curve in Pink (#ff4081)
-        ctx.strokeStyle = isEnabled ? "#ff4081" : "#666";
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        for (let x = 0; x < w; x++) {
-            let freq = 100 * Math.pow(100, x / w);
-            let ratio = fc / freq;
-            let gainDb = crossoverState.treb_trim;
-            if (isEnabled) {
-                let mag = 1 / Math.sqrt(1 + Math.pow(ratio, order));
-                gainDb += 20 * Math.log10(mag);
+            // 2. Midrange Band-Pass curve in Green (#00e676)
+            ctx.strokeStyle = isEnabled ? "#00e676" : "#666";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let x = 0; x < w; x++) {
+                let freq = 40 * Math.pow(250, x / w);
+                let ratioLow = fcLow / freq;
+                let ratioHigh = freq / fcHigh;
+                let gainDb = crossoverState.mid_trim;
+                if (isEnabled) {
+                    let magHpf = 1 / Math.sqrt(1 + Math.pow(ratioLow, order));
+                    let magLpf = 1 / Math.sqrt(1 + Math.pow(ratioHigh, order));
+                    gainDb += 20 * Math.log10(magHpf * magLpf);
+                }
+                let y = h / 2 - (gainDb / 36) * (h * 0.4);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
             }
-            let y = h / 2 - (gainDb / 36) * (h * 0.4);
-            if (x === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+            ctx.stroke();
+
+            // 3. Treble High-Pass curve in Pink (#ff4081)
+            ctx.strokeStyle = isEnabled ? "#ff4081" : "#666";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let x = 0; x < w; x++) {
+                let freq = 40 * Math.pow(250, x / w);
+                let ratio = fcHigh / freq;
+                let gainDb = crossoverState.treb_trim;
+                if (isEnabled) {
+                    let mag = 1 / Math.sqrt(1 + Math.pow(ratio, order));
+                    gainDb += 20 * Math.log10(mag);
+                }
+                let y = h / 2 - (gainDb / 36) * (h * 0.4);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Marker lines for Crossover Frequencies
+            let xCrossLow = (Math.log10(fcLow / 40) / Math.log10(250)) * w;
+            let xCrossHigh = (Math.log10(fcHigh / 40) / Math.log10(250)) * w;
+
+            ctx.strokeStyle = "rgba(255, 145, 0, 0.7)";
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(xCrossLow, 0); ctx.lineTo(xCrossLow, h); ctx.stroke();
+
+            ctx.strokeStyle = "rgba(0, 242, 254, 0.7)";
+            ctx.beginPath(); ctx.moveTo(xCrossHigh, 0); ctx.lineTo(xCrossHigh, h); ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.font = "9px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "#ff9100"; ctx.fillText(`${fcLow}Hz`, xCrossLow, 12);
+            ctx.fillStyle = "#00f2fe"; ctx.fillText(`${fcHigh}Hz`, xCrossHigh, 12);
+
+        } else {
+            // --- 2-WAY CURVES ---
+            ctx.strokeStyle = isEnabled ? "#00e676" : "#666";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let x = 0; x < w; x++) {
+                let freq = 100 * Math.pow(100, x / w);
+                let ratio = freq / fcHigh;
+                let gainDb = crossoverState.mid_trim;
+                if (isEnabled) {
+                    let mag = 1 / Math.sqrt(1 + Math.pow(ratio, order));
+                    gainDb += 20 * Math.log10(mag);
+                }
+                let y = h / 2 - (gainDb / 36) * (h * 0.4);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            ctx.strokeStyle = isEnabled ? "#ff4081" : "#666";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (let x = 0; x < w; x++) {
+                let freq = 100 * Math.pow(100, x / w);
+                let ratio = fcHigh / freq;
+                let gainDb = crossoverState.treb_trim;
+                if (isEnabled) {
+                    let mag = 1 / Math.sqrt(1 + Math.pow(ratio, order));
+                    gainDb += 20 * Math.log10(mag);
+                }
+                let y = h / 2 - (gainDb / 36) * (h * 0.4);
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            let xCross = (Math.log10(fcHigh / 100) / Math.log10(100)) * w;
+            ctx.strokeStyle = "rgba(0, 242, 254, 0.7)";
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(xCross, 0); ctx.lineTo(xCross, h); ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = "#00f2fe";
+            ctx.font = "10px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(`fc: ${fcHigh} Hz`, xCross, 15);
         }
-        ctx.stroke();
-
-        // Marker line for Crossover Frequency
-        let xCross = (Math.log10(fc / 100) / Math.log10(100)) * w;
-        ctx.strokeStyle = "rgba(0, 242, 254, 0.7)";
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(xCross, 0);
-        ctx.lineTo(xCross, h);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        ctx.fillStyle = "#00f2fe";
-        ctx.font = "10px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(`fc: ${fc} Hz`, xCross, 15);
     }
 
 </script>
