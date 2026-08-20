@@ -798,17 +798,18 @@
             </div>
             <!-- Dual/Triple TAS5825M Crossover & Channel Trim Card -->
             <div class="section-card" style="margin-top: 20px; border: 1px solid rgba(0, 242, 254, 0.25); background: rgba(10, 15, 30, 0.4); padding: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding-bottom: 8px; gap: 12px; width: 100%; box-sizing: border-box;">
-                    <div class="section-title" id="crossoverCardTitle" style="color: #00f2fe; margin: 0; padding: 0; flex-shrink: 0;">
-                        🎛️ CROSSOVER & TRIM GAIN
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end; margin-left: auto;">
-                        <span style="font-size: 11px; color: #aaa; font-weight: 500; white-space: nowrap;">Filter Slope:</span>
-                        <select id="selCrossoverSlope" onchange="onCrossoverSlopeChange()" style="background: rgba(0, 0, 0, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; outline: none; flex: 1; max-width: 260px; height: 26px;">
-                            <option value="1">12 dB/oct (2nd Order)</option>
-                            <option value="2" selected>24 dB/oct (4th Order)</option>
-                        </select>
-                    </div>
+                <!-- Row 1: Section Title -->
+                <div class="section-title" id="crossoverCardTitle" style="color: #00f2fe; margin: 0 0 10px 0; padding-bottom: 6px; border-bottom: 1px solid rgba(0, 242, 254, 0.15); width: 100%;">
+                    🎛️ CROSSOVER & TRIM GAIN
+                </div>
+
+                <!-- Row 2: Filter Slope Control Row -->
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.2); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(0, 242, 254, 0.15);">
+                    <span style="font-size: 12px; color: #cbd5e1; font-weight: 600; white-space: nowrap;">Filter Slope:</span>
+                    <select id="selCrossoverSlope" onchange="onCrossoverSlopeChange()" style="background: rgba(0, 0, 0, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; outline: none; flex: 1; max-width: 240px; height: 28px;">
+                        <option value="1">12 dB/oct (2nd Order)</option>
+                        <option value="2" selected>24 dB/oct (4th Order)</option>
+                    </select>
                 </div>
 
                 <!-- Main Crossover Response Graph -->
