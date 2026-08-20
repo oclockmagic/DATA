@@ -897,6 +897,14 @@
                             </label>
                         </div>
                         
+                        <div class="control-group" id="groupSubClipper" style="display: none; border-left: 3px solid #ff9100; padding-left: 8px; background: rgba(255, 145, 0, 0.05); border-radius: 0 6px 6px 0; margin-bottom: 8px;">
+                            <div class="control-label">
+                                <span style="color: #ff9100;">🔈 Sub-Bass Clipper (0x4D MONO)</span>
+                                <span id="lblSubClipperThr" style="color: #ff9100; font-weight: 600;">0.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderSubClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onSubClipSliderInput()" onchange="onClipSliderChange()">
+                        </div>
+
                         <div class="control-group" style="border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
                             <div class="control-label">
                                 <span style="color: #00e676;">🔊 Midbass Clipper</span>
@@ -3094,7 +3102,7 @@
     let isDraggingSb = null;
 
     // --- Professional Output Clipper State ---
-    let clipperState = { en: 0, thr: 0.0 };
+    let clipperState = { en: 0, thr: 0.0, tr_thr: -2.5, sub_thr: 0.0 };
     let isDraggingClipper = false;
 
     // --- 2-Way / 3-Way Crossover State ---
@@ -4217,8 +4225,9 @@
                 if (event.data.startsWith('EQ_SMART_SETTINGS:')) {
                     const vals = event.data.substring(18).split(',');
                     if (vals.length >= 54) {
+                        const stride = (vals.length >= 60) ? 20 : ((vals.length >= 57) ? 19 : 18);
                         for (let p = 0; p < 3; p++) {
-                            const offset = p * 18;
+                            const offset = p * stride;
                             const sb_en = parseInt(vals[offset + 0]);
                             const sb_bst = parseFloat(vals[offset + 1]) / 10.0;
                             const sb_lth = -parseFloat(vals[offset + 2]) / 10.0;
@@ -4242,10 +4251,11 @@
                             const cp_en = parseInt(vals[offset + 16]);
                             const cp_thr = -parseFloat(vals[offset + 17]) / 10.0;
                             const cp_tr_thr = (vals.length > offset + 18 && vals[offset + 18] !== undefined) ? (-parseFloat(vals[offset + 18]) / 10.0) : (cp_thr - 1.0);
+                            const cp_sub_thr = (stride >= 20 && vals.length > offset + 19 && vals[offset + 19] !== undefined) ? (-parseFloat(vals[offset + 19]) / 10.0) : 0.0;
                             
                             if (p === activeProfileIndex) {
                                 sbState = { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth };
-                                clipperState = { en: cp_en, thr: cp_thr, tr_thr: cp_tr_thr };
+                                clipperState = { en: cp_en, thr: cp_thr, tr_thr: cp_tr_thr, sub_thr: cp_sub_thr };
                                 
                                 drcState.low = { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel };
                                 drcState.mid = { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel };
@@ -4256,7 +4266,7 @@
                             window.sbProfilesCache[p] = { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth };
 
                             if (!window.clipProfilesCache) window.clipProfilesCache = [];
-                            window.clipProfilesCache[p] = { en: cp_en, thr: cp_thr, tr_thr: cp_tr_thr };
+                            window.clipProfilesCache[p] = { en: cp_en, thr: cp_thr, tr_thr: cp_tr_thr, sub_thr: cp_sub_thr };
                             
                             if (!window.drcProfilesCache) window.drcProfilesCache = [];
                             window.drcProfilesCache[p] = {
@@ -4949,6 +4959,12 @@
         const chk = document.getElementById('chkClipper');
         if (chk) chk.checked = (clipperState.en === 1);
 
+        const sliderSub = document.getElementById('sliderSubClipperThr');
+        if (sliderSub) sliderSub.value = clipperState.sub_thr !== undefined ? clipperState.sub_thr : 0.0;
+
+        const lblSubThr = document.getElementById('lblSubClipperThr');
+        if (lblSubThr) lblSubThr.innerText = (clipperState.sub_thr !== undefined ? clipperState.sub_thr : 0.0).toFixed(1) + ' dB';
+
         const slider = document.getElementById('sliderClipperThr');
         if (slider) slider.value = clipperState.thr;
 
@@ -4997,9 +5013,16 @@
         }
         
         const isEnabled = clipperState.en === 1;
+        const is3Way = systemSpeakerMode === 3;
+
+        const subVal = clipperState.sub_thr !== undefined ? clipperState.sub_thr : 0.0;
+        const subFactor = Math.pow(10, subVal / 20);
         const mbFactor = Math.pow(10, clipperState.thr / 20);
         const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr : -2.5;
         const trFactor = Math.pow(10, trVal / 20);
+
+        const topSubClipY = h/2 - (subFactor * (h * 0.35));
+        const bottomSubClipY = h/2 + (subFactor * (h * 0.35));
         
         const topClipY = h/2 - (mbFactor * (h * 0.35));
         const bottomClipY = h/2 + (mbFactor * (h * 0.35));
@@ -5009,13 +5032,21 @@
         
         ctx.setLineDash([4, 4]);
 
-        // 1. Vẽ đường giới hạn Midbass Clipper (màu Xanh)
+        // 1. Vẽ đường giới hạn Sub-Bass Clipper (màu Cam) - 3-Way Only
+        if (is3Way) {
+            ctx.strokeStyle = isEnabled ? 'rgba(255, 145, 0, 0.8)' : 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(0, topSubClipY); ctx.lineTo(w, topSubClipY); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, bottomSubClipY); ctx.lineTo(w, bottomSubClipY); ctx.stroke();
+        }
+
+        // 2. Vẽ đường giới hạn Midbass Clipper (màu Xanh)
         ctx.strokeStyle = isEnabled ? 'rgba(0, 230, 118, 0.8)' : 'rgba(255, 255, 255, 0.2)';
         ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.moveTo(0, topClipY); ctx.lineTo(w, topClipY); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(0, bottomClipY); ctx.lineTo(w, bottomClipY); ctx.stroke();
 
-        // 2. Vẽ đường giới hạn Treble Protection Clipper (màu Hồng)
+        // 3. Vẽ đường giới hạn Treble Protection Clipper (màu Hồng)
         ctx.strokeStyle = isEnabled ? 'rgba(255, 64, 129, 0.8)' : 'rgba(255, 255, 255, 0.2)';
         ctx.lineWidth = 1.5;
         ctx.beginPath(); ctx.moveTo(0, topTrClipY); ctx.lineTo(w, topTrClipY); ctx.stroke();
@@ -5023,7 +5054,7 @@
         
         ctx.setLineDash([]); // reset
         
-        // 3. Vẽ sóng sin mô phỏng
+        // 4. Vẽ sóng sin mô phỏng
         const waveAmp = h * 0.42;
         ctx.lineWidth = 2.5;
         
@@ -5173,6 +5204,24 @@
         sendClipperSettings();
     }
 
+    function onSubClipSliderInput() {
+        const sliderSub = document.getElementById('sliderSubClipperThr');
+        if (sliderSub) {
+            clipperState.sub_thr = parseFloat(sliderSub.value);
+        }
+
+        const lblSubThr = document.getElementById('lblSubClipperThr');
+        if (lblSubThr && clipperState.sub_thr !== undefined) {
+            lblSubThr.innerText = clipperState.sub_thr.toFixed(1) + ' dB';
+        }
+
+        if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
+            window.clipProfilesCache[activeProfileIndex].sub_thr = clipperState.sub_thr;
+        }
+
+        drawClipperCurve();
+    }
+
     function onMidbassClipSliderInput() {
         const valMb = parseFloat(document.getElementById('sliderClipperThr').value);
         clipperState.thr = valMb;
@@ -5218,7 +5267,8 @@
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
         const mbVal = clipperState.thr !== undefined ? clipperState.thr.toFixed(1) : '-1.5';
         const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr.toFixed(1) : '-2.5';
-        const msg = `#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${mbVal},${trVal}`;
+        const subVal = clipperState.sub_thr !== undefined ? clipperState.sub_thr.toFixed(1) : '0.0';
+        const msg = `#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${mbVal},${trVal},${subVal}`;
         window.eqWebSocket.send(msg);
         console.log("Sent Clipper WebSocket Command:", msg);
     }
@@ -5305,6 +5355,9 @@
 
         const groupBassTrim = document.getElementById('groupBassTrim');
         if (groupBassTrim) groupBassTrim.style.display = is3Way ? "block" : "none";
+
+        const groupSubClipper = document.getElementById('groupSubClipper');
+        if (groupSubClipper) groupSubClipper.style.display = is3Way ? "block" : "none";
 
         const lblMidTrimTitle = document.getElementById('lblMidTrimTitle');
         if (lblMidTrimTitle) {
