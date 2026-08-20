@@ -3741,9 +3741,9 @@
 
         function syncToneUi() {
             if (!profiles[activeProfileIndex] || !profiles[activeProfileIndex].bands) return;
-            const bBass = profiles[activeProfileIndex].bands[12];
-            const bMid = profiles[activeProfileIndex].bands[13];
-            const bTreb = profiles[activeProfileIndex].bands[14];
+            const bBass = profiles[activeProfileIndex].bands[10];
+            const bMid = profiles[activeProfileIndex].bands[11];
+            const bTreb = profiles[activeProfileIndex].bands[12];
 
             const gBass = bBass ? bBass.gain : 0;
             const gMid = bMid ? bMid.gain : 0;
@@ -3772,33 +3772,33 @@
 
             const prof = profiles[activeProfileIndex];
             if (prof && prof.bands) {
-                if (type === 'bass' && prof.bands[12]) {
-                    prof.bands[12].type = 1;      // Low Shelf (Cố định)
-                    prof.bands[12].freq = 100.0;  // 100 Hz (Cố định)
+                if (type === 'bass' && prof.bands[10]) {
+                    prof.bands[10].type = 1;      // Low Shelf (Cố định)
+                    prof.bands[10].freq = 100.0;  // 100 Hz (Cố định)
+                    prof.bands[10].q = 0.707;     // Q = 0.707 (Cố định)
+                    prof.bands[10].gain = val;
+                    prof.bands[10].enabled = true;
+                } else if (type === 'mid' && prof.bands[11]) {
+                    prof.bands[11].type = 0;      // Peaking (Cố định)
+                    prof.bands[11].freq = 1000.0; // 1000 Hz (Cố định)
+                    prof.bands[11].q = 0.707;     // Q = 0.707 (Cố định)
+                    prof.bands[11].gain = val;
+                    prof.bands[11].enabled = true;
+                } else if (type === 'treble' && prof.bands[12]) {
+                    prof.bands[12].type = 2;      // High Shelf (Cố định)
+                    prof.bands[12].freq = 10000.0;// 10000 Hz (Cố định)
                     prof.bands[12].q = 0.707;     // Q = 0.707 (Cố định)
                     prof.bands[12].gain = val;
                     prof.bands[12].enabled = true;
-                } else if (type === 'mid' && prof.bands[13]) {
-                    prof.bands[13].type = 0;      // Peaking (Cố định)
-                    prof.bands[13].freq = 1000.0; // 1000 Hz (Cố định)
-                    prof.bands[13].q = 0.707;     // Q = 0.707 (Cố định)
-                    prof.bands[13].gain = val;
-                    prof.bands[13].enabled = true;
-                } else if (type === 'treble' && prof.bands[14]) {
-                    prof.bands[14].type = 2;      // High Shelf (Cố định)
-                    prof.bands[14].freq = 10000.0;// 10000 Hz (Cố định)
-                    prof.bands[14].q = 0.707;     // Q = 0.707 (Cố định)
-                    prof.bands[14].gain = val;
-                    prof.bands[14].enabled = true;
                 }
             }
             drawGraph();
         }
 
         function onToneSliderChange(type) {
-            let filterIdx = 12;
-            if (type === 'mid') filterIdx = 13;
-            if (type === 'treble') filterIdx = 14;
+            let filterIdx = 10;
+            if (type === 'mid') filterIdx = 11;
+            if (type === 'treble') filterIdx = 12;
 
             onToneSliderInput(type);
             if (typeof window.sendEQUpdate === 'function') {
@@ -3811,37 +3811,37 @@
             const prof = profiles[activeProfileIndex];
             if (!prof || !prof.bands) return;
 
+            if (prof.bands[10]) {
+                prof.bands[10].type = 1;
+                prof.bands[10].freq = 100.0;
+                prof.bands[10].q = 0.707;
+                prof.bands[10].gain = 0.0;
+                prof.bands[10].enabled = true;
+            }
+
+            if (prof.bands[11]) {
+                prof.bands[11].type = 0;
+                prof.bands[11].freq = 1000.0;
+                prof.bands[11].q = 0.707;
+                prof.bands[11].gain = 0.0;
+                prof.bands[11].enabled = true;
+            }
+
             if (prof.bands[12]) {
-                prof.bands[12].type = 1;
-                prof.bands[12].freq = 100.0;
+                prof.bands[12].type = 2;
+                prof.bands[12].freq = 10000.0;
                 prof.bands[12].q = 0.707;
                 prof.bands[12].gain = 0.0;
                 prof.bands[12].enabled = true;
-            }
-
-            if (prof.bands[13]) {
-                prof.bands[13].type = 0;
-                prof.bands[13].freq = 1000.0;
-                prof.bands[13].q = 0.707;
-                prof.bands[13].gain = 0.0;
-                prof.bands[13].enabled = true;
-            }
-
-            if (prof.bands[14]) {
-                prof.bands[14].type = 2;
-                prof.bands[14].freq = 10000.0;
-                prof.bands[14].q = 0.707;
-                prof.bands[14].gain = 0.0;
-                prof.bands[14].enabled = true;
             }
 
             syncToneUi();
             drawGraph();
 
             if (typeof window.sendEQUpdate === 'function') {
+                window.sendEQUpdate(activeProfileIndex, 10);
+                window.sendEQUpdate(activeProfileIndex, 11);
                 window.sendEQUpdate(activeProfileIndex, 12);
-                window.sendEQUpdate(activeProfileIndex, 13);
-                window.sendEQUpdate(activeProfileIndex, 14);
             }
             console.log(`[Tone Control] Reset Bass, Mid, Treble to 0.0 dB for Profile ${activeProfileIndex + 1}`);
         }
