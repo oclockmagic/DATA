@@ -639,6 +639,11 @@
 
 <body>
 
+    <!-- Floating Toast Notification Banner -->
+    <div id="toastNotification"
+        style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10000;background:rgba(15,23,42,0.95);color:#fff;border:1px solid #38bdf8;padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,0.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:none;opacity:0;transition:opacity 0.3s ease;pointer-events:none;text-align:center;">
+    </div>
+
     <!-- Overlay nạp cấu hình từ thiết bị -->
     <div id="eqSyncOverlay"
         style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;justify-content:center;align-items:center;color:#fff;font-family:sans-serif;font-size:18px;font-weight:500;backdrop-filter:blur(2px);transition:opacity 0.3s ease;">
@@ -792,29 +797,39 @@
             </div>
             <!-- Dual/Triple TAS5825M Crossover & Channel Trim Card -->
             <div class="section-card" style="margin-top: 20px; border: 1px solid rgba(0, 242, 254, 0.25); background: rgba(10, 15, 30, 0.4); padding: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 242, 254, 0.15); padding-bottom: 8px; flex-wrap: wrap; gap: 8px;">
                     <div class="section-title" id="crossoverCardTitle" style="color: #00f2fe; margin: 0; padding: 0;">
                         🎛️ CROSSOVER & TRIM GAIN
                     </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 11px; color: #aaa;">Filter Slope:</span>
+                        <select id="selCrossoverSlope" onchange="onCrossoverSlopeChange()" style="background: rgba(0, 0, 0, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; outline: none;">
+                            <option value="1">12 dB/oct (2nd Order)</option>
+                            <option value="2" selected>24 dB/oct (4th Order)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="lblCrossoverModeTitle" style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 4px;">
+                    Active 3-Way DSP Crossover
                 </div>
 
                 <!-- Main Crossover Response Graph -->
-                <div style="width: 100%; margin-top: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                <div style="width: 100%; margin-top: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
                     <canvas id="crossoverCanvas" width="500" height="150" style="width: 100%; max-width: 550px; height: 150px;"></canvas>
                 </div>
 
-                <!-- 3 Clean Rows Layout (Sub, Mid, Treble) -->
-                <div id="crossoverControlGrid" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                <!-- 3 Clean Equal Rows Layout (Sub, Mid, Treble) -->
+                <div id="crossoverControlGrid" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
                     
-                    <!-- Hàng 1: SUB / BASS (0x4D MONO) -->
+                    <!-- Hàng 1: SUB BASS -->
                     <div class="control-group" id="groupBassTrim" style="display: none; border: 1px solid rgba(255, 145, 0, 0.3); padding: 10px 14px; background: rgba(255, 145, 0, 0.05); border-radius: 8px;">
-                        <div style="color: #ff9100; font-weight: 700; font-size: 13px; margin-bottom: 8px;">
-                            🔈 SUB BASS (0x4D MONO)
+                        <div style="color: #ff9100; font-weight: 700; font-size: 12px; margin-bottom: 8px;">
+                            🔈 SUB BASS
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
                                 <div class="control-label" style="font-size: 11px;">
-                                    <span style="color: #ccc;">Cắt Tần Tốt (Sub-Mid Fc):</span>
+                                    <span style="color: #ccc;">Cắt Tần Sub-Mid (Fc Low):</span>
                                     <span id="lblCrossoverFcLow" style="color: #ff9100; font-weight: 600;">250 Hz</span>
                                 </div>
                                 <input type="range" id="sliderCrossoverFcLow" class="smart-slider" min="80" max="500" step="10" value="250" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
@@ -829,15 +844,15 @@
                         </div>
                     </div>
 
-                    <!-- Hàng 2: MIDRANGE (0x4C STEREO) -->
+                    <!-- Hàng 2: MIDRANGE -->
                     <div class="control-group" style="border: 1px solid rgba(0, 230, 118, 0.3); padding: 10px 14px; background: rgba(0, 230, 118, 0.05); border-radius: 8px;">
-                        <div style="color: #00e676; font-weight: 700; font-size: 13px; margin-bottom: 8px;">
-                            🔊 MIDRANGE (0x4C STEREO)
+                        <div style="color: #00e676; font-weight: 700; font-size: 12px; margin-bottom: 8px;">
+                            🔊 MIDRANGE
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
                                 <div class="control-label" style="font-size: 11px;">
-                                    <span id="lblFcTitle" style="color: #ccc;">Cắt Tần Mid-Treble (Fc):</span>
+                                    <span id="lblFcTitle" style="color: #ccc;">Cắt Tần Mid-Treble (Fc High):</span>
                                     <span id="lblCrossoverFc" style="color: #00e676; font-weight: 600;">2500 Hz</span>
                                 </div>
                                 <input type="range" id="sliderCrossoverFc" class="smart-slider" min="500" max="8000" step="50" value="2500" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
@@ -852,16 +867,16 @@
                         </div>
                     </div>
 
-                    <!-- Hàng 3: TREBLE (0x4E STEREO) -->
+                    <!-- Hàng 3: TREBLE -->
                     <div class="control-group" style="border: 1px solid rgba(255, 64, 129, 0.3); padding: 10px 14px; background: rgba(255, 64, 129, 0.05); border-radius: 8px;">
-                        <div style="color: #ff4081; font-weight: 700; font-size: 13px; margin-bottom: 8px;">
-                            📻 TREBLE (0x4E STEREO)
+                        <div style="color: #ff4081; font-weight: 700; font-size: 12px; margin-bottom: 8px;">
+                            📻 TREBLE
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center;">
                             <div>
                                 <div class="control-label" style="font-size: 11px;">
                                     <span style="color: #ccc;">Dải Tần Hoạt Động:</span>
-                                    <span style="color: #ff4081; font-weight: 600;">High-Pass (> Fc Mid)</span>
+                                    <span style="color: #ff4081; font-weight: 600;">High-Pass (> Fc High)</span>
                                 </div>
                             </div>
                             <div>
@@ -877,7 +892,7 @@
                 </div>
             </div>
 
-            <!-- Output Clipper Card (Dual IC Hard Limit) -->
+            <!-- Output Clipper Card (Hard Limit) -->
             <div class="section-card" style="margin-top: 20px;">
                 <div class="section-title">✂️ Output Clipper (Hard Limit)</div>
                 
@@ -890,32 +905,35 @@
                     <!-- Right Column: Controls -->
                     <div class="clipper-controls-container">
                         <div class="smart-header" style="margin-bottom: 12px;">
-                            <span class="smart-title" style="font-size: 15px; color: #ff1744; font-weight: 600;">Hardware Protection Limit</span>
+                            <span class="smart-title" style="font-size: 14px; color: #ff1744; font-weight: 600;">Hardware Protection Limit</span>
                             <label class="switch">
                                 <input type="checkbox" id="chkClipper" onchange="onClipStateChange()">
                                 <span class="slider-round"></span>
                             </label>
                         </div>
                         
-                        <div class="control-group" id="groupSubClipper" style="display: none; border-left: 3px solid #ff9100; padding-left: 8px; background: rgba(255, 145, 0, 0.05); border-radius: 0 6px 6px 0; margin-bottom: 8px;">
+                        <!-- Sub-Bass Protection Clipper -->
+                        <div class="control-group" id="groupSubClipper" style="display: none; border-left: 3px solid #ff9100; padding: 8px 10px; background: rgba(255, 145, 0, 0.05); border-radius: 0 8px 8px 0; margin-bottom: 8px;">
                             <div class="control-label">
-                                <span style="color: #ff9100;">🔈 Sub-Bass Clipper (0x4D MONO)</span>
+                                <span style="color: #ff9100; font-weight: 600;">🔈 Sub-Bass Protection Clipper</span>
                                 <span id="lblSubClipperThr" style="color: #ff9100; font-weight: 600;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderSubClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onSubClipSliderInput()" onchange="onClipSliderChange()">
                         </div>
 
-                        <div class="control-group" style="border-left: 3px solid #00e676; padding-left: 8px; background: rgba(0, 230, 118, 0.05); border-radius: 0 6px 6px 0;">
+                        <!-- Midrange Protection Clipper -->
+                        <div class="control-group" style="border-left: 3px solid #00e676; padding: 8px 10px; background: rgba(0, 230, 118, 0.05); border-radius: 0 8px 8px 0; margin-bottom: 8px;">
                             <div class="control-label">
-                                <span style="color: #00e676;">🔊 Midbass Clipper</span>
+                                <span style="color: #00e676; font-weight: 600;">🔊 Midrange Protection Clipper</span>
                                 <span id="lblClipperThr" style="color: #00e676; font-weight: 600;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onMidbassClipSliderInput()" onchange="onClipSliderChange()">
                         </div>
 
-                        <div class="control-group" style="margin-top: 8px; border-left: 3px solid #ff4081; padding-left: 8px; background: rgba(255, 64, 129, 0.05); border-radius: 0 6px 6px 0;">
+                        <!-- Treble Protection Clipper -->
+                        <div class="control-group" style="border-left: 3px solid #ff4081; padding: 8px 10px; background: rgba(255, 64, 129, 0.05); border-radius: 0 8px 8px 0; margin-bottom: 8px;">
                             <div class="control-label">
-                                <span style="color: #ff4081;">📻 Treble Protection Clipper</span>
+                                <span style="color: #ff4081; font-weight: 600;">📻 Treble Protection Clipper</span>
                                 <span id="lblTrebleClipperThr" style="color: #ff4081; font-weight: 600;">-2.5 dB</span>
                             </div>
                             <input type="range" id="sliderTrebleClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="-2.5" oninput="onTrebleClipSliderInput()" onchange="onClipSliderChange()">
@@ -3804,7 +3822,10 @@
             if (typeof window.sendEQUpdate === 'function') {
                 window.sendEQUpdate(activeProfileIndex, filterIdx);
             }
-            console.log(`[Tone Control] ${type.toUpperCase()} gain set to ${profiles[activeProfileIndex].bands[filterIdx].gain} dB`);
+            const prof = profiles[activeProfileIndex];
+            const gVal = prof && prof.bands && prof.bands[filterIdx] ? prof.bands[filterIdx].gain.toFixed(1) : '0.0';
+            showToast(`🎛️ Đã lưu ${type.toUpperCase()}: ${gVal} dB`, "#38bdf8");
+            console.log(`[Tone Control] ${type.toUpperCase()} gain set to ${gVal} dB`);
         }
 
         function resetToneControls() {
@@ -4142,6 +4163,21 @@
                 window.eqWebSocket.send(msg);
             }
         };
+
+        let toastTimer = null;
+        function showToast(msg, color = '#38bdf8') {
+            let t = document.getElementById('toastNotification');
+            if (!t) return;
+            t.innerText = msg;
+            t.style.borderColor = color;
+            t.style.display = 'block';
+            t.style.opacity = '1';
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                t.style.opacity = '0';
+                setTimeout(() => { t.style.display = 'none'; }, 300);
+            }, 1800);
+        }
 
         function initEQSync() {
             // Lấy phần tử overlay tĩnh đã vẽ sẵn
@@ -5264,12 +5300,16 @@
     }
 
     function sendClipperSettings() {
-        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
+        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) {
+            showToast("⚠️ WebSocket chưa kết nối!", "#ff1744");
+            return;
+        }
         const mbVal = clipperState.thr !== undefined ? clipperState.thr.toFixed(1) : '-1.5';
         const trVal = clipperState.tr_thr !== undefined ? clipperState.tr_thr.toFixed(1) : '-2.5';
         const subVal = clipperState.sub_thr !== undefined ? clipperState.sub_thr.toFixed(1) : '0.0';
         const msg = `#EQ_SET_CLIPPER$${activeProfileIndex},${clipperState.en},${mbVal},${trVal},${subVal}`;
         window.eqWebSocket.send(msg);
+        showToast(`✂️ Đã lưu Clipper (Sub:${subVal} Mid:${mbVal} Treb:${trVal}dB)`, "#ff1744");
         console.log("Sent Clipper WebSocket Command:", msg);
     }
 
@@ -5299,7 +5339,10 @@
         updateHybridModeLabelPassive(mode);
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_HYBRID$${mode}`);
+            showToast(`⚡ Đã chọn Modulation Scheme ${mode}`, "#ff9100");
             console.log("Sent Hybrid Modulation Mode:", mode);
+        } else {
+            showToast("⚠️ WebSocket chưa kết nối!", "#ff1744");
         }
     }
 
@@ -5457,8 +5500,12 @@
     }
 
     function sendCrossoverSettings() {
-        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
+        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) {
+            showToast("⚠️ WebSocket chưa kết nối!", "#ff1744");
+            return;
+        }
         window.eqWebSocket.send(`#EQ_SET_CROSS$${activeProfileIndex},${crossoverState.en},${crossoverState.fc},${crossoverState.slope},${crossoverState.treb_trim},${crossoverState.mid_trim},${crossoverState.fc_low || 250},${crossoverState.bass_trim || 0.0}`);
+        showToast(`✅ Đã lưu Crossover (${crossoverState.slope == 2 ? '24dB' : '12dB'})`, "#00f2fe");
         console.log("Sent Crossover Settings:", crossoverState);
     }
 
