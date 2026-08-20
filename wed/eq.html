@@ -723,28 +723,28 @@
             <!-- Row 1: Bass Slider -->
             <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 107, 107, 0.25); box-sizing: border-box;">
                 <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ff6b6b; font-weight: 600;">
-                    <span>🔊 BASS (Low Shelf 100Hz)</span>
+                    <span>🔊 BASS</span>
                     <span id="lblBassVal">0.0 dB</span>
                 </div>
-                <input type="range" id="sliderBass" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('bass')" onchange="onToneSliderChange('bass')">
+                <input type="range" id="sliderBass" class="smart-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('bass')" onchange="onToneSliderChange('bass')">
             </div>
 
             <!-- Row 2: Mid Slider -->
             <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 217, 61, 0.25); box-sizing: border-box;">
                 <div style="display: flex; justify-content: space-between; font-size: 12px; color: #ffd93d; font-weight: 600;">
-                    <span>🎚️ MID (Peaking 1kHz)</span>
+                    <span>🎚️ MID</span>
                     <span id="lblMidVal">0.0 dB</span>
                 </div>
-                <input type="range" id="sliderMid" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('mid')" onchange="onToneSliderChange('mid')">
+                <input type="range" id="sliderMid" class="smart-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('mid')" onchange="onToneSliderChange('mid')">
             </div>
 
             <!-- Row 3: Treble Slider -->
             <div style="width: 100%; display: flex; flex-direction: column; gap: 4px; background: rgba(0, 0, 0, 0.25); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(56, 189, 248, 0.25); box-sizing: border-box;">
                 <div style="display: flex; justify-content: space-between; font-size: 12px; color: #38bdf8; font-weight: 600;">
-                    <span>📻 TREBLE (High Shelf 10kHz)</span>
+                    <span>📻 TREBLE</span>
                     <span id="lblTrebleVal">0.0 dB</span>
                 </div>
-                <input type="range" id="sliderTreble" class="preamp-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('treble')" onchange="onToneSliderChange('treble')">
+                <input type="range" id="sliderTreble" class="smart-slider" min="-12" max="12" step="0.5" value="0.0" oninput="onToneSliderInput('treble')" onchange="onToneSliderChange('treble')">
             </div>
         </div>
 
@@ -802,16 +802,13 @@
                     <div class="section-title" id="crossoverCardTitle" style="color: #00f2fe; margin: 0; padding: 0;">
                         🎛️ CROSSOVER & TRIM GAIN
                     </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-size: 11px; color: #aaa; font-weight: 500;">Filter Slope:</span>
-                        <select id="selCrossoverSlope" onchange="onCrossoverSlopeChange()" style="background: rgba(0, 0, 0, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; outline: none; min-width: 190px; box-shadow: 0 2px 6px rgba(0, 242, 254, 0.15);">
+                    <div style="display: flex; align-items: center; gap: 8px; flex: 1; max-width: 320px; justify-content: flex-end;">
+                        <span style="font-size: 11px; color: #aaa; font-weight: 500; white-space: nowrap;">Filter Slope:</span>
+                        <select id="selCrossoverSlope" onchange="onCrossoverSlopeChange()" style="background: rgba(0, 0, 0, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; outline: none; flex: 1; width: 100%; height: 26px;">
                             <option value="1">12 dB/oct (2nd Order)</option>
                             <option value="2" selected>24 dB/oct (4th Order)</option>
                         </select>
                     </div>
-                </div>
-                <div id="lblCrossoverModeTitle" style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 4px;">
-                    Active 3-Way DSP Crossover
                 </div>
 
                 <!-- Main Crossover Response Graph -->
@@ -5380,10 +5377,6 @@
         const cardTitle = document.getElementById('crossoverCardTitle');
         if (cardTitle) {
             cardTitle.innerText = is3Way ? "🎛️ TRIPLE TAS 3-WAY CROSSOVER & TRIM" : "🎛️ DUAL TAS 2-WAY CROSSOVER & TRIM";
-        }
-        const modeTitle = document.getElementById('lblCrossoverModeTitle');
-        if (modeTitle) {
-            modeTitle.innerText = is3Way ? "Active 3-Way DSP Crossover (0x4D Sub, 0x4C Mid, 0x4E Treble)" : "Active 2-Way DSP Crossover (0x4C Midbass, 0x4E Treble)";
         }
 
         const groupFcLow = document.getElementById('groupCrossoverFcLow');
