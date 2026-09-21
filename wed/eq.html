@@ -461,44 +461,142 @@
         /* Toggle switch */
         .switch {
             position: relative;
-            display: inline-block;
-            width: 34px;
-            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            width: 38px;
+            height: 22px;
+            flex-shrink: 0;
+            cursor: pointer;
+            margin: 0;
         }
 
         .switch input {
             opacity: 0;
             width: 0;
             height: 0;
+            position: absolute;
         }
 
         .slider-round {
             position: absolute;
             cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255, 255, 255, 0.15);
-            transition: .3s;
-            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all .25s ease;
+            border-radius: 22px;
         }
 
         .slider-round:before {
             position: absolute;
             content: "";
-            height: 14px;
-            width: 14px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #ffffff;
+            transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
             border-radius: 50%;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
         }
 
         input:checked + .slider-round {
-            background-color: var(--primary);
+            background-color: #00f2fe;
+            border-color: #00f2fe;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
         }
 
         input:checked + .slider-round:before {
-            transform: translateX(14px);
+            transform: translateX(16px);
+        }
+
+        /* Color variations for block themes */
+        input:checked + .slider-round.sw-green {
+            background-color: #00e676;
+            border-color: #00e676;
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.45);
+        }
+        input:checked + .slider-round.sw-red {
+            background-color: #ff1744;
+            border-color: #ff1744;
+            box-shadow: 0 0 10px rgba(255, 23, 68, 0.45);
+        }
+        input:checked + .slider-round.sw-orange {
+            background-color: #ff9100;
+            border-color: #ff9100;
+            box-shadow: 0 0 10px rgba(255, 145, 0, 0.45);
+        }
+        input:checked + .slider-round.sw-purple {
+            background-color: #e040fb;
+            border-color: #e040fb;
+            box-shadow: 0 0 10px rgba(224, 64, 251, 0.45);
+        }
+        input:checked + .slider-round.sw-yellow {
+            background-color: #ffd600;
+            border-color: #ffd600;
+            box-shadow: 0 0 10px rgba(255, 214, 0, 0.45);
+        }
+        input:checked + .slider-round.sw-amber {
+            background-color: #ffb74d;
+            border-color: #ffb74d;
+            box-shadow: 0 0 10px rgba(255, 183, 77, 0.45);
+        }
+
+        /* --- UNIFIED CUSTOM CHECKBOX FOR BAND TABLE --- */
+        .band-check-container {
+            display: inline-flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .band-check-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .band-checkmark {
+            height: 16px;
+            width: 16px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .band-check-container:hover input ~ .band-checkmark {
+            border-color: rgba(255, 255, 255, 0.6);
+            background-color: rgba(255, 255, 255, 0.16);
+        }
+
+        .band-check-container input:checked ~ .band-checkmark {
+            background-color: var(--band-active-color, #00f2fe);
+            border-color: var(--band-active-color, #00f2fe);
+            box-shadow: 0 0 8px var(--band-active-color, #00f2fe);
+        }
+
+        .band-checkmark:after {
+            content: "";
+            display: none;
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-bottom: 2px;
+        }
+
+        .band-check-container input:checked ~ .band-checkmark:after {
+            display: block;
         }
     
         /* Professional DRC styling */
@@ -693,6 +791,23 @@
             <input type="range" id="inputPreamp" class="preamp-slider" min="-20" max="0" step="0.1" value="-6.0">
         </div>
 
+        <!-- Dedicated Hardware EQ Bypass Row (Hàng riêng cân bằng) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.45); border: 1px solid var(--glass-border); border-radius: 14px; padding: 10px 16px; margin-top: 4px; margin-bottom: 8px; width: 100%; box-sizing: border-box;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; font-weight: 600; color: #cbd5e1; display: flex; align-items: center; gap: 6px;">
+                    ⚡ Hardware EQ:
+                </span>
+                <span id="lblFastEqBypassStatus" style="font-size: 11px; font-weight: 700; color: #00e676; background: rgba(0, 230, 118, 0.12); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(0, 230, 118, 0.25);">ACTIVE (BẬT)</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; font-weight: 600; color: #94a3b8;">Bypass EQ</span>
+                <label class="switch">
+                    <input type="checkbox" id="chkFastEqBypass" onchange="onFastBypassChange()">
+                    <span class="slider-round sw-orange"></span>
+                </label>
+            </div>
+        </div>
+
         <!-- EQ Bands Table List -->
         <div class="table-container">
             <table>
@@ -748,28 +863,88 @@
             </div>
         </div>
 
-        <!-- Smart Audio Processor Container -->
+                <!-- Smart Audio Processor Container -->
         <div class="smart-processor-container">
-            <!-- Smart Bass Card -->
+
+            <!-- CARD 1: TAS5825M Spatializer 3D Pro -->
             <div class="section-card">
-                <div class="section-title">🔊 Smart Bass (Dynamic Boost)</div>
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="display: flex; align-items: center; gap: 8px; color: #00f2fe;">
+                        🌐 TAS5825M Spatializer 3D (Mở Rộng Âm Hình)
+                    </span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="lblSpatializerState" style="font-weight: 700; color: #9ca3af; font-size: 11px;">TẮT</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkSpatializerEn" onchange="onSpatializerUserChange()">
+                            <span class="slider-round"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="padding: 12px 14px; background: rgba(0, 242, 254, 0.04); border: 1px solid rgba(0, 242, 254, 0.15); border-radius: 12px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Cường độ hiệu ứng (Stereo Widening Level):</span>
+                        <span id="lblSpatializerVal" style="font-size: 13px; font-weight: 700; color: #00f2fe; background: rgba(0, 242, 254, 0.15); padding: 2px 10px; border-radius: 6px; border: 1px solid rgba(0, 242, 254, 0.3);">50%</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">0%</span>
+                        <input type="range" id="rngSpatializerLevel" min="0" max="100" value="50" oninput="onSpatializerUserChange()" style="flex: 1; accent-color: #00f2fe; height: 6px; cursor: pointer;">
+                        <span style="font-size: 11px; color: #94a3b8; font-weight: 600;">100%</span>
+                    </div>
+
+                    <!-- Presets -->
+                    <div style="display: flex; gap: 8px; justify-content: space-between; padding-top: 2px;">
+                        <button type="button" onclick="setSpatialPreset(0.25, 4000, 20000, 1)" style="flex: 1; padding: 6px 0; font-size: 11px; font-weight: 600; background: rgba(0,242,254,0.1); border: 1px solid rgba(0,242,254,0.25); border-radius: 8px; color: #00f2fe; cursor: pointer;">Nhẹ (25%)</button>
+                        <button type="button" onclick="setSpatialPreset(0.50, 800, 6000, 2)" style="flex: 1; padding: 6px 0; font-size: 11px; font-weight: 600; background: rgba(0,242,254,0.1); border: 1px solid rgba(0,242,254,0.25); border-radius: 8px; color: #00f2fe; cursor: pointer;">Vừa (50%)</button>
+                        <button type="button" onclick="setSpatialPreset(0.75, 300, 20000, 3)" style="flex: 1; padding: 6px 0; font-size: 11px; font-weight: 600; background: rgba(0,242,254,0.1); border: 1px solid rgba(0,242,254,0.25); border-radius: 8px; color: #00f2fe; cursor: pointer;">Mạnh (75%)</button>
+                    </div>
+
+                    <!-- HPF & LPF Cutoff Filters -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">HPF Trầm:</span>
+                                <span id="lblSpatializerHpf" style="color: #00f2fe; font-weight: 600;">300 Hz</span>
+                            </div>
+                            <input type="range" id="rngSpatializerHpf" min="100" max="1000" step="20" value="300" oninput="onSpatializerUserChange()" style="width: 100%; accent-color: #00f2fe; height: 5px; cursor: pointer;">
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">LPF Cao:</span>
+                                <span id="lblSpatializerLpf" style="color: #00f2fe; font-weight: 600;">20.0 kHz</span>
+                            </div>
+                            <input type="range" id="rngSpatializerLpf" min="3000" max="20000" step="500" value="20000" oninput="onSpatializerUserChange()" style="width: 100%; accent-color: #00f2fe; height: 5px; cursor: pointer;">
+                        </div>
+                    </div>
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.3;">
+                        💡 HPF 300Hz giữ nguyên uy lực âm trầm Mono; LPF cắt bớt dải siêu cao tránh chói gắt.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: Smart Bass & Dynamic Tracking -->
+            <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #00e676; display: flex; align-items: center; gap: 6px;">
+                        🔊 Smart Bass (Dynamic Bass Tracking & Morphing)
+                    </span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="lblSmartBassState" style="font-weight: 700; color: #9ca3af; font-size: 11px;">TẮT</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkSmartBass" onchange="onSbStateChange()">
+                            <span class="slider-round sw-green"></span>
+                        </label>
+                    </div>
+                </div>
                 
                 <div class="sb-content-layout">
-                    <!-- Left Column: Interactive Canvas -->
+                    <!-- Interactive Canvas -->
                     <div class="sb-canvas-container">
-                        <canvas id="sbCanvas" width="260" height="260"></canvas>
+                        <canvas id="sbCanvas" width="260" height="200"></canvas>
                     </div>
                     
-                    <!-- Right Column: Settings Controls -->
+                    <!-- Controls -->
                     <div class="sb-controls-container">
-                        <div class="smart-header" style="margin-bottom: 12px;">
-                            <span class="smart-title" style="font-size: 15px; color: #00e676; font-weight: 600;">JBL Bass Tracking</span>
-                            <label class="switch">
-                                <input type="checkbox" id="chkSmartBass" onchange="onSbStateChange()">
-                                <span class="slider-round"></span>
-                            </label>
-                        </div>
-                        
                         <div class="control-group">
                             <div class="control-label">
                                 <span>Max Boost Gain</span>
@@ -778,7 +953,15 @@
                             <input type="range" id="sliderSmartBassBst" class="smart-slider" min="0" max="12" step="0.5" value="6" oninput="onSbSliderInput('bst')" onchange="onSbSliderChange('bst')">
                         </div>
                         
-                        <div class="control-group" style="margin-top: 12px;">
+                        <div class="control-group" style="margin-top: 8px;">
+                            <div class="control-label">
+                                <span>Tần số kích Bass (Fc)</span>
+                                <span id="lblSmartBassFc" style="color: #00e676; font-weight: 600;">70 Hz</span>
+                            </div>
+                            <input type="range" id="sliderSmartBassFc" class="smart-slider" min="40" max="180" step="5" value="70" oninput="onSbSliderInput('fc')" onchange="onSbSliderChange('fc')">
+                        </div>
+
+                        <div class="control-group" style="margin-top: 8px;">
                             <div class="control-label">
                                 <span>Low Threshold</span>
                                 <span id="lblSmartBassLth" style="color: #ff9100;">-10.0 dB</span>
@@ -786,189 +969,93 @@
                             <input type="range" id="sliderSmartBassLth" class="smart-slider" min="-40" max="0" step="0.5" value="-10" oninput="onSbSliderInput('lth')" onchange="onSbSliderChange('lth')">
                         </div>
                         
-                        <div class="control-group" style="margin-top: 12px;">
+                        <div class="control-group" style="margin-top: 8px;">
                             <div class="control-label">
                                 <span>High Threshold</span>
                                 <span id="lblSmartBassHth" style="color: #00e5ff;">0.0 dB</span>
                             </div>
                             <input type="range" id="sliderSmartBassHth" class="smart-slider" min="-20" max="10" step="0.5" value="0" oninput="onSbSliderInput('hth')" onchange="onSbSliderChange('hth')">
                         </div>
+
+                        <div class="control-group" style="margin-top: 8px;">
+                            <div class="control-label">
+                                <span>Tỷ lệ hòa trộn (Morphing)</span>
+                                <span id="lblSmartBassMorph" style="color: #ba68c8; font-weight: 600;">50%</span>
+                            </div>
+                            <input type="range" id="sliderSmartBassMorph" class="smart-slider" min="0" max="100" step="5" value="50" oninput="onSbSliderInput('morph')" onchange="onSbSliderChange('morph')">
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- Dual/Triple TAS5825M Crossover & Channel Trim Card -->
-            <div class="section-card" style="margin-top: 20px; border: 1px solid rgba(0, 242, 254, 0.25); background: rgba(10, 15, 30, 0.4); padding: 15px;">
-                <!-- Row 1: Section Title -->
-                <div class="section-title" id="crossoverCardTitle" style="color: #00f2fe; margin: 0 0 10px 0; padding-bottom: 6px; border-bottom: 1px solid rgba(0, 242, 254, 0.15); width: 100%;">
-                    🎛️ CROSSOVER & TRIM GAIN
+
+            <!-- CARD 3: Volume Softening & Dynamic Parametric EQ (DPEQ) -->
+            <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #e040fb; display: flex; align-items: center; gap: 6px;">
+                        📊 Volume & DPEQ (Equalizer Động Loudness)
+                    </span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="lblDpeqState" style="font-weight: 700; color: #9ca3af; font-size: 11px;">TẮT</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkDpeqEn" onchange="onDpeqStateChange()">
+                            <span class="slider-round sw-purple"></span>
+                        </label>
+                    </div>
                 </div>
 
-                <!-- Row 2: Filter Slope Control Row -->
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.2); padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(0, 242, 254, 0.15);">
-                    <span style="font-size: 12px; color: #cbd5e1; font-weight: 600; white-space: nowrap;">Filter Slope:</span>
-                    <select id="selCrossoverSlope" onchange="onCrossoverSlopeChange()" style="background: rgba(0, 0, 0, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; outline: none; flex: 1; max-width: 240px; height: 28px;">
-                        <option value="1">12 dB/oct (2nd Order)</option>
-                        <option value="2" selected>24 dB/oct (4th Order)</option>
-                    </select>
-                </div>
-
-                <!-- Main Crossover Response Graph -->
-                <div style="width: 100%; margin-top: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                    <canvas id="crossoverCanvas" width="500" height="150" style="width: 100%; max-width: 550px; height: 150px;"></canvas>
-                </div>
-
-                <!-- 3 Clean Equal Rows Layout (Sub, Mid, Treble) -->
-                <div id="crossoverControlGrid" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                    
-                    <!-- Hàng 1: SUB BASS -->
-                    <div class="control-group" id="groupBassTrim" style="display: none; border: 1px solid rgba(255, 145, 0, 0.3); padding: 10px 14px; background: rgba(255, 145, 0, 0.05); border-radius: 8px;">
-                        <div style="color: #ff9100; font-weight: 700; font-size: 12px; margin-bottom: 8px;">
-                            🔈 SUB BASS
+                <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; background: rgba(224, 64, 251, 0.04); border: 1px solid rgba(224, 64, 251, 0.15); border-radius: 12px;">
+                    <!-- Volume Softening Filter -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                            <span style="color: #cbd5e1; font-weight: 600;">Volume Softening Alpha (Độ mượt Volume):</span>
+                            <span id="lblVolSoftening" style="color: #e040fb; font-weight: 700;">20 ms</span>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <div class="control-label" style="font-size: 11px;">
-                                    <span style="color: #aaa;">Fc Low:</span>
-                                    <span id="lblCrossoverFcLow" style="color: #ff9100; font-weight: 600;">250 Hz</span>
-                                </div>
-                                <input type="range" id="sliderCrossoverFcLow" class="smart-slider" min="80" max="500" step="10" value="250" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
-                            </div>
-                            <div>
-                                <div class="control-label" style="font-size: 11px;">
-                                    <span style="color: #aaa;">Gain:</span>
-                                    <span id="lblBassTrim" style="color: #ff9100; font-weight: 600;">0.0 dB</span>
-                                </div>
-                                <input type="range" id="sliderBassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
-                            </div>
-                        </div>
+                        <input type="range" id="sliderVolSoftening" class="smart-slider" min="5" max="100" step="5" value="20" oninput="onVolSofteningInput()" onchange="onVolSofteningChange()">
                     </div>
 
-                    <!-- Hàng 2: MIDRANGE -->
-                    <div class="control-group" style="border: 1px solid rgba(0, 230, 118, 0.3); padding: 10px 14px; background: rgba(0, 230, 118, 0.05); border-radius: 8px;">
-                        <div style="color: #00e676; font-weight: 700; font-size: 12px; margin-bottom: 8px;">
-                            🔊 MIDRANGE
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <div class="control-label" style="font-size: 11px;">
-                                    <span id="lblFcTitle" style="color: #aaa;">Fc High:</span>
-                                    <span id="lblCrossoverFc" style="color: #00e676; font-weight: 600;">2500 Hz</span>
-                                </div>
-                                <input type="range" id="sliderCrossoverFc" class="smart-slider" min="500" max="8000" step="50" value="2500" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                    <!-- DPEQ Thresholds -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">Low Thresh (Nhỏ):</span>
+                                <span id="lblDpeqLowThr" style="color: #00e676; font-weight: 600;">-40 dB</span>
                             </div>
-                            <div>
-                                <div class="control-label" style="font-size: 11px;">
-                                    <span id="lblMidTrimTitle" style="color: #aaa;">Gain:</span>
-                                    <span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span>
-                                </div>
-                                <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Hàng 3: TREBLE -->
-                    <div class="control-group" style="border: 1px solid rgba(255, 64, 129, 0.3); padding: 10px 14px; background: rgba(255, 64, 129, 0.05); border-radius: 8px;">
-                        <div style="color: #ff4081; font-weight: 700; font-size: 12px; margin-bottom: 8px;">
-                            📻 TREBLE
+                            <input type="range" id="sliderDpeqLowThr" class="smart-slider" min="-50" max="-15" step="1" value="-40" oninput="onDpeqSliderInput('low')" onchange="onDpeqSliderChange()">
                         </div>
                         <div>
-                            <div class="control-label" style="font-size: 11px;">
-                                <span style="color: #aaa;">Gain:</span>
-                                <span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">-2.0 dB</span>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">High Thresh (Lớn):</span>
+                                <span id="lblDpeqHighThr" style="color: #ff5252; font-weight: 600;">-10 dB</span>
                             </div>
-                            <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="-2.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                            <input type="range" id="sliderDpeqHighThr" class="smart-slider" min="-25" max="0" step="1" value="-10" oninput="onDpeqSliderInput('high')" onchange="onDpeqSliderChange()">
                         </div>
                     </div>
 
-                </div>
-            </div>
-
-            <!-- Output Clipper Card (Hard Limit) -->
-            <div class="section-card" style="margin-top: 20px;">
-                <div class="section-title">✂️ Output Clipper (Hard Limit)</div>
-                
-                <div class="clipper-content-layout">
-                    <!-- Left Column: Waveform clipping simulation -->
-                    <div class="clipper-canvas-container">
-                        <canvas id="clipperCanvas" width="260" height="150"></canvas>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">Energy Time:</span>
+                                <span id="lblDpeqEnergy" style="color: #cbd5e1; font-weight: 600;">50 ms</span>
+                            </div>
+                            <input type="range" id="sliderDpeqEnergy" class="smart-slider" min="10" max="200" step="10" value="50" oninput="onDpeqSliderInput('energy')" onchange="onDpeqSliderChange()">
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">Sense Bass Fc:</span>
+                                <span id="lblDpeqSenseFc" style="color: #cbd5e1; font-weight: 600;">120 Hz</span>
+                            </div>
+                            <input type="range" id="sliderDpeqSenseFc" class="smart-slider" min="60" max="250" step="10" value="120" oninput="onDpeqSliderInput('fc')" onchange="onDpeqSliderChange()">
+                        </div>
                     </div>
-                    
-                    <!-- Right Column: Controls -->
-                    <div class="clipper-controls-container">
-                        <div class="smart-header" style="margin-bottom: 12px;">
-                            <span class="smart-title" style="font-size: 14px; color: #ff1744; font-weight: 600;">Hardware Protection Limit</span>
-                            <label class="switch">
-                                <input type="checkbox" id="chkClipper" onchange="onClipStateChange()">
-                                <span class="slider-round"></span>
-                            </label>
-                        </div>
-                        
-                        <!-- Sub-Bass Protection Clipper -->
-                        <div class="control-group" id="groupSubClipper" style="display: none; border-left: 3px solid #ff9100; padding: 8px 10px; background: rgba(255, 145, 0, 0.05); border-radius: 0 8px 8px 0; margin-bottom: 8px; width: 100%; box-sizing: border-box;">
-                            <div class="control-label">
-                                <span style="color: #ff9100; font-weight: 600;">🔈 Sub Clipper</span>
-                                <span id="lblSubClipperThr" style="color: #ff9100; font-weight: 600;">0.0 dB</span>
-                            </div>
-                            <input type="range" id="sliderSubClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onSubClipSliderInput()" onchange="onClipSliderChange()">
-                        </div>
-
-                        <!-- Midrange Protection Clipper -->
-                        <div class="control-group" style="border-left: 3px solid #00e676; padding: 8px 10px; background: rgba(0, 230, 118, 0.05); border-radius: 0 8px 8px 0; margin-bottom: 8px; width: 100%; box-sizing: border-box;">
-                            <div class="control-label">
-                                <span style="color: #00e676; font-weight: 600;" id="lblMidClipperTitle">🔊 Mid Clipper</span>
-                                <span id="lblClipperThr" style="color: #00e676; font-weight: 600;">0.0 dB</span>
-                            </div>
-                            <input type="range" id="sliderClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onMidbassClipSliderInput()" onchange="onClipSliderChange()">
-                        </div>
-
-                        <!-- Treble Protection Clipper -->
-                        <div class="control-group" style="border-left: 3px solid #ff4081; padding: 8px 10px; background: rgba(255, 64, 129, 0.05); border-radius: 0 8px 8px 0; margin-bottom: 8px; width: 100%; box-sizing: border-box;">
-                            <div class="control-label">
-                                <span style="color: #ff4081; font-weight: 600;">📻 Treble Clipper</span>
-                                <span id="lblTrebleClipperThr" style="color: #ff4081; font-weight: 600;">-2.5 dB</span>
-                            </div>
-                            <input type="range" id="sliderTrebleClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="-2.5" oninput="onTrebleClipSliderInput()" onchange="onClipSliderChange()">
-                        </div>
-                        
-                        <div style="margin-top: 10px; font-size: 12px; color: rgba(255, 255, 255, 0.4); line-height: 1.5;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <span>Treble Safety Protection:</span>
-                                <strong id="lblClipAmplitude" style="color: #ff4081;">75% (-2.5 dB)</strong>
-                            </div>
-                        </div>
-
-                        <!-- TAS5825M PWM Modulation Scheme & Power State Control -->
-                        <div class="control-group" style="margin-top: 12px; border-left: 3px solid #ff9100; padding-left: 8px; background: rgba(255, 145, 0, 0.05); border-radius: 0 6px 6px 0;">
-                            <!-- 1. Modulation Scheme (Reg 0x02 DAMP_MOD) -->
-                            <div style="margin-bottom: 10px;">
-                                <div class="control-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                                    <span style="color: #ff9100; font-size: 13px; font-weight: 600;">⚡ TAS5825M Device Modulation Scheme</span>
-                                </div>
-                                <select id="selectHybridMode" onchange="onHybridModeUserChange()" style="width: 100%; background: #121826; color: #ff9100; border: 1px solid #ff9100; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; outline: none;">
-                                    <option value="0">0: BD Mode (Low Distortion - Ít Méo Tiếng)</option>
-                                    <option value="1">1: 1SPW Standard (Low Loss - Tiết Kiệm Điện)</option>
-                                    <option value="2" selected>2: Hybrid Modulation (Cooling - Mát IC Tự Động)</option>
-                                </select>
-                                <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 4px;">
-                                    Modulation: <strong id="lblHybridModeStatus" style="color: #ff9100;">2: Hybrid Modulation (Cooling)</strong>
-                                </div>
-                            </div>
-
-                            <!-- 2. Power Output State (Reg 0x03 CTRL_STATE) - Hidden as requested -->
-                            <div style="display: none;">
-                                <select id="selectAmpState">
-                                    <option value="1" selected>1: Active / Play Mode</option>
-                                </select>
-                                <strong id="lblAmpStateStatus">1: Active / Play Mode</strong>
-                            </div>
-                        </div>
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.45); line-height: 1.3;">
+                        💡 Tự động kích Loudness khi nghe nhỏ, nén hạ dải trầm khi mở to để bảo vệ củ loa không văng màng.
                     </div>
                 </div>
             </div>
 
-            <!-- Multi-band DRC Card -->
+            <!-- CARD 4: Multi-Band DRC -->
             <div class="section-card">
-                <div class="section-title">🛡️ Multi-Band DRC (Limiter / AGL)</div>
+                <div class="section-title">🛡️ Multi-Band DRC (3-Band Dynamic Range Control)</div>
                 
                 <!-- Tab Selector -->
                 <div class="drc-tab-container">
@@ -980,45 +1067,380 @@
                 <div class="drc-content-layout">
                     <!-- Left Column: Interactive Canvas -->
                     <div class="drc-canvas-container">
-                        <canvas id="drcCanvas" width="260" height="260"></canvas>
+                        <canvas id="drcCanvas" width="260" height="240"></canvas>
                     </div>
                     
                     <!-- Right Column: Settings Controls -->
                     <div class="drc-controls-container">
-                        <div class="smart-header" style="margin-bottom: 12px;">
-                            <span class="smart-title" id="drcBandTitle" style="font-size: 15px; color: #ff9100; font-weight: 600;">Bass DRC Settings</span>
-                            <label class="switch">
-                                <input type="checkbox" id="chkDrcActive" onchange="onDrcStateChange()">
-                                <span class="slider-round"></span>
-                            </label>
+                        <div class="smart-header" style="margin-bottom: 8px;">
+                            <span class="smart-title" id="drcBandTitle" style="font-size: 14px; color: #ff9100; font-weight: 600;">Bass DRC Settings</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span id="lblDrcState" style="font-weight: 700; color: #9ca3af; font-size: 11px;">TẮT</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="chkDrcActive" onchange="onDrcStateChange()">
+                                    <span class="slider-round sw-orange"></span>
+                                </label>
+                            </div>
                         </div>
                         
                         <div class="control-group">
                             <div class="control-label">
-                                <span>Threshold</span>
+                                <span>T1 Soft Knee</span>
+                                <span id="lblDrcT1" style="color: #ffb74d; font-weight: 600;">-24.0 dB</span>
+                            </div>
+                            <input type="range" id="sliderDrcT1" class="smart-slider" min="-40" max="-10" step="0.5" value="-24" oninput="onDrcSliderInput('t1')" onchange="onDrcSliderChange('t1')">
+                        </div>
+
+                        <div class="control-group" style="margin-top: 6px;">
+                            <div class="control-label">
+                                <span>T2 Limiter Threshold</span>
                                 <span id="lblDrcThreshold" style="color: #ff9100; font-weight: 600;">-12.0 dB</span>
                             </div>
-                            <input type="range" id="sliderDrcThreshold" class="smart-slider" min="-40" max="0" step="0.5" value="-12" oninput="onDrcSliderInput('thr')" onchange="onDrcSliderChange('thr')">
+                            <input type="range" id="sliderDrcThreshold" class="smart-slider" min="-25" max="0" step="0.5" value="-12" oninput="onDrcSliderInput('thr')" onchange="onDrcSliderChange('thr')">
                         </div>
-                        
-                        <div class="control-group" style="margin-top: 12px;">
-                            <div class="control-label">
-                                <span>Attack Time</span>
-                                <span id="lblDrcAttack" style="color: #00e5ff;">10 ms</span>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+                            <div>
+                                <div class="control-label" style="font-size: 10px;">
+                                    <span>K1 Slope (Ratio)</span>
+                                    <span id="lblDrcK1" style="color: #00e5ff;">0.50</span>
+                                </div>
+                                <input type="range" id="sliderDrcK1" class="smart-slider" min="0" max="0.9" step="0.05" value="0.5" oninput="onDrcSliderInput('k1')" onchange="onDrcSliderChange('k1')">
                             </div>
-                            <input type="range" id="sliderDrcAttack" class="smart-slider" min="1" max="100" step="1" value="10" oninput="onDrcSliderInput('att')" onchange="onDrcSliderChange('att')">
+                            <div>
+                                <div class="control-label" style="font-size: 10px;">
+                                    <span>K2 Limiter Slope</span>
+                                    <span id="lblDrcK2" style="color: #00e5ff;">0.98</span>
+                                </div>
+                                <input type="range" id="sliderDrcK2" class="smart-slider" min="0.8" max="0.99" step="0.01" value="0.98" oninput="onDrcSliderInput('k2')" onchange="onDrcSliderChange('k2')">
+                            </div>
                         </div>
-                        
-                        <div class="control-group" style="margin-top: 12px;">
-                            <div class="control-label">
-                                <span>Release Time</span>
-                                <span id="lblDrcRelease" style="color: #00e5ff;">500 ms</span>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+                            <div>
+                                <div class="control-label" style="font-size: 10px;">
+                                    <span>Attack Time</span>
+                                    <span id="lblDrcAttack" style="color: #00e5ff;">10 ms</span>
+                                </div>
+                                <input type="range" id="sliderDrcAttack" class="smart-slider" min="1" max="100" step="1" value="10" oninput="onDrcSliderInput('att')" onchange="onDrcSliderChange('att')">
                             </div>
-                            <input type="range" id="sliderDrcRelease" class="smart-slider" min="10" max="2000" step="10" value="500" oninput="onDrcSliderInput('rel')" onchange="onDrcSliderChange('rel')">
+                            <div>
+                                <div class="control-label" style="font-size: 10px;">
+                                    <span>Release Time</span>
+                                    <span id="lblDrcRelease" style="color: #00e5ff;">500 ms</span>
+                                </div>
+                                <input type="range" id="sliderDrcRelease" class="smart-slider" min="10" max="2000" step="10" value="500" oninput="onDrcSliderInput('rel')" onchange="onDrcSliderChange('rel')">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+                            <div>
+                                <div class="control-label" style="font-size: 10px;">
+                                    <span>Energy ms</span>
+                                    <span id="lblDrcEnergy" style="color: #cbd5e1;">25 ms</span>
+                                </div>
+                                <input type="range" id="sliderDrcEnergy" class="smart-slider" min="5" max="100" step="5" value="25" oninput="onDrcSliderInput('energy')" onchange="onDrcSliderChange('energy')">
+                            </div>
+                            <div>
+                                <div class="control-label" style="font-size: 10px;">
+                                    <span>Mixer Gain</span>
+                                    <span id="lblDrcMixerGain" style="color: #00e676;">0.0 dB</span>
+                                </div>
+                                <input type="range" id="sliderDrcMixerGain" class="smart-slider" min="-6" max="6" step="0.5" value="0" oninput="onDrcSliderInput('gain')" onchange="onDrcSliderChange('gain')">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- CARD 5: SmartAmp + AGL Limiter -->
+            <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #ff1744; display: flex; align-items: center; gap: 6px;">
+                        ⚡ SmartAmp + AGL (Bộ Giới Hạn Tự Động Hồi Tiếp)
+                    </span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="lblAglState" style="font-weight: 700; color: #9ca3af; font-size: 11px;">TẮT</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkAglEn" onchange="onAglStateChange()">
+                            <span class="slider-round sw-red"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="padding: 12px 14px; background: rgba(255, 23, 68, 0.04); border: 1px solid rgba(255, 23, 68, 0.15); border-radius: 12px; display: flex; flex-direction: column; gap: 10px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                            <span style="color: #cbd5e1; font-weight: 600;">Ngưỡng giới hạn (AGL Threshold):</span>
+                            <span id="lblAglThr" style="color: #ff1744; font-weight: 700;">-1.5 dB</span>
+                        </div>
+                        <input type="range" id="sliderAglThr" class="smart-slider" min="-24" max="0" step="0.5" value="-1.5" oninput="onAglSliderInput('thr')" onchange="onAglSliderChange()">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">Attack Rate:</span>
+                                <span id="lblAglAtt" style="color: #ff9100; font-weight: 600;">0.20</span>
+                            </div>
+                            <input type="range" id="sliderAglAtt" class="smart-slider" min="0.01" max="1.0" step="0.01" value="0.2" oninput="onAglSliderInput('att')" onchange="onAglSliderChange()">
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">Release Rate:</span>
+                                <span id="lblAglRel" style="color: #00e5ff; font-weight: 600;">0.0010</span>
+                            </div>
+                            <input type="range" id="sliderAglRel" class="smart-slider" min="0.0001" max="0.02" step="0.0002" value="0.001" oninput="onAglSliderInput('rel')" onchange="onAglSliderChange()">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                            <span style="color: #aaa;">Softening Knee Alpha:</span>
+                            <span id="lblAglAlpha" style="color: #cbd5e1; font-weight: 600;">0.55 ms</span>
+                        </div>
+                        <input type="range" id="sliderAglAlpha" class="smart-slider" min="0.1" max="2.0" step="0.05" value="0.55" oninput="onAglSliderInput('alpha')" onchange="onAglSliderChange()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 6: Active Crossover & Phase Delay (Time Alignment) -->
+            <div class="section-card">
+                <div class="section-title" id="crossoverCardTitle" style="color: #00f2fe;">
+                    🎛️ Phân Tần Chủ Động & Time Alignment (Trễ Pha)
+                </div>
+
+                <!-- Row: Filter Slope & Phase Invert -->
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; background: rgba(0, 0, 0, 0.2); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(0, 242, 254, 0.15);">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 12px; color: #cbd5e1; font-weight: 600;">Độ dốc:</span>
+                        <select id="selCrossoverSlope" onchange="onCrossoverSlopeChange()" style="background: rgba(0, 0, 0, 0.6); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.4); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                            <option value="1">12 dB/oct Butterworth (2nd)</option>
+                            <option value="2" selected>24 dB/oct Linkwitz-Riley (4th)</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 11px; color: #ffb74d; font-weight: 600;">Đảo pha 180°</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkCrossoverInvertPhase" onchange="onCrossoverInvertPhaseChange()">
+                            <span class="slider-round sw-amber"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Main Crossover Response Graph -->
+                <div style="width: 100%; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                    <canvas id="crossoverCanvas" width="500" height="150" style="width: 100%; max-width: 550px; height: 150px;"></canvas>
+                </div>
+
+                <!-- Sub, Mid, Treble Controls -->
+                <div id="crossoverControlGrid" style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+                    <!-- Hàng 1: SUB BASS -->
+                    <div class="control-group" id="groupBassTrim" style="display: none; border: 1px solid rgba(255, 145, 0, 0.3); padding: 8px 12px; background: rgba(255, 145, 0, 0.05); border-radius: 8px;">
+                        <div style="color: #ff9100; font-weight: 700; font-size: 11px; margin-bottom: 4px;">🔈 SUB BASS</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <div class="control-label" style="font-size: 10px;"><span style="color: #aaa;">Fc Low:</span><span id="lblCrossoverFcLow" style="color: #ff9100; font-weight: 600;">250 Hz</span></div>
+                                <input type="range" id="sliderCrossoverFcLow" class="smart-slider" min="80" max="500" step="10" value="250" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                            </div>
+                            <div>
+                                <div class="control-label" style="font-size: 10px;"><span style="color: #aaa;">Gain:</span><span id="lblBassTrim" style="color: #ff9100; font-weight: 600;">0.0 dB</span></div>
+                                <input type="range" id="sliderBassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hàng 2: MIDRANGE -->
+                    <div class="control-group" style="border: 1px solid rgba(0, 230, 118, 0.3); padding: 8px 12px; background: rgba(0, 230, 118, 0.05); border-radius: 8px;">
+                        <div style="color: #00e676; font-weight: 700; font-size: 11px; margin-bottom: 4px;">🔊 MIDRANGE</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <div class="control-label" style="font-size: 10px;"><span id="lblFcTitle" style="color: #aaa;">Fc High:</span><span id="lblCrossoverFc" style="color: #00e676; font-weight: 600;">2500 Hz</span></div>
+                                <input type="range" id="sliderCrossoverFc" class="smart-slider" min="500" max="8000" step="50" value="2500" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                            </div>
+                            <div>
+                                <div class="control-label" style="font-size: 10px;"><span id="lblMidTrimTitle" style="color: #aaa;">Gain:</span><span id="lblMidbassTrim" style="color: #00e676; font-weight: 600;">0.0 dB</span></div>
+                                <input type="range" id="sliderMidbassTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="0.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hàng 3: TREBLE -->
+                    <div class="control-group" style="border: 1px solid rgba(255, 64, 129, 0.3); padding: 8px 12px; background: rgba(255, 64, 129, 0.05); border-radius: 8px;">
+                        <div style="color: #ff4081; font-weight: 700; font-size: 11px; margin-bottom: 4px;">📻 TREBLE</div>
+                        <div>
+                            <div class="control-label" style="font-size: 10px;"><span style="color: #aaa;">Gain:</span><span id="lblTrebleTrim" style="color: #ff4081; font-weight: 600;">-2.0 dB</span></div>
+                            <input type="range" id="sliderTrebleTrim" class="smart-slider" min="-6.0" max="6.0" step="0.5" value="-2.0" oninput="onCrossoverSliderInput()" onchange="onCrossoverSliderChange()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase Delay (Driver Time Alignment) -->
+                <div style="background: rgba(186, 104, 200, 0.05); border: 1px solid rgba(186, 104, 200, 0.2); border-radius: 10px; padding: 10px 12px; margin-top: 6px;">
+                    <div style="font-size: 12px; font-weight: 700; color: #ba68c8; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+                        <span>⏱️ Căn Chỉnh Trễ Pha Màng Loa (Driver Time Alignment)</span>
+                        <span style="font-size: 10px; color: #94a3b8;">1 sample ≈ 0.71cm (Lùi tâm phát âm)</span>
+                    </div>
+                    <div id="phaseDelayGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
+                                <span id="lblPhaseTrebleTitle" style="color: #ff4081; font-weight: 600;">Trễ Treble (Tweeter):</span>
+                                <span id="lblPhaseTreble" style="color: #ff4081; font-weight: 600;">0 sp (0.0cm)</span>
+                            </div>
+                            <input type="range" id="sliderPhaseTreble" class="smart-slider" min="0" max="16" step="1" value="0" oninput="onPhaseSliderInput('treble')" onchange="onPhaseSliderChange()">
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
+                                <span id="lblPhaseMidTitle" style="color: #00e676; font-weight: 600;">Trễ Mid/Bass:</span>
+                                <span id="lblPhaseMid" style="color: #00e676; font-weight: 600;">0 sp (0.0cm)</span>
+                            </div>
+                            <input type="range" id="sliderPhaseMid" class="smart-slider" min="0" max="16" step="1" value="0" oninput="onPhaseSliderInput('mid')" onchange="onPhaseSliderChange()">
+                        </div>
+                        <div id="groupPhaseSub" style="display: none;">
+                            <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px;">
+                                <span style="color: #ff9100; font-weight: 600;">Trễ Subwoofer:</span>
+                                <span id="lblPhaseSub" style="color: #ff9100; font-weight: 600;">0 sp (0.0cm)</span>
+                            </div>
+                            <input type="range" id="sliderPhaseSub" class="smart-slider" min="0" max="16" step="1" value="0" oninput="onPhaseSliderInput('sub')" onchange="onPhaseSliderChange()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 7: Output Clipper (Hard Limit & Makeup Gain) -->
+            <div class="section-card">
+                <div class="section-title">✂️ Output Clipper (Hard Limit & Makeup Gain)</div>
+                
+                <div class="clipper-content-layout">
+                    <!-- Waveform canvas -->
+                    <div class="clipper-canvas-container">
+                        <canvas id="clipperCanvas" width="260" height="150"></canvas>
+                    </div>
+                    
+                    <!-- Controls -->
+                    <div class="clipper-controls-container">
+                        <div class="smart-header" style="margin-bottom: 8px;">
+                            <span class="smart-title" style="font-size: 13px; color: #ff1744; font-weight: 600;">Hardware Protection Limit</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span id="lblClipperState" style="font-weight: 700; color: #9ca3af; font-size: 11px;">TẮT</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="chkClipper" onchange="onClipStateChange()">
+                                    <span class="slider-round sw-red"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group" id="groupSubClipper" style="display: none; border-left: 3px solid #ff9100; padding: 6px 8px; background: rgba(255, 145, 0, 0.05); margin-bottom: 6px;">
+                            <div class="control-label"><span style="color: #ff9100; font-weight: 600;">Sub Clipper</span><span id="lblSubClipperThr" style="color: #ff9100; font-weight: 600;">0.0 dB</span></div>
+                            <input type="range" id="sliderSubClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onSubClipSliderInput()" onchange="onClipSliderChange()">
+                        </div>
+
+                        <div class="control-group" style="border-left: 3px solid #00e676; padding: 6px 8px; background: rgba(0, 230, 118, 0.05); margin-bottom: 6px;">
+                            <div class="control-label"><span style="color: #00e676; font-weight: 600;" id="lblMidClipperTitle">Mid Clipper</span><span id="lblClipperThr" style="color: #00e676; font-weight: 600;">0.0 dB</span></div>
+                            <input type="range" id="sliderClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="0.0" oninput="onMidbassClipSliderInput()" onchange="onClipSliderChange()">
+                        </div>
+
+                        <div class="control-group" style="border-left: 3px solid #ff4081; padding: 6px 8px; background: rgba(255, 64, 129, 0.05); margin-bottom: 6px;">
+                            <div class="control-label"><span style="color: #ff4081; font-weight: 600;">Treble Clipper</span><span id="lblTrebleClipperThr" style="color: #ff4081; font-weight: 600;">-2.5 dB</span></div>
+                            <input type="range" id="sliderTrebleClipperThr" class="smart-slider" min="-10.0" max="0.0" step="0.1" value="-2.5" oninput="onTrebleClipSliderInput()" onchange="onClipSliderChange()">
+                        </div>
+
+                        <!-- Makeup Gain & THD Boost -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <div class="control-label" style="font-size: 10px;"><span>Makeup Gain:</span><span id="lblClipperMakeup" style="color: #00f2fe; font-weight: 600;">0.0 dB</span></div>
+                                <input type="range" id="sliderClipperMakeup" class="smart-slider" min="0" max="12" step="0.5" value="0" oninput="onClipperAdvInput('makeup')" onchange="onClipSliderChange()">
+                            </div>
+                            <div>
+                                <div class="control-label" style="font-size: 10px;"><span>THD Boost:</span><span id="lblClipperThdBoost" style="color: #ff9100; font-weight: 600;">0.0 dB</span></div>
+                                <input type="range" id="sliderClipperThdBoost" class="smart-slider" min="0" max="6" step="0.5" value="0" oninput="onClipperAdvInput('thd')" onchange="onClipSliderChange()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modulation Scheme Selector -->
+                <div style="margin-top: 8px; padding: 8px 10px; background: rgba(255, 145, 0, 0.05); border-left: 3px solid #ff9100; border-radius: 0 6px 6px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="color: #ff9100; font-size: 11px; font-weight: 600;">⚡ TAS5825M Modulation Scheme:</span>
+                    </div>
+                    <select id="selectHybridMode" onchange="onHybridModeUserChange()" style="width: 100%; background: #121826; color: #ff9100; border: 1px solid #ff9100; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                        <option value="0">0: BD Mode (Low Distortion - Méo Thấp)</option>
+                        <option value="1">1: 1SPW Standard (Low Loss - Tiết Kiệm)</option>
+                        <option value="2" selected>2: Hybrid Modulation (Cooling - Mát Tự Động)</option>
+                    </select>
+                </div>
+
+                </div>
+
+            <!-- CARD 8: PVDD Tracking & Hardware DSP Status -->
+            <div class="section-card">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #ffd600; display: flex; align-items: center; gap: 6px;">
+                        🔋 PVDD Tracking & DSP Monitor
+                    </span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="lblPvddState" style="font-weight: 700; color: #ffd600; font-size: 11px;">BẬT</span>
+                        <label class="switch">
+                            <input type="checkbox" id="chkPvddEn" checked onchange="onPvddStateChange()">
+                            <span class="slider-round sw-yellow"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; background: rgba(255, 214, 0, 0.04); border: 1px solid rgba(255, 214, 0, 0.15); border-radius: 12px;">
+                    <!-- PVDD Parameters -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+                            <span style="color: #cbd5e1; font-weight: 600;">Ngưỡng bảo vệ sụt áp Pin (PVDD Cutoff):</span>
+                            <span id="lblPvddThr" style="color: #ffd600; font-weight: 700;">9.5 V</span>
+                        </div>
+                        <input type="range" id="sliderPvddThr" class="smart-slider" min="9.0" max="12.0" step="0.1" value="9.5" oninput="onPvddSliderInput('thr')" onchange="onPvddSliderChange()">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">Độ dốc nén áp:</span>
+                                <span id="lblPvddScale" style="color: #ffd600; font-weight: 600;">-0.5 dB/V</span>
+                            </div>
+                            <input type="range" id="sliderPvddScale" class="smart-slider" min="-2.0" max="-0.1" step="0.1" value="-0.5" oninput="onPvddSliderInput('scale')" onchange="onPvddSliderChange()">
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px;">
+                                <span style="color: #aaa;">Thời gian phản ứng:</span>
+                                <span id="lblPvddTime" style="color: #cbd5e1; font-weight: 600;">1.0 ms</span>
+                            </div>
+                            <input type="range" id="sliderPvddTime" class="smart-slider" min="0.5" max="10.0" step="0.5" value="1.0" oninput="onPvddSliderInput('time')" onchange="onPvddSliderChange()">
+                        </div>
+                    </div>
+
+                    <!-- Realtime DSP RMS Level Meters -->
+                    <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);">
+                        <div style="font-size: 11px; color: #cbd5e1; font-weight: 600; margin-bottom: 6px; display: flex; justify-content: space-between;">
+                            <span>📊 Realtime DSP RMS Level (dBFS):</span>
+                            <span id="lblMeterStatus" style="color: #00e676; font-size: 10px;">MONITORING</span>
+                        </div>
+                        <!-- Left Meter Bar -->
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span style="font-size: 10px; color: #aaa; width: 14px;">L:</span>
+                            <div style="flex: 1; height: 10px; background: rgba(0,0,0,0.4); border-radius: 5px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                                <div id="meterBarL" style="width: 15%; height: 100%; background: linear-gradient(90deg, #00e676 60%, #ffd600 85%, #ff1744 100%); transition: width 0.15s ease;"></div>
+                            </div>
+                            <span id="lblMeterL" style="font-size: 10px; font-family: monospace; color: #cbd5e1; width: 44px; text-align: right;">-45dB</span>
+                        </div>
+                        <!-- Right Meter Bar -->
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 10px; color: #aaa; width: 14px;">R:</span>
+                            <div style="flex: 1; height: 10px; background: rgba(0,0,0,0.4); border-radius: 5px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                                <div id="meterBarR" style="width: 15%; height: 100%; background: linear-gradient(90deg, #00e676 60%, #ffd600 85%, #ff1744 100%); transition: width 0.15s ease;"></div>
+                            </div>
+                            <span id="lblMeterR" style="font-size: 10px; font-family: monospace; color: #cbd5e1; width: 44px; text-align: right;">-45dB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <div
@@ -3072,20 +3494,28 @@
   ]
 };
 
-        // --- 12 ISO octave bands for main EQ profile + 3 dedicated Tone bands (Bass, Mid, Treble) ---
-        const ISO_OCTAVES = [31, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 12000, 16000, 20000];
+        // --- 10 ISO Octave Bands chuẩn cho Main EQ + 3 Dải Tone Control + 2 Dải Crossover (Tổng 15 Biquads) ---
+        const ISO_OCTAVES = [31, 63, 125, 250, 500, 1000, 2000, 4000, 8000, 16000];
 
         const BAND_COLORS = [
             '#ff6b6b', '#ffa06b', '#ffd93d', '#6bcb77',
             '#4ecdc4', '#45b7d1', '#96c4ff', '#a78bfa',
-            '#f472b6', '#fb923c', '#2dd4bf', '#fb7185'
+            '#f472b6', '#fb923c'
         ];
 
         function createDefaultBands() {
-            const b = ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: i < 10 }));
-            b.push({ id: 12, type: 1, freq: 100, gain: 0.0, q: 0.707, enabled: true });   // Bass (Low Shelf 100Hz)
-            b.push({ id: 13, type: 0, freq: 1000, gain: 0.0, q: 0.707, enabled: true });  // Mid (Peaking 1kHz)
-            b.push({ id: 14, type: 2, freq: 10000, gain: 0.0, q: 0.707, enabled: true }); // Treble (High Shelf 10kHz)
+            // Slot 1..10 (Index 0..9): 10 Dải Parametric EQ Tự Do
+            const b = ISO_OCTAVES.map((freq, i) => ({ id: i, type: 0, freq, gain: 0, q: 0.707, enabled: true }));
+            // Slot 11 (Index 10): Bass Tone Control (Low Shelf 100Hz)
+            b.push({ id: 10, type: 1, freq: 100, gain: 0.0, q: 0.707, enabled: true });
+            // Slot 12 (Index 11): Mid Tone Control (Peaking 1kHz)
+            b.push({ id: 11, type: 0, freq: 1000, gain: 0.0, q: 0.707, enabled: true });
+            // Slot 13 (Index 12): Treble Tone Control (High Shelf 10kHz)
+            b.push({ id: 12, type: 2, freq: 10000, gain: 0.0, q: 0.707, enabled: true });
+            // Slot 14 (Index 13): Active Crossover Stage 1
+            b.push({ id: 13, type: 4, freq: 250, gain: 0.0, q: 0.707, enabled: true });
+            // Slot 15 (Index 14): Active Crossover Stage 2
+            b.push({ id: 14, type: 3, freq: 2500, gain: 0.0, q: 0.707, enabled: true });
             return b;
         }
 
@@ -3144,9 +3574,11 @@
             if (!p.bands) p.bands = createDefaultBands();
             while (p.bands.length < 15) {
                 const idx = p.bands.length;
-                if (idx === 12) p.bands.push({ id: 12, type: 1, freq: 100, gain: 0, q: 0.707, enabled: true });
-                else if (idx === 13) p.bands.push({ id: 13, type: 0, freq: 1000, gain: 0, q: 0.707, enabled: true });
-                else if (idx === 14) p.bands.push({ id: 14, type: 2, freq: 10000, gain: 0, q: 0.707, enabled: true });
+                if (idx === 10) p.bands.push({ id: 10, type: 1, freq: 100, gain: 0, q: 0.707, enabled: true });
+                else if (idx === 11) p.bands.push({ id: 11, type: 0, freq: 1000, gain: 0, q: 0.707, enabled: true });
+                else if (idx === 12) p.bands.push({ id: 12, type: 2, freq: 10000, gain: 0, q: 0.707, enabled: true });
+                else if (idx === 13) p.bands.push({ id: 13, type: 4, freq: 250, gain: 0, q: 0.707, enabled: true });
+                else if (idx === 14) p.bands.push({ id: 14, type: 3, freq: 2500, gain: 0, q: 0.707, enabled: true });
                 else p.bands.push({ id: idx, type: 0, freq: 1000, gain: 0, q: 0.707, enabled: false });
             }
         });
@@ -3440,7 +3872,7 @@
             }
 
             // Individual Band Curves (shows Q Factor shape for 12 EQ bands)
-            bands.slice(0, 12).forEach((band, index) => {
+            bands.slice(0, 10).forEach((band, index) => {
                 if (band.enabled === false) return;
                 if (Math.abs(band.gain) < 0.05 && index !== selectedBand) return;
 
@@ -3496,7 +3928,7 @@
             ctx.stroke();
 
             // Band Nodes (rendered ONLY for the 12 profile EQ bands, not for Tone Control bands 12-14)
-            bands.slice(0, 12).forEach((band, index) => {
+            bands.slice(0, 10).forEach((band, index) => {
                 if (band.enabled === false) return;
                 const x = freqToX(band.freq, metrics);
                 const y = dbToY(band.gain, metrics);
@@ -3572,7 +4004,7 @@
         function hitTest(x, y) {
             const metrics = getGraphMetrics();
             let closest = -1, minDist = 15;
-            bands.slice(0, 12).forEach((band, index) => {
+            bands.slice(0, 10).forEach((band, index) => {
                 const dist = Math.hypot(x - freqToX(band.freq, metrics), y - dbToY(band.gain, metrics));
                 if (dist < minDist) {
                     minDist = dist;
@@ -3717,6 +4149,36 @@
         const tableBody = document.getElementById('bandsTableBody');
 
         // --- Smart Bass & DRC UI Sync ---
+        function syncDpeqUi() {
+            const chkDp = document.getElementById('chkDpeqEn');
+            if (chkDp) chkDp.checked = (dpeqState.en === 1);
+            const lblDp = document.getElementById('lblDpeqState');
+            if (lblDp) { lblDp.innerText = dpeqState.en ? 'BẬT' : 'TẮT'; lblDp.style.color = dpeqState.en ? '#e040fb' : '#9ca3af'; }
+            if (document.getElementById('sliderDpeqLowThr')) document.getElementById('sliderDpeqLowThr').value = dpeqState.low_thr;
+            if (document.getElementById('lblDpeqLowThr')) document.getElementById('lblDpeqLowThr').innerText = dpeqState.low_thr.toFixed(0) + ' dB';
+            if (document.getElementById('sliderDpeqHighThr')) document.getElementById('sliderDpeqHighThr').value = dpeqState.high_thr;
+            if (document.getElementById('lblDpeqHighThr')) document.getElementById('lblDpeqHighThr').innerText = dpeqState.high_thr.toFixed(0) + ' dB';
+            if (document.getElementById('sliderDpeqEnergy')) document.getElementById('sliderDpeqEnergy').value = dpeqState.energy_ms;
+            if (document.getElementById('lblDpeqEnergy')) document.getElementById('lblDpeqEnergy').innerText = dpeqState.energy_ms.toFixed(0) + ' ms';
+            if (document.getElementById('sliderDpeqSenseFc')) document.getElementById('sliderDpeqSenseFc').value = dpeqState.sense_fc;
+            if (document.getElementById('lblDpeqSenseFc')) document.getElementById('lblDpeqSenseFc').innerText = dpeqState.sense_fc.toFixed(0) + ' Hz';
+        }
+
+        function syncAglUi() {
+            const chkAgl = document.getElementById('chkAglEn');
+            if (chkAgl) chkAgl.checked = (aglState.en === 1);
+            const lblAgl = document.getElementById('lblAglState');
+            if (lblAgl) { lblAgl.innerText = aglState.en ? 'BẬT' : 'TẮT'; lblAgl.style.color = aglState.en ? '#ff1744' : '#9ca3af'; }
+            if (document.getElementById('sliderAglThr')) document.getElementById('sliderAglThr').value = aglState.thr;
+            if (document.getElementById('lblAglThr')) document.getElementById('lblAglThr').innerText = aglState.thr.toFixed(1) + ' dB';
+            if (document.getElementById('sliderAglAtt')) document.getElementById('sliderAglAtt').value = aglState.att;
+            if (document.getElementById('lblAglAtt')) document.getElementById('lblAglAtt').innerText = aglState.att.toFixed(2);
+            if (document.getElementById('sliderAglRel')) document.getElementById('sliderAglRel').value = aglState.rel;
+            if (document.getElementById('lblAglRel')) document.getElementById('lblAglRel').innerText = aglState.rel.toFixed(4);
+            if (document.getElementById('sliderAglAlpha')) document.getElementById('sliderAglAlpha').value = aglState.alpha;
+            if (document.getElementById('lblAglAlpha')) document.getElementById('lblAglAlpha').innerText = aglState.alpha.toFixed(2) + ' ms';
+        }
+
         function updateSmartBassDrcUI() {
             // Sync Smart Bass cache to active profile
             if (window.sbProfilesCache && window.sbProfilesCache[activeProfileIndex]) {
@@ -3733,6 +4195,16 @@
             // Sync Crossover cache to active profile
             if (window.crossoverProfilesCache && window.crossoverProfilesCache[activeProfileIndex]) {
                 crossoverState = JSON.parse(JSON.stringify(window.crossoverProfilesCache[activeProfileIndex]));
+            }
+            // Sync DPEQ cache to active profile
+            if (window.dpeqProfilesCache && window.dpeqProfilesCache[activeProfileIndex]) {
+                dpeqState = JSON.parse(JSON.stringify(window.dpeqProfilesCache[activeProfileIndex]));
+                syncDpeqUi();
+            }
+            // Sync AGL cache to active profile
+            if (window.aglProfilesCache && window.aglProfilesCache[activeProfileIndex]) {
+                aglState = JSON.parse(JSON.stringify(window.aglProfilesCache[activeProfileIndex]));
+                syncAglUi();
             }
             
             syncSbUi();
@@ -3775,30 +4247,57 @@
             if (lt) lt.textContent = (gTreb > 0 ? '+' : '') + gTreb.toFixed(1) + ' dB';
         }
 
+        function calculateDynamicTone(type, gain) {
+            let outType = 0, outFc = 1000.0, outQ = 0.707;
+            const g = Math.max(-12.0, Math.min(12.0, gain));
+            if (type === 'bass') {
+                outType = 1; // Low-Shelf
+                if (g >= 0) {
+                    outFc = 100.0 - (g / 12.0) * 25.0; // 100Hz -> 75Hz (Tập trung cú Kick)
+                    outQ = 0.707 + (g / 12.0) * 0.25;  // 0.707 -> 0.957 (Thon gọn tránh đục 200Hz)
+                } else {
+                    outFc = 100.0 + (Math.abs(g) / 12.0) * 40.0; // 100Hz -> 140Hz (Quét sạch ù rền)
+                    outQ = 0.65;
+                }
+            } else if (type === 'mid') {
+                outType = 0; // Peaking
+                if (g >= 0) {
+                    outFc = 1000.0 + (g / 12.0) * 350.0; // 1000Hz -> 1350Hz (Làm rõ Vocal)
+                    outQ = 0.707 + (g / 12.0) * 0.35;    // 0.707 -> 1.05
+                } else {
+                    outFc = 1000.0;
+                    outQ = 0.60; // V-Shape êm dịu
+                }
+            } else if (type === 'treble') {
+                outType = 2; // High-Shelf
+                if (g >= 0) {
+                    outFc = 10000.0 + (g / 12.0) * 3500.0; // 10kHz -> 13.5kHz (Air Band né vùng chói 5-7kHz)
+                    outQ = 0.707;
+                } else {
+                    outFc = 10000.0 - (Math.abs(g) / 12.0) * 2500.0; // 10kHz -> 7.5kHz (Gọt tiếng xì)
+                    outQ = 0.65;
+                }
+            }
+            return { type: outType, freq: outFc, q: outQ, gain: g };
+        }
+
         function onToneSliderInput(type) {
             const val = parseFloat(document.getElementById(`slider${type.charAt(0).toUpperCase() + type.slice(1)}`).value);
             document.getElementById(`lbl${type.charAt(0).toUpperCase() + type.slice(1)}Val`).textContent = (val > 0 ? '+' : '') + val.toFixed(1) + ' dB';
 
             const prof = profiles[activeProfileIndex];
             if (prof && prof.bands) {
-                if (type === 'bass' && prof.bands[10]) {
-                    prof.bands[10].type = 1;      // Low Shelf (Cố định)
-                    prof.bands[10].freq = 100.0;  // 100 Hz (Cố định)
-                    prof.bands[10].q = 0.707;     // Q = 0.707 (Cố định)
-                    prof.bands[10].gain = val;
-                    prof.bands[10].enabled = true;
-                } else if (type === 'mid' && prof.bands[11]) {
-                    prof.bands[11].type = 0;      // Peaking (Cố định)
-                    prof.bands[11].freq = 1000.0; // 1000 Hz (Cố định)
-                    prof.bands[11].q = 0.707;     // Q = 0.707 (Cố định)
-                    prof.bands[11].gain = val;
-                    prof.bands[11].enabled = true;
-                } else if (type === 'treble' && prof.bands[12]) {
-                    prof.bands[12].type = 2;      // High Shelf (Cố định)
-                    prof.bands[12].freq = 10000.0;// 10000 Hz (Cố định)
-                    prof.bands[12].q = 0.707;     // Q = 0.707 (Cố định)
-                    prof.bands[12].gain = val;
-                    prof.bands[12].enabled = true;
+                const toneParams = calculateDynamicTone(type, val);
+                let fIdx = 10;
+                if (type === 'mid') fIdx = 11;
+                else if (type === 'treble') fIdx = 12;
+
+                if (prof.bands[fIdx]) {
+                    prof.bands[fIdx].type = toneParams.type;
+                    prof.bands[fIdx].freq = toneParams.freq;
+                    prof.bands[fIdx].q = toneParams.q;
+                    prof.bands[fIdx].gain = toneParams.gain;
+                    prof.bands[fIdx].enabled = true;
                 }
             }
             drawGraph();
@@ -3813,10 +4312,17 @@
             if (typeof window.sendEQUpdate === 'function') {
                 window.sendEQUpdate(activeProfileIndex, filterIdx);
             }
+            if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                const prof = profiles[activeProfileIndex];
+                const bG = prof.bands[10] ? prof.bands[10].gain : 0.0;
+                const mG = prof.bands[11] ? prof.bands[11].gain : 0.0;
+                const tG = prof.bands[12] ? prof.bands[12].gain : 0.0;
+                window.eqWebSocket.send(`#EQ_SET_TONE$${activeProfileIndex},${bG.toFixed(1)},${mG.toFixed(1)},${tG.toFixed(1)}`);
+            }
             const prof = profiles[activeProfileIndex];
             const gVal = prof && prof.bands && prof.bands[filterIdx] ? prof.bands[filterIdx].gain.toFixed(1) : '0.0';
-            showToast(`🎛️ Đã lưu ${type.toUpperCase()}: ${gVal} dB`, "#38bdf8");
-            console.log(`[Tone Control] ${type.toUpperCase()} gain set to ${gVal} dB`);
+            showToast(`🎛️ Đã lưu ${type.toUpperCase()}: ${gVal} dB (Dynamic Tone)`, "#38bdf8");
+            console.log(`[Tone Control] ${type.toUpperCase()} dynamic gain set to ${gVal} dB`);
         }
 
         function resetToneControls() {
@@ -3860,14 +4366,17 @@
 
         function buildTable() {
             tableBody.innerHTML = '';
-            bands.slice(0, 12).forEach((band, index) => {
+            bands.slice(0, 10).forEach((band, index) => {
                 const color = BAND_COLORS[index % BAND_COLORS.length];
                 const tr = document.createElement('tr');
                 tr.className = 'band-row';
                 tr.id = `band-row-${index}`;
                 tr.innerHTML = `
                     <td>
-                        <input type="checkbox" id="chk-band-${index}" ${band.enabled !== false ? 'checked' : ''} style="margin-right: 6px; width: 14px; height: 14px; cursor: pointer; vertical-align: middle;">
+                        <label class="band-check-container" style="--band-active-color: ${color};" title="Bật/Tắt lọc Band ${index + 1}">
+                            <input type="checkbox" id="chk-band-${index}" ${band.enabled !== false ? 'checked' : ''}>
+                            <span class="band-checkmark"></span>
+                        </label>
                         <span class="band-color-dot" style="color: ${color}; background-color: ${color}"></span>
                         <strong>${index + 1}</strong>
                     </td>
@@ -4076,9 +4585,9 @@
 
                 // Reset 3 dải Tone Control (Bass, Mid, Treble) về 0 dB khi áp dụng preset mới
                 if (profiles[activeProfileIndex] && profiles[activeProfileIndex].bands) {
+                    profiles[activeProfileIndex].bands[10].gain = 0.0;
+                    profiles[activeProfileIndex].bands[11].gain = 0.0;
                     profiles[activeProfileIndex].bands[12].gain = 0.0;
-                    profiles[activeProfileIndex].bands[13].gain = 0.0;
-                    profiles[activeProfileIndex].bands[14].gain = 0.0;
                     syncToneUi();
                 }
 
@@ -4249,6 +4758,152 @@
                     }
                 }
                 
+                
+                
+                if (event.data.startsWith('EQ_METER:')) {
+                    const parts = event.data.substring(9).split(',');
+                    if (parts.length >= 2) {
+                        updateDspMeter(parseFloat(parts[0]), parseFloat(parts[1]));
+                    }
+                }
+
+                if (event.data.startsWith('EQ_DSP_ADV:')) {
+                    const p = event.data.substring(11).split(',');
+                    if (p.length >= 28) {
+                        // DPEQ (0..4)
+                        const dp_en = parseInt(p[0]) === 1;
+                        const dp_low = parseFloat(p[1]);
+                        const dp_high = parseFloat(p[2]);
+                        const dp_energy = parseFloat(p[3]);
+                        const dp_fc = parseFloat(p[4]);
+                        dpeqState = { en: dp_en ? 1 : 0, low_thr: dp_low, high_thr: dp_high, energy_ms: dp_energy, sense_fc: dp_fc };
+                        if (!window.dpeqProfilesCache) window.dpeqProfilesCache = [];
+                        window.dpeqProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(dpeqState));
+                        syncDpeqUi();
+
+                        // AGL (5..9)
+                        const agl_en = parseInt(p[5]) === 1;
+                        const agl_thr = parseFloat(p[6]);
+                        const agl_att = parseFloat(p[7]);
+                        const agl_rel = parseFloat(p[8]);
+                        const agl_alpha = parseFloat(p[9]);
+                        aglState = { en: agl_en ? 1 : 0, thr: agl_thr, att: agl_att, rel: agl_rel, alpha: agl_alpha };
+                        if (!window.aglProfilesCache) window.aglProfilesCache = [];
+                        window.aglProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(aglState));
+                        syncAglUi();
+
+                        // Crossbar (10..13)
+                        const cb_amp_l = parseInt(p[10]), cb_amp_r = parseInt(p[11]), cb_i2s_l = parseInt(p[12]), cb_i2s_r = parseInt(p[13]);
+                        crossbarState = { amp_l: cb_amp_l, amp_r: cb_amp_r, i2s_l: cb_i2s_l, i2s_r: cb_i2s_r };
+                        if (document.getElementById('selCrossbarAmpL')) document.getElementById('selCrossbarAmpL').value = cb_amp_l;
+                        if (document.getElementById('selCrossbarAmpR')) document.getElementById('selCrossbarAmpR').value = cb_amp_r;
+                        if (document.getElementById('selCrossbarI2sL')) document.getElementById('selCrossbarI2sL').value = cb_i2s_l;
+                        if (document.getElementById('selCrossbarI2sR')) document.getElementById('selCrossbarI2sR').value = cb_i2s_r;
+
+                        // Driver Phase delay (14..16: Treble, Mid, Sub)
+                        const ph_tr = parseInt(p[14]) || 0, ph_mb = parseInt(p[15]) || 0, ph_sub = parseInt(p[16]) || 0;
+                        phaseState = { treble: ph_tr, mid: ph_mb, sub: ph_sub, l: ph_tr, r: ph_mb };
+                        const sTr = document.getElementById('sliderPhaseTreble') || document.getElementById('sliderPhaseL');
+                        if (sTr) sTr.value = ph_tr;
+                        const lTr = document.getElementById('lblPhaseTreble') || document.getElementById('lblPhaseL');
+                        if (lTr) lTr.innerText = `${ph_tr} sp (${(ph_tr*0.71).toFixed(1)}cm)`;
+
+                        const sMb = document.getElementById('sliderPhaseMid') || document.getElementById('sliderPhaseR');
+                        if (sMb) sMb.value = ph_mb;
+                        const lMb = document.getElementById('lblPhaseMid') || document.getElementById('lblPhaseR');
+                        if (lMb) lMb.innerText = `${ph_mb} sp (${(ph_mb*0.71).toFixed(1)}cm)`;
+
+                        const sSub = document.getElementById('sliderPhaseSub');
+                        if (sSub) sSub.value = ph_sub;
+                        const lSub = document.getElementById('lblPhaseSub');
+                        if (lSub) lSub.innerText = `${ph_sub} sp (${(ph_sub*0.71).toFixed(1)}cm)`;
+
+                        // PVDD (17..20)
+                        const pv_en = parseInt(p[17]) === 1, pv_v = parseFloat(p[18]), pv_s = parseFloat(p[19]), pv_t = parseFloat(p[20]);
+                        pvddState = { en: pv_en ? 1 : 0, thr: pv_v, scale: pv_s, time: pv_t };
+                        const chkPv = document.getElementById('chkPvddEn');
+                        if (chkPv) chkPv.checked = pv_en;
+                        const lblPv = document.getElementById('lblPvddState');
+                        if (lblPv) { lblPv.innerText = pv_en ? 'BẬT' : 'TẮT'; lblPv.style.color = pv_en ? '#ffd600' : '#9ca3af'; }
+                        if (document.getElementById('sliderPvddThr')) document.getElementById('sliderPvddThr').value = pv_v;
+                        if (document.getElementById('lblPvddThr')) document.getElementById('lblPvddThr').innerText = pv_v.toFixed(1) + ' V';
+                        if (document.getElementById('sliderPvddScale')) document.getElementById('sliderPvddScale').value = pv_s;
+                        if (document.getElementById('lblPvddScale')) document.getElementById('lblPvddScale').innerText = pv_s.toFixed(1) + ' dB/V';
+                        if (document.getElementById('sliderPvddTime')) document.getElementById('sliderPvddTime').value = pv_t;
+                        if (document.getElementById('lblPvddTime')) document.getElementById('lblPvddTime').innerText = pv_t.toFixed(1) + ' ms';
+
+                        // Spatializer HPF/LPF (21..23)
+                        if (p.length >= 24) {
+                            const sp_hpf = parseFloat(p[21]), sp_lpf = parseFloat(p[22]);
+                            if (document.getElementById('rngSpatializerHpf')) document.getElementById('rngSpatializerHpf').value = sp_hpf;
+                            if (document.getElementById('lblSpatializerHpf')) document.getElementById('lblSpatializerHpf').innerText = `${Math.round(sp_hpf)} Hz`;
+                            if (document.getElementById('rngSpatializerLpf')) document.getElementById('rngSpatializerLpf').value = sp_lpf;
+                            if (document.getElementById('lblSpatializerLpf')) document.getElementById('lblSpatializerLpf').innerText = sp_lpf >= 1000 ? `${(sp_lpf/1000).toFixed(1)} kHz` : `${Math.round(sp_lpf)} Hz`;
+                        }
+
+                        // Smart Bass Fc & Morph (24..25)
+                        if (p.length >= 26) {
+                            const sb_fc = parseFloat(p[24]), sb_morph = parseFloat(p[25]);
+                            if (sbState) { sbState.fc = sb_fc; sbState.morph = sb_morph; }
+                            if (document.getElementById('sliderSmartBassFc')) document.getElementById('sliderSmartBassFc').value = sb_fc;
+                            if (document.getElementById('lblSmartBassFc')) document.getElementById('lblSmartBassFc').innerText = `${Math.round(sb_fc)} Hz`;
+                            if (document.getElementById('sliderSmartBassMorph')) document.getElementById('sliderSmartBassMorph').value = Math.round(sb_morph * 100);
+                            if (document.getElementById('lblSmartBassMorph')) document.getElementById('lblSmartBassMorph').innerText = `${Math.round(sb_morph * 100)}%`;
+                        }
+
+                        // Crossover Invert Phase (26)
+                        if (p.length >= 27) {
+                            const cr_inv = parseInt(p[26]) === 1;
+                            if (crossoverState) crossoverState.invert_phase = cr_inv ? 1 : 0;
+                            const chkInv = document.getElementById('chkCrossoverInvertPhase');
+                            if (chkInv) chkInv.checked = cr_inv;
+                        }
+
+                        // Clipper Makeup & THD Boost (27..28)
+                        if (p.length >= 29) {
+                            const cp_mk = parseFloat(p[27]), cp_thd = parseFloat(p[28]);
+                            clipperAdvState = { makeup: cp_mk, thd: cp_thd };
+                            if (document.getElementById('sliderClipperMakeup')) document.getElementById('sliderClipperMakeup').value = cp_mk;
+                            if (document.getElementById('lblClipperMakeup')) document.getElementById('lblClipperMakeup').innerText = `+${cp_mk.toFixed(1)} dB`;
+                            if (document.getElementById('sliderClipperThdBoost')) document.getElementById('sliderClipperThdBoost').value = cp_thd;
+                            if (document.getElementById('lblClipperThdBoost')) document.getElementById('lblClipperThdBoost').innerText = `+${cp_thd.toFixed(1)} dB`;
+                        }
+
+                        // DRC 3-Band Extended (29..49)
+                        if (p.length >= 49) {
+                            drcState.low.t1 = parseFloat(p[29]); drcState.low.k1 = parseFloat(p[30]); drcState.low.k2 = parseFloat(p[31]);
+                            drcState.low.energy = parseFloat(p[34]); drcState.low.gain = 20 * Math.log10(parseFloat(p[35]) || 1.0);
+
+                            drcState.mid.t1 = parseFloat(p[36]); drcState.mid.k1 = parseFloat(p[37]); drcState.mid.k2 = parseFloat(p[38]);
+                            drcState.mid.energy = parseFloat(p[41]); drcState.mid.gain = 20 * Math.log10(parseFloat(p[42]) || 1.0);
+
+                            drcState.high.t1 = parseFloat(p[43]); drcState.high.k1 = parseFloat(p[44]); drcState.high.k2 = parseFloat(p[45]);
+                            drcState.high.energy = parseFloat(p[48]); drcState.high.gain = 20 * Math.log10(parseFloat(p[49]) || 1.0);
+
+                            syncDrcUi();
+                        }
+                    }
+                }
+
+                if (event.data.startsWith('EQ_SPATIAL:')) {
+                    const parts = event.data.substring(11).split(',');
+                    if (parts.length >= 2) {
+                        const en = parseInt(parts[0]) === 1;
+                        const lvl = parseFloat(parts[1]);
+                        const chk = document.getElementById('chkSpatializerEn');
+                        const rng = document.getElementById('rngSpatializerLevel');
+                        const lbl = document.getElementById('lblSpatializerVal');
+                        const lblState = document.getElementById('lblSpatializerState');
+                        if (chk) chk.checked = en;
+                        if (rng) rng.value = Math.round(lvl * 100);
+                        if (lbl) lbl.innerText = `${Math.round(lvl * 100)}%`;
+                        if (lblState) {
+                            lblState.innerText = en ? 'BẬT' : 'TẮT';
+                            lblState.style.color = en ? '#00f2fe' : '#9ca3af';
+                        }
+                    }
+                }
+
                 if (event.data.startsWith('EQ_SMART_SETTINGS:')) {
                     const vals = event.data.substring(18).split(',');
                     if (vals.length >= 54) {
@@ -4406,7 +5061,13 @@
     function syncDrcUi() {
         const currentDrc = drcState[activeDrcTab];
         
-        document.getElementById('chkDrcActive').checked = currentDrc.en === 1;
+        const isDrcOn = currentDrc.en === 1;
+        document.getElementById('chkDrcActive').checked = isDrcOn;
+        const lblDrc = document.getElementById('lblDrcState');
+        if (lblDrc) {
+            lblDrc.innerText = isDrcOn ? 'BẬT' : 'TẮT';
+            lblDrc.style.color = isDrcOn ? '#ff9100' : '#9ca3af';
+        }
         document.getElementById('sliderDrcThreshold').value = currentDrc.thr;
         document.getElementById('lblDrcThreshold').innerText = currentDrc.thr.toFixed(1) + ' dB';
         
@@ -4623,6 +5284,11 @@
     function onDrcStateChange() {
         const en = document.getElementById('chkDrcActive').checked ? 1 : 0;
         drcState[activeDrcTab].en = en;
+        const lblDrc = document.getElementById('lblDrcState');
+        if (lblDrc) {
+            lblDrc.innerText = en ? 'BẬT' : 'TẮT';
+            lblDrc.style.color = en ? '#ff9100' : '#9ca3af';
+        }
         
         if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
             window.drcProfilesCache[activeProfileIndex][activeDrcTab].en = en;
@@ -4669,7 +5335,13 @@
     // --- Professional Smart Bass Canvas & Controls Functions ---
 
     function syncSbUi() {
-        document.getElementById('chkSmartBass').checked = sbState.en === 1;
+        const isSbOn = sbState.en === 1;
+        document.getElementById('chkSmartBass').checked = isSbOn;
+        const lblSb = document.getElementById('lblSmartBassState');
+        if (lblSb) {
+            lblSb.innerText = isSbOn ? 'BẬT' : 'TẮT';
+            lblSb.style.color = isSbOn ? '#00e676' : '#9ca3af';
+        }
         
         document.getElementById('sliderSmartBassBst').value = sbState.bst;
         document.getElementById('lblSmartBassBst').innerText = sbState.bst.toFixed(1) + ' dB';
@@ -4925,6 +5597,11 @@
     function onSbStateChange() {
         const en = document.getElementById('chkSmartBass').checked ? 1 : 0;
         sbState.en = en;
+        const lblSb = document.getElementById('lblSmartBassState');
+        if (lblSb) {
+            lblSb.innerText = en ? 'BẬT' : 'TẮT';
+            lblSb.style.color = en ? '#00e676' : '#9ca3af';
+        }
         
         if (window.sbProfilesCache && window.sbProfilesCache[activeProfileIndex]) {
             window.sbProfilesCache[activeProfileIndex].en = en;
@@ -4983,8 +5660,14 @@
             clipperState = JSON.parse(JSON.stringify(window.clipProfilesCache[activeProfileIndex]));
         }
 
+        const isClipOn = (clipperState.en === 1);
         const chk = document.getElementById('chkClipper');
-        if (chk) chk.checked = (clipperState.en === 1);
+        if (chk) chk.checked = isClipOn;
+        const lblClip = document.getElementById('lblClipperState');
+        if (lblClip) {
+            lblClip.innerText = isClipOn ? 'BẬT' : 'TẮT';
+            lblClip.style.color = isClipOn ? '#ff1744' : '#9ca3af';
+        }
 
         const sliderSub = document.getElementById('sliderSubClipperThr');
         if (sliderSub) sliderSub.value = clipperState.sub_thr !== undefined ? clipperState.sub_thr : 0.0;
@@ -5222,6 +5905,11 @@
     function onClipStateChange() {
         const en = document.getElementById('chkClipper').checked ? 1 : 0;
         clipperState.en = en;
+        const lblClip = document.getElementById('lblClipperState');
+        if (lblClip) {
+            lblClip.innerText = en ? 'BẬT' : 'TẮT';
+            lblClip.style.color = en ? '#ff1744' : '#9ca3af';
+        }
         
         if (window.clipProfilesCache && window.clipProfilesCache[activeProfileIndex]) {
             window.clipProfilesCache[activeProfileIndex].en = en;
@@ -5379,6 +6067,15 @@
         if (cardTitle) {
             cardTitle.innerText = is3Way ? "🎛️ TRIPLE TAS 3-WAY CROSSOVER & TRIM" : "🎛️ DUAL TAS 2-WAY CROSSOVER & TRIM";
         }
+
+        // Căn Chỉnh Trễ Pha: Tự động thích ứng 2-Way và 3-Way
+        const grpPhaseSub = document.getElementById('groupPhaseSub');
+        const gridPhase = document.getElementById('phaseDelayGrid');
+        const lblPhaseMidTitle = document.getElementById('lblPhaseMidTitle');
+
+        if (grpPhaseSub) grpPhaseSub.style.display = is3Way ? "block" : "none";
+        if (gridPhase) gridPhase.style.gridTemplateColumns = is3Way ? "1fr 1fr 1fr" : "1fr 1fr";
+        if (lblPhaseMidTitle) lblPhaseMidTitle.innerText = is3Way ? "Trễ Mid:" : "Trễ Mid/Bass:";
 
         const groupFcLow = document.getElementById('groupCrossoverFcLow');
         if (groupFcLow) groupFcLow.style.display = is3Way ? "block" : "none";
@@ -5651,6 +6348,301 @@
             ctx.fillText(`fc: ${fcHigh} Hz`, xCross, 15);
         }
     }
+
+
+    
+    // ==========================================
+    // EXTENDED DSP FUNCTIONS & STATE MANAGEMENT
+    // ==========================================
+
+    let dpeqState = { en: 0, vol_alpha_ms: 20, low_thr: -40.0, high_thr: -10.0, energy_ms: 50.0, sense_fc: 120.0 };
+    let aglState = { en: 0, thr: -1.5, att: 0.20, rel: 0.0010, alpha: 0.55 };
+    let crossbarState = { amp_l: 0, amp_r: 1, i2s_l: 0, i2s_r: 1 };
+    let phaseState = { l: 0, r: 0, sub: 0 };
+    let pvddState = { en: 1, thr: 9.5, scale: -0.5, time: 1.0 };
+    let clipperAdvState = { makeup: 0.0, thd: 0.0 };
+
+    function onSpatializerUserChange() {
+        const chk = document.getElementById('chkSpatializerEn');
+        const rng = document.getElementById('rngSpatializerLevel');
+        const hpfRng = document.getElementById('rngSpatializerHpf');
+        const lpfRng = document.getElementById('rngSpatializerLpf');
+        const lbl = document.getElementById('lblSpatializerVal');
+        const lblState = document.getElementById('lblSpatializerState');
+        const lblHpf = document.getElementById('lblSpatializerHpf');
+        const lblLpf = document.getElementById('lblSpatializerLpf');
+        if (!chk || !rng) return;
+        const en = chk.checked ? 1 : 0;
+        const lvl = parseFloat(rng.value) / 100.0;
+        const hpf = hpfRng ? parseFloat(hpfRng.value) : 300.0;
+        const lpf = lpfRng ? parseFloat(lpfRng.value) : 20000.0;
+        if (lbl) lbl.innerText = `${rng.value}%`;
+        if (lblHpf) lblHpf.innerText = `${Math.round(hpf)} Hz`;
+        if (lblLpf) lblLpf.innerText = lpf >= 1000 ? `${(lpf/1000).toFixed(1)} kHz` : `${Math.round(lpf)} Hz`;
+        if (lblState) {
+            lblState.innerText = en ? 'BẬT' : 'TẮT';
+            lblState.style.color = en ? '#00f2fe' : '#9ca3af';
+        }
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send(`#EQ_SET_SPATIAL$${en},${lvl.toFixed(2)},${hpf.toFixed(0)},${lpf.toFixed(0)},0`);
+            showToast(`🌐 Spatializer 3D: ${en ? 'BẬT (' + rng.value + '%)' : 'TẮT'}`, "#00f2fe");
+        }
+    }
+
+    function setSpatialPreset(val, hpf, lpf, preset) {
+        const chk = document.getElementById('chkSpatializerEn');
+        const rng = document.getElementById('rngSpatializerLevel');
+        const hpfRng = document.getElementById('rngSpatializerHpf');
+        const lpfRng = document.getElementById('rngSpatializerLpf');
+        if (chk) chk.checked = true;
+        if (rng) rng.value = Math.round(val * 100);
+        if (hpfRng) hpfRng.value = hpf;
+        if (lpfRng) lpfRng.value = lpf;
+        onSpatializerUserChange();
+    }
+
+    function onFastBypassChange() {
+        const chk = document.getElementById('chkFastEqBypass');
+        const lbl = document.getElementById('lblFastEqBypassStatus');
+        if (!chk) return;
+        const bypass = chk.checked ? 1 : 0;
+        if (lbl) {
+            lbl.innerText = bypass ? 'BYPASS (TẮT LỌC)' : 'ACTIVE (BẬT)';
+            lbl.style.color = bypass ? '#ff9100' : '#00e676';
+            lbl.style.background = bypass ? 'rgba(255, 145, 0, 0.12)' : 'rgba(0, 230, 118, 0.12)';
+            lbl.style.borderColor = bypass ? 'rgba(255, 145, 0, 0.25)' : 'rgba(0, 230, 118, 0.25)';
+        }
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send(`#EQ_SET_BYPASS$${bypass}`);
+            showToast(bypass ? '⚡ Đã BYPASS phần cứng EQ' : '⚡ Đã KÍCH HOẠT lại EQ', bypass ? '#ff9100' : '#00e676');
+        }
+    }
+
+    // DPEQ & Volume Softening
+    function onVolSofteningInput() {
+        const val = parseInt(document.getElementById('sliderVolSoftening').value);
+        document.getElementById('lblVolSoftening').innerText = val + " ms";
+        dpeqState.vol_alpha_ms = val;
+    }
+    function onVolSofteningChange() { sendDpeqSettings(); }
+
+    function onDpeqStateChange() {
+        const chk = document.getElementById('chkDpeqEn');
+        dpeqState.en = chk && chk.checked ? 1 : 0;
+        const lbl = document.getElementById('lblDpeqState');
+        if (lbl) {
+            lbl.innerText = dpeqState.en ? 'BẬT' : 'TẮT';
+            lbl.style.color = dpeqState.en ? '#e040fb' : '#9ca3af';
+        }
+        sendDpeqSettings();
+    }
+
+    function onDpeqSliderInput(field) {
+        if (field === 'low') {
+            const val = parseFloat(document.getElementById('sliderDpeqLowThr').value);
+            document.getElementById('lblDpeqLowThr').innerText = val.toFixed(0) + " dB";
+            dpeqState.low_thr = val;
+        } else if (field === 'high') {
+            const val = parseFloat(document.getElementById('sliderDpeqHighThr').value);
+            document.getElementById('lblDpeqHighThr').innerText = val.toFixed(0) + " dB";
+            dpeqState.high_thr = val;
+        } else if (field === 'energy') {
+            const val = parseFloat(document.getElementById('sliderDpeqEnergy').value);
+            document.getElementById('lblDpeqEnergy').innerText = val.toFixed(0) + " ms";
+            dpeqState.energy_ms = val;
+        } else if (field === 'fc') {
+            const val = parseFloat(document.getElementById('sliderDpeqSenseFc').value);
+            document.getElementById('lblDpeqSenseFc').innerText = val.toFixed(0) + " Hz";
+            dpeqState.sense_fc = val;
+        }
+    }
+    function onDpeqSliderChange() { sendDpeqSettings(); }
+
+    function sendDpeqSettings() {
+        if (!window.dpeqProfilesCache) window.dpeqProfilesCache = [];
+        window.dpeqProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(dpeqState));
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send(`#EQ_SET_DPEQ$${activeProfileIndex},${dpeqState.en},${dpeqState.low_thr.toFixed(1)},${dpeqState.high_thr.toFixed(1)},${dpeqState.energy_ms.toFixed(1)},${dpeqState.sense_fc.toFixed(0)}`);
+            showToast(`📊 DPEQ: ${dpeqState.en ? 'BẬT (Loudness Dynamic)' : 'TẮT'}`, "#e040fb");
+        }
+    }
+
+    // AGL Limiter
+    function onAglStateChange() {
+        const chk = document.getElementById('chkAglEn');
+        aglState.en = chk && chk.checked ? 1 : 0;
+        const lbl = document.getElementById('lblAglState');
+        if (lbl) {
+            lbl.innerText = aglState.en ? 'BẬT' : 'TẮT';
+            lbl.style.color = aglState.en ? '#ff1744' : '#9ca3af';
+        }
+        sendAglSettings();
+    }
+
+    function onAglSliderInput(field) {
+        if (field === 'thr') {
+            const val = parseFloat(document.getElementById('sliderAglThr').value);
+            document.getElementById('lblAglThr').innerText = val.toFixed(1) + " dB";
+            aglState.thr = val;
+        } else if (field === 'att') {
+            const val = parseFloat(document.getElementById('sliderAglAtt').value);
+            document.getElementById('lblAglAtt').innerText = val.toFixed(2);
+            aglState.att = val;
+        } else if (field === 'rel') {
+            const val = parseFloat(document.getElementById('sliderAglRel').value);
+            document.getElementById('lblAglRel').innerText = val.toFixed(4);
+            aglState.rel = val;
+        } else if (field === 'alpha') {
+            const val = parseFloat(document.getElementById('sliderAglAlpha').value);
+            document.getElementById('lblAglAlpha').innerText = val.toFixed(2) + " ms";
+            aglState.alpha = val;
+        }
+    }
+    function onAglSliderChange() { sendAglSettings(); }
+
+    function sendAglSettings() {
+        if (!window.aglProfilesCache) window.aglProfilesCache = [];
+        window.aglProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(aglState));
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send(`#EQ_SET_AGL$${activeProfileIndex},${aglState.en},${aglState.thr.toFixed(1)},${aglState.att.toFixed(3)},${aglState.rel.toFixed(4)},${aglState.alpha.toFixed(2)}`);
+            showToast(`⚡ AGL Limiter: ${aglState.en ? 'BẬT' : 'TẮT'} (${aglState.thr.toFixed(1)}dB)`, "#ff1744");
+        }
+    }
+
+    // Phase Delay (Driver Time Alignment)
+    function onPhaseSliderInput(ch) {
+        if (ch === 'treble' || ch === 'l') {
+            const el = document.getElementById('sliderPhaseTreble') || document.getElementById('sliderPhaseL');
+            const val = parseInt(el.value);
+            const cm = (val * 0.71).toFixed(1);
+            const lbl = document.getElementById('lblPhaseTreble') || document.getElementById('lblPhaseL');
+            if (lbl) lbl.innerText = `${val} sp (${cm}cm)`;
+            phaseState.treble = val;
+            phaseState.l = val;
+        } else if (ch === 'mid' || ch === 'r') {
+            const el = document.getElementById('sliderPhaseMid') || document.getElementById('sliderPhaseR');
+            const val = parseInt(el.value);
+            const cm = (val * 0.71).toFixed(1);
+            const lbl = document.getElementById('lblPhaseMid') || document.getElementById('lblPhaseR');
+            if (lbl) lbl.innerText = `${val} sp (${cm}cm)`;
+            phaseState.mid = val;
+            phaseState.r = val;
+        } else if (ch === 'sub') {
+            const val = parseInt(document.getElementById('sliderPhaseSub').value);
+            const cm = (val * 0.71).toFixed(1);
+            const lbl = document.getElementById('lblPhaseSub');
+            if (lbl) lbl.innerText = `${val} sp (${cm}cm)`;
+            phaseState.sub = val;
+        }
+    }
+    function onPhaseSliderChange() { sendPhaseSettings(); }
+
+    function sendPhaseSettings() {
+        const tr = (phaseState.treble !== undefined) ? phaseState.treble : (phaseState.l || 0);
+        const mb = (phaseState.mid !== undefined) ? phaseState.mid : (phaseState.r || 0);
+        const sub = phaseState.sub || 0;
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send(`#EQ_SET_PHASE$${tr},${mb},${sub}`);
+            showToast(`⏱️ Trễ màng loa: Treble=${tr}sp (${(tr*0.71).toFixed(1)}cm), Mid=${mb}sp, Sub=${sub}sp`, "#ba68c8");
+        }
+    }
+
+    // Crossbar Routing Matrix
+    function onCrossbarChange() {
+        const selAmpL = document.getElementById('selCrossbarAmpL');
+        const selAmpR = document.getElementById('selCrossbarAmpR');
+        const selI2sL = document.getElementById('selCrossbarI2sL');
+        const selI2sR = document.getElementById('selCrossbarI2sR');
+        if (selAmpL) crossbarState.amp_l = parseInt(selAmpL.value);
+        if (selAmpR) crossbarState.amp_r = parseInt(selAmpR.value);
+        if (selI2sL) crossbarState.i2s_l = parseInt(selI2sL.value);
+        if (selI2sR) crossbarState.i2s_r = parseInt(selI2sR.value);
+        sendCrossbarSettings();
+    }
+
+    function sendCrossbarSettings() {
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send(`#EQ_SET_CROSSBAR$${crossbarState.amp_l},${crossbarState.amp_r},${crossbarState.i2s_l},${crossbarState.i2s_r}`);
+            showToast(`🔀 Crossbar Updated`, "#38bdf8");
+        }
+    }
+
+    // PVDD Tracking Protection
+    function onPvddStateChange() {
+        const chk = document.getElementById('chkPvddEn');
+        pvddState.en = chk && chk.checked ? 1 : 0;
+        const lbl = document.getElementById('lblPvddState');
+        if (lbl) {
+            lbl.innerText = pvddState.en ? 'BẬT' : 'TẮT';
+            lbl.style.color = pvddState.en ? '#ffd600' : '#9ca3af';
+        }
+        sendPvddSettings();
+    }
+
+    function onPvddSliderInput(field) {
+        if (field === 'thr') {
+            const val = parseFloat(document.getElementById('sliderPvddThr').value);
+            document.getElementById('lblPvddThr').innerText = val.toFixed(1) + " V";
+            pvddState.thr = val;
+        } else if (field === 'scale') {
+            const val = parseFloat(document.getElementById('sliderPvddScale').value);
+            document.getElementById('lblPvddScale').innerText = val.toFixed(1) + " dB/V";
+            pvddState.scale = val;
+        } else if (field === 'time') {
+            const val = parseFloat(document.getElementById('sliderPvddTime').value);
+            document.getElementById('lblPvddTime').innerText = val.toFixed(1) + " ms";
+            pvddState.time = val;
+        }
+    }
+    function onPvddSliderChange() { sendPvddSettings(); }
+
+    function sendPvddSettings() {
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send(`#EQ_SET_PVDD$${pvddState.en},${pvddState.thr.toFixed(1)},${pvddState.scale.toFixed(1)},${pvddState.time.toFixed(1)}`);
+            showToast(`🔋 PVDD Protection: ${pvddState.en ? 'BẬT (' + pvddState.thr + 'V)' : 'TẮT'}`, "#ffd600");
+        }
+    }
+
+    // Clipper Makeup & THD Boost
+    function onClipperAdvInput(field) {
+        if (field === 'makeup') {
+            const val = parseFloat(document.getElementById('sliderClipperMakeup').value);
+            document.getElementById('lblClipperMakeup').innerText = "+" + val.toFixed(1) + " dB";
+            clipperAdvState.makeup = val;
+        } else if (field === 'thd') {
+            const val = parseFloat(document.getElementById('sliderClipperThdBoost').value);
+            document.getElementById('lblClipperThdBoost').innerText = "+" + val.toFixed(1) + " dB";
+            clipperAdvState.thd = val;
+        }
+    }
+
+    // Crossover Invert Phase
+    function onCrossoverInvertPhaseChange() {
+        const chk = document.getElementById('chkCrossoverInvertPhase');
+        if (crossoverState) crossoverState.invert_phase = chk && chk.checked ? 1 : 0;
+        sendCrossoverSettings();
+    }
+
+    // Realtime DSP RMS Meter update
+    function updateDspMeter(leftDb, rightDb) {
+        const barL = document.getElementById('meterBarL');
+        const barR = document.getElementById('meterBarR');
+        const lblL = document.getElementById('lblMeterL');
+        const lblR = document.getElementById('lblMeterR');
+        const pctL = Math.max(0, Math.min(100, ((leftDb + 60) / 60) * 100));
+        const pctR = Math.max(0, Math.min(100, ((rightDb + 60) / 60) * 100));
+        if (barL) barL.style.width = pctL + "%";
+        if (barR) barR.style.width = pctR + "%";
+        if (lblL) lblL.innerText = leftDb.toFixed(1) + "dB";
+        if (lblR) lblR.innerText = rightDb.toFixed(1) + "dB";
+    }
+
+    // Periodic meter poller
+    setInterval(() => {
+        if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+            window.eqWebSocket.send("#EQ_GET_METER$");
+        }
+    }, 400);
 
 </script>
 </body>
