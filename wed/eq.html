@@ -1527,6 +1527,7 @@
                         <div style="padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06);">
                             <div class="control-header" style="margin-bottom: 4px;">
                                 <span class="control-title">TAS5825M Modulation Scheme:</span>
+                                <span id="lblHybridModeStatus" class="control-val" style="color: #ff9100;">2: Hybrid Modulation</span>
                             </div>
                             <select id="selectHybridMode" class="app-select" onchange="onHybridModeUserChange()" style="width: 100%;">
                                 <option value="0">0: BD Mode (Low Distortion - Méo Thấp)</option>
@@ -5044,6 +5045,7 @@
 
                 if (event.data.startsWith('EQ_DSP_ADV:')) {
                     const p = event.data.substring(11).split(',');
+                    console.log(`[EQ_DSP_ADV] received ${p.length} fields. activeProfileIndex=${activeProfileIndex}`);
                     if (p.length >= 28) {
                         // DPEQ (0..4)
                         const dp_en = parseInt(p[0]) === 1;
@@ -5051,6 +5053,7 @@
                         const dp_high = parseFloat(p[2]);
                         const dp_energy = parseFloat(p[3]);
                         const dp_fc = parseFloat(p[4]);
+                        console.log(`[EQ_DSP_ADV] DPEQ raw: en=${p[0]} low=${p[1]} high=${p[2]} energy=${p[3]} fc=${p[4]} => dp_en=${dp_en}`);
                         dpeqState.en = dp_en ? 1 : 0;
                         dpeqState.low_thr = dp_low;
                         dpeqState.high_thr = dp_high;
@@ -5062,6 +5065,7 @@
                         if (!dpeqState.high_eq) dpeqState.high_eq = { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 };
                         if (!window.dpeqProfilesCache) window.dpeqProfilesCache = [];
                         window.dpeqProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(dpeqState));
+                        console.log(`[EQ_DSP_ADV] dpeqState.en set to ${dpeqState.en}, syncing UI...`);
                         syncDpeqUi();
 
                         // AGL (5..9)
@@ -5130,13 +5134,26 @@
                         }
 
                         // Smart Bass Fc & Morph (24..25)
+                        // sb_morph từ firmware là giá trị 0.0-1.0 (float)
                         if (p.length >= 26) {
                             const sb_fc = parseFloat(p[24]), sb_morph = parseFloat(p[25]);
                             if (sbState) { sbState.fc = sb_fc; sbState.morph = sb_morph; }
-                            if (document.getElementById('sliderSmartBassFc')) document.getElementById('sliderSmartBassFc').value = sb_fc;
-                            if (document.getElementById('lblSmartBassFc')) document.getElementById('lblSmartBassFc').innerText = `${Math.round(sb_fc)} Hz`;
-                            if (document.getElementById('sliderSmartBassMorph')) document.getElementById('sliderSmartBassMorph').value = Math.round(sb_morph * 100);
-                            if (document.getElementById('lblSmartBassMorph')) document.getElementById('lblSmartBassMorph').innerText = `${Math.round(sb_morph * 100)}%`;
+                            // Cập nhật cache sb với fc và morph
+                            if (window.sbProfilesCache && window.sbProfilesCache[activeProfileIndex]) {
+                                window.sbProfilesCache[activeProfileIndex].fc = sb_fc;
+                                window.sbProfilesCache[activeProfileIndex].morph = sb_morph;
+                            }
+                            const sFc = document.getElementById('sliderSmartBassFc');
+                            if (sFc) sFc.value = sb_fc;
+                            const lFc = document.getElementById('lblSmartBassFc');
+                            if (lFc) lFc.innerText = `${Math.round(sb_fc)} Hz`;
+                            // sb_morph = 0.0..1.0, slider range 0..100
+                            const morphPct = Math.round(sb_morph * 100);
+                            const sMorph = document.getElementById('sliderSmartBassMorph');
+                            if (sMorph) sMorph.value = morphPct;
+                            const lMorph = document.getElementById('lblSmartBassMorph');
+                            if (lMorph) lMorph.innerText = `${morphPct}%`;
+                            console.log(`[DSP_ADV] SB fc=${sb_fc}Hz morph=${sb_morph}(${morphPct}%)`);
                         }
 
                         // Crossover Invert Phase (26)
@@ -5151,23 +5168,57 @@
                         if (p.length >= 29) {
                             const cp_mk = parseFloat(p[27]), cp_thd = parseFloat(p[28]);
                             clipperAdvState = { makeup: cp_mk, thd: cp_thd };
-                            if (document.getElementById('sliderClipperMakeup')) document.getElementById('sliderClipperMakeup').value = cp_mk;
-                            if (document.getElementById('lblClipperMakeup')) document.getElementById('lblClipperMakeup').innerText = `+${cp_mk.toFixed(1)} dB`;
-                            if (document.getElementById('sliderClipperThdBoost')) document.getElementById('sliderClipperThdBoost').value = cp_thd;
-                            if (document.getElementById('lblClipperThdBoost')) document.getElementById('lblClipperThdBoost').innerText = `+${cp_thd.toFixed(1)} dB`;
+                            const sMk = document.getElementById('sliderClipperMakeup');
+                            if (sMk) sMk.value = cp_mk;
+                            const lMk = document.getElementById('lblClipperMakeup');
+                            if (lMk) lMk.innerText = `+${cp_mk.toFixed(1)} dB`;
+                            const sThd = document.getElementById('sliderClipperThdBoost');
+                            if (sThd) sThd.value = cp_thd;
+                            const lThd = document.getElementById('lblClipperThdBoost');
+                            if (lThd) lThd.innerText = `+${cp_thd.toFixed(1)} dB`;
+                            console.log(`[DSP_ADV] Clipper Makeup=${cp_mk}dB THD=${cp_thd}dB`);
                         }
 
-                        // DRC 3-Band Extended (29..49)
-                        if (p.length >= 49) {
-                            drcState.low.t1 = parseFloat(p[29]); drcState.low.k1 = parseFloat(p[30]); drcState.low.k2 = parseFloat(p[31]);
-                            drcState.low.energy = parseFloat(p[34]); drcState.low.gain = 20 * Math.log10(parseFloat(p[35]) || 1.0);
+                        // DRC 3-Band Extended (indices 29..49)
+                        // Firmware order per band: t1, k1, k2, off1, off2, energy_ms, mixer_gain
+                        // LOW  : p[29]=t1, p[30]=k1, p[31]=k2, p[32]=off1, p[33]=off2, p[34]=energy, p[35]=gain_lin
+                        // MID  : p[36]=t1, p[37]=k1, p[38]=k2, p[39]=off1, p[40]=off2, p[41]=energy, p[42]=gain_lin
+                        // HIGH : p[43]=t1, p[44]=k1, p[45]=k2, p[46]=off1, p[47]=off2, p[48]=energy, p[49]=gain_lin
+                        if (p.length >= 50) {
+                            drcState.low.t1     = parseFloat(p[29]);
+                            drcState.low.k1     = parseFloat(p[30]);
+                            drcState.low.k2     = parseFloat(p[31]);
+                            drcState.low.off1   = parseFloat(p[32]);
+                            drcState.low.off2   = parseFloat(p[33]);
+                            drcState.low.energy = parseFloat(p[34]);
+                            drcState.low.gain   = 20 * Math.log10(parseFloat(p[35]) || 1.0);
 
-                            drcState.mid.t1 = parseFloat(p[36]); drcState.mid.k1 = parseFloat(p[37]); drcState.mid.k2 = parseFloat(p[38]);
-                            drcState.mid.energy = parseFloat(p[41]); drcState.mid.gain = 20 * Math.log10(parseFloat(p[42]) || 1.0);
+                            drcState.mid.t1     = parseFloat(p[36]);
+                            drcState.mid.k1     = parseFloat(p[37]);
+                            drcState.mid.k2     = parseFloat(p[38]);
+                            drcState.mid.off1   = parseFloat(p[39]);
+                            drcState.mid.off2   = parseFloat(p[40]);
+                            drcState.mid.energy = parseFloat(p[41]);
+                            drcState.mid.gain   = 20 * Math.log10(parseFloat(p[42]) || 1.0);
 
-                            drcState.high.t1 = parseFloat(p[43]); drcState.high.k1 = parseFloat(p[44]); drcState.high.k2 = parseFloat(p[45]);
-                            drcState.high.energy = parseFloat(p[48]); drcState.high.gain = 20 * Math.log10(parseFloat(p[49]) || 1.0);
+                            drcState.high.t1     = parseFloat(p[43]);
+                            drcState.high.k1     = parseFloat(p[44]);
+                            drcState.high.k2     = parseFloat(p[45]);
+                            drcState.high.off1   = parseFloat(p[46]);
+                            drcState.high.off2   = parseFloat(p[47]);
+                            drcState.high.energy = parseFloat(p[48]);
+                            drcState.high.gain   = 20 * Math.log10(parseFloat(p[49]) || 1.0);
 
+                            // Cập nhật cache DRC với các thông số mở rộng
+                            if (!window.drcProfilesCache) window.drcProfilesCache = [];
+                            if (!window.drcProfilesCache[activeProfileIndex]) window.drcProfilesCache[activeProfileIndex] = { low: {}, mid: {}, high: {} };
+                            Object.assign(window.drcProfilesCache[activeProfileIndex].low,  { t1: drcState.low.t1, k1: drcState.low.k1, k2: drcState.low.k2, off1: drcState.low.off1, off2: drcState.low.off2, energy: drcState.low.energy, gain: drcState.low.gain });
+                            Object.assign(window.drcProfilesCache[activeProfileIndex].mid,  { t1: drcState.mid.t1, k1: drcState.mid.k1, k2: drcState.mid.k2, off1: drcState.mid.off1, off2: drcState.mid.off2, energy: drcState.mid.energy, gain: drcState.mid.gain });
+                            Object.assign(window.drcProfilesCache[activeProfileIndex].high, { t1: drcState.high.t1, k1: drcState.high.k1, k2: drcState.high.k2, off1: drcState.high.off1, off2: drcState.high.off2, energy: drcState.high.energy, gain: drcState.high.gain });
+
+                            console.log(`[DSP_ADV] DRC LOW  t1=${drcState.low.t1} k1=${drcState.low.k1} k2=${drcState.low.k2} energy=${drcState.low.energy} gain=${drcState.low.gain.toFixed(1)}dB`);
+                            console.log(`[DSP_ADV] DRC MID  t1=${drcState.mid.t1} k1=${drcState.mid.k1} k2=${drcState.mid.k2} energy=${drcState.mid.energy} gain=${drcState.mid.gain.toFixed(1)}dB`);
+                            console.log(`[DSP_ADV] DRC HIGH t1=${drcState.high.t1} k1=${drcState.high.k1} k2=${drcState.high.k2} energy=${drcState.high.energy} gain=${drcState.high.gain.toFixed(1)}dB`);
                             syncDrcUi();
                         }
                     }
@@ -5229,26 +5280,32 @@
                             const cp_sub_thr = (stride >= 20 && vals.length > offset + 19 && vals[offset + 19] !== undefined) ? (-parseFloat(vals[offset + 19]) / 10.0) : 0.0;
                             
                             if (p === activeProfileIndex) {
-                                sbState = { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth };
+                                Object.assign(sbState, { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth });
                                 clipperState = { en: cp_en, thr: cp_thr, tr_thr: cp_tr_thr, sub_thr: cp_sub_thr };
                                 
-                                drcState.low = { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel };
-                                drcState.mid = { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel };
-                                drcState.high = { en: dh_en, thr: dh_thr, att: dh_att, rel: dh_rel };
+                                Object.assign(drcState.low, { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel });
+                                Object.assign(drcState.mid, { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel });
+                                Object.assign(drcState.high, { en: dh_en, thr: dh_thr, att: dh_att, rel: dh_rel });
                             }
                             
                             if (!window.sbProfilesCache) window.sbProfilesCache = [];
-                            window.sbProfilesCache[p] = { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth };
+                            window.sbProfilesCache[p] = Object.assign(window.sbProfilesCache[p] || {}, { en: sb_en, bst: sb_bst, lth: sb_lth, hth: sb_hth });
 
                             if (!window.clipProfilesCache) window.clipProfilesCache = [];
                             window.clipProfilesCache[p] = { en: cp_en, thr: cp_thr, tr_thr: cp_tr_thr, sub_thr: cp_sub_thr };
                             
                             if (!window.drcProfilesCache) window.drcProfilesCache = [];
-                            window.drcProfilesCache[p] = {
-                                low: { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel },
-                                mid: { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel },
-                                high: { en: dh_en, thr: dh_thr, att: dh_att, rel: dh_rel }
-                            };
+                            if (!window.drcProfilesCache[p]) {
+                                window.drcProfilesCache[p] = {
+                                    low: { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel },
+                                    mid: { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel },
+                                    high: { en: dh_en, thr: dh_thr, att: dh_att, rel: dh_rel }
+                                };
+                            } else {
+                                Object.assign(window.drcProfilesCache[p].low, { en: dl_en, thr: dl_thr, att: dl_att, rel: dl_rel });
+                                Object.assign(window.drcProfilesCache[p].mid, { en: dm_en, thr: dm_thr, att: dm_att, rel: dm_rel });
+                                Object.assign(window.drcProfilesCache[p].high, { en: dh_en, thr: dh_thr, att: dh_att, rel: dh_rel });
+                            }
                         }
                         syncSbUi();
                         syncClipUi();
@@ -5446,23 +5503,64 @@
     }
 
     function syncDrcUi() {
-        const currentDrc = drcState[activeDrcTab];
+        const currentDrc = drcState[activeDrcTab] || {};
         
         const isDrcOn = currentDrc.en === 1;
-        document.getElementById('chkDrcActive').checked = isDrcOn;
+        const chk = document.getElementById('chkDrcActive');
+        if (chk) chk.checked = isDrcOn;
         const lblDrc = document.getElementById('lblDrcState');
         if (lblDrc) {
             lblDrc.innerText = isDrcOn ? 'BẬT' : 'TẮT';
             lblDrc.style.color = isDrcOn ? '#ff9100' : '#9ca3af';
         }
-        document.getElementById('sliderDrcThreshold').value = currentDrc.thr;
-        document.getElementById('lblDrcThreshold').innerText = currentDrc.thr.toFixed(1) + ' dB';
+
+        const t1Val = (currentDrc.t1 !== undefined) ? currentDrc.t1 : -24.0;
+        const sT1 = document.getElementById('sliderDrcT1');
+        if (sT1) sT1.value = t1Val;
+        const lT1 = document.getElementById('lblDrcT1');
+        if (lT1) lT1.innerText = t1Val.toFixed(1) + ' dB';
+
+        const thrVal = (currentDrc.thr !== undefined) ? currentDrc.thr : -12.0;
+        const sThr = document.getElementById('sliderDrcThreshold');
+        if (sThr) sThr.value = thrVal;
+        const lThr = document.getElementById('lblDrcThreshold');
+        if (lThr) lThr.innerText = thrVal.toFixed(1) + ' dB';
+
+        const k1Val = (currentDrc.k1 !== undefined) ? currentDrc.k1 : 0.50;
+        const sK1 = document.getElementById('sliderDrcK1');
+        if (sK1) sK1.value = k1Val;
+        const lK1 = document.getElementById('lblDrcK1');
+        if (lK1) lK1.innerText = k1Val.toFixed(2);
+
+        const k2Val = (currentDrc.k2 !== undefined) ? currentDrc.k2 : 0.98;
+        const sK2 = document.getElementById('sliderDrcK2');
+        if (sK2) sK2.value = k2Val;
+        const lK2 = document.getElementById('lblDrcK2');
+        if (lK2) lK2.innerText = k2Val.toFixed(2);
         
-        document.getElementById('sliderDrcAttack').value = currentDrc.att;
-        document.getElementById('lblDrcAttack').innerText = currentDrc.att + ' ms';
+        const attVal = (currentDrc.att !== undefined) ? currentDrc.att : 10;
+        const sAtt = document.getElementById('sliderDrcAttack');
+        if (sAtt) sAtt.value = attVal;
+        const lAtt = document.getElementById('lblDrcAttack');
+        if (lAtt) lAtt.innerText = attVal + ' ms';
         
-        document.getElementById('sliderDrcRelease').value = currentDrc.rel;
-        document.getElementById('lblDrcRelease').innerText = currentDrc.rel + ' ms';
+        const relVal = (currentDrc.rel !== undefined) ? currentDrc.rel : 500;
+        const sRel = document.getElementById('sliderDrcRelease');
+        if (sRel) sRel.value = relVal;
+        const lRel = document.getElementById('lblDrcRelease');
+        if (lRel) lRel.innerText = relVal + ' ms';
+
+        const energyVal = (currentDrc.energy !== undefined) ? currentDrc.energy : 25;
+        const sEnergy = document.getElementById('sliderDrcEnergy');
+        if (sEnergy) sEnergy.value = energyVal;
+        const lEnergy = document.getElementById('lblDrcEnergy');
+        if (lEnergy) lEnergy.innerText = energyVal + ' ms';
+
+        const gainVal = (currentDrc.gain !== undefined) ? currentDrc.gain : 0.0;
+        const sGain = document.getElementById('sliderDrcMixerGain');
+        if (sGain) sGain.value = gainVal;
+        const lGain = document.getElementById('lblDrcMixerGain');
+        if (lGain) lGain.innerText = (gainVal > 0 ? '+' : '') + gainVal.toFixed(1) + ' dB';
         
         // Redraw Canvas
         drawDrcCurve();
@@ -5719,22 +5817,63 @@
     }
 
     function onDrcSliderInput(param) {
-        const val = parseFloat(document.getElementById('sliderDrc' + (param === 'thr' ? 'Threshold' : param === 'att' ? 'Attack' : 'Release')).value);
+        let sliderId = 'sliderDrcThreshold';
+        if (param === 't1') sliderId = 'sliderDrcT1';
+        else if (param === 'thr') sliderId = 'sliderDrcThreshold';
+        else if (param === 'k1') sliderId = 'sliderDrcK1';
+        else if (param === 'k2') sliderId = 'sliderDrcK2';
+        else if (param === 'att') sliderId = 'sliderDrcAttack';
+        else if (param === 'rel') sliderId = 'sliderDrcRelease';
+        else if (param === 'energy') sliderId = 'sliderDrcEnergy';
+        else if (param === 'gain') sliderId = 'sliderDrcMixerGain';
+
+        const el = document.getElementById(sliderId);
+        if (!el) return;
+        const val = parseFloat(el.value);
         
-        if (param === 'thr') {
+        if (param === 't1') {
+            drcState[activeDrcTab].t1 = val;
+            const lbl = document.getElementById('lblDrcT1');
+            if (lbl) lbl.innerText = val.toFixed(1) + ' dB';
+            drawDrcCurve(); // cap nhat do thi khi keo T1
+        } else if (param === 'thr') {
             drcState[activeDrcTab].thr = val;
-            document.getElementById('lblDrcThreshold').innerText = val.toFixed(1) + ' dB';
+            const lbl = document.getElementById('lblDrcThreshold');
+            if (lbl) lbl.innerText = val.toFixed(1) + ' dB';
             drawDrcCurve();
+        } else if (param === 'k1') {
+            drcState[activeDrcTab].k1 = val;
+            const lbl = document.getElementById('lblDrcK1');
+            if (lbl) lbl.innerText = val.toFixed(2);
+            drawDrcCurve(); // cap nhat do thi khi keo K1
+        } else if (param === 'k2') {
+            drcState[activeDrcTab].k2 = val;
+            const lbl = document.getElementById('lblDrcK2');
+            if (lbl) lbl.innerText = val.toFixed(2);
+            drawDrcCurve(); // cap nhat do thi khi keo K2
         } else if (param === 'att') {
             drcState[activeDrcTab].att = parseInt(val);
-            document.getElementById('lblDrcAttack').innerText = parseInt(val) + ' ms';
+            const lbl = document.getElementById('lblDrcAttack');
+            if (lbl) lbl.innerText = parseInt(val) + ' ms';
         } else if (param === 'rel') {
             drcState[activeDrcTab].rel = parseInt(val);
-            document.getElementById('lblDrcRelease').innerText = parseInt(val) + ' ms';
+            const lbl = document.getElementById('lblDrcRelease');
+            if (lbl) lbl.innerText = parseInt(val) + ' ms';
+        } else if (param === 'energy') {
+            drcState[activeDrcTab].energy = val;
+            const lbl = document.getElementById('lblDrcEnergy');
+            if (lbl) lbl.innerText = parseInt(val) + ' ms';
+        } else if (param === 'gain') {
+            drcState[activeDrcTab].gain = val;
+            const lbl = document.getElementById('lblDrcMixerGain');
+            if (lbl) lbl.innerText = (val > 0 ? '+' : '') + val.toFixed(1) + ' dB';
         }
         
         // Sync cache
         if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
+            if (!window.drcProfilesCache[activeProfileIndex][activeDrcTab]) {
+                window.drcProfilesCache[activeProfileIndex][activeDrcTab] = {};
+            }
             window.drcProfilesCache[activeProfileIndex][activeDrcTab][param] = val;
         }
     }
@@ -5745,32 +5884,66 @@
 
     function sendDrcSettings(band) {
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
-        const currentDrc = drcState[band];
+        const d = drcState[band];
         const cmdName = '#EQ_SET_DRC_' + band.toUpperCase() + '$';
-        window.eqWebSocket.send(`${cmdName}${activeProfileIndex},${currentDrc.en},${currentDrc.thr},${currentDrc.att},${currentDrc.rel}`);
-        console.log(`Sent DRC [${band}]:`, currentDrc);
+        // Server expects 12 params: p_idx,en,thr,att,rel,t1,k1,k2,off1,off2,energy_ms,mixer_gain
+        const t1     = (d.t1     !== undefined) ? d.t1.toFixed(1)       : (-40.0).toFixed(1);
+        const k1     = (d.k1     !== undefined) ? d.k1.toFixed(2)       : (0.50).toFixed(2);
+        const k2     = (d.k2     !== undefined) ? d.k2.toFixed(2)       : (0.98).toFixed(2);
+        const energy = (d.energy !== undefined) ? d.energy.toFixed(1)   : (25.0).toFixed(1);
+        const gain   = (d.gain   !== undefined) ? Math.pow(10, d.gain / 20.0).toFixed(3) : (1.0).toFixed(3);
+        const off1   = (d.off1   !== undefined) ? d.off1.toFixed(1)     : (0.0).toFixed(1);
+        const off2   = (d.off2   !== undefined) ? d.off2.toFixed(1)     : (0.0).toFixed(1);
+        window.eqWebSocket.send(
+            `${cmdName}${activeProfileIndex},${d.en},${d.thr},${d.att},${d.rel},${t1},${k1},${k2},${off1},${off2},${energy},${gain}`
+        );
+        console.log(`[DRC] Sent [${band}] p${activeProfileIndex}: en=${d.en}, thr=${d.thr}, att=${d.att}ms, rel=${d.rel}ms, T1=${t1}, K1=${k1}, K2=${k2}, energy=${energy}ms, gain=${gain}`);
     }
+
 
 
     // --- Professional Smart Bass Canvas & Controls Functions ---
 
     function syncSbUi() {
         const isSbOn = sbState.en === 1;
-        document.getElementById('chkSmartBass').checked = isSbOn;
+        const chk = document.getElementById('chkSmartBass');
+        if (chk) chk.checked = isSbOn;
         const lblSb = document.getElementById('lblSmartBassState');
         if (lblSb) {
             lblSb.innerText = isSbOn ? 'BẬT' : 'TẮT';
             lblSb.style.color = isSbOn ? '#00e676' : '#9ca3af';
         }
         
-        document.getElementById('sliderSmartBassBst').value = sbState.bst;
-        document.getElementById('lblSmartBassBst').innerText = sbState.bst.toFixed(1) + ' dB';
+        const bstVal = (sbState.bst !== undefined) ? sbState.bst : 6.0;
+        const sBst = document.getElementById('sliderSmartBassBst');
+        if (sBst) sBst.value = bstVal;
+        const lBst = document.getElementById('lblSmartBassBst');
+        if (lBst) lBst.innerText = bstVal.toFixed(1) + ' dB';
+
+        const fcVal = (sbState.fc !== undefined) ? sbState.fc : 70;
+        const sFc = document.getElementById('sliderSmartBassFc');
+        if (sFc) sFc.value = fcVal;
+        const lFc = document.getElementById('lblSmartBassFc');
+        if (lFc) lFc.innerText = Math.round(fcVal) + ' Hz';
         
-        document.getElementById('sliderSmartBassLth').value = sbState.lth;
-        document.getElementById('lblSmartBassLth').innerText = sbState.lth.toFixed(1) + ' dB';
+        const lthVal = (sbState.lth !== undefined) ? sbState.lth : -10.0;
+        const sLth = document.getElementById('sliderSmartBassLth');
+        if (sLth) sLth.value = lthVal;
+        const lLth = document.getElementById('lblSmartBassLth');
+        if (lLth) lLth.innerText = lthVal.toFixed(1) + ' dB';
         
-        document.getElementById('sliderSmartBassHth').value = sbState.hth;
-        document.getElementById('lblSmartBassHth').innerText = sbState.hth.toFixed(1) + ' dB';
+        const hthVal = (sbState.hth !== undefined) ? sbState.hth : 0.0;
+        const sHth = document.getElementById('sliderSmartBassHth');
+        if (sHth) sHth.value = hthVal;
+        const lHth = document.getElementById('lblSmartBassHth');
+        if (lHth) lHth.innerText = hthVal.toFixed(1) + ' dB';
+
+        const rawMorph = (sbState.morph !== undefined) ? sbState.morph : 0.5;
+        const morphPct = Math.round(rawMorph > 1.0 ? rawMorph : (rawMorph * 100));
+        const sMorph = document.getElementById('sliderSmartBassMorph');
+        if (sMorph) sMorph.value = morphPct;
+        const lMorph = document.getElementById('lblSmartBassMorph');
+        if (lMorph) lMorph.innerText = morphPct + '%';
         
         // Redraw Canvas
         drawSbCurve();
@@ -6083,11 +6256,25 @@
     }
 
     function onSbSliderInput(param) {
-        const val = parseFloat(document.getElementById('sliderSmartBass' + (param === 'bst' ? 'Bst' : param === 'lth' ? 'Lth' : 'Hth')).value);
+        let sliderId = 'sliderSmartBassBst';
+        if (param === 'bst') sliderId = 'sliderSmartBassBst';
+        else if (param === 'fc') sliderId = 'sliderSmartBassFc';
+        else if (param === 'lth') sliderId = 'sliderSmartBassLth';
+        else if (param === 'hth') sliderId = 'sliderSmartBassHth';
+        else if (param === 'morph') sliderId = 'sliderSmartBassMorph';
+
+        const el = document.getElementById(sliderId);
+        if (!el) return;
+        const val = parseFloat(el.value);
         
         if (param === 'bst') {
             sbState.bst = val;
-            document.getElementById('lblSmartBassBst').innerText = val.toFixed(1) + ' dB';
+            const lbl = document.getElementById('lblSmartBassBst');
+            if (lbl) lbl.innerText = val.toFixed(1) + ' dB';
+        } else if (param === 'fc') {
+            sbState.fc = val;
+            const lbl = document.getElementById('lblSmartBassFc');
+            if (lbl) lbl.innerText = Math.round(val) + ' Hz';
         } else if (param === 'lth') {
             sbState.lth = val;
             // Low Threshold must be less than High Threshold
@@ -6095,7 +6282,8 @@
                 sbState.lth = sbState.hth - 2;
                 document.getElementById('sliderSmartBassLth').value = sbState.lth;
             }
-            document.getElementById('lblSmartBassLth').innerText = sbState.lth.toFixed(1) + ' dB';
+            const lbl = document.getElementById('lblSmartBassLth');
+            if (lbl) lbl.innerText = sbState.lth.toFixed(1) + ' dB';
         } else if (param === 'hth') {
             sbState.hth = val;
             // High Threshold must be greater than Low Threshold
@@ -6103,7 +6291,12 @@
                 sbState.hth = sbState.lth + 2;
                 document.getElementById('sliderSmartBassHth').value = sbState.hth;
             }
-            document.getElementById('lblSmartBassHth').innerText = sbState.hth.toFixed(1) + ' dB';
+            const lbl = document.getElementById('lblSmartBassHth');
+            if (lbl) lbl.innerText = sbState.hth.toFixed(1) + ' dB';
+        } else if (param === 'morph') {
+            sbState.morph = val / 100.0;
+            const lbl = document.getElementById('lblSmartBassMorph');
+            if (lbl) lbl.innerText = Math.round(val) + '%';
         }
         
         if (window.sbProfilesCache && window.sbProfilesCache[activeProfileIndex]) {
@@ -6118,11 +6311,16 @@
     }
 
     function sendSmartBassSettings() {
-        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
+        if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) {
+            console.warn('[SmartBass] WebSocket not open!');
+            return;
+        }
         const sbFc = (sbState && sbState.fc !== undefined) ? sbState.fc : 80;
         const sbMorph = (sbState && sbState.morph !== undefined) ? sbState.morph : 0.5;
-        window.eqWebSocket.send(`#EQ_SET_SMART_BASS$${activeProfileIndex},${sbState.en},${sbState.bst},${sbState.lth},${sbState.hth},${sbFc},${sbMorph}`);
-        console.log("Sent Smart Bass Settings:", sbState);
+        const cmd = `#EQ_SET_SMART_BASS$${activeProfileIndex},${sbState.en},${sbState.bst},${sbState.lth},${sbState.hth},${sbFc},${sbMorph}`;
+        window.eqWebSocket.send(cmd);
+        console.log(`[SmartBass] Sent: ${cmd}`);
+        showToast(`🔊 SmartBass P${activeProfileIndex+1}: bst=${sbState.bst.toFixed(1)}dB fc=${Math.round(sbFc)}Hz morph=${Math.round(sbMorph*100)}%`, '#00e676');
     }
 
 
@@ -6165,6 +6363,21 @@
         const factor = Math.pow(10, trVal / 20);
         const lblAmp = document.getElementById('lblClipAmplitude');
         if (lblAmp) lblAmp.innerText = Math.round(factor * 100) + ' % (' + trVal.toFixed(1) + ' dB)';
+
+        if (clipperAdvState) {
+            const sMk = document.getElementById('sliderClipperMakeup');
+            if (sMk && clipperAdvState.makeup !== undefined) {
+                sMk.value = clipperAdvState.makeup;
+                const lMk = document.getElementById('lblClipperMakeup');
+                if (lMk) lMk.innerText = `+${clipperAdvState.makeup.toFixed(1)} dB`;
+            }
+            const sThd = document.getElementById('sliderClipperThdBoost');
+            if (sThd && clipperAdvState.thd !== undefined) {
+                sThd.value = clipperAdvState.thd;
+                const lThd = document.getElementById('lblClipperThdBoost');
+                if (lThd) lThd.innerText = `+${clipperAdvState.thd.toFixed(1)} dB`;
+            }
+        }
 
         // Redraw Canvas
         drawClipperCurve();
@@ -6642,8 +6855,8 @@
             lblMidClipperTitle.innerText = is3Way ? "🔊 Mid Clipper" : "🔊 Midbass Clipper";
         }
 
-        const chk = document.getElementById('chkCrossover');
-        if (chk) chk.checked = crossoverState.en === 1;
+        const chkInv = document.getElementById('chkCrossoverInvertPhase');
+        if (chkInv) chkInv.checked = (crossoverState.invert_phase === 1);
 
         const sliderFcLow = document.getElementById('sliderCrossoverFcLow');
         if (sliderFcLow) sliderFcLow.value = crossoverState.fc_low || 250;
@@ -7322,6 +7535,11 @@
     }
 
     function syncDpeqUI() {
+        // Checkbox enable
+        const chkDpeq = document.getElementById('chkDpeqEn');
+        if (chkDpeq) chkDpeq.checked = (dpeqState.en === 1);
+        updateStatusPill('lblDpeqState', dpeqState.en);
+
         // Sliders & Labels
         const sLow = document.getElementById('sliderDpeqLow');
         const sHigh = document.getElementById('sliderDpeqHigh');
@@ -7507,8 +7725,12 @@
         window.dpeqProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(dpeqState));
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             const senseFc = (dpeqState.sense && dpeqState.sense.fc !== undefined) ? dpeqState.sense.fc : (dpeqState.sense_fc || 120);
-            window.eqWebSocket.send(`#EQ_SET_DPEQ$${activeProfileIndex},${dpeqState.en},${dpeqState.low_thr.toFixed(1)},${dpeqState.high_thr.toFixed(1)},${dpeqState.energy_ms.toFixed(1)},${senseFc.toFixed(0)}`);
+            const cmd = `#EQ_SET_DPEQ$${activeProfileIndex},${dpeqState.en},${dpeqState.low_thr.toFixed(1)},${dpeqState.high_thr.toFixed(1)},${dpeqState.energy_ms.toFixed(1)},${senseFc.toFixed(0)}`;
+            window.eqWebSocket.send(cmd);
+            console.log(`[DPEQ] Sent: ${cmd}`);
             showToast(`📊 DPEQ [${dpeqState.preset || 'DBE'}]: ${dpeqState.en ? 'BẬT' : 'TẮT'} (T1=${dpeqState.low_thr}dB, T2=${dpeqState.high_thr}dB)`, "#5092de");
+        } else {
+            console.warn('[DPEQ] WebSocket not open, cannot send.');
         }
     }
 
