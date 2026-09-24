@@ -3740,8 +3740,41 @@
         // 2. Volume Softening State
         let volSofteningState = { alpha_ms: 20 };
         
-        // 3. Dynamic EQ (DPEQ) State
-        dpeqState = {
+        // 3. Dynamic EQ (DPEQ) State & Presets
+        const DPEQ_PRESETS = {
+            DBE: {
+                name: "Dynamic Bass Enhancement",
+                desc: "🔊 DBE: Tự động kích trầm sâu khi nghe ở mức âm lượng nhỏ, giảm kích khi mở to tránh quá tải loa.",
+                low_thr: -30.0,
+                high_thr: -10.0,
+                energy_ms: 100.0,
+                sense: { type: "LP_LR2", fc: 200.0, q: 0.71 },
+                low_eq: { type: "PEAK", fc: 70.0, gain: 6.0, q: 1.2 },
+                high_eq: { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 }
+            },
+            DDE: {
+                name: "Dynamic Dialogue Enhancement",
+                desc: "🗣️ DDE: Tự động kích rõ dải tần lời thoại (vocal/speech) khi nghe nhỏ, trả về trong suốt khi mở lớn.",
+                low_thr: -30.0,
+                high_thr: -10.0,
+                energy_ms: 100.0,
+                sense: { type: "LP_LR2", fc: 8000.0, q: 0.71 },
+                low_eq: { type: "PEAK", fc: 2500.0, gain: 4.5, q: 1.5 },
+                high_eq: { type: "ALL_PASS", fc: 2500.0, gain: 0.0, q: 1.0 }
+            },
+            DEQ: {
+                name: "Dynamic EQ Advanced",
+                desc: "🎛️ DEQ: Cho phép tùy chỉnh tự do toàn bộ bộ lọc Sensing, Low-Level Boost và High-Level Thresholds.",
+                low_thr: -30.0,
+                high_thr: -10.0,
+                energy_ms: 100.0,
+                sense: { type: "LP_LR2", fc: 200.0, q: 0.71 },
+                low_eq: { type: "PEAK", fc: 70.0, gain: 6.0, q: 1.2 },
+                high_eq: { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 }
+            }
+        };
+
+        let dpeqState = {
             en: 0,
             vol_alpha_ms: 20,
             preset: "DBE",
@@ -3755,7 +3788,7 @@
             high_eq: { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 },
             sim_level: -30.0
         };
-        isDraggingDpeq = null;
+        let isDraggingDpeq = null;
 
         // 4. Multi-Band DRC State
         let drcState = {
@@ -7606,61 +7639,6 @@
     }
 
     // --- Complete TAS5825M DPEQ Studio (Process Flow 7 TI PPC3) ---
-    const DPEQ_PRESETS = {
-        DBE: {
-            name: "Dynamic Bass Enhancement",
-            desc: "🔊 DBE: Tự động kích trầm sâu khi nghe ở mức âm lượng nhỏ, giảm kích khi mở to tránh quá tải loa.",
-            low_thr: -30.0,
-            high_thr: -10.0,
-            energy_ms: 100.0,
-            sense: { type: "LP_LR2", fc: 200.0, q: 0.71 },
-            low_eq: { type: "PEAK", fc: 70.0, gain: 6.0, q: 1.2 },
-            high_eq: { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 }
-        },
-        DDE: {
-            name: "Dynamic Dialogue Enhancement",
-            desc: "🗣️ DDE: Tự động kích rõ dải tần lời thoại (vocal/speech) khi nghe nhỏ, trả về trong suốt khi mở lớn.",
-            low_thr: -30.0,
-            high_thr: -10.0,
-            energy_ms: 100.0,
-            sense: { type: "LP_LR2", fc: 8000.0, q: 0.71 },
-            low_eq: { type: "PEAK", fc: 2500.0, gain: 4.5, q: 1.5 },
-            high_eq: { type: "ALL_PASS", fc: 2500.0, gain: 0.0, q: 1.0 }
-        },
-        DEQ: {
-            name: "Dynamic EQ Advanced",
-            desc: "🎛️ DEQ: Cho phép tùy chỉnh tự do toàn bộ bộ lọc Sensing, Low-Level Boost và High-Level Thresholds.",
-            low_thr: -30.0,
-            high_thr: -10.0,
-            energy_ms: 100.0,
-            sense: { type: "LP_LR2", fc: 200.0, q: 0.71 },
-            low_eq: { type: "PEAK", fc: 70.0, gain: 6.0, q: 1.2 },
-            high_eq: { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 }
-        }
-    };
-
-    dpeqState = {
-        en: 0,
-        vol_alpha_ms: 20,
-        preset: "DBE",
-        activeTab: "sense",
-        low_thr: -30.0,
-        high_thr: -10.0,
-        energy_ms: 100.0,
-        sense: { type: "LP_LR2", fc: 200.0, q: 0.71 },
-        low_eq: { type: "PEAK", fc: 70.0, gain: 6.0, q: 1.2 },
-        high_eq: { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 },
-        sim_level: -30.0
-    };
-
-    
-    function updateStatusPill(elementId, isActive) {
-        const el = document.getElementById(elementId);
-        if (el) {
-            el.innerText = isActive ? 'BẬT' : 'TẮT';
-            el.classList.toggle('active', !!isActive);
-        }
-    }
 
     function onFastBypassChange() {
         const chk = document.getElementById('chkFastEqBypass');
