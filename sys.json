@@ -7,15 +7,15 @@
     "colorpk.dat": 29589586,
     "bass.dat": 29621522,
     "back.dat": 29602554,
-    "listclock.lst": 29837342,
-    "listalarm.lst": 29837342,
-    "listmusic.lst": 29837342,
+    "listclock.lst": 29837825,
+    "listalarm.lst": 29837825,
+    "listmusic.lst": 29837825,
     "listzing.zin": 29833491,
     "listtruyen.try": 29612597,
     "listradio.rao": 29777270,
     "emoji.emj": 29770985,
     "backemoji.emj": 29770986,
-    "firmware.bin": 29833552
+    "firmware.bin": 29837825
   },
   "url_music": {
     "url_play": "http://171.244.40.218:5006/proxy_audio?id="

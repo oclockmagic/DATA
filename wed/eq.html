@@ -4333,6 +4333,9 @@
 
                 syncInputs(dragBand);
                 console.log(`[EQ Drag] Band ${dragBand + 1} updated: { type: "${FILTER_TYPES[bands[dragBand].type]}", freq: ${bands[dragBand].freq} Hz, gain: ${bands[dragBand].gain} dB, q: ${bands[dragBand].q} }`);
+                if (typeof window.throttleSendEQ === 'function') {
+                    window.throttleSendEQ(activeProfileIndex, dragBand);
+                }
             } else {
                 const b = hitTest(x, y);
                 if (b !== hoverBand) {
@@ -4418,6 +4421,9 @@
 
                 syncInputs(dragBand);
                 console.log(`[EQ Drag] Band ${dragBand + 1} updated: { type: "${FILTER_TYPES[bands[dragBand].type]}", freq: ${bands[dragBand].freq} Hz, gain: ${bands[dragBand].gain} dB, q: ${bands[dragBand].q} }`);
+                if (typeof window.throttleSendEQ === 'function') {
+                    window.throttleSendEQ(activeProfileIndex, dragBand);
+                }
                 e.preventDefault();
                 drawGraph();
             }
@@ -4576,6 +4582,23 @@
             return { type: outType, freq: outFc, q: outQ, gain: g };
         }
 
+        let lastSendToneTime = 0;
+        window.throttleSendTone = function (profileIdx) {
+            const now = Date.now();
+            if (now - lastSendToneTime > 50) {
+                if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
+                    const prof = profiles[profileIdx];
+                    if (prof && prof.bands) {
+                        const bG = prof.bands[10] ? prof.bands[10].gain : 0.0;
+                        const mG = prof.bands[11] ? prof.bands[11].gain : 0.0;
+                        const tG = prof.bands[12] ? prof.bands[12].gain : 0.0;
+                        window.eqWebSocket.send(`#EQ_SET_TONE$${profileIdx},${bG.toFixed(1)},${mG.toFixed(1)},${tG.toFixed(1)}`);
+                    }
+                }
+                lastSendToneTime = now;
+            }
+        };
+
         function onToneSliderInput(type) {
             const val = parseFloat(document.getElementById(`slider${type.charAt(0).toUpperCase() + type.slice(1)}`).value);
             document.getElementById(`lbl${type.charAt(0).toUpperCase() + type.slice(1)}Val`).textContent = (val > 0 ? '+' : '') + val.toFixed(1) + ' dB';
@@ -4596,6 +4619,9 @@
                 }
             }
             drawGraph();
+            if (typeof window.throttleSendTone === 'function') {
+                window.throttleSendTone(activeProfileIndex);
+            }
         }
 
         function onToneSliderChange(type) {
@@ -4736,10 +4762,18 @@
 
                         console.log(`[EQ Input] Band ${index + 1} manually set: { type: "${FILTER_TYPES[bands[index].type]}", freq: ${bands[index].freq} Hz, gain: ${bands[index].gain} dB, q: ${bands[index].q} }`);
 
-                        if (typeof window.sendEQUpdate === 'function') {
+                        if (typeof window.throttleSendEQ === 'function') {
+                            window.throttleSendEQ(activeProfileIndex, index);
+                        } else if (typeof window.sendEQUpdate === 'function') {
                             window.sendEQUpdate(activeProfileIndex, index);
                         }
                         drawGraph();
+                    });
+
+                    input.addEventListener('change', (e) => {
+                        if (typeof window.sendEQUpdate === 'function') {
+                            window.sendEQUpdate(activeProfileIndex, index);
+                        }
                     });
                 });
 
@@ -4952,6 +4986,9 @@
                 const val = parseFloat(e.target.value);
                 profiles[activeProfileIndex].preamp = val;
                 preampValText.textContent = val > 0 ? `+${val.toFixed(1)}` : val.toFixed(1);
+                if (typeof window.throttleSendEQ === 'function') {
+                    window.throttleSendEQ(activeProfileIndex, 0);
+                }
             });
 
             // Chỉ gửi lên ESP32 và lưu NVS khi thả tay ra (change event)
