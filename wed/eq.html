@@ -5314,14 +5314,34 @@
                         if (typeof spatializerState !== 'undefined') {
                             spatializerState.en = en ? 1 : 0;
                             spatializerState.level = lvl;
+                            if (parts.length >= 4) {
+                                spatializerState.hpf = parseFloat(parts[2]);
+                                spatializerState.lpf = parseFloat(parts[3]);
+                            }
+                            if (parts.length >= 5) {
+                                spatializerState.preset = parseInt(parts[4]);
+                            }
                         }
                         const chk = document.getElementById('chkSpatializerEn');
                         const rng = document.getElementById('rngSpatializerLevel');
+                        const rngHpf = document.getElementById('rngSpatializerHpf');
+                        const rngLpf = document.getElementById('rngSpatializerLpf');
                         const lbl = document.getElementById('lblSpatializerVal');
+                        const lblHpf = document.getElementById('lblSpatializerHpf');
+                        const lblLpf = document.getElementById('lblSpatializerLpf');
                         const lblState = document.getElementById('lblSpatializerState');
                         if (chk) chk.checked = en;
                         if (rng) rng.value = Math.round(lvl * 100);
                         if (lbl) lbl.innerText = `${Math.round(lvl * 100)}%`;
+                        if (parts.length >= 4) {
+                            const hpf_val = parseFloat(parts[2]);
+                            const lpf_val = parseFloat(parts[3]);
+                            if (rngHpf) rngHpf.value = hpf_val;
+                            if (lblHpf) lblHpf.innerText = `${Math.round(hpf_val)} Hz`;
+                            if (rngLpf) rngLpf.value = lpf_val;
+                            if (lblLpf) lblLpf.innerText = lpf_val >= 1000 ? `${(lpf_val / 1000).toFixed(1)} kHz` : `${Math.round(lpf_val)} Hz`;
+                        }
+                        if (typeof updateSpatialPresetButtons === 'function') updateSpatialPresetButtons();
                         if (lblState) {
                             lblState.innerText = en ? 'BẬT' : 'TẮT';
                             lblState.style.color = en ? '#00f2fe' : '#9ca3af';
