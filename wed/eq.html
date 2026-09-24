@@ -3759,9 +3759,9 @@
 
         // 4. Multi-Band DRC State
         let drcState = {
-            low: { en: 0, thr: -4.0, att: 15, rel: 120, t1: -24.0, k1: 0.5, k2: 0.98, energy: 25, gain: 0.0 },
-            mid: { en: 0, thr: -5.0, att: 10, rel: 100, t1: -20.0, k1: 0.5, k2: 0.98, energy: 20, gain: 0.0 },
-            high: { en: 0, thr: -6.0, att: 8, rel: 80, t1: -18.0, k1: 0.5, k2: 0.98, energy: 15, gain: 0.0 }
+            low:  { en: 0, thr: -4.0, att: 15, rel: 120, t1: -24.0, k1: 0.5, k2: 0.98, off1: 0.0, off2: 0.0, energy: 25, gain: 0.0 },
+            mid:  { en: 0, thr: -5.0, att: 10, rel: 100, t1: -20.0, k1: 0.5, k2: 0.98, off1: 0.0, off2: 0.0, energy: 20, gain: 0.0 },
+            high: { en: 0, thr: -6.0, att: 8,  rel: 80,  t1: -18.0, k1: 0.5, k2: 0.98, off1: 0.0, off2: 0.0, energy: 15, gain: 0.0 }
         };
         let activeDrcTab = 'low'; // 'low', 'mid', 'high'
         let isDraggingDrc = false;
@@ -3790,7 +3790,7 @@
         let aglState = { en: 0, thr: -12.0, att: 10, rel: 500, alpha: 2.0 };
 
         // 11. PVDD Protection State
-        let pvddState = { en: 1, thr: 12.0, scale: -1.0, time: 10.0 };
+        let pvddState = { en: 1, thr: 9.5, scale: -0.5, time: 1.0 };
 
         // 12. Driver Time Alignment / Phase State
         let phaseState = { treble: 0, mid: 0, sub: 0, l: 0, r: 0 };
@@ -3875,7 +3875,7 @@
 
         // --- Biquad Calculations (Bristow-Johnson Cookbook) ---
         const TWO_PI = 2 * Math.PI;
-        const FS = 96000;
+        const FS = 48000;  // TAS5825M Base/Pro Hybrid 2.0 – internal sample rate 48kHz (PF7)
 
         function designBiquad(type, f0, Q, gainDb, fs) {
             const A = Math.pow(10, gainDb / 40);
@@ -4444,8 +4444,11 @@
             // Sync DPEQ cache to active profile
             if (window.dpeqProfilesCache && window.dpeqProfilesCache[activeProfileIndex]) {
                 dpeqState = JSON.parse(JSON.stringify(window.dpeqProfilesCache[activeProfileIndex]));
-                syncDpeqUi();
             }
+            if (window.dpeqPresetsPerProfile && window.dpeqPresetsPerProfile[activeProfileIndex]) {
+                dpeqState.preset = window.dpeqPresetsPerProfile[activeProfileIndex];
+            }
+            syncDpeqUi();
             // Sync AGL cache to active profile
             if (window.aglProfilesCache && window.aglProfilesCache[activeProfileIndex]) {
                 aglState = JSON.parse(JSON.stringify(window.aglProfilesCache[activeProfileIndex]));
@@ -4759,6 +4762,16 @@
                 activeProfileIndex = idx;
                 bands = profiles[activeProfileIndex].bands;
 
+                // Sync DPEQ Preset for active profile
+                if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = ['DBE', 'DBE', 'DDE'];
+                if (window.dpeqPresetsPerProfile[activeProfileIndex]) {
+                    dpeqState.preset = window.dpeqPresetsPerProfile[activeProfileIndex];
+                } else if (window.dpeqProfilesCache && window.dpeqProfilesCache[activeProfileIndex] && window.dpeqProfilesCache[activeProfileIndex].preset) {
+                    dpeqState.preset = window.dpeqProfilesCache[activeProfileIndex].preset;
+                } else {
+                    dpeqState.preset = (activeProfileIndex === 2) ? 'DDE' : 'DBE';
+                }
+
                 // Gửi lệnh chọn active profile lên ESP32
                 if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
                     window.eqWebSocket.send(`#EQ_SELECT_PROFILE$${activeProfileIndex}`);
@@ -4971,6 +4984,29 @@
             };
 
             ws.onmessage = (event) => {
+                if (event.data.startsWith('EQ_ACTIVE_PROFILE:')) {
+                    const parts = event.data.substring(18).split(',').map(Number);
+                    const serverActiveProfile = parts[0];
+                    if (serverActiveProfile >= 0 && serverActiveProfile < 3) {
+                        activeProfileIndex = serverActiveProfile;
+                        document.querySelectorAll('.tab-btn').forEach((b, idx) => {
+                            b.classList.toggle('active', idx === activeProfileIndex);
+                        });
+                    }
+                    const presetNames = ['DBE', 'DDE', 'DEQ'];
+                    if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = ['DBE', 'DBE', 'DDE'];
+                    for (let i = 0; i < 3; i++) {
+                        const preIdx = parts[i + 1];
+                        if (preIdx >= 0 && preIdx <= 2) {
+                            window.dpeqPresetsPerProfile[i] = presetNames[preIdx];
+                        }
+                    }
+                    if (window.dpeqPresetsPerProfile[activeProfileIndex]) {
+                        dpeqState.preset = window.dpeqPresetsPerProfile[activeProfileIndex];
+                    }
+                    console.log(`[EQ Sync] Server Active Profile=${activeProfileIndex}, DPEQ Presets:`, window.dpeqPresetsPerProfile);
+                }
+
                 if (event.data.startsWith('EQ_PROFILES:')) {
                     console.log('[EQ Sync] Received profiles data from ESP32');
                     const dataStr = event.data.substring(12);
@@ -5059,13 +5095,26 @@
                         dpeqState.high_thr = dp_high;
                         dpeqState.energy_ms = dp_energy;
                         dpeqState.sense_fc = dp_fc;
+                        if (p.length >= 51) {
+                            const dp_pre_idx = parseInt(p[50]);
+                            const presetNames = ['DBE', 'DDE', 'DEQ'];
+                            if (dp_pre_idx >= 0 && dp_pre_idx <= 2) {
+                                dpeqState.preset = presetNames[dp_pre_idx];
+                                if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = ['DBE', 'DBE', 'DDE'];
+                                window.dpeqPresetsPerProfile[activeProfileIndex] = dpeqState.preset;
+                            }
+                        }
+                        const curPresetDef = DPEQ_PRESETS[dpeqState.preset || 'DBE'];
+                        if (curPresetDef) {
+                            dpeqState.sense = JSON.parse(JSON.stringify(curPresetDef.sense));
+                            dpeqState.low_eq = JSON.parse(JSON.stringify(curPresetDef.low_eq));
+                            dpeqState.high_eq = JSON.parse(JSON.stringify(curPresetDef.high_eq));
+                        }
                         if (!dpeqState.sense) dpeqState.sense = { type: "LP_LR2", fc: dp_fc, q: 0.71 };
                         else dpeqState.sense.fc = dp_fc;
-                        if (!dpeqState.low_eq) dpeqState.low_eq = { type: "PEAK", fc: 70.0, gain: 6.0, q: 1.2 };
-                        if (!dpeqState.high_eq) dpeqState.high_eq = { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 };
                         if (!window.dpeqProfilesCache) window.dpeqProfilesCache = [];
                         window.dpeqProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(dpeqState));
-                        console.log(`[EQ_DSP_ADV] dpeqState.en set to ${dpeqState.en}, syncing UI...`);
+                        console.log(`[EQ_DSP_ADV] dpeqState.en=${dpeqState.en} preset=${dpeqState.preset}, syncing UI...`);
                         syncDpeqUi();
 
                         // AGL (5..9)
@@ -5566,6 +5615,8 @@
         drawDrcCurve();
     }
 
+    let drcDragTarget = null; // 't1' or 't2'
+
     function drawDrcCurve() {
         const canvas = document.getElementById('drcCanvas');
         if (!canvas) return;
@@ -5585,6 +5636,10 @@
         ctx.fillStyle = 'rgba(15, 23, 42, 0.6)';
         ctx.fillRect(startX, startY, graphW, graphH);
         
+        // Coordinate Converters between dB [-80, 0] and Canvas pixels
+        const dbToX = (db) => startX + Math.max(0, Math.min(1, (db + 80) / 80)) * graphW;
+        const dbToY = (db) => startY + (1 - Math.max(0, Math.min(1, (db + 80) / 80))) * graphH;
+        
         // Draw grid lines every 10dB (from -80dB to 0dB)
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
         ctx.lineWidth = 1;
@@ -5593,8 +5648,7 @@
         ctx.textAlign = 'center';
         
         for (let db = -80; db <= 0; db += 10) {
-            const pct = (db + 80) / 80;
-            const x = startX + pct * graphW;
+            const x = dbToX(db);
             ctx.beginPath();
             ctx.moveTo(x, startY);
             ctx.lineTo(x, startY + graphH);
@@ -5604,7 +5658,7 @@
                 ctx.fillText(db, x, startY + graphH + 11);
             }
             
-            const y = startY + (1 - pct) * graphH;
+            const y = dbToY(db);
             ctx.beginPath();
             ctx.moveTo(startX, y);
             ctx.lineTo(startX + graphW, y);
@@ -5641,36 +5695,105 @@
         ctx.setLineDash([]);
         
         // Current tab info
-        const currentDrc = drcState[activeDrcTab];
+        const currentDrc = drcState[activeDrcTab] || {};
         const isEnabled = currentDrc.en === 1;
-        const threshPct = (currentDrc.thr + 80) / 80;
-        const threshX = startX + threshPct * graphW;
-        const threshY = startY + (1 - threshPct) * graphH;
+        const activeColor = drcBandColors[activeDrcTab] || '#38bdf8';
+        
+        // 3-Region Multi-Knee DRC (TI PurePath Console 3 Flow 7 standard):
+        // Region 1: Linear pass-through (slope = 1.0) when Input <= T1
+        // Region 2: Soft Knee Compression (slope = 1.0 - K1) when T1 < Input <= T2
+        // Region 3: Limiter / Hard Compression (slope = 1.0 - K2) when Input > T2
+        let t1 = (currentDrc.t1 !== undefined) ? currentDrc.t1 : -24.0;
+        let t2 = (currentDrc.thr !== undefined) ? currentDrc.thr : -12.0;
+        let k1 = (currentDrc.k1 !== undefined) ? currentDrc.k1 : 0.50;
+        let k2 = (currentDrc.k2 !== undefined) ? currentDrc.k2 : 0.98;
+        
+        // Constrain T1 <= T2
+        if (t1 > t2) t1 = t2;
+        
+        const y_at_t1 = t1;
+        const y_at_t2 = t1 + (1.0 - k1) * (t2 - t1);
+        const y_at_0  = y_at_t2 + (1.0 - k2) * (0.0 - t2);
+        
+        const ptStart = { x: dbToX(-80), y: dbToY(-80) };
+        const ptT1    = { x: dbToX(t1),  y: dbToY(y_at_t1) };
+        const ptT2    = { x: dbToX(t2),  y: dbToY(y_at_t2) };
+        const ptEnd   = { x: dbToX(0),   y: dbToY(y_at_0) };
+        
+        // Fill gradient under curve when enabled
+        if (isEnabled) {
+            const fillGrad = ctx.createLinearGradient(startX, startY, startX, startY + graphH);
+            fillGrad.addColorStop(0, activeColor.replace(')', ', 0.22)').replace('rgb', 'rgba'));
+            fillGrad.addColorStop(1, 'rgba(0, 0, 0, 0.0)');
+            
+            ctx.beginPath();
+            ctx.moveTo(ptStart.x, ptStart.y);
+            ctx.lineTo(ptT1.x, ptT1.y);
+            ctx.lineTo(ptT2.x, ptT2.y);
+            ctx.lineTo(ptEnd.x, ptEnd.y);
+            ctx.lineTo(ptEnd.x, startY + graphH);
+            ctx.lineTo(startX, startY + graphH);
+            ctx.closePath();
+            ctx.fillStyle = fillGrad;
+            ctx.fill();
+        }
         
         // Main DRC Curve
-        const activeColor = drcBandColors[activeDrcTab];
         ctx.strokeStyle = isEnabled ? activeColor : 'rgba(255, 255, 255, 0.25)';
-        ctx.lineWidth = 2;
+        ctx.lineWidth = isEnabled ? 2.5 : 1.5;
         if (isEnabled) {
             ctx.shadowColor = activeColor;
-            ctx.shadowBlur = 4;
+            ctx.shadowBlur = 6;
         }
         
         ctx.beginPath();
-        ctx.moveTo(startX, startY + graphH);
-        ctx.lineTo(threshX, threshY);
-        ctx.lineTo(startX + graphW, threshY); // Limiter (flat)
+        if (isEnabled) {
+            ctx.moveTo(ptStart.x, ptStart.y);
+            ctx.lineTo(ptT1.x, ptT1.y);
+            ctx.lineTo(ptT2.x, ptT2.y);
+            ctx.lineTo(ptEnd.x, ptEnd.y);
+        } else {
+            ctx.moveTo(ptStart.x, ptStart.y);
+            ctx.lineTo(startX + graphW, startY);
+        }
         ctx.stroke();
         ctx.shadowBlur = 0; // reset
         
-        // Refined Handle Point
-        ctx.fillStyle = isEnabled ? '#fff' : '#555';
-        ctx.beginPath();
-        ctx.arc(threshX, threshY, 4.5, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.strokeStyle = activeColor;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
+        if (isEnabled) {
+            // Anchor 1: T1 (Soft Knee)
+            ctx.fillStyle = '#38bdf8';
+            ctx.beginPath();
+            ctx.arc(ptT1.x, ptT1.y, 4.5, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            // Anchor 2: T2 (Hard Limit Threshold)
+            ctx.fillStyle = activeColor;
+            ctx.beginPath();
+            ctx.arc(ptT2.x, ptT2.y, 5.5, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2.0;
+            ctx.stroke();
+            
+            // T1 and T2 Labels
+            ctx.font = '8px system-ui, sans-serif';
+            ctx.fillStyle = '#38bdf8';
+            ctx.textAlign = 'center';
+            ctx.fillText(`T1:${t1.toFixed(1)}dB`, ptT1.x, Math.max(startY + 10, ptT1.y - 8));
+            ctx.fillStyle = '#ffffff';
+            ctx.fillText(`T2:${t2.toFixed(1)}dB`, ptT2.x, Math.max(startY + 10, ptT2.y - 10));
+            
+            // Compression Ratio Badges
+            const r1 = k1 >= 0.99 ? "∞" : (1.0 / (1.0 - k1)).toFixed(1);
+            const r2 = k2 >= 0.99 ? "∞" : (1.0 / (1.0 - k2)).toFixed(0);
+            ctx.font = '8px monospace';
+            ctx.fillStyle = '#94a3b8';
+            ctx.textAlign = 'left';
+            ctx.fillText(`K1: ${r1}:1 | Limiter: ${r2}:1`, startX + 6, startY + 12);
+        }
     }
 
     function initDrcCanvasEvents() {
@@ -5697,20 +5820,31 @@
             if (pct > 1) pct = 1;
             
             let db = -80 + pct * 80;
-            if (db < -40) db = -40;
+            if (db < -60) db = -60;
             if (db > 0) db = 0;
-            
             db = Math.round(db * 2) / 2; // Step 0.5dB
             
-            drcState[activeDrcTab].thr = db;
-            const sl = document.getElementById('sliderDrcThreshold');
-            if (sl) sl.value = db;
-            const lb = document.getElementById('lblDrcThreshold');
-            if (lb) lb.innerText = db.toFixed(1) + ' dB';
+            const cur = drcState[activeDrcTab];
+            if (drcDragTarget === 't1') {
+                if (db > cur.thr) db = cur.thr;
+                cur.t1 = db;
+                const sl = document.getElementById('sliderDrcT1');
+                if (sl) sl.value = db;
+                const lb = document.getElementById('lblDrcT1');
+                if (lb) lb.innerText = db.toFixed(1) + ' dB';
+            } else {
+                if (db < cur.t1) db = cur.t1;
+                cur.thr = db;
+                const sl = document.getElementById('sliderDrcThreshold');
+                if (sl) sl.value = db;
+                const lb = document.getElementById('lblDrcThreshold');
+                if (lb) lb.innerText = db.toFixed(1) + ' dB';
+            }
             
             // Sync cache
             if (window.drcProfilesCache && window.drcProfilesCache[activeProfileIndex]) {
-                window.drcProfilesCache[activeProfileIndex][activeDrcTab].thr = db;
+                window.drcProfilesCache[activeProfileIndex][activeDrcTab].t1 = cur.t1;
+                window.drcProfilesCache[activeProfileIndex][activeDrcTab].thr = cur.thr;
             }
             
             drawDrcCurve();
@@ -5724,11 +5858,20 @@
             const graphH = canvas.height - padT - padB;
             const startX = padL;
             const startY = padT;
-            const threshPct = (drcState[activeDrcTab].thr + 80) / 80;
-            const threshX = startX + threshPct * graphW;
-            const threshY = startY + (1 - threshPct) * graphH;
-            const dist = Math.hypot(pos.x - threshX, pos.y - threshY);
-            canvas.style.cursor = dist < 22 ? 'grab' : 'default';
+            
+            const cur = drcState[activeDrcTab] || {};
+            const t1 = (cur.t1 !== undefined) ? cur.t1 : -24.0;
+            const t2 = (cur.thr !== undefined) ? cur.thr : -12.0;
+            const k1 = (cur.k1 !== undefined) ? cur.k1 : 0.50;
+            const y_at_t2 = t1 + (1.0 - k1) * (t2 - t1);
+            
+            const dbToX = (db) => startX + Math.max(0, Math.min(1, (db + 80) / 80)) * graphW;
+            const dbToY = (db) => startY + (1 - Math.max(0, Math.min(1, (db + 80) / 80))) * graphH;
+            
+            const distT1 = Math.hypot(pos.x - dbToX(t1), pos.y - dbToY(t1));
+            const distT2 = Math.hypot(pos.x - dbToX(t2), pos.y - dbToY(y_at_t2));
+            
+            canvas.style.cursor = (distT1 < 18 || distT2 < 18) ? 'grab' : 'default';
         });
         
         canvas.addEventListener('mousedown', function(evt) {
@@ -5739,12 +5882,25 @@
             const startX = padL;
             const startY = padT;
             
-            const threshPct = (drcState[activeDrcTab].thr + 80) / 80;
-            const threshX = startX + threshPct * graphW;
-            const threshY = startY + (1 - threshPct) * graphH;
+            const cur = drcState[activeDrcTab] || {};
+            const t1 = (cur.t1 !== undefined) ? cur.t1 : -24.0;
+            const t2 = (cur.thr !== undefined) ? cur.thr : -12.0;
+            const k1 = (cur.k1 !== undefined) ? cur.k1 : 0.50;
+            const y_at_t2 = t1 + (1.0 - k1) * (t2 - t1);
             
-            const dist = Math.hypot(pos.x - threshX, pos.y - threshY);
-            if (dist < 22) {
+            const dbToX = (db) => startX + Math.max(0, Math.min(1, (db + 80) / 80)) * graphW;
+            const dbToY = (db) => startY + (1 - Math.max(0, Math.min(1, (db + 80) / 80))) * graphH;
+            
+            const distT1 = Math.hypot(pos.x - dbToX(t1), pos.y - dbToY(t1));
+            const distT2 = Math.hypot(pos.x - dbToX(t2), pos.y - dbToY(y_at_t2));
+            
+            if (distT1 < 18) {
+                drcDragTarget = 't1';
+                isDraggingDrc = true;
+                canvas.style.cursor = 'grabbing';
+                evt.preventDefault();
+            } else if (distT2 < 18) {
+                drcDragTarget = 't2';
                 isDraggingDrc = true;
                 canvas.style.cursor = 'grabbing';
                 evt.preventDefault();
@@ -5760,6 +5916,7 @@
         window.addEventListener('mouseup', function() {
             if (isDraggingDrc) {
                 isDraggingDrc = false;
+                drcDragTarget = null;
                 canvas.style.cursor = 'default';
                 sendDrcSettings(activeDrcTab);
             }
@@ -5774,11 +5931,25 @@
             const graphH = canvas.height - padT - padB;
             const startX = padL;
             const startY = padT;
-            const threshPct = (drcState[activeDrcTab].thr + 80) / 80;
-            const threshX = startX + threshPct * graphW;
-            const threshY = startY + (1 - threshPct) * graphH;
-            const dist = Math.hypot(pos.x - threshX, pos.y - threshY);
-            if (dist < 26) {
+            
+            const cur = drcState[activeDrcTab] || {};
+            const t1 = (cur.t1 !== undefined) ? cur.t1 : -24.0;
+            const t2 = (cur.thr !== undefined) ? cur.thr : -12.0;
+            const k1 = (cur.k1 !== undefined) ? cur.k1 : 0.50;
+            const y_at_t2 = t1 + (1.0 - k1) * (t2 - t1);
+            
+            const dbToX = (db) => startX + Math.max(0, Math.min(1, (db + 80) / 80)) * graphW;
+            const dbToY = (db) => startY + (1 - Math.max(0, Math.min(1, (db + 80) / 80))) * graphH;
+            
+            const distT1 = Math.hypot(pos.x - dbToX(t1), pos.y - dbToY(t1));
+            const distT2 = Math.hypot(pos.x - dbToX(t2), pos.y - dbToY(y_at_t2));
+            
+            if (distT1 < 24) {
+                drcDragTarget = 't1';
+                isDraggingDrc = true;
+                evt.preventDefault();
+            } else if (distT2 < 24) {
+                drcDragTarget = 't2';
                 isDraggingDrc = true;
                 evt.preventDefault();
             }
@@ -5794,6 +5965,7 @@
         canvas.addEventListener('touchend', function() {
             if (isDraggingDrc) {
                 isDraggingDrc = false;
+                drcDragTarget = null;
                 sendDrcSettings(activeDrcTab);
             }
         });
@@ -7003,6 +7175,9 @@
             ctx.stroke();
 
             // 2. Midrange Band-Pass curve in Green (#00e676)
+            // NOTE: Mid 3-Way thực tế chỉ 12dB/oct (LR2 Q=0.5) vì giới hạn EQ slot
+            // → Dùng order=2 cho Mid để hiển thị đúng
+            const midOrder = 2; // LR2 12dB/oct per edge (slot giới hạn)
             ctx.strokeStyle = isEnabled ? "#00e676" : "#666";
             ctx.lineWidth = 2.5;
             ctx.beginPath();
@@ -7012,8 +7187,8 @@
                 let ratioHigh = freq / fcHigh;
                 let gainDb = crossoverState.mid_trim;
                 if (isEnabled) {
-                    let magHpf = 1 / Math.sqrt(1 + Math.pow(ratioLow, order));
-                    let magLpf = 1 / Math.sqrt(1 + Math.pow(ratioHigh, order));
+                    let magHpf = 1 / Math.sqrt(1 + Math.pow(ratioLow, midOrder));
+                    let magLpf = 1 / Math.sqrt(1 + Math.pow(ratioHigh, midOrder));
                     gainDb += 20 * Math.log10(magHpf * magLpf);
                 }
                 let y = h / 2 - (gainDb / 36) * (h * 0.4);
@@ -7518,6 +7693,8 @@
         const sel = document.getElementById('selDpeqPreset');
         const key = sel ? sel.value : "DBE";
         dpeqState.preset = key;
+        if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = ['DBE', 'DBE', 'DDE'];
+        window.dpeqPresetsPerProfile[activeProfileIndex] = key;
         const p = DPEQ_PRESETS[key];
         if (p) {
             dpeqState.low_thr = p.low_thr;
@@ -7535,6 +7712,17 @@
     }
 
     function syncDpeqUI() {
+        // Sync Preset Selector and Description
+        const selPreset = document.getElementById('selDpeqPreset');
+        if (selPreset && dpeqState.preset) {
+            selPreset.value = dpeqState.preset;
+        }
+        const pPreset = DPEQ_PRESETS[dpeqState.preset || 'DBE'];
+        const descPreset = document.getElementById('lblDpeqPresetDesc');
+        if (descPreset && pPreset) {
+            descPreset.innerText = pPreset.desc;
+        }
+
         // Checkbox enable
         const chkDpeq = document.getElementById('chkDpeqEn');
         if (chkDpeq) chkDpeq.checked = (dpeqState.en === 1);
@@ -7723,9 +7911,12 @@
     function sendDpeqSettings() {
         if (!window.dpeqProfilesCache) window.dpeqProfilesCache = [];
         window.dpeqProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(dpeqState));
+        if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = ['DBE', 'DBE', 'DDE'];
+        window.dpeqPresetsPerProfile[activeProfileIndex] = dpeqState.preset || 'DBE';
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             const senseFc = (dpeqState.sense && dpeqState.sense.fc !== undefined) ? dpeqState.sense.fc : (dpeqState.sense_fc || 120);
-            const cmd = `#EQ_SET_DPEQ$${activeProfileIndex},${dpeqState.en},${dpeqState.low_thr.toFixed(1)},${dpeqState.high_thr.toFixed(1)},${dpeqState.energy_ms.toFixed(1)},${senseFc.toFixed(0)}`;
+            const presetIdx = (dpeqState.preset === 'DDE') ? 1 : ((dpeqState.preset === 'DEQ') ? 2 : 0);
+            const cmd = `#EQ_SET_DPEQ$${activeProfileIndex},${dpeqState.en},${dpeqState.low_thr.toFixed(1)},${dpeqState.high_thr.toFixed(1)},${dpeqState.energy_ms.toFixed(1)},${senseFc.toFixed(0)},${presetIdx}`;
             window.eqWebSocket.send(cmd);
             console.log(`[DPEQ] Sent: ${cmd}`);
             showToast(`📊 DPEQ [${dpeqState.preset || 'DBE'}]: ${dpeqState.en ? 'BẬT' : 'TẮT'} (T1=${dpeqState.low_thr}dB, T2=${dpeqState.high_thr}dB)`, "#5092de");
