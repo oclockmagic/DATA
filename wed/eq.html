@@ -388,6 +388,61 @@
             border: 1px solid var(--glass-border);
             width: 100%;
         }
+        /* Grid 2-3 hàng cho 10 Profile thể loại âm nhạc đồng bộ Pro Audio Studio */
+        .profile-tabs-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .profile-tabs-grid .tab-btn {
+            padding: 7px 3px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-align: center;
+            white-space: normal;
+            line-height: 1.25;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .profile-tabs-grid .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.14);
+            border-color: rgba(56, 189, 248, 0.45);
+            color: #ffffff;
+            transform: translateY(-1px);
+        }
+        .profile-tabs-grid .tab-btn:active {
+            transform: scale(0.97);
+        }
+        .profile-tabs-grid .tab-btn.active {
+            background: linear-gradient(135deg, #0284c7, #06b6d4);
+            color: #ffffff;
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.35);
+            font-weight: 700;
+        }
+        @media (max-width: 440px) {
+            .profile-tabs-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5px;
+            }
+            .profile-tabs-grid .tab-btn {
+                padding: 6px 2px;
+                font-size: 10px;
+                min-height: 32px;
+            }
+        }
         .preset-container {
             display: flex;
             gap: 8px;
@@ -609,20 +664,29 @@
     <div class="container">
         <h2>DSP TOOL</h2>
 
-        <!-- Tab Profiles: 10 Genre-Based Profiles -->
-        <div class="tabs-container">
-            <div class="profile-tabs" style="width: 100%; justify-content: flex-start; display: flex; gap: 6px; align-items: center; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin;">
-                <button class="tab-btn active" data-index="0" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Default</button>
-                <button class="tab-btn" data-index="1" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Acoustic</button>
-                <button class="tab-btn" data-index="2" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Jazz &amp; Blues</button>
-                <button class="tab-btn" data-index="3" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Pop</button>
-                <button class="tab-btn" data-index="4" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Rock</button>
-                <button class="tab-btn" data-index="5" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">R&amp;B &amp; Soul</button>
-                <button class="tab-btn" data-index="6" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Classical</button>
-                <button class="tab-btn" data-index="7" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Country &amp; Folk</button>
-                <button class="tab-btn" data-index="8" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Dance &amp; EDM</button>
-                <button class="tab-btn" data-index="9" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Vocal &amp; Bolero</button>
-                <button id="btnResetDefaults" onclick="resetProfileToDefaults()" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; cursor: pointer; transition: all 0.2s ease;" title="Khôi phục toàn bộ Profile hiện tại về mặc định xuất xưởng">↺ Mặc định</button>
+        <!-- Acoustic Profiles Card (10 Genre Profiles Grid) -->
+        <div class="section-card" id="cardProfiles" style="padding: 10px 12px; margin-bottom: 8px;">
+            <div class="section-header" style="margin-bottom: 8px; padding-bottom: 5px;">
+                <h3 class="section-title">
+                    <span class="icon">🎵</span>
+                    <span>Acoustic Profiles</span>
+                    <span class="tag" id="lblActiveProfileBadge">Default</span>
+                </h3>
+                <button id="btnResetDefaults" onclick="resetProfileToDefaults()" class="app-btn" style="background: rgba(239, 68, 68, 0.12); border-color: rgba(239, 68, 68, 0.35); color: #f87171; padding: 3px 8px; font-size: 10px;" title="Khôi phục Profile đang chọn về mặc định xuất xưởng">
+                    ↺ Đặt lại mặc định
+                </button>
+            </div>
+            <div class="profile-tabs-grid">
+                <button class="tab-btn active" data-index="0">Default</button>
+                <button class="tab-btn" data-index="1">Acoustic</button>
+                <button class="tab-btn" data-index="2">Jazz &amp; Blues</button>
+                <button class="tab-btn" data-index="3">Pop</button>
+                <button class="tab-btn" data-index="4">Rock</button>
+                <button class="tab-btn" data-index="5">R&amp;B &amp; Soul</button>
+                <button class="tab-btn" data-index="6">Classical</button>
+                <button class="tab-btn" data-index="7">Country &amp; Folk</button>
+                <button class="tab-btn" data-index="8">Dance &amp; EDM</button>
+                <button class="tab-btn" data-index="9">Vocal &amp; Bolero</button>
             </div>
         </div>
 
@@ -3849,10 +3913,10 @@
         let profiles = [
             { name: "Default", preamp: -6.5, bands: createDefaultBands() },
             { name: "Acoustic", preamp: -6.5, bands: createDefaultBands() },
-            { name: "Jazz & Blues", preamp: -6.5, bands: createDefaultBands() },
+            { name: "Jazz & Blues", preamp: -6.8, bands: createDefaultBands() },
             { name: "Pop", preamp: -7.0, bands: createDefaultBands() },
-            { name: "Rock", preamp: -7.5, bands: createDefaultBands() },
-            { name: "R&B & Soul", preamp: -7.5, bands: createDefaultBands() },
+            { name: "Rock", preamp: -7.2, bands: createDefaultBands() },
+            { name: "R&B & Soul", preamp: -7.6, bands: createDefaultBands() },
             { name: "Classical", preamp: -6.0, bands: createDefaultBands() },
             { name: "Country & Folk", preamp: -6.5, bands: createDefaultBands() },
             { name: "Dance & EDM", preamp: -8.0, bands: createDefaultBands() },
@@ -4843,6 +4907,11 @@
                 activeProfileIndex = idx;
                 bands = profiles[activeProfileIndex].bands;
 
+                const badge = document.getElementById('lblActiveProfileBadge');
+                if (badge && profiles[activeProfileIndex]) {
+                    badge.innerText = profiles[activeProfileIndex].name;
+                }
+
                 // Sync DPEQ Preset for active profile
                 if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = ['DBE', 'DBE', 'DDE'];
                 if (window.dpeqPresetsPerProfile[activeProfileIndex]) {
@@ -5077,6 +5146,10 @@
                         document.querySelectorAll('.tab-btn').forEach((b, idx) => {
                             b.classList.toggle('active', idx === activeProfileIndex);
                         });
+                        const badge = document.getElementById('lblActiveProfileBadge');
+                        if (badge && profiles[activeProfileIndex]) {
+                            badge.innerText = profiles[activeProfileIndex].name;
+                        }
                     }
                     const presetNames = ['DBE', 'DDE', 'DEQ'];
                     if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = new Array(profiles.length).fill('DBE');
