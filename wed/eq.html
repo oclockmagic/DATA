@@ -609,13 +609,20 @@
     <div class="container">
         <h2>DSP TOOL</h2>
 
-        <!-- Tab Profiles -->
+        <!-- Tab Profiles: 10 Genre-Based Profiles -->
         <div class="tabs-container">
-            <div class="profile-tabs" style="width: 100%; justify-content: space-around; display: flex; gap: 6px; align-items: center;">
-                <button class="tab-btn active" data-index="0" style="flex: 1; text-align: center;">Profile 1</button>
-                <button class="tab-btn" data-index="1" style="flex: 1; text-align: center;">Profile 2</button>
-                <button class="tab-btn" data-index="2" style="flex: 1; text-align: center;">Profile 3</button>
-                <button id="btnResetDefaults" onclick="resetProfileToDefaults()" style="flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; cursor: pointer; transition: all 0.2s ease;" title="Khôi phục toàn bộ Profile hiện tại về mặc định xuất xưởng">↺ Mặc định</button>
+            <div class="profile-tabs" style="width: 100%; justify-content: flex-start; display: flex; gap: 6px; align-items: center; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin;">
+                <button class="tab-btn active" data-index="0" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Default</button>
+                <button class="tab-btn" data-index="1" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Acoustic</button>
+                <button class="tab-btn" data-index="2" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Jazz &amp; Blues</button>
+                <button class="tab-btn" data-index="3" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Pop</button>
+                <button class="tab-btn" data-index="4" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Rock</button>
+                <button class="tab-btn" data-index="5" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">R&amp;B &amp; Soul</button>
+                <button class="tab-btn" data-index="6" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Classical</button>
+                <button class="tab-btn" data-index="7" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Country &amp; Folk</button>
+                <button class="tab-btn" data-index="8" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Dance &amp; EDM</button>
+                <button class="tab-btn" data-index="9" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px;">Vocal &amp; Bolero</button>
+                <button id="btnResetDefaults" onclick="resetProfileToDefaults()" style="white-space: nowrap; flex: 0 0 auto; padding: 6px 12px; font-size: 11px; font-weight: 600; border-radius: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; cursor: pointer; transition: all 0.2s ease;" title="Khôi phục toàn bộ Profile hiện tại về mặc định xuất xưởng">↺ Mặc định</button>
             </div>
         </div>
 
@@ -3840,9 +3847,16 @@
 
         let activeProfileIndex = 0;
         let profiles = [
-            { name: "Profile 1", preamp: -6.2, bands: createDefaultBands() },
-            { name: "Profile 2", preamp: -6.1, bands: createDefaultBands() },
-            { name: "Profile 3", preamp: -2.1, bands: createDefaultBands() }
+            { name: "Default", preamp: -6.5, bands: createDefaultBands() },
+            { name: "Acoustic", preamp: -6.5, bands: createDefaultBands() },
+            { name: "Jazz & Blues", preamp: -6.5, bands: createDefaultBands() },
+            { name: "Pop", preamp: -7.0, bands: createDefaultBands() },
+            { name: "Rock", preamp: -7.5, bands: createDefaultBands() },
+            { name: "R&B & Soul", preamp: -7.5, bands: createDefaultBands() },
+            { name: "Classical", preamp: -6.0, bands: createDefaultBands() },
+            { name: "Country & Folk", preamp: -6.5, bands: createDefaultBands() },
+            { name: "Dance & EDM", preamp: -8.0, bands: createDefaultBands() },
+            { name: "Vocal & Bolero", preamp: -6.5, bands: createDefaultBands() }
         ];
 
         // Load saved profiles from localStorage
@@ -3850,7 +3864,7 @@
         if (savedProfiles) {
             try {
                 const parsed = JSON.parse(savedProfiles);
-                if (Array.isArray(parsed) && parsed.length >= 3) {
+                if (Array.isArray(parsed) && parsed.length >= 10) {
                     profiles = parsed;
                 }
             } catch (e) {
@@ -4870,12 +4884,13 @@
         });
 
         function resetProfileToDefaults() {
-            if (!confirm(`Bạn có chắc chắn muốn khôi phục Profile ${activeProfileIndex + 1} về cấu hình xuất xưởng (Factory Defaults) không?\nThao tác này sẽ đặt lại 15 bộ lọc EQ, Smart Bass, DRC, Clipper và Crossover.`)) {
+            const profName = profiles[activeProfileIndex] ? profiles[activeProfileIndex].name : `Profile ${activeProfileIndex + 1}`;
+            if (!confirm(`Bạn có chắc chắn muốn khôi phục Profile "${profName}" về cấu hình xuất xưởng (Factory Defaults) không?\nThao tác này sẽ đặt lại 15 bộ lọc EQ, Smart Bass, DRC, Clipper và Crossover.`)) {
                 return;
             }
             if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
                 window.eqWebSocket.send(`#EQ_RESET_DEFAULTS$${activeProfileIndex}`);
-                showToast(`↺ Đang khôi phục Profile ${activeProfileIndex + 1} về mặc định...`, "#ff9800");
+                showToast(`↺ Đang khôi phục ${profName} về mặc định...`, "#ff9800");
                 setTimeout(() => {
                     if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
                         window.eqWebSocket.send('#EQ_GET$');
@@ -5057,15 +5072,15 @@
                 if (event.data.startsWith('EQ_ACTIVE_PROFILE:')) {
                     const parts = event.data.substring(18).split(',').map(Number);
                     const serverActiveProfile = parts[0];
-                    if (serverActiveProfile >= 0 && serverActiveProfile < 3) {
+                    if (serverActiveProfile >= 0 && serverActiveProfile < profiles.length) {
                         activeProfileIndex = serverActiveProfile;
                         document.querySelectorAll('.tab-btn').forEach((b, idx) => {
                             b.classList.toggle('active', idx === activeProfileIndex);
                         });
                     }
                     const presetNames = ['DBE', 'DDE', 'DEQ'];
-                    if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = ['DBE', 'DBE', 'DDE'];
-                    for (let i = 0; i < 3; i++) {
+                    if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = new Array(profiles.length).fill('DBE');
+                    for (let i = 0; i < parts.length - 1 && i < profiles.length; i++) {
                         const preIdx = parts[i + 1];
                         if (preIdx >= 0 && preIdx <= 2) {
                             window.dpeqPresetsPerProfile[i] = presetNames[preIdx];
@@ -5085,14 +5100,15 @@
                         return;
                     }
                     const vals = dataStr.split(',').map(Number);
-                    if (vals.length < 228) {
+                    if (vals.length < 76) {
                         console.error('[EQ Sync] Invalid profiles data length:', vals.length);
                         overlay.remove();
                         return;
                     }
 
+                    const numRecProfiles = Math.min(Math.floor(vals.length / 76), profiles.length);
                     let idx = 0;
-                    for (let p = 0; p < 3; p++) {
+                    for (let p = 0; p < numRecProfiles; p++) {
                         profiles[p].preamp = vals[idx++];
                         for (let f = 0; f < 15; f++) {
                             const b_type = vals[idx++];
@@ -5389,9 +5405,10 @@
 
                 if (event.data.startsWith('EQ_SMART_SETTINGS:')) {
                     const vals = event.data.substring(18).split(',');
-                    if (vals.length >= 54) {
-                        const stride = (vals.length >= 60) ? 20 : ((vals.length >= 57) ? 19 : 18);
-                        for (let p = 0; p < 3; p++) {
+                    if (vals.length >= 20) {
+                        const stride = 20;
+                        const numProfiles = Math.min(Math.floor(vals.length / stride), profiles.length);
+                        for (let p = 0; p < numProfiles; p++) {
                             const offset = p * stride;
                             const sb_en = parseInt(vals[offset + 0]);
                             const sb_bst = parseFloat(vals[offset + 1]) / 10.0;
@@ -5454,22 +5471,19 @@
 
                 if (event.data.startsWith('EQ_CROSSOVER:')) {
                     const vals = event.data.substring(13).split(',');
-                    if (vals.length >= 15) {
+                    if (vals.length >= 10) {
                         if (!window.crossoverProfilesCache) window.crossoverProfilesCache = [];
-                        const is24Fields = vals.length >= 24;
-                        for (let p = 0; p < 3; p++) {
-                            const offset = is24Fields ? (p * 7) : (p * 5);
+                        const stride = 7;
+                        const numProfiles = Math.min(Math.floor((vals.length - 3) / stride), profiles.length);
+                        for (let p = 0; p < numProfiles; p++) {
+                            const offset = p * stride;
                             const cr_en = parseInt(vals[offset + 0]);
                             const cr_fc = parseInt(vals[offset + 1]);
                             const cr_slp = parseInt(vals[offset + 2]);
                             const tr_trim = (parseFloat(vals[offset + 3]) / 10.0) - 10.0;
                             const mb_trim = (parseFloat(vals[offset + 4]) / 10.0) - 10.0;
-                            let fc_low = 250;
-                            let bass_trim = 0.0;
-                            if (is24Fields) {
-                                fc_low = parseInt(vals[offset + 5]);
-                                bass_trim = (parseFloat(vals[offset + 6]) / 10.0) - 10.0;
-                            }
+                            const fc_low = parseInt(vals[offset + 5]);
+                            const bass_trim = (parseFloat(vals[offset + 6]) / 10.0) - 10.0;
 
                             window.crossoverProfilesCache[p] = {
                                 en: cr_en,
@@ -5485,22 +5499,13 @@
                                 crossoverState = { en: cr_en, fc: cr_fc, slope: cr_slp, treb_trim: tr_trim, mid_trim: mb_trim, fc_low: fc_low, bass_trim: bass_trim };
                             }
                         }
-                        if (is24Fields) {
-                            const hbMode = parseInt(vals[21]);
+                        if (vals.length >= 3) {
+                            const hbMode = parseInt(vals[vals.length - 3]);
                             if (!isNaN(hbMode)) updateHybridModeLabelPassive(hbMode);
-                            const ampState = parseInt(vals[22]);
+                            const ampState = parseInt(vals[vals.length - 2]);
                             if (!isNaN(ampState)) updateAmpStateLabelPassive(ampState);
-                            const spkMode = parseInt(vals[23]);
+                            const spkMode = parseInt(vals[vals.length - 1]);
                             if (!isNaN(spkMode)) systemSpeakerMode = spkMode;
-                        } else {
-                            if (vals.length >= 16) {
-                                const hbMode = parseInt(vals[15]);
-                                if (!isNaN(hbMode)) updateHybridModeLabelPassive(hbMode);
-                            }
-                            if (vals.length >= 17) {
-                                const ampState = parseInt(vals[16]);
-                                if (!isNaN(ampState)) updateAmpStateLabelPassive(ampState);
-                            }
                         }
                         syncCrossoverUi();
                     }
@@ -5522,9 +5527,10 @@
 
                 if (event.data.startsWith('EQ_EXCURSION:')) {
                     const p = event.data.substring(13).split(',');
-                    if (p.length >= 15) {
+                    if (p.length >= 5) {
                         if (!window.excursionProfilesCache) window.excursionProfilesCache = [];
-                        for (let i = 0; i < 3; i++) {
+                        const numProfiles = Math.min(Math.floor(p.length / 5), profiles.length);
+                        for (let i = 0; i < numProfiles; i++) {
                             const off = i * 5;
                             window.excursionProfilesCache[i] = {
                                 en: parseInt(p[off + 0]),
@@ -5543,9 +5549,10 @@
 
                 if (event.data.startsWith('EQ_THERMAL:')) {
                     const p = event.data.substring(11).split(',');
-                    if (p.length >= 12) {
+                    if (p.length >= 4) {
                         if (!window.thermalProfilesCache) window.thermalProfilesCache = [];
-                        for (let i = 0; i < 3; i++) {
+                        const numProfiles = Math.min(Math.floor(p.length / 4), profiles.length);
+                        for (let i = 0; i < numProfiles; i++) {
                             const off = i * 4;
                             window.thermalProfilesCache[i] = {
                                 en: parseInt(p[off + 0]),
