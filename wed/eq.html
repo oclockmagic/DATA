@@ -3909,6 +3909,7 @@
         function syncMonoCrossbarUi() {}
         function onRegReadResponse(reg, val) {}
 
+        let isSyncingUI = false;
         let activeProfileIndex = 0;
         let profiles = [
             { name: "Default", preamp: -6.5, bands: createDefaultBands() },
@@ -4662,6 +4663,7 @@
 
         let lastSendToneTime = 0;
         window.throttleSendTone = function (profileIdx) {
+            if (isSyncingUI) return;
             const now = Date.now();
             if (now - lastSendToneTime > 50) {
                 if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
@@ -4678,6 +4680,7 @@
         };
 
         function onToneSliderInput(type) {
+            if (isSyncingUI) return;
             const val = parseFloat(document.getElementById(`slider${type.charAt(0).toUpperCase() + type.slice(1)}`).value);
             document.getElementById(`lbl${type.charAt(0).toUpperCase() + type.slice(1)}Val`).textContent = (val > 0 ? '+' : '') + val.toFixed(1) + ' dB';
 
@@ -4703,6 +4706,7 @@
         }
 
         function onToneSliderChange(type) {
+            if (isSyncingUI) return;
             let filterIdx = 10;
             if (type === 'mid') filterIdx = 11;
             if (type === 'treble') filterIdx = 12;
@@ -4899,6 +4903,8 @@
                 const idx = parseInt(btn.getAttribute('data-index'));
                 if (idx === activeProfileIndex) return;
 
+                isSyncingUI = true;
+
                 // Update active tab UI
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
@@ -4947,6 +4953,8 @@
                 buildTable();
                 updateSelectedRowHighlight();
                 drawGraph();
+
+                setTimeout(() => { isSyncingUI = false; }, 350);
 
                 console.log(`[EQ Profile] Switched to ${profiles[activeProfileIndex].name}`);
             });
@@ -5087,6 +5095,7 @@
         // --- WebSocket Sync ---
         let lastSendTime = 0;
         window.throttleSendEQ = function (profileIdx, filterIdx) {
+            if (isSyncingUI) return;
             const now = Date.now();
             if (now - lastSendTime > 50) { // 50ms throttle
                 window.sendEQUpdate(profileIdx, filterIdx);
@@ -5095,6 +5104,7 @@
         };
 
         window.sendEQUpdate = function (profileIdx, filterIdx) {
+            if (isSyncingUI) return;
             if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
                 const prof = profiles[profileIdx];
                 const filter = prof.bands[filterIdx];
@@ -6225,6 +6235,7 @@
     }
 
     function sendDrcSettings(band) {
+        if (isSyncingUI) return;
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) return;
         const d = drcState[band];
         const cmdName = '#EQ_SET_DRC_' + band.toUpperCase() + '$';
@@ -6653,6 +6664,7 @@
     }
 
     function sendSmartBassSettings() {
+        if (isSyncingUI) return;
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) {
             console.warn('[SmartBass] WebSocket not open!');
             return;
@@ -7075,6 +7087,7 @@
     }
 
     function sendClipperSettings() {
+        if (isSyncingUI) return;
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) {
             showToast("⚠️ WebSocket chưa kết nối!", "#ff1744");
             return;
@@ -7287,6 +7300,7 @@
     }
 
     function sendCrossoverSettings() {
+        if (isSyncingUI) return;
         if (!window.eqWebSocket || window.eqWebSocket.readyState !== WebSocket.OPEN) {
             showToast("⚠️ WebSocket chưa kết nối!", "#ff1744");
             return;
@@ -7636,6 +7650,7 @@
     }
 
     function sendSpatializerSettings() {
+        if (isSyncingUI) return;
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             const cmd = `#EQ_SET_SPATIAL$${spatializerState.en},${spatializerState.level.toFixed(2)},${spatializerState.hpf.toFixed(0)},${spatializerState.lpf.toFixed(0)},${spatializerState.preset}`;
             window.eqWebSocket.send(cmd);
@@ -7769,6 +7784,7 @@
     }
 
     function sendVolSofteningSettings() {
+        if (isSyncingUI) return;
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_VOL_SOFT$${volSofteningState.alpha_ms.toFixed(1)}`);
             showToast(`🔊 Volume Softening: ${volSofteningState.alpha_ms} ms`, "#38bdf8");
@@ -8024,6 +8040,7 @@
     }
 
     function sendDpeqSettings() {
+        if (isSyncingUI) return;
         if (!window.dpeqProfilesCache) window.dpeqProfilesCache = [];
         window.dpeqProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(dpeqState));
         if (!window.dpeqPresetsPerProfile) window.dpeqPresetsPerProfile = ['DBE', 'DBE', 'DDE'];
@@ -8530,6 +8547,7 @@
     function onAglSliderChange() { sendAglSettings(); }
 
     function sendAglSettings() {
+        if (isSyncingUI) return;
         if (!window.aglProfilesCache) window.aglProfilesCache = [];
         window.aglProfilesCache[activeProfileIndex] = JSON.parse(JSON.stringify(aglState));
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
@@ -8567,6 +8585,7 @@
     function onPhaseSliderChange() { sendPhaseSettings(); }
 
     function sendPhaseSettings() {
+        if (isSyncingUI) return;
         const tr = (phaseState.treble !== undefined) ? phaseState.treble : (phaseState.l || 0);
         const mb = (phaseState.mid !== undefined) ? phaseState.mid : (phaseState.r || 0);
         const sub = phaseState.sub || 0;
@@ -8590,6 +8609,7 @@
     }
 
     function sendCrossbarSettings() {
+        if (isSyncingUI) return;
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_CROSSBAR$${crossbarState.amp_l},${crossbarState.amp_r},${crossbarState.i2s_l},${crossbarState.i2s_r}`);
             showToast(`🔀 Crossbar Updated`, "#38bdf8");
@@ -8625,6 +8645,7 @@
     function onPvddSliderChange() { sendPvddSettings(); }
 
     function sendPvddSettings() {
+        if (isSyncingUI) return;
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_PVDD$${pvddState.en},${pvddState.thr.toFixed(1)},${pvddState.scale.toFixed(1)},${pvddState.time.toFixed(1)}`);
             showToast(`🔋 PVDD Protection: ${pvddState.en ? 'BẬT (' + pvddState.thr + 'V)' : 'TẮT'}`, "#ffd600");
@@ -8667,6 +8688,7 @@
 
     // Periodic meter poller
     setInterval(() => {
+        if (isSyncingUI) return;
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send("#EQ_GET_METER$");
         }
@@ -8891,6 +8913,7 @@
     }
 
     function sendInputMixer() {
+        if (isSyncingUI) return;
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_INPUT_MIXER$${inputMixerState.l2l.toFixed(1)},${inputMixerState.r2l.toFixed(1)},${inputMixerState.l2r.toFixed(1)},${inputMixerState.r2r.toFixed(1)},${inputMixerState.mode}`);
             showToast("🎚️ Input Mixer Coeffs Applied", "#4facfe");
@@ -8956,6 +8979,7 @@
     }
 
     function sendExcursionSettings() {
+        if (isSyncingUI) return;
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_EXCURSION$${activeProfileIndex},${excursionState.en},${excursionState.xmax.toFixed(1)},${excursionState.att.toFixed(1)},${excursionState.dec.toFixed(1)},${excursionState.fc.toFixed(0)}`);
             if (!window.excursionProfilesCache) window.excursionProfilesCache = [];
@@ -9022,6 +9046,7 @@
     }
 
     function sendThermalSettings() {
+        if (isSyncingUI) return;
         if (window.eqWebSocket && window.eqWebSocket.readyState === WebSocket.OPEN) {
             window.eqWebSocket.send(`#EQ_SET_THERMAL$${activeProfileIndex},${thermalState.en},${thermalState.rth.toFixed(1)},${thermalState.tmax.toFixed(0)},${thermalState.ta.toFixed(0)}`);
             if (!window.thermalProfilesCache) window.thermalProfilesCache = [];
