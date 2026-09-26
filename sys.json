@@ -15,7 +15,7 @@
     "listradio.rao": 29777270,
     "emoji.emj": 29770985,
     "backemoji.emj": 29770986,
-    "firmware.bin": 29840735,
+    "firmware.bin": 29840743,
     "updater.bin": 29840712
   },
   "url_music": {
@@ -26,5 +26,5 @@
     "secret": "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW",
     "version": "1.20.5"
   },
-  "updater.bin": 29840729
+  "updater.bin": 29840740
 }
