@@ -875,13 +875,13 @@
                 <div class="card-inner-box">
                     <div class="control-header">
                         <span class="control-title">Volume Softening Alpha (Độ mượt Volume Slew Rate):</span>
-                        <span id="lblVolSoftening" class="control-val">20 ms</span>
+                        <span id="lblVolSoftening" class="control-val">3 ms</span>
                     </div>
-                    <input type="range" id="sliderVolSoftening" class="smart-slider" min="5" max="100" step="5" value="20" oninput="onVolSofteningInput()" onchange="onVolSofteningChange()">
+                    <input type="range" id="sliderVolSoftening" class="smart-slider" min="1" max="50" step="1" value="3" oninput="onVolSofteningInput()" onchange="onVolSofteningChange()">
                     <div style="display: flex; justify-content: space-between; font-size: 9px; color: var(--text-dim); margin-top: 2px;">
-                        <span>5 ms (Tức thì)</span>
-                        <span>20 ms (Tiêu chuẩn TI)</span>
-                        <span>100 ms (Rất mượt)</span>
+                        <span>1 ms (Tức thì)</span>
+                        <span>3 ms (Chuẩn TI App)</span>
+                        <span>50 ms (Rất mượt)</span>
                     </div>
 
                     <div style="font-size: 10px; color: var(--text-dim); line-height: 1.3; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06);">
@@ -994,9 +994,9 @@
                                     <div>
                                         <div class="control-header">
                                             <span class="control-title">Cutoff Fc:</span>
-                                            <span id="lblDpeqSenseFc" class="control-val">200 Hz</span>
+                                            <span id="lblDpeqSenseFc" class="control-val">150 Hz</span>
                                         </div>
-                                        <input type="range" id="sliderDpeqSenseFc" class="smart-slider" min="30" max="12000" step="10" value="200" oninput="onDpeqFilterParamInput('sense', 'fc')" onchange="onDpeqFilterParamChange('sense', 'fc')">
+                                        <input type="range" id="sliderDpeqSenseFc" class="smart-slider" min="30" max="12000" step="10" value="150" oninput="onDpeqFilterParamInput('sense', 'fc')" onchange="onDpeqFilterParamChange('sense', 'fc')">
                                     </div>
                                 </div>
                                 <div>
@@ -1279,9 +1279,9 @@
                         <span class="tag">Cone Xmax Protection</span>
                     </h3>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span id="lblExcursionState" class="status-pill">TẮT</span>
+                        <span id="lblExcursionState" class="status-pill active">BẬT</span>
                         <label class="smart-switch">
-                            <input type="checkbox" id="chkExcursionEn" onchange="onExcursionStateChange()">
+                            <input type="checkbox" id="chkExcursionEn" checked onchange="onExcursionStateChange()">
                             <span class="smart-switch-track"></span>
                         </label>
                     </div>
@@ -1342,9 +1342,9 @@
                         <span class="tag">Voice Coil Protection</span>
                     </h3>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span id="lblThermalState" class="status-pill">TẮT</span>
+                        <span id="lblThermalState" class="status-pill active">BẬT</span>
                         <label class="smart-switch">
-                            <input type="checkbox" id="chkThermalEn" onchange="onThermalStateChange()">
+                            <input type="checkbox" id="chkThermalEn" checked onchange="onThermalStateChange()">
                             <span class="smart-switch-track"></span>
                         </label>
                     </div>
@@ -1397,9 +1397,9 @@
                         <span class="tag">Automatic Gain Limiter</span>
                     </h3>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span id="lblAglState" class="status-pill">TẮT</span>
+                        <span id="lblAglState" class="status-pill active">BẬT</span>
                         <label class="smart-switch">
-                            <input type="checkbox" id="chkAglEn" onchange="onAglStateChange()">
+                            <input type="checkbox" id="chkAglEn" checked onchange="onAglStateChange()">
                             <span class="smart-switch-track"></span>
                         </label>
                     </div>
@@ -1539,9 +1539,9 @@
                         <span class="tag">Anti-Clipping Protection</span>
                     </h3>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span id="lblClipperState" class="status-pill">TẮT</span>
+                        <span id="lblClipperState" class="status-pill active">BẬT</span>
                         <label class="smart-switch">
-                            <input type="checkbox" id="chkClipper" onchange="onClipStateChange()">
+                            <input type="checkbox" id="chkClipper" checked onchange="onClipStateChange()">
                             <span class="smart-switch-track"></span>
                         </label>
                     </div>
@@ -3809,7 +3809,7 @@
         spatializerState = { en: 0, level: 0.5, hpf: 300, lpf: 20000 };
         
         // 2. Volume Softening State
-        let volSofteningState = { alpha_ms: 20 };
+        let volSofteningState = { alpha_ms: 3 }; // App spec: volume-alpha-default.json default = 3ms
         
         // 3. Dynamic EQ (DPEQ) State & Presets
         const DPEQ_PRESETS = {
@@ -3847,14 +3847,14 @@
 
         let dpeqState = {
             en: 0,
-            vol_alpha_ms: 20,
+            vol_alpha_ms: 3, // App spec: volume-alpha-default.json default = 3ms
             preset: "DBE",
             activeTab: "sense",
             low_thr: -30.0,
             high_thr: -10.0,
             energy_ms: 100.0,
-            sense_fc: 200.0,
-            sense: { type: "LP_LR2", fc: 200.0, q: 0.71 },
+            sense_fc: 150.0, // App spec: senseEq default ~150 Hz
+            sense: { type: "LP_LR2", fc: 150.0, q: 0.71 },
             low_eq: { type: "PEAK", fc: 70.0, gain: 6.0, q: 1.2 },
             high_eq: { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 },
             sim_level: -30.0
@@ -3876,7 +3876,7 @@
         let isDraggingSb = null;
 
         // 6. Output Clipper State & Advanced Mode
-        let clipperState = { en: 0, thr: 0.0, tr_thr: -2.5, sub_thr: 0.0 };
+        let clipperState = { en: 1, thr: -0.5, tr_thr: -1.5, sub_thr: 0.0 };
         let clipperAdvState = { makeup: 0.0, thd: 0.0 };
         let isDraggingClipper = false;
 
@@ -3885,13 +3885,13 @@
         let crossoverState = { en: 1, fc: 2500, slope: 2, treb_trim: -2.0, mid_trim: 0.0, fc_low: 250, bass_trim: 0.0, invert_phase: 0 };
 
         // 8. Driver Excursion State
-        excursionState = { en: 0, xmax: 1.5, att: 10, dec: 50, fc: 60 };
+        excursionState = { en: 1, xmax: 3.5, att: 10, dec: 120, fc: 65 };
 
         // 9. Thermal Protection State
-        thermalState = { en: 0, rth: 5.0, tmax: 95, ta: 30 };
+        thermalState = { en: 1, rth: 5.0, tmax: 100, ta: 25 };
 
         // 10. AGL Limiter State
-        let aglState = { en: 0, thr: -12.0, att: 10, rel: 500, alpha: 2.0 };
+        let aglState = { en: 1, thr: -1.0, att: 0.2, rel: 0.001, alpha: 0.55 };
 
         // 11. PVDD Protection State
         let pvddState = { en: 1, thr: 9.5, scale: -0.5, time: 1.0 };
@@ -3912,16 +3912,16 @@
         let isSyncingUI = false;
         let activeProfileIndex = 0;
         let profiles = [
-            { name: "Default", preamp: -6.5, bands: createDefaultBands() },
+            { name: "Default", preamp: -7.0, bands: createDefaultBands() },
             { name: "Acoustic", preamp: -6.5, bands: createDefaultBands() },
-            { name: "Jazz & Blues", preamp: -6.8, bands: createDefaultBands() },
-            { name: "Pop", preamp: -7.0, bands: createDefaultBands() },
-            { name: "Rock", preamp: -7.2, bands: createDefaultBands() },
-            { name: "R&B & Soul", preamp: -7.6, bands: createDefaultBands() },
-            { name: "Classical", preamp: -6.0, bands: createDefaultBands() },
-            { name: "Country & Folk", preamp: -6.5, bands: createDefaultBands() },
-            { name: "Dance & EDM", preamp: -8.0, bands: createDefaultBands() },
-            { name: "Vocal & Bolero", preamp: -6.5, bands: createDefaultBands() }
+            { name: "Jazz & Blues", preamp: -7.5, bands: createDefaultBands() },
+            { name: "Pop", preamp: -7.8, bands: createDefaultBands() },
+            { name: "Rock", preamp: -8.0, bands: createDefaultBands() },
+            { name: "R&B & Soul", preamp: -8.5, bands: createDefaultBands() },
+            { name: "Classical", preamp: -6.5, bands: createDefaultBands() },
+            { name: "Country & Folk", preamp: -7.0, bands: createDefaultBands() },
+            { name: "Dance & EDM", preamp: -9.0, bands: createDefaultBands() },
+            { name: "Vocal & Bolero", preamp: -7.5, bands: createDefaultBands() }
         ];
 
         // Load saved profiles from localStorage
