@@ -15,8 +15,8 @@
     "listradio.rao": 29777270,
     "emoji.emj": 29770985,
     "backemoji.emj": 29770986,
-    "firmware.bin": 29840676,
-    "updater.bin": 29840707
+    "firmware.bin": 29840730,
+    "updater.bin": 29840712
   },
   "url_music": {
     "url_play": "http://171.244.40.218:5006/proxy_audio?id="
@@ -25,5 +25,6 @@
     "apiKey": "X5BM3w8N7MKozC0B85o4KMlzLZKhV00y",
     "secret": "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW",
     "version": "1.20.5"
-  }
+  },
+  "updater.bin": 29840729
 }
