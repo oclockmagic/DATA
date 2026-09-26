@@ -899,9 +899,9 @@
                         <span class="tag">Loudness Tracking</span>
                     </h3>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <span id="lblDpeqState" class="status-pill">TẮT</span>
+                        <span id="lblDpeqState" class="status-pill active">BẬT</span>
                         <label class="smart-switch">
-                            <input type="checkbox" id="chkDpeqEn" onchange="onDpeqStateChange()">
+                            <input type="checkbox" id="chkDpeqEn" checked onchange="onDpeqStateChange()">
                             <span class="smart-switch-track"></span>
                         </label>
                     </div>
@@ -3846,7 +3846,7 @@
         };
 
         let dpeqState = {
-            en: 0,
+            en: 1,
             vol_alpha_ms: 3, // App spec: volume-alpha-default.json default = 3ms
             preset: "DBE",
             activeTab: "sense",
@@ -3952,6 +3952,59 @@
         });
 
         let bands = profiles[activeProfileIndex].bands;
+
+        // Khởi tạo cache ban đầu cho tất cả 10 profiles: Luôn BẬT bảo vệ & DPEQ mặc định
+        window.dpeqProfilesCache = [];
+        window.excursionProfilesCache = [];
+        window.thermalProfilesCache = [];
+        window.aglProfilesCache = [];
+        window.clipProfilesCache = [];
+        window.dpeqPresetsPerProfile = [];
+
+        for (let i = 0; i < 10; i++) {
+            const pre = (i === 2) ? "DDE" : "DBE";
+            window.dpeqPresetsPerProfile[i] = pre;
+            window.dpeqProfilesCache[i] = {
+                en: 1,
+                vol_alpha_ms: 3,
+                preset: pre,
+                activeTab: "sense",
+                low_thr: -30.0,
+                high_thr: -10.0,
+                energy_ms: 100.0,
+                sense_fc: 150.0,
+                sense: { type: "LP_LR2", fc: 150.0, q: 0.71 },
+                low_eq: { type: "PEAK", fc: 70.0, gain: 6.0, q: 1.2 },
+                high_eq: { type: "PEAK", fc: 70.0, gain: 0.0, q: 1.0 },
+                sim_level: -30.0
+            };
+            window.excursionProfilesCache[i] = {
+                en: 1,
+                xmax: 3.5,
+                att: 10.0,
+                dec: 120.0,
+                fc: 65.0
+            };
+            window.thermalProfilesCache[i] = {
+                en: 1,
+                rth: 5.0,
+                tmax: 100.0,
+                ta: 25.0
+            };
+            window.aglProfilesCache[i] = {
+                en: 1,
+                thr: -1.0,
+                att: 0.2,
+                rel: 0.001,
+                alpha: 0.55
+            };
+            window.clipProfilesCache[i] = {
+                en: 1,
+                thr: -0.5,
+                tr_thr: -1.5,
+                sub_thr: 0.0
+            };
+        }
 
         // Console logger interceptor (safeguarded for layout compatibility)
         const consoleLogsContainer = document.getElementById('consoleLogs');
@@ -8921,7 +8974,7 @@
     }
 
     // 3. Excursion Limiter State
-    excursionState = { en: 0, xmax: 3.5, att: 10.0, dec: 100.0, fc: 50.0 };
+    excursionState = { en: 1, xmax: 3.5, att: 10.0, dec: 120.0, fc: 65.0 };
 
     function syncExcursionUi() {
         const chk = document.getElementById('chkExcursionEn');
@@ -8989,7 +9042,7 @@
     }
 
     // 4. Thermal Limiter State
-    thermalState = { en: 0, rth: 15.0, tmax: 120.0, ta: 25.0 };
+    thermalState = { en: 1, rth: 5.0, tmax: 100.0, ta: 25.0 };
 
     function syncThermalUi() {
         const chk = document.getElementById('chkThermalEn');
