@@ -704,6 +704,12 @@
         </div>
 
         <!-- Main EQ Canvas Graph -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px; margin-bottom: 4px; padding: 0 4px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 11px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 0.8px;">ĐÁP TUYẾN TẦN SỐ</span>
+                <span id="eqGraphLegend" style="font-size: 10px; color: #00e676; background: rgba(0,230,118,0.12); padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(0,230,118,0.25); font-weight: 600;">● 10 EQ + 3 Tone</span>
+            </div>
+        </div>
         <div class="canvas-container">
             <canvas id="eqCanvas"></canvas>
         </div>
@@ -3911,31 +3917,9 @@
 
         let isSyncingUI = false;
         let activeProfileIndex = 0;
-        let profiles = [
-            { name: "Default", preamp: -7.0, bands: createDefaultBands() },
-            { name: "Acoustic", preamp: -6.5, bands: createDefaultBands() },
-            { name: "Jazz & Blues", preamp: -7.5, bands: createDefaultBands() },
-            { name: "Pop", preamp: -7.8, bands: createDefaultBands() },
-            { name: "Rock", preamp: -8.0, bands: createDefaultBands() },
-            { name: "R&B & Soul", preamp: -8.5, bands: createDefaultBands() },
-            { name: "Classical", preamp: -6.5, bands: createDefaultBands() },
-            { name: "Country & Folk", preamp: -7.0, bands: createDefaultBands() },
-            { name: "Dance & EDM", preamp: -9.0, bands: createDefaultBands() },
-            { name: "Vocal & Bolero", preamp: -7.5, bands: createDefaultBands() }
-        ];
+        const DEFAULT_GENRE_PROFILES = [{"name":"Default","preamp":-6.5,"bands":[{"id":0,"type":0,"freq":60,"q":0.8,"gain":1.5,"enabled":true},{"id":1,"type":0,"freq":170,"q":0.85,"gain":-1.5,"enabled":true},{"id":2,"type":0,"freq":330,"q":1.4,"gain":-2.5,"enabled":true},{"id":3,"type":0,"freq":700,"q":1.8,"gain":-1,"enabled":true},{"id":4,"type":0,"freq":1800,"q":2,"gain":2,"enabled":true},{"id":5,"type":0,"freq":3500,"q":2.5,"gain":-1.5,"enabled":true},{"id":6,"type":0,"freq":5000,"q":2.2,"gain":1.5,"enabled":true},{"id":7,"type":0,"freq":8000,"q":1.8,"gain":-1,"enabled":true},{"id":8,"type":1,"freq":100,"q":0.7,"gain":1.5,"enabled":true},{"id":9,"type":2,"freq":14000,"q":0.7,"gain":1.5,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"Acoustic","preamp":-6,"bands":[{"id":0,"type":0,"freq":80,"q":1.2,"gain":-2.5,"enabled":true},{"id":1,"type":0,"freq":200,"q":1,"gain":-3.5,"enabled":true},{"id":2,"type":0,"freq":380,"q":1.6,"gain":-2,"enabled":true},{"id":3,"type":0,"freq":900,"q":1.5,"gain":1.5,"enabled":true},{"id":4,"type":0,"freq":2200,"q":2.8,"gain":3.5,"enabled":true},{"id":5,"type":0,"freq":4500,"q":2.5,"gain":4,"enabled":true},{"id":6,"type":0,"freq":6500,"q":2,"gain":2.5,"enabled":true},{"id":7,"type":0,"freq":9000,"q":1.8,"gain":-1,"enabled":true},{"id":8,"type":1,"freq":80,"q":0.6,"gain":-1.5,"enabled":true},{"id":9,"type":2,"freq":12000,"q":0.7,"gain":4.5,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"Jazz & Blues","preamp":-7.5,"bands":[{"id":0,"type":0,"freq":55,"q":0.7,"gain":3,"enabled":true},{"id":1,"type":0,"freq":130,"q":0.9,"gain":2.5,"enabled":true},{"id":2,"type":0,"freq":300,"q":1.2,"gain":-2,"enabled":true},{"id":3,"type":0,"freq":800,"q":1.5,"gain":2,"enabled":true},{"id":4,"type":0,"freq":1600,"q":1.8,"gain":1.5,"enabled":true},{"id":5,"type":0,"freq":3200,"q":2.5,"gain":-3,"enabled":true},{"id":6,"type":0,"freq":6000,"q":2,"gain":-2.5,"enabled":true},{"id":7,"type":0,"freq":8500,"q":1.5,"gain":2,"enabled":true},{"id":8,"type":1,"freq":120,"q":0.7,"gain":3.5,"enabled":true},{"id":9,"type":2,"freq":12000,"q":0.7,"gain":1,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"Pop","preamp":-8,"bands":[{"id":0,"type":0,"freq":65,"q":1,"gain":5,"enabled":true},{"id":1,"type":0,"freq":120,"q":1.1,"gain":3,"enabled":true},{"id":2,"type":0,"freq":300,"q":1.3,"gain":-3,"enabled":true},{"id":3,"type":0,"freq":700,"q":1.5,"gain":-1.5,"enabled":true},{"id":4,"type":0,"freq":2000,"q":2,"gain":4,"enabled":true},{"id":5,"type":0,"freq":4500,"q":2.5,"gain":3.5,"enabled":true},{"id":6,"type":0,"freq":7000,"q":2,"gain":-2,"enabled":true},{"id":7,"type":0,"freq":11000,"q":1.8,"gain":1.5,"enabled":true},{"id":8,"type":1,"freq":90,"q":0.65,"gain":4.5,"enabled":true},{"id":9,"type":2,"freq":14000,"q":0.7,"gain":3.5,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"Rock","preamp":-8.5,"bands":[{"id":0,"type":0,"freq":75,"q":1.2,"gain":4,"enabled":true},{"id":1,"type":0,"freq":150,"q":1,"gain":-3,"enabled":true},{"id":2,"type":0,"freq":400,"q":1.5,"gain":-2.5,"enabled":true},{"id":3,"type":0,"freq":1200,"q":2.2,"gain":5.5,"enabled":true},{"id":4,"type":0,"freq":2800,"q":3,"gain":-2.5,"enabled":true},{"id":5,"type":0,"freq":4000,"q":2.5,"gain":5,"enabled":true},{"id":6,"type":0,"freq":6500,"q":2,"gain":-3,"enabled":true},{"id":7,"type":0,"freq":9000,"q":1.8,"gain":1.5,"enabled":true},{"id":8,"type":1,"freq":100,"q":0.7,"gain":2.5,"enabled":true},{"id":9,"type":2,"freq":13000,"q":0.7,"gain":2.5,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"R&B & Soul","preamp":-8.5,"bands":[{"id":0,"type":0,"freq":50,"q":0.7,"gain":4,"enabled":true},{"id":1,"type":0,"freq":100,"q":1,"gain":4.5,"enabled":true},{"id":2,"type":0,"freq":250,"q":1.2,"gain":-2.5,"enabled":true},{"id":3,"type":0,"freq":600,"q":1.6,"gain":-1.5,"enabled":true},{"id":4,"type":0,"freq":1500,"q":2,"gain":3.5,"enabled":true},{"id":5,"type":0,"freq":3000,"q":2.5,"gain":-2,"enabled":true},{"id":6,"type":0,"freq":5000,"q":2.2,"gain":2,"enabled":true},{"id":7,"type":0,"freq":8000,"q":1.8,"gain":-1.5,"enabled":true},{"id":8,"type":1,"freq":110,"q":0.65,"gain":5,"enabled":true},{"id":9,"type":2,"freq":12000,"q":0.7,"gain":2,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"Classical","preamp":-5.5,"bands":[{"id":0,"type":0,"freq":45,"q":0.7,"gain":-2,"enabled":true},{"id":1,"type":0,"freq":100,"q":0.8,"gain":1.5,"enabled":true},{"id":2,"type":0,"freq":250,"q":1.2,"gain":-2,"enabled":true},{"id":3,"type":0,"freq":500,"q":1.5,"gain":-1,"enabled":true},{"id":4,"type":0,"freq":1000,"q":1.8,"gain":1.5,"enabled":true},{"id":5,"type":0,"freq":2500,"q":2,"gain":-2.5,"enabled":true},{"id":6,"type":0,"freq":4500,"q":1.8,"gain":2.5,"enabled":true},{"id":7,"type":0,"freq":7500,"q":1.6,"gain":-2,"enabled":true},{"id":8,"type":1,"freq":90,"q":0.6,"gain":1,"enabled":true},{"id":9,"type":2,"freq":16000,"q":0.7,"gain":4,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"Country & Folk","preamp":-7,"bands":[{"id":0,"type":0,"freq":70,"q":1,"gain":-1,"enabled":true},{"id":1,"type":0,"freq":150,"q":0.9,"gain":-2,"enabled":true},{"id":2,"type":0,"freq":350,"q":1.4,"gain":-1.5,"enabled":true},{"id":3,"type":0,"freq":950,"q":1.6,"gain":3.5,"enabled":true},{"id":4,"type":0,"freq":2400,"q":2.2,"gain":4.5,"enabled":true},{"id":5,"type":0,"freq":4800,"q":2.5,"gain":5,"enabled":true},{"id":6,"type":0,"freq":7200,"q":2,"gain":2.5,"enabled":true},{"id":7,"type":0,"freq":10000,"q":1.8,"gain":-1,"enabled":true},{"id":8,"type":1,"freq":90,"q":0.65,"gain":1,"enabled":true},{"id":9,"type":2,"freq":14000,"q":0.7,"gain":3.5,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"Dance & EDM","preamp":-9.5,"bands":[{"id":0,"type":0,"freq":40,"q":0.8,"gain":5,"enabled":true},{"id":1,"type":0,"freq":80,"q":1,"gain":6,"enabled":true},{"id":2,"type":0,"freq":300,"q":1.4,"gain":-4,"enabled":true},{"id":3,"type":0,"freq":800,"q":1.6,"gain":-3.5,"enabled":true},{"id":4,"type":0,"freq":3000,"q":2.5,"gain":2.5,"enabled":true},{"id":5,"type":0,"freq":5500,"q":2.8,"gain":5.5,"enabled":true},{"id":6,"type":0,"freq":8000,"q":2.2,"gain":-2,"enabled":true},{"id":7,"type":0,"freq":12000,"q":2,"gain":3,"enabled":true},{"id":8,"type":1,"freq":80,"q":0.65,"gain":6.5,"enabled":true},{"id":9,"type":2,"freq":16000,"q":0.7,"gain":4.5,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]},{"name":"Vocal & Bolero","preamp":-7.5,"bands":[{"id":0,"type":0,"freq":60,"q":0.8,"gain":1,"enabled":true},{"id":1,"type":0,"freq":160,"q":0.9,"gain":-2.5,"enabled":true},{"id":2,"type":0,"freq":380,"q":1.3,"gain":-2,"enabled":true},{"id":3,"type":0,"freq":800,"q":1.5,"gain":2.5,"enabled":true},{"id":4,"type":0,"freq":1400,"q":2,"gain":6,"enabled":true},{"id":5,"type":0,"freq":2800,"q":3,"gain":-3.5,"enabled":true},{"id":6,"type":0,"freq":4500,"q":2.5,"gain":2.5,"enabled":true},{"id":7,"type":0,"freq":7000,"q":2,"gain":-3,"enabled":true},{"id":8,"type":1,"freq":100,"q":0.7,"gain":2.5,"enabled":true},{"id":9,"type":2,"freq":13000,"q":0.7,"gain":1.5,"enabled":true},{"id":10,"type":1,"freq":100,"q":0.71,"gain":0,"enabled":true},{"id":11,"type":0,"freq":1000,"q":0.71,"gain":0,"enabled":true},{"id":12,"type":2,"freq":10000,"q":0.71,"gain":0,"enabled":true},{"id":13,"type":4,"freq":250,"q":0.71,"gain":0,"enabled":true},{"id":14,"type":3,"freq":4000,"q":0.71,"gain":0,"enabled":true}]}];
 
-        // Load saved profiles from localStorage
-        const savedProfiles = localStorage.getItem('eq_profiles');
-        if (savedProfiles) {
-            try {
-                const parsed = JSON.parse(savedProfiles);
-                if (Array.isArray(parsed) && parsed.length >= 10) {
-                    profiles = parsed;
-                }
-            } catch (e) {
-                console.warn('Failed to parse saved profiles, using defaults');
-            }
-        }
+        let profiles = JSON.parse(JSON.stringify(DEFAULT_GENRE_PROFILES));
 
         // Validate profiles have 15 bands
         profiles.forEach(p => {
@@ -4165,8 +4149,9 @@
 
         function computeCombinedResponse(freqs) {
             const combined = new Float32Array(freqs.length);
-            // Chỉ tính toán response của các band được bật (enabled !== false)
-            const activeBands = bands.filter(b => b.enabled !== false);
+            // Luôn tính 10 band EQ (0..9) + 3 band Tone Control (10..12: Bass, Mid, Treble)
+            // TUYỆT ĐỐI KHÔNG tính band 13 & 14 (bộ lọc cắt tần Crossover HP/LP) vào đồ thị EQ
+            const activeBands = bands.slice(0, 13).filter(b => b.enabled !== false);
             const biquads = activeBands.map(b => designBiquad(b.type, b.freq, b.q, b.gain, FS));
 
             for (let f = 0; f < freqs.length; f++) {
@@ -4280,7 +4265,7 @@
             // dB grid
             for (const db of DB_MARKERS) {
                 const y = dbToY(db, metrics);
-                ctx.strokeStyle = db === 0 ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.05)';
+                ctx.strokeStyle = db === 0 ? 'rgba(0, 230, 118, 0.3)' : 'rgba(255, 255, 255, 0.05)';
                 ctx.lineWidth = db === 0 ? 1.5 : 1;
                 ctx.beginPath();
                 ctx.moveTo(metrics.gx, y);
@@ -4292,7 +4277,7 @@
                 ctx.fillText(`${db > 0 ? '+' : ''}${db}`, metrics.gx - 10, y + 4);
             }
 
-            // Individual Band Curves (shows Q Factor shape for 12 EQ bands)
+            // Individual Band Curves (shows Q Factor shape for 10 EQ bands)
             bands.slice(0, 10).forEach((band, index) => {
                 if (band.enabled === false) return;
                 if (Math.abs(band.gain) < 0.05 && index !== selectedBand) return;
@@ -4301,8 +4286,8 @@
                 const color = BAND_COLORS[index % BAND_COLORS.length];
                 const isSelected = index === selectedBand;
 
-                ctx.strokeStyle = isSelected ? color : `${color}38`;
-                ctx.lineWidth = isSelected ? 1.5 : 0.8;
+                ctx.strokeStyle = isSelected ? color : `${color}40`;
+                ctx.lineWidth = isSelected ? 1.8 : 0.9;
                 ctx.setLineDash(isSelected ? [] : [4, 4]);
 
                 ctx.beginPath();
@@ -4316,7 +4301,31 @@
             });
             ctx.setLineDash([]); // reset
 
-            // Combined Response Curve (includes all 15 bands: 12 EQ profile bands + 3 Tone control bands)
+            // Tone Control Reference Curves (shows Bass/Mid/Treble shape if active)
+            const toneConfigs = [
+                { idx: 10, name: 'Bass Tone', color: '#38bdf8' },
+                { idx: 11, name: 'Mid Tone', color: '#f59e0b' },
+                { idx: 12, name: 'Treble Tone', color: '#c084fc' }
+            ];
+            toneConfigs.forEach(t => {
+                const b = bands[t.idx];
+                if (!b || b.enabled === false || Math.abs(b.gain) < 0.05) return;
+                const curve = computeSingleBandResponse(b, FREQS);
+                ctx.strokeStyle = `${t.color}75`;
+                ctx.lineWidth = 1.2;
+                ctx.setLineDash([3, 4]);
+                ctx.beginPath();
+                for (let i = 0; i < NUM_POINTS; i++) {
+                    const x = freqToX(FREQS[i], metrics);
+                    const y = dbToY(curve[i], metrics);
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            });
+            ctx.setLineDash([]);
+
+            // Combined Response Curve (10 EQ bands + 3 Tone bands)
             const combined = computeCombinedResponse(FREQS);
 
             // Curve Fill
@@ -4330,14 +4339,17 @@
             ctx.closePath();
 
             const grad = ctx.createLinearGradient(0, metrics.gy, 0, metrics.gy + metrics.gh);
-            grad.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
-            grad.addColorStop(0.5, 'rgba(16, 185, 129, 0.02)');
-            grad.addColorStop(1, 'rgba(16, 185, 129, 0.15)');
+            grad.addColorStop(0, 'rgba(0, 230, 118, 0.16)');
+            grad.addColorStop(0.5, 'rgba(0, 230, 118, 0.02)');
+            grad.addColorStop(1, 'rgba(0, 230, 118, 0.16)');
             ctx.fillStyle = grad;
             ctx.fill();
 
-            // Curve Line
-            ctx.strokeStyle = varColor('--accent-green');
+            // Curve Line (Bright Glowing Neon Green)
+            ctx.save();
+            ctx.strokeStyle = '#00e676';
+            ctx.shadowColor = 'rgba(0, 230, 118, 0.45)';
+            ctx.shadowBlur = 6;
             ctx.lineWidth = 2.5;
             ctx.beginPath();
             for (let i = 0; i < NUM_POINTS; i++) {
@@ -4347,8 +4359,9 @@
                 else ctx.lineTo(x, y);
             }
             ctx.stroke();
+            ctx.restore();
 
-            // Band Nodes (rendered ONLY for the 12 profile EQ bands, not for Tone Control bands 12-14)
+            // Band Nodes (rendered ONLY for the 10 profile EQ bands)
             bands.slice(0, 10).forEach((band, index) => {
                 if (band.enabled === false) return;
                 const x = freqToX(band.freq, metrics);
@@ -4356,7 +4369,7 @@
                 const color = BAND_COLORS[index % BAND_COLORS.length];
                 const isSelected = index === selectedBand;
                 const isHover = index === hoverBand;
-                const r = 7;
+                const r = isSelected ? 8 : (isHover ? 7.5 : 6);
 
                 // Glow for selection
                 if (isSelected) {
@@ -4375,10 +4388,10 @@
                 ctx.shadowBlur = 0; // reset shadow
 
                 // Index Label
-                ctx.fillStyle = isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.6)';
+                ctx.fillStyle = isSelected ? '#ffffff' : 'rgba(255, 255, 255, 0.7)';
                 ctx.font = 'bold 9px "Outfit", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(index + 1, x, y - 12);
+                ctx.fillText(index + 1, x, y - (r + 4));
             });
 
             // Outer frame border
@@ -4389,20 +4402,20 @@
             ctx.restore();
         }
 
-        function varColor(name) {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        }
-
         // --- Resize canvas handler ---
         function resizeCanvas() {
+            if (!canvas || !canvas.parentElement) return;
             const container = canvas.parentElement;
             const rect = container.getBoundingClientRect();
             const dpr = window.devicePixelRatio || 1;
 
-            canvas.width = Math.round(rect.width * dpr);
-            canvas.height = Math.round(rect.height * dpr);
-            canvas.style.width = Math.round(rect.width) + 'px';
-            canvas.style.height = Math.round(rect.height) + 'px';
+            const w = Math.round(rect.width > 0 ? rect.width : (container.clientWidth || 460));
+            const h = Math.round(rect.height > 0 ? rect.height : (container.clientHeight || 240));
+
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
 
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.scale(dpr, dpr);
@@ -4411,7 +4424,22 @@
         }
 
         window.addEventListener('resize', resizeCanvas);
-        setTimeout(resizeCanvas, 50);
+        document.addEventListener('DOMContentLoaded', resizeCanvas);
+        window.addEventListener('load', resizeCanvas);
+        setTimeout(resizeCanvas, 30);
+        setTimeout(resizeCanvas, 150);
+        setTimeout(resizeCanvas, 500);
+
+        if (window.ResizeObserver && canvas && canvas.parentElement) {
+            try {
+                const ro = new ResizeObserver(() => {
+                    resizeCanvas();
+                });
+                ro.observe(canvas.parentElement);
+            } catch (e) {
+                console.warn('ResizeObserver init failed:', e);
+            }
+        }
 
         // --- Interaction Event Listeners ---
         function getMousePos(e) {
