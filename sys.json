@@ -1,30 +1,29 @@
-{
-  "sys": {
-    "melody.dat": 29597138,
-    "quota.dat": 29529668,
-    "fcard.dat": 29529666,
-    "coloreq.dat": 29589586,
-    "colorpk.dat": 29589586,
-    "bass.dat": 29621522,
-    "back.dat": 29602554,
-    "listclock.lst": 29840602,
-    "listalarm.lst": 29840602,
-    "listmusic.lst": 29840602,
-    "listzing.zin": 29833491,
-    "listtruyen.try": 29612597,
-    "listradio.rao": 29777270,
-    "emoji.emj": 29770985,
-    "backemoji.emj": 29770986,
-    "firmware.bin": 29840757,
-    "updater.bin": 29840712
-  },
-  "url_music": {
-    "url_play": "http://171.244.40.218:5006/proxy_audio?id="
-  },
-  "zing": {
-    "apiKey": "X5BM3w8N7MKozC0B85o4KMlzLZKhV00y",
-    "secret": "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW",
-    "version": "1.20.5"
-  },
-  "updater.bin": 29840768
+﻿{
+    "sys":  {
+                "melody.dat":  29597138,
+                "quota.dat":  29529668,
+                "fcard.dat":  29529666,
+                "coloreq.dat":  29589586,
+                "colorpk.dat":  29589586,
+                "bass.dat":  29621522,
+                "back.dat":  29602554,
+                "listclock.lst":  29840602,
+                "listalarm.lst":  29840602,
+                "listmusic.lst":  29840602,
+                "listzing.zin":  29833491,
+                "listtruyen.try":  29612597,
+                "listradio.rao":  29777270,
+                "emoji.emj":  29770985,
+                "backemoji.emj":  29770986,
+                "firmware.bin":  29840757,
+                "updater.bin":  29840776
+            },
+    "url_music":  {
+                      "url_play":  "http://171.244.40.218:5006/proxy_audio?id="
+                  },
+    "zing":  {
+                 "apiKey":  "X5BM3w8N7MKozC0B85o4KMlzLZKhV00y",
+                 "secret":  "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW",
+                 "version":  "1.20.5"
+             }
 }
