@@ -16,7 +16,8 @@
     "emoji.emj": 29770985,
     "backemoji.emj": 29770986,
     "firmware.bin": 29841613,
-    "updater.bin": 29840778
+    "updater.bin": 29840778,
+    "art.art": 29844989
   },
   "url_music": {
     "url_play": "http://171.244.40.218:5006/proxy_audio?id="
