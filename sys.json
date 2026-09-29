@@ -10,7 +10,7 @@
     "listclock.lst": 29840602,
     "listalarm.lst": 29840602,
     "listmusic.lst": 29840602,
-    "listzing.zin": 29833491,
+    "listzing.zin": 29844434,
     "listtruyen.try": 29612597,
     "listradio.rao": 29842060,
     "emoji.emj": 29770985,
@@ -24,6 +24,6 @@
   "zing": {
     "apiKey": "X5BM3w8N7MKozC0B85o4KMlzLZKhV00y",
     "secret": "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW",
-    "version": "1.20.5"
+    "version": "1.22.0"
   }
 }
