@@ -1,2 +1,0 @@
-mus.dat
-00.dat

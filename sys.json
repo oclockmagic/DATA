@@ -7,9 +7,9 @@
     "colorpk.dat": 29589586,
     "bass.dat": 29621522,
     "back.dat": 29602554,
-    "listclock.lst": 29840602,
-    "listalarm.lst": 29840602,
-    "listmusic.lst": 29840602,
+    "listclock.lst": 29853557,
+    "listalarm.lst": 29853557,
+    "listmusic.lst": 29853557,
     "listzing.zin": 29844434,
     "listtruyen.try": 29612597,
     "listradio.rao": 29842060,
@@ -19,9 +19,6 @@
     "updater.bin": 29840778,
     "art.art": 29848752,
     "podcast.pod": 29849413
-  },
-  "url_music": {
-    "url_play": "http://171.244.40.218:5006/proxy_audio?id="
   },
   "zing": {
     "apiKey": "X5BM3w8N7MKozC0B85o4KMlzLZKhV00y",
