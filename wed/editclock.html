@@ -1181,7 +1181,7 @@
 
             // 4. Kết thúc: Lưu vào Flash với flag MET để chip chỉ ghi header/alarm/text, không ghi ảnh
             websocket.send("#CRES$");
-            websocket.send(isSaving ? "#CSAV:MET" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
+            sendWithWatchdog(isSaving ? "#CSAV:MET" + (isGifAnimation ? ":1" : ":0") : "#CFIN$");
         }
 
         function sendImageData(finalSave, doRedirect, onlyImage = false) {
@@ -1445,16 +1445,19 @@
                     if (isGifAnimation) {
                         startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
                     } else {
-                        if (isRedirecting) {
-                            document.getElementById('modal-title').innerText = "SUCCESS!";
-                            document.getElementById('modal-text').innerText = "Configuration saved";
-                            document.getElementById('modal-spinner').style.display = 'none';
-                            document.getElementById('modal-progress-container').style.display = 'none';
-                            document.getElementById('progress-percent').style.display = 'none';
-                            setTimeout(() => { window.location.href = '/clock.html?v=' + Date.now(); }, 1500);
-                        } else {
-                            document.getElementById('init-overlay').classList.add('hidden');
-                        }
+                        document.getElementById('modal-title').innerText = "SUCCESS!";
+                        document.getElementById('modal-text').innerText = "Configuration saved";
+                        document.getElementById('modal-spinner').style.display = 'none';
+                        document.getElementById('modal-progress-container').style.display = 'none';
+                        document.getElementById('progress-percent').style.display = 'none';
+                        setTimeout(() => {
+                            if (isRedirecting) {
+                                window.location.href = '/clock.html?v=' + Date.now();
+                            } else {
+                                document.getElementById('init-overlay').classList.add('hidden');
+                                document.getElementById('modal-spinner').style.display = 'block';
+                            }
+                        }, 1200);
                     }
                 } else if (data === "A_READY" || data === "A_UP_OK") {
                     clearUploadWatchdog();
