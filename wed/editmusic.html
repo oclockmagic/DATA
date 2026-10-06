@@ -912,6 +912,25 @@
             musicWatchdogAttempts = 0;
         }
 
+        // FIX #5: Session watchdog cho music — gửi #MCANCEL$ khi timeout
+        let musicSessionTimeoutId = null;
+        function startMusicSessionWatchdog(ms) {
+            clearMusicSessionWatchdog();
+            musicSessionTimeoutId = setTimeout(() => {
+                console.warn('[MUS-WD] Music session timeout — sending #MCANCEL$');
+                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    websocket.send('#MCANCEL$');
+                }
+                document.getElementById('modal-title').innerText = 'TIMEOUT';
+                document.getElementById('modal-text').innerText = 'ESP không phản hồi. Thử lại.';
+                document.getElementById('modal-spinner').style.display = 'none';
+                setTimeout(() => { document.getElementById('loading-overlay').classList.add('hidden'); }, 2500);
+            }, ms || 25000);
+        }
+        function clearMusicSessionWatchdog() {
+            if (musicSessionTimeoutId) { clearTimeout(musicSessionTimeoutId); musicSessionTimeoutId = null; }
+        }
+
         function sendWithMusicWatchdog(pkt) {
             clearMusicWatchdog();
             activeMusicWatchdogPkt = pkt;
@@ -1200,6 +1219,7 @@
                 websocket.send("#MGET$");
             };
             websocket.onclose = () => {
+                clearMusicSessionWatchdog();  // FIX #5e: Xóa watchdog khi WS đóng
                 statusEl.innerText = "Disconnected";
                 isDataLoaded = false;
                 setTimeout(initWebSocket, 2000);
@@ -1264,9 +1284,11 @@
                     streamNextChunk();
                 } else if (data === "M_BG_OK" || data === "M_BG_SAVEOK") {
                     clearMusicWatchdog();
+                    clearMusicSessionWatchdog();  // FIX #5f: BG done
                     handleStepBG_Done();
                 } else if (data === "M_SAVEOK" || data === "M_BASS_SAVEOK") {
                     clearMusicWatchdog();
+                    clearMusicSessionWatchdog();  // FIX #5g: Bass done
                     handleStepBass_Done();
                 } else if (data === "M_META_OK") {
                     clearMusicWatchdog();
@@ -1702,7 +1724,8 @@
             document.getElementById('modal-progress-container').style.display = 'block';
             document.getElementById('progress-percent').style.display = 'block';
             
-            websocket.send("#MSTB$" + currentMusicIdx);
+            startMusicSessionWatchdog(25000);  // FIX #5b: Session watchdog trước khi bắt phiên
+            sendWithMusicWatchdog("#MSTB$" + currentMusicIdx);  // FIX #5c: Dùng watchdog thay vì send() thô
         }
 
         // =============================================
@@ -1723,6 +1746,7 @@
             animMusicPackets = animMusicQueue.length; websocket.send('#MABSTB$' + idx + ':1');
         }
         function finishSession() {
+            clearMusicSessionWatchdog();  // FIX #5d: Xóa session watchdog khi xong
             websocket.send("#M_FIN$");
             document.getElementById('modal-title').innerText = 'SUCCESS!';
             document.getElementById('modal-text').innerText = 'Settings saved successfully';

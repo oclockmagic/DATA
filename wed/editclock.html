@@ -542,7 +542,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex-column" style="margin-top: 10px; margin-bottom: 20px;">
+                <div class="flex-column" style="margin-top: 10px; margin-bottom: 10px;">
                     <label>Melody</label>
                     <select id="mel" class="listmelody"><option value="0">-No melody</option>
 <option value="1">HappyBirthday</option>
@@ -709,14 +709,14 @@
 </select>
                 </div>
             </div>
+        </div>
 
-            <div id="section-meta-save"
-                style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: none;">
-                <button class="btn btn-primary" id="btn-save-meta-only"
-                    style="width: 100%; height: 36px; font-size: 10px;">
-                    SAVE META ONLY
-                </button>
-            </div>
+        <div id="section-meta-save" class="section-glass"
+            style="margin-bottom: 10px; display: none;">
+            <button class="btn btn-primary" id="btn-save-meta-only"
+                style="width: 100%; height: 36px; font-size: 11px;">
+                SAVE META ONLY
+            </button>
         </div>
 
         <div id="section-image-params" style="display: none;">
@@ -814,23 +814,17 @@
             const secMetaSave = document.getElementById('section-meta-save');
             const alarmFields = document.getElementById('alarm-fields-container');
 
-            const isAlarmActive = (secAlarm.getAttribute('data-active') === '1');
-            const isTextActive = (secText.style.display !== 'none');
+            const isAlarmActive = (secAlarm && secAlarm.getAttribute('data-active') === '1');
+            const isTextActive = (secText && secText.style.display !== 'none');
 
-            // Nút save meta hiện khi có ít nhất 1 cái active
-            secMetaSave.style.display = (isAlarmActive || isTextActive) ? 'block' : 'none';
-
-            // Nếu chỉ có Text active mà Alarm không active, ta vẫn hiện secAlarm nhưng ẩn các fields bên trong
-            // để mục đích là chứa nút SAVE META ONLY ở cuối.
-            if (isAlarmActive) {
-                secAlarm.style.display = 'block';
-                alarmFields.style.display = 'block';
-            } else if (isTextActive) {
-                secAlarm.style.display = 'block';
-                alarmFields.style.display = 'none';
-            } else {
-                secAlarm.style.display = 'none';
+            // Nút save meta hiện khi có ít nhất Text hoặc Alarm active
+            if (secMetaSave) {
+                secMetaSave.style.display = (isAlarmActive || isTextActive) ? 'block' : 'none';
             }
+
+            // section-alarm CHỈ hiển thị khi file thực sự có hẹn giờ
+            if (secAlarm) secAlarm.style.display = isAlarmActive ? 'block' : 'none';
+            if (alarmFields) alarmFields.style.display = isAlarmActive ? 'block' : 'none';
         };
 
         let croppr = null;
@@ -851,6 +845,25 @@
             }
             activeWatchdogPacket = null;
             watchdogAttempts = 0;
+        }
+
+        // FIX #4: Session-level watchdog — gửi #CCANCEL$ khi timeout toàn phiên
+        let sessionTimeoutId = null;
+        function startSessionWatchdog(ms) {
+            clearSessionWatchdog();
+            sessionTimeoutId = setTimeout(() => {
+                console.warn('[CLK-WD] Session timeout — sending #CCANCEL$');
+                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    websocket.send('#CCANCEL$');
+                }
+                document.getElementById('modal-title').innerText = 'TIMEOUT';
+                document.getElementById('modal-text').innerText = 'ESP không phản hồi. Thử lại.';
+                document.getElementById('modal-spinner').style.display = 'none';
+                setTimeout(() => { document.getElementById('init-overlay').classList.add('hidden'); }, 2500);
+            }, ms || 20000);
+        }
+        function clearSessionWatchdog() {
+            if (sessionTimeoutId) { clearTimeout(sessionTimeoutId); sessionTimeoutId = null; }
         }
 
         function sendWithWatchdog(pkt) {
@@ -1126,7 +1139,7 @@
             const secText = document.getElementById('section-text');
             const secImg = document.getElementById('section-image');
 
-            const isAlarm = (secAlarm && secAlarm.style.display !== 'none');
+            const isAlarm = (secAlarm && secAlarm.getAttribute('data-active') === '1');
             const isText = (secText && secText.style.display !== 'none');
             const isTutao = (secImg && secImg.style.display !== 'none'); // tutao
             const tutao = isTutao ? 1 : 0;
@@ -1149,7 +1162,12 @@
             // 0. Gửi Header (Tọa độ và cờ tutao)
             websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
 
-            // 1. Gửi Note/Text (nếu là chế độ tự nhập)
+            // 1. Luôn gửi Quote Category nếu có
+            const qEl = document.getElementById('quote_idx');
+            const qidx = qEl ? qEl.value : "0";
+            websocket.send(`#CQOT$${qidx}`);
+
+            // 2. Gửi Note/Text (nếu là chế độ tự nhập)
             const manualBox = document.getElementById('manual-text-container');
             const isManualMode = (manualBox && manualBox.style.display !== 'none');
             if (isText && isManualMode) {
@@ -1165,7 +1183,7 @@
                 websocket.send(`#CNOT$${tv.length},${nhex}`);
             }
 
-            // 3. Gửi Alarm (nếu bật alarm)
+            // 3. Gửi Alarm (CHỈ KHI isAlarm THỰC SỰ LÀ TRUE)
             if (isAlarm) {
                 const typ = parseInt(document.getElementById("typ").value) || 0;
                 const gi = parseInt(document.getElementById("gio").value) || 0;
@@ -1175,8 +1193,7 @@
                 const tnu = parseInt(document.getElementById("thu").value) || 0;
                 const am = parseInt(document.getElementById("am").value) || 0;
                 const mel = parseInt(document.getElementById("mel").value) || 0;
-                const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
-                websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel},${qidx}`);
+                websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel},${qidx},1`);
             }
 
             // 4. Kết thúc: Lưu vào Flash với flag MET để chip chỉ ghi header/alarm/text, không ghi ảnh
@@ -1237,7 +1254,7 @@
                 const secText = document.getElementById('section-text');
                 const secImg = document.getElementById('section-image');
 
-                const isAlarm = (secAlarm && secAlarm.style.display !== 'none');
+                const isAlarm = (secAlarm && secAlarm.getAttribute('data-active') === '1');
                 const isText = (secText && secText.style.display !== 'none');
                 const tutao = (secImg && secImg.style.display !== 'none') ? 1 : 0;
 
@@ -1254,7 +1271,9 @@
                 websocket.send(`#CHDR$${px},${py},${pw},${phh},${tutao}`);
 
                 if (!onlyImage) {
-                    const qidx = document.getElementById('quote_idx') ? document.getElementById('quote_idx').value : "0";
+                    const qEl = document.getElementById('quote_idx');
+                    const qidx = qEl ? qEl.value : "0";
+                    websocket.send(`#CQOT$${qidx}`);
 
                     // Gửi Note/Text (nếu có)
                     const manualBox = document.getElementById('manual-text-container');
@@ -1269,7 +1288,7 @@
                         websocket.send(`#CNOT$${tv.length},${nhex}`);
                     }
 
-                    if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel},${qidx}`);
+                    if (isAlarm) websocket.send(`#CALM$${typ},${gi},${ph},${ng},${th},${tnu},${am},${mel},${qidx},1`);
                 }
             }
 
@@ -1320,6 +1339,7 @@
             totalPackets = uploadQueue.length;
             const params = new URLSearchParams(window.location.search);
             const idx = params.get('idx') || 0;
+            startSessionWatchdog(25000);  // FIX #4b: Session watchdog trước khi bắt phiên image upload
             sendWithWatchdog("#CSTB$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
         }
 
@@ -1420,6 +1440,7 @@
                 }, 3000);
             };
             websocket.onclose = () => {
+                clearSessionWatchdog();  // FIX #4d: Xóa watchdog khi WS đóng
                 setTimeout(initWebSocket, 2000);
                 connectt = 0;
                 document.getElementById('ws-status').innerText = "Disconnected";
@@ -1442,6 +1463,7 @@
                     }
                 } else if (data === "C_SAVEOK") {
                     clearUploadWatchdog();
+                    clearSessionWatchdog();  // FIX #4c: Xóa session watchdog khi save thành công
                     if (isGifAnimation) {
                         startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
                     } else {
@@ -1511,7 +1533,14 @@
 
                         if (p[18]) { const tEl = document.getElementById('text'); if (tEl) tEl.value = decodeHexText(p[18]); }
                         const qotEl = document.getElementById('quote_idx');
-                        if (qotEl && p[19] !== undefined) qotEl.value = p[19];
+                        if (qotEl) {
+                            if (p[19] !== undefined) qotEl.value = p[19];
+                            qotEl.onchange = () => {
+                                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                                    websocket.send(`#CQOT$${qotEl.value}`);
+                                }
+                            };
+                        }
 
                         // State flags
                         const tutaoFlag = p[2];
