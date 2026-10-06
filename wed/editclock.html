@@ -840,6 +840,38 @@
         let websocket;
         let connectt = 0;
         let currentLayer = 0;
+        let activeWatchdogPacket = null;
+        let watchdogTimeoutId = null;
+        let watchdogAttempts = 0;
+
+        function clearUploadWatchdog() {
+            if (watchdogTimeoutId) {
+                clearTimeout(watchdogTimeoutId);
+                watchdogTimeoutId = null;
+            }
+            activeWatchdogPacket = null;
+            watchdogAttempts = 0;
+        }
+
+        function sendWithWatchdog(pkt) {
+            clearUploadWatchdog();
+            activeWatchdogPacket = pkt;
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send(pkt);
+                watchdogTimeoutId = setTimeout(() => {
+                    if (activeWatchdogPacket && watchdogAttempts < 3) {
+                        watchdogAttempts++;
+                        console.warn(`[editclock] ACK timeout, resending packet (${watchdogAttempts}/3)...`);
+                        if (websocket && websocket.readyState === WebSocket.OPEN) {
+                            websocket.send(activeWatchdogPacket);
+                        }
+                    } else if (watchdogAttempts >= 3) {
+                        const mText = document.getElementById('modal-text');
+                        if (mText) mText.innerText = "Mạng WiFi chập chờn hoặc thiết bị bận. Đang đợi...";
+                    }
+                }, 4500);
+            }
+        }
 
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
@@ -1288,7 +1320,7 @@
             totalPackets = uploadQueue.length;
             const params = new URLSearchParams(window.location.search);
             const idx = params.get('idx') || 0;
-            websocket.send("#CSTB$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
+            sendWithWatchdog("#CSTB$" + idx); // Phase 1: Bắt đầu lưu ảnh tĩnh/metadata
         }
 
         let animQueue = [];
@@ -1359,7 +1391,7 @@
                 animQueue.push("#AIMG$" + allFramesHex.substring(i, i + 1024));
             }
             animPackets = animQueue.length;
-            websocket.send("#ASTB$" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
+            sendWithWatchdog("#ASTB$" + currentLayer); // Lệnh bắt đầu Animation - dùng currentLayer từ DOWNLOAD_EDIT_CLOCK
         }
 
 
@@ -1395,19 +1427,21 @@
             websocket.onmessage = (e) => {
                 const data = e.data;
                 if (data === "C_READY" || data === "C_UP_OK") {
+                    clearUploadWatchdog();
                     if (uploadQueue.length > 0) {
-                        websocket.send(uploadQueue.shift());
+                        sendWithWatchdog(uploadQueue.shift());
                         const prog = Math.round(((totalPackets - uploadQueue.length) / totalPackets) * 100);
                         progressBar.style.width = prog + '%';
                         progressPercent.innerText = prog + '%';
                     } else {
                         if (isSaving) {
-                            websocket.send("#CSAV:IMG" + (isGifAnimation ? ":1" : ":0"));
+                            sendWithWatchdog("#CSAV:IMG" + (isGifAnimation ? ":1" : ":0"));
                         } else {
-                            websocket.send("#CFIN$");
+                            sendWithWatchdog("#CFIN$");
                         }
                     }
                 } else if (data === "C_SAVEOK") {
+                    clearUploadWatchdog();
                     if (isGifAnimation) {
                         startAnimationUpload(); // Chuyển sang Phase 2 (Animation)
                     } else {
@@ -1423,15 +1457,17 @@
                         }
                     }
                 } else if (data === "A_READY" || data === "A_UP_OK") {
+                    clearUploadWatchdog();
                     if (animQueue.length > 0) {
-                        websocket.send(animQueue.shift());
+                        sendWithWatchdog(animQueue.shift());
                         const prog = Math.round(((animPackets - animQueue.length) / animPackets) * 100);
                         progressBar.style.width = prog + '%';
                         progressPercent.innerText = prog + '%';
                     } else {
-                        websocket.send("#ASAV$"); // Kết thúc Animation
+                        sendWithWatchdog("#ASAV$"); // Kết thúc Animation
                     }
                 } else if (data === "A_SAVEOK") {
+                    clearUploadWatchdog();
                     if (isRedirecting) {
                         document.getElementById('modal-title').innerText = "SUCCESS!";
                         document.getElementById('modal-text').innerText = "Animation saved";

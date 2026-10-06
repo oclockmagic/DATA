@@ -878,9 +878,9 @@
             "background/ini": ["none.png", "file.png", "image.png"],
             "bass": ["none.png","file.png","image.png","random.png","0.png","1.png","10.png","13.png","14.png","15.png","2.png","20.png","21.png","22.png","23.png","24.png","25.png","26.png","27.png","28.png","29.png","3.png","30.png","31.png","32.png","33.png","34.png","35.png","36.png","37.png","38.png","39.png","4.png","40.png","41.png","42.png","43.png","44.png","45.png","46.png","47.png","48.png","49.png","5.png","50.png","51.png","52.png","53.png","55.png","56.png","57.png","58.png","59.png","6.png","60.png","61.png","63.png","64.png","66.png","68.png","69.png","7.png","70.png","71.png","72.png","73.png","74.png","8.png","9.png","kk.png","ll.png"],
             "equalizer/type": ["000.png","001.png","01-cot.png","02-cot_peak_down.png","03-cot_peak_up.png","04-nhay.png","05-nhay_dac.png","06-nhay_tim.png","07-nhay_vuong.png","08-nhay_tron.png","09-chay.png","10-chay_peak_down.png","11-chay_peak_up.png","12-giua.png","13-giua_peak_down.png","14-giua_peak_up.png","15-xuong.png","16-xuong_peak_down.png","17-xuong_peak_up.png","18-vacham_cong.png","19-vacham_vuong.png","20-vacham_tron.png","21-vacham_tim.png","22-vacham_dac.png","23-vacham_ran1.png","23-vacham_random.png","24-cotdoi.png","25-cotdoi_peak_1.png","25-cotdoi_peak_2.png","25-cotdoi_peak_3.png"],
-            "equalizer/color": ["011.png","012.png","013.png","014.png","016.png","017.png","018.png","019.png","020.png","021.png","022.png","023.png","024.png","025.png","026.png","027.png","028.png","file.png","random.png"],
+            "equalizer/color": ["random.png","file.png","011.png","012.png","013.png","014.png","016.png","017.png","018.png","019.png","020.png","021.png","022.png","023.png","024.png","025.png","026.png","027.png","028.png"],
             "equalizer/effect": ["c1.png","c2.png","c3.png"],
-            "equalizer/peak": ["1.png","2.png","3.png","4.png","file.png","random.png"]
+            "equalizer/peak": ["random.png","file.png","1.png","2.png","3.png","4.png"]
         };
 
         const CONFIG = [
@@ -899,6 +899,38 @@
         const bassCtx = bassCanvas ? bassCanvas.getContext('2d', { willReadFrequently: true }) : null;
 
         let websocket = null;
+        let activeMusicWatchdogPkt = null;
+        let musicWatchdogTimeoutId = null;
+        let musicWatchdogAttempts = 0;
+
+        function clearMusicWatchdog() {
+            if (musicWatchdogTimeoutId) {
+                clearTimeout(musicWatchdogTimeoutId);
+                musicWatchdogTimeoutId = null;
+            }
+            activeMusicWatchdogPkt = null;
+            musicWatchdogAttempts = 0;
+        }
+
+        function sendWithMusicWatchdog(pkt) {
+            clearMusicWatchdog();
+            activeMusicWatchdogPkt = pkt;
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                websocket.send(pkt);
+                musicWatchdogTimeoutId = setTimeout(() => {
+                    if (activeMusicWatchdogPkt && musicWatchdogAttempts < 3) {
+                        musicWatchdogAttempts++;
+                        console.warn(`[editmusic] ACK timeout, resending packet (${musicWatchdogAttempts}/3)...`);
+                        if (websocket && websocket.readyState === WebSocket.OPEN) {
+                            websocket.send(activeMusicWatchdogPkt);
+                        }
+                    } else if (musicWatchdogAttempts >= 3) {
+                        const mt = document.getElementById('modal-text');
+                        if (mt) mt.innerText = "Mạng WiFi chập chờn hoặc thiết bị bận. Đang đợi...";
+                    }
+                }, 4500);
+            }
+        }
         let currentMusicIdx = "0";
         let isDataLoaded = false;
         let hasUploadedBG = false;
@@ -1228,14 +1260,19 @@
                         streamNextChunk();
                     }
                 } else if (data === "M_RE_OK" || data === "M_UP_OK") {
+                    clearMusicWatchdog();
                     streamNextChunk();
                 } else if (data === "M_BG_OK" || data === "M_BG_SAVEOK") {
+                    clearMusicWatchdog();
                     handleStepBG_Done();
                 } else if (data === "M_SAVEOK" || data === "M_BASS_SAVEOK") {
+                    clearMusicWatchdog();
                     handleStepBass_Done();
                 } else if (data === "M_META_OK") {
+                    clearMusicWatchdog();
                     streamNextChunk();
                 } else if (data === "M_AB_READY" || data === "M_AB_UP_OK") {
+                    clearMusicWatchdog();
                     // Gửi chunk anim tiếp theo
                     if (animMusicQueue.length > 0) {
                         const chunk = animMusicQueue.shift();
@@ -1243,11 +1280,12 @@
                         const prg = Math.round((sent / animMusicPackets) * 100);
                         document.getElementById('progress-bar').style.width = prg + '%';
                         document.getElementById('progress-percent').innerText = prg + '%';
-                        websocket.send('#MABIMG$' + chunk);
+                        sendWithMusicWatchdog('#MABIMG$' + chunk);
                     } else {
-                        websocket.send('#MABSAV$');
+                        sendWithMusicWatchdog('#MABSAV$');
                     }
                 } else if (data === "M_AB_SAVEOK") {
+                    clearMusicWatchdog();
                     afterABSaveOK();
                 }
             };
@@ -1273,7 +1311,7 @@
             if (hexPos < globalPhotoHex.length) {
                 const chunk = globalPhotoHex.substring(hexPos, hexPos + CHUNK_SIZE * 2);
                 const tag = (currentStep === "BASS") ? "#MGM2$" : "#MGM1$";
-                websocket.send(tag + chunk);
+                sendWithMusicWatchdog(tag + chunk);
                 hexPos += CHUNK_SIZE * 2;
                 const prg = Math.round((hexPos / globalPhotoHex.length) * 100);
                 const safePrg = prg > 100 ? 100 : prg;
@@ -1283,7 +1321,7 @@
                 document.getElementById('progress-percent').innerText = safePrg + '%';
             } else {
                 if (currentStep === "BG") {
-                    websocket.send("#MFB1$"); // Finalize BG
+                    sendWithMusicWatchdog("#MFB1$"); // Finalize BG
                 } else {
                     finalizeSave();
                 }
