@@ -7,18 +7,17 @@
     "colorpk.dat": 29589586,
     "bass.dat": 29621522,
     "back.dat": 29602554,
+	"emoji.emj": 29770985,
+    "backemoji.emj": 29770986,
     "listclock.lst": 29853633,
     "listalarm.lst": 29853633,
     "listmusic.lst": 29853633,
     "listzing.zin": 29844434,
-    "listtruyen.try": 29612597,
     "listradio.rao": 29842060,
-    "emoji.emj": 29770985,
-    "backemoji.emj": 29770986,
-    "firmware.bin": 29850484,
-    "updater.bin": 29840778,
     "art.art": 29848752,
-    "podcast.pod": 29849413
+    "podcast.pod": 29849413,
+    "updater.bin": 29840778,
+	"firmware.bin": 29850484
   },
   "zing": {
     "apiKey": "X5BM3w8N7MKozC0B85o4KMlzLZKhV00y",
