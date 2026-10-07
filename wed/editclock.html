@@ -1447,6 +1447,10 @@
             };
             websocket.onmessage = (e) => {
                 const data = e.data;
+                if (data === "C_EXIT_HOME" || data === "M_EXIT_HOME" || data === "EXIT_HOME") {
+                    window.location.href = '/';
+                    return;
+                }
                 if (data === "C_READY" || data === "C_UP_OK") {
                     clearUploadWatchdog();
                     if (uploadQueue.length > 0) {
