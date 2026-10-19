@@ -306,6 +306,7 @@
             color: white;
             line-height: 1.5;
             margin-bottom: 20px;
+            white-space: pre-line;
         }
 
         .modal-footer {
@@ -738,18 +739,18 @@
             }
         }
 
-        function showConfirm(msg, onConfirm) {
+        function showConfirm(msg, onConfirm, title = "Confirm Action", confirmText = "YES", cancelText = "NO") {
             const overlay = document.getElementById("modal-overlay");
             const card = document.getElementById("modal-card");
             const footer = document.getElementById("modal-footer");
 
-            document.getElementById("modal-title").innerText = "Confirm Action";
+            document.getElementById("modal-title").innerText = title;
             document.getElementById("modal-msg").innerText = msg;
             card.className = `modal-card type-info`;
 
             footer.innerHTML = `
-                <button class="modal-btn btn-cancel" id="m-cancel">NO</button>
-                <button class="modal-btn btn-confirm" id="m-confirm">YES</button>
+                <button class="modal-btn btn-cancel" id="m-cancel">${cancelText}</button>
+                <button class="modal-btn btn-confirm" id="m-confirm">${confirmText}</button>
             `;
 
             overlay.classList.add("show");
@@ -789,10 +790,39 @@
             })
         }
 
-        // Back Home
+        // Back Home / Dashboard
         var homeImgBtn = document.querySelector(".home-img");
-        const homeImage = () => { window.open("/", "_self") };
-        homeImgBtn.addEventListener("click", homeImage);
+        function homeImage() {
+            var host = window.location.hostname || "1.2.3.4";
+            var isAndroid = /Android/i.test(navigator.userAgent);
+            var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+            if (isAndroid) {
+                // Trên Android: Thử bật Chrome / Trình duyệt mặc định qua Android Intent
+                window.location.href = `intent://${host}/#Intent;scheme=http;action=android.intent.action.VIEW;end;`;
+                setTimeout(() => { window.location.href = "/"; }, 1200);
+            } else if (isIOS) {
+                // Trên iOS WebSheet: Hướng dẫn giữ kết nối Wi-Fi và mở Safari
+                showConfirm(
+                    "📱 HƯỚNG DẪN MỞ BẰNG SAFARI:\n\n1. Bấm nút 'Hủy' (Cancel) ở góc trên bên phải màn hình này.\n2. Chọn 'Sử dụng không có Internet' (để giữ kết nối Wi-Fi với MagicBox).\n3. Mở app Safari và truy cập địa chỉ:\nhttp://" + host + "\n\n👉 Bạn có muốn copy địa chỉ IP này không?",
+                    () => {
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText("http://" + host);
+                            showNotify("ĐÃ COPY: http://" + host, "success");
+                        } else {
+                            showNotify("ĐỊA CHỈ: http://" + host, "info");
+                        }
+                        setTimeout(() => { window.location.href = "/"; }, 1500);
+                    },
+                    "Mở trên Safari",
+                    "COPY LINK",
+                    "ĐÓNG"
+                );
+            } else {
+                window.open("/", "_self");
+            }
+        }
+        if (homeImgBtn) homeImgBtn.addEventListener("click", homeImage);
 
         // WebSocket Logic
         var websocket;
