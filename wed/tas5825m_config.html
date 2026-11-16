@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAS5825M DSP Studio — Process Flow 7</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+:root{
+  --bg:#0d1117;--bg-card:#161b22;--bg-card2:#1c2330;--bg-hover:#21262d;
+  --border:#30363d;--ba:var(--accent-blue);
+  --text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+  --blue:#58a6ff;--green:#3fb950;--orange:#d29922;--red:#f85149;
+  --purple:#a371f7;--cyan:#39d353;--teal:#56d364;--pink:#ff79c6;
+  --tab-h:46px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+.hdr{background:linear-gradient(90deg,#0d1f3c,#161b22 50%,#1a2744);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,.6)}
+.hdr-logo{width:38px;height:38px;background:linear-gradient(135deg,#58a6ff,#a371f7);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;letter-spacing:-0.5px;flex-shrink:0}
+.hdr-info{flex:1}
+.hdr-info h1{font-size:15px;font-weight:700}
+.hdr-info p{font-size:11px;color:var(--text2)}
+.hdr-ctrls{display:flex;gap:8px;align-items:center}
+.sel{background:var(--bg-card2);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:6px;font-size:12px;font-family:'JetBrains Mono',monospace}
+.badge{padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-ok{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+.badge-warn{background:rgba(210,153,34,.15);color:var(--orange);border:1px solid rgba(210,153,34,.3)}
+
+/* PROCESS FLOW HEADER */
+.pf-bar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:10px 16px;overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.pf-bar::-webkit-scrollbar{display:none}
+.pf-chain{display:inline-flex;align-items:center;gap:6px}
+.pf-block{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid transparent;white-space:nowrap}
+.pf-block:hover{filter:brightness(1.2)}
+.pf-block.active{border-color:var(--blue);box-shadow:0 0 8px rgba(88,166,255,.4)}
+.pf-arrow{color:var(--text3);font-size:12px;flex-shrink:0}
+.pf-src{background:rgba(88,166,255,.1);color:var(--blue);border-color:rgba(88,166,255,.2)}
+.pf-mix{background:rgba(163,113,247,.1);color:var(--purple);border-color:rgba(163,113,247,.2)}
+.pf-eq{background:rgba(57,211,83,.1);color:var(--cyan);border-color:rgba(57,211,83,.2)}
+.pf-vol{background:rgba(210,153,34,.1);color:var(--orange);border-color:rgba(210,153,34,.2)}
+.pf-spa{background:rgba(255,121,198,.1);color:var(--pink);border-color:rgba(255,121,198,.2)}
+.pf-dpeq{background:rgba(88,166,255,.15);color:#79c0ff;border-color:rgba(88,166,255,.3)}
+.pf-drc{background:rgba(248,81,73,.1);color:var(--red);border-color:rgba(248,81,73,.2)}
+.pf-sa{background:rgba(63,185,80,.1);color:var(--green);border-color:rgba(63,185,80,.2)}
+.pf-excl{background:rgba(63,185,80,.2);color:#56d364;border-color:rgba(63,185,80,.4)}
+.pf-therm{background:rgba(63,185,80,.2);color:#56d364;border-color:rgba(63,185,80,.4)}
+.pf-agl{background:rgba(210,153,34,.15);color:#e3b341;border-color:rgba(210,153,34,.3)}
+.pf-clip{background:rgba(248,81,73,.15);color:#ffa198;border-color:rgba(248,81,73,.3)}
+.pf-xbar{background:rgba(163,113,247,.15);color:#d2a8ff;border-color:rgba(163,113,247,.3)}
+.pf-out{background:var(--bg-card2);color:var(--text2);border-color:var(--border)}
+
+/* TAB NAV */
+.tabs{display:flex;background:var(--bg-card);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:60px;z-index:99}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:0 16px;height:var(--tab-h);border:none;background:none;color:var(--text2);cursor:pointer;font-size:11.5px;font-weight:500;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:5px;font-family:'Inter',sans-serif}
+.tab:hover{color:var(--text);background:var(--bg-hover)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-icon{font-size:13px}
+
+/* CONTENT */
+.tc{display:none;padding:20px;max-width:1700px;margin:0 auto;animation:fadeIn .2s ease}
+.tc.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.card-hdr{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.card-title{font-size:13.5px;font-weight:600}
+.card-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.ctag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(88,166,255,.1);color:var(--blue);border:1px solid rgba(88,166,255,.2);white-space:nowrap}
+.ctag-green{background:rgba(63,185,80,.1);color:var(--green);border-color:rgba(63,185,80,.2)}
+.ctag-orange{background:rgba(210,153,34,.1);color:var(--orange);border-color:rgba(210,153,34,.2)}
+.ctag-red{background:rgba(248,81,73,.1);color:var(--red);border-color:rgba(248,81,73,.2)}
+.ctag-purple{background:rgba(163,113,247,.1);color:var(--purple);border-color:rgba(163,113,247,.2)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+/* FORM */
+.fl{display:block;font-size:10.5px;font-weight:600;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.ca{font-family:'JetBrains Mono';font-size:9.5px;color:var(--purple);margin-left:5px}
+.fi,.fs{width:100%;padding:7px 11px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12.5px;font-family:'Inter',sans-serif;transition:border-color .2s}
+.fi:focus,.fs:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(88,166,255,.12)}
+.fs option{background:var(--bg-card)}
+.fg{margin-bottom:12px}
+
+/* SLIDER */
+.sg{display:flex;align-items:center;gap:10px}
+.sl{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;background:var(--border);outline:none;cursor:pointer}
+.sl::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--blue);cursor:pointer;border:2px solid var(--bg-card);box-shadow:0 0 5px rgba(88,166,255,.4)}
+.sv{min-width:70px;text-align:right;font-family:'JetBrains Mono';font-size:11.5px;color:var(--blue);font-weight:600}
+.sl-mini{flex:1;height:3px;-webkit-appearance:none;border-radius:2px;background:var(--border);outline:none;cursor:pointer}
+.sl-mini::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--blue);cursor:pointer;border:2px solid var(--bg-card)}
+
+/* TOGGLE */
+.tog{display:flex;align-items:center;gap:8px;cursor:pointer}
+.tog input[type=checkbox]{display:none}
+.tog-track{width:34px;height:18px;border-radius:9px;background:var(--border);position:relative;transition:background .2s;flex-shrink:0}
+.tog input:checked~.tog-track{background:var(--blue)}
+.tog-track::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s}
+.tog input:checked~.tog-track::after{left:18px}
+.tog-txt{font-size:12px;color:var(--text)}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'Inter';transition:all .2s;display:inline-flex;align-items:center;gap:5px}
+.btn-p{background:var(--blue);color:#0d1117}
+.btn-p:hover{background:#79b8ff;transform:translateY(-1px)}
+.btn-s{background:var(--bg-card2);color:var(--text);border:1px solid var(--border)}
+.btn-s:hover{background:var(--bg-hover)}
+.btn-g{background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+.btn-r{background:rgba(248,81,73,.1);color:var(--red);border:1px solid rgba(248,81,73,.3)}
+.btn-sm{padding:4px 9px;font-size:11px}
+
+/* POWER BUTTONS */
+.pw-btns{display:flex;gap:8px}
+.pw-btn{padding:8px 16px;border-radius:7px;border:1px solid var(--border);background:var(--bg);color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;font-family:'Inter'}
+.pw-btn:hover{border-color:var(--blue);color:var(--blue)}
+.pw-btn.active{border-color:var(--green);background:rgba(63,185,80,.1);color:var(--green)}
+
+/* INFO PILL */
+.irow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ip{padding:3px 9px;border-radius:14px;font-size:10.5px;background:var(--bg-card2);border:1px solid var(--border);color:var(--text2);font-family:'JetBrains Mono'}
+.ip span{color:var(--orange)}
+
+/* COEFF TABLE */
+.ct{width:100%;border-collapse:collapse;font-size:11.5px}
+.ct th{background:var(--bg-card2);padding:7px 11px;text-align:left;color:var(--text2);font-weight:600;border-bottom:1px solid var(--border)}
+.ct td{padding:6px 11px;border-bottom:1px solid rgba(48,54,61,.4)}
+.ct tr:hover td{background:var(--bg-hover)}
+.cn{font-family:'JetBrains Mono';color:var(--purple)}
+.ch{font-family:'JetBrains Mono';color:var(--orange)}
+.cf{font-family:'JetBrains Mono';color:var(--green)}
+
+/* CANVAS */
+.bode{width:100%;height:260px;border-radius:8px;border:1px solid var(--border);background:#0a0e14;display:block}
+.drc-cv{width:100%;height:190px;border-radius:8px;border:1px solid var(--border);background:#0a0e14;display:block}
+
+/* EQ BANDS */
+.eq-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.eq-band{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center;cursor:pointer;transition:border-color .2s}
+.eq-band:hover,.eq-band.sel{border-color:var(--blue)}
+.eq-bn{font-size:9.5px;color:var(--text3)}
+.eq-btn{width:20px;height:20px;border-radius:50%;border:none;cursor:pointer;font-size:9px;margin:3px auto;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.eq-btn.on{background:var(--blue);color:#0d1117}
+.eq-btn.off{background:var(--text3);color:var(--bg)}
+.eq-freq{font-size:10.5px;font-weight:600;color:var(--cyan);font-family:'JetBrains Mono'}
+.eq-gain{font-size:12px;font-weight:700;font-family:'JetBrains Mono'}
+.eq-type{font-size:9.5px;color:var(--text2)}
+.eq-ca{font-size:8.5px;color:var(--purple);font-family:'JetBrains Mono';margin-top:2px}
+
+/* MATRIX */
+.mx{width:100%;border-collapse:collapse}
+.mx th,.mx td{padding:10px 12px;border:1px solid var(--border);text-align:center;font-size:11.5px}
+.mx th{background:var(--bg-card2);color:var(--text2);font-weight:600}
+.mx .rh{color:var(--cyan);font-weight:600;font-family:'JetBrains Mono';background:var(--bg-card2)}
+.mx-cell{display:flex;flex-direction:column;gap:4px;align-items:center}
+
+/* FAULT LEDs */
+.fault-grid{display:flex;gap:10px;flex-wrap:wrap}
+.fl-led{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:16px;border:1px solid var(--border);font-size:11.5px;font-weight:500;background:var(--bg)}
+.led{width:9px;height:9px;border-radius:50%;background:var(--text3)}
+.ok .led{background:var(--green);box-shadow:0 0 6px var(--green)}
+.err .led{background:var(--red);box-shadow:0 0 6px var(--red);animation:blink 1s infinite}
+.warn .led{background:var(--orange);box-shadow:0 0 6px var(--orange)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* REGISTER MAP */
+.reg-search{width:100%;padding:7px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;margin-bottom:10px}
+.reg-wrap{max-height:580px;overflow-y:auto;border-radius:8px;border:1px solid var(--border)}
+.rt{width:100%;border-collapse:collapse;font-size:11.5px}
+.rt th{background:var(--bg-card2);padding:9px 12px;text-align:left;color:var(--text2);font-weight:600;position:sticky;top:0;z-index:1}
+.rt td{padding:7px 12px;border-bottom:1px solid rgba(48,54,61,.3)}
+.rt tr:hover td{background:var(--bg-hover)}
+.rv{font-family:'JetBrains Mono';color:var(--orange);background:var(--bg);border:1px solid var(--border);padding:2px 7px;border-radius:4px;width:80px;font-size:11px}
+
+/* CODE */
+.code-out{font-family:'JetBrains Mono',monospace;font-size:10.5px;background:#0a0e14;border:1px solid var(--border);border-radius:8px;padding:16px;color:var(--cyan);height:420px;overflow-y:auto;white-space:pre;line-height:1.6}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* TOAST */
+#toast{position:fixed;bottom:18px;right:18px;z-index:9999;background:var(--bg-card2);border:1px solid var(--green);color:var(--green);padding:9px 16px;border-radius:8px;font-size:12.5px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none}
+#toast.show{opacity:1}
+
+/* SECTION DIV */
+.sdiv{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+/* ADDR BADGE */
+.ab{display:inline-block;padding:1px 5px;border-radius:3px;background:rgba(163,113,247,.1);color:var(--purple);font-family:'JetBrains Mono';font-size:9.5px;border:1px solid rgba(163,113,247,.2);margin-left:3px}
+
+/* DPEQ PATHS */
+.dpeq-paths{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.dpeq-path{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px}
+.dpeq-path-title{font-size:11px;font-weight:700;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border)}
+
+/* SPATIALIZER DISPLAY */
+.spa-visual{display:flex;gap:12px;align-items:center;justify-content:center;padding:16px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.spa-speaker{text-align:center;padding:10px}
+.spa-arc{font-size:32px;opacity:.6}
+
+/* LEVEL METER */
+.lm-bar{height:200px;width:40px;background:var(--bg);border:1px solid var(--border);border-radius:4px;position:relative;overflow:hidden;display:flex;flex-direction:column-reverse}
+.lm-fill{width:100%;border-radius:3px;transition:height .1s;background:linear-gradient(0deg,var(--green),var(--orange) 70%,var(--red) 90%)}
+
+/* AGL BAR */
+.agl-bar{height:10px;border-radius:5px;background:var(--border);overflow:hidden}
+.agl-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .3s}
+
+/* INFO BLOCK */
+.info-block{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text2)}
+.info-block .mono{font-family:'JetBrains Mono';font-size:10.5px;color:var(--teal);line-height:1.8}
+
+/* SMARTAMP RANGE */
+.sa-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* CHAIN VISUAL */
+.chain{display:flex;align-items:center;gap:6px;overflow-x:auto;padding:12px;background:var(--bg);border-radius:8px;border:1px solid var(--border)}
+.ch-blk{background:var(--bg-card2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;text-align:center;min-width:90px;flex-shrink:0}
+.ch-blk.hl{border-color:var(--blue);background:rgba(88,166,255,.05)}
+.ch-blk .ch-name{font-size:10px;color:var(--text2)}
+.ch-blk .ch-val{font-family:'JetBrains Mono';font-size:11px;color:var(--blue);font-weight:600}
+.ch-blk .ch-addr{font-family:'JetBrains Mono';font-size:9px;color:var(--purple)}
+.ch-arrow{color:var(--text3);font-size:11px;flex-shrink:0}
+
+/* Excursion/Thermal visual */
+.prot-block{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.prot-val{font-family:'JetBrains Mono';font-size:24px;font-weight:700;color:var(--green)}
+.prot-label{font-size:11px;color:var(--text2);margin-top:4px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">DSP</div>
+  <div class="hdr-info">
+    <h1>TAS5825M DSP Studio — Process Flow 7</h1>
+    <p>Texas Instruments · Stereo Class-D · 48kHz internal DSP · SmartAmp enabled</p>
+  </div>
+  <div class="hdr-ctrls">
+    <select class="sel" id="i2cAddr"><option value="0x98">I²C: 0x98</option><option value="0x9A">I²C: 0x9A</option><option value="0x9C">I²C: 0x9C</option><option value="0x9E">I²C: 0x9E</option></select>
+    <select class="sel" id="srSel" onchange="onSRChange()"><option value="48000">48 kHz</option><option value="96000">96 kHz (→48k SRC)</option><option value="44100">44.1 kHz</option></select>
+    <div class="badge badge-ok" id="pwrBadge">HIZ</div>
+  </div>
+</div>
+
+<!-- PROCESS FLOW BAR -->
+<div class="pf-bar">
+  <div class="pf-chain" id="pfChain">
+    <div class="pf-block pf-src" onclick="switchTab(0)" id="pf0">📥 SRC</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-mix" onclick="switchTab(1)" id="pf1">🎚 Input Mixer</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-eq" onclick="switchTab(2)" id="pf2">🎛 15 BQs</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-vol" onclick="switchTab(3)" id="pf3">🔊 Volume</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-spa" onclick="switchTab(4)" id="pf4">🌐 Spatializer</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-dpeq" onclick="switchTab(5)" id="pf5">📊 DPEQ</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-drc" onclick="switchTab(6)" id="pf6">📉 3-Band DRC</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-sa" onclick="switchTab(7)" id="pf7">🎸 SmartBass</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-excl" onclick="switchTab(8)" id="pf8">⚡ Excursion</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-therm" onclick="switchTab(9)" id="pf9">🌡 Thermal</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-agl" onclick="switchTab(10)" id="pf10">🎯 PVDD AGL</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-clip" onclick="switchTab(11)" id="pf11">✂ Clipper</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-xbar" onclick="switchTab(12)" id="pf12">🔀 Crossbar</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-out">AMP+I2S</div>
+    <div class="pf-arrow">→</div>
+    <div class="pf-block pf-out" onclick="switchTab(14)" id="pf14">📊 Level Meter</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" id="tabBar">
+  <button class="tab active" onclick="switchTab(0)" id="tab0"><span class="tab-icon">⚙️</span>Device</button>
+  <button class="tab" onclick="switchTab(1)" id="tab1"><span class="tab-icon">🎚</span>Input Mixer</button>
+  <button class="tab" onclick="switchTab(2)" id="tab2"><span class="tab-icon">🎛</span>EQ Biquad×15</button>
+  <button class="tab" onclick="switchTab(3)" id="tab3"><span class="tab-icon">🔊</span>Volume</button>
+  <button class="tab" onclick="switchTab(4)" id="tab4"><span class="tab-icon">🌐</span>Spatializer</button>
+  <button class="tab" onclick="switchTab(5)" id="tab5"><span class="tab-icon">📊</span>DPEQ</button>
+  <button class="tab" onclick="switchTab(6)" id="tab6"><span class="tab-icon">📉</span>3-Band DRC</button>
+  <button class="tab" onclick="switchTab(7)" id="tab7"><span class="tab-icon">🎸</span>SmartBass</button>
+  <button class="tab" onclick="switchTab(8)" id="tab8"><span class="tab-icon">⚡</span>Excursion</button>
+  <button class="tab" onclick="switchTab(9)" id="tab9"><span class="tab-icon">🌡</span>Thermal</button>
+  <button class="tab" onclick="switchTab(10)" id="tab10"><span class="tab-icon">🎯</span>PVDD AGL</button>
+  <button class="tab" onclick="switchTab(11)" id="tab11"><span class="tab-icon">✂</span>Clipper</button>
+  <button class="tab" onclick="switchTab(12)" id="tab12"><span class="tab-icon">🔀</span>Crossbar</button>
+  <button class="tab" onclick="switchTab(13)" id="tab13"><span class="tab-icon">📋</span>Reg Map</button>
+  <button class="tab" onclick="switchTab(14)" id="tab14"><span class="tab-icon">📊</span>Level Meter</button>
+  <button class="tab" onclick="switchTab(15)" id="tab15"><span class="tab-icon">💾</span>Code Gen</button>
+</div>
+
+<!-- ===== TAB 0: DEVICE CONTROL ===== -->
+<div class="tc active" id="tc0">
+  <div class="g2">
+    <div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">Power State</div><div class="card-sub">Reg 0x03 — bits [1:0]</div></div><span class="ctag">Reg 0x03</span></div>
+        <div class="pw-btns">
+          <button class="pw-btn" onclick="setPwr('DEEP_SLEEP',0)">DEEP SLEEP</button>
+          <button class="pw-btn active" onclick="setPwr('HIZ',1)">HIZ</button>
+          <button class="pw-btn" onclick="setPwr('PLAY',2)">▶ PLAY</button>
+          <button class="pw-btn" onclick="setPwr('MUTE',3)">MUTE</button>
+        </div>
+        <div class="irow" style="margin-top:10px">
+          <div class="ip">Bits [1:0] <span id="pwrBits">01</span></div>
+          <div class="ip">Amp <span id="ampSt">Off</span></div>
+          <div class="ip">Reg 0x03 → <span id="reg03">0x01</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">SRC — Sample Rate Converter</div><div class="card-sub">Decimator ×2 for 96kHz input. Supports 32/44.1/48/88.2/96 kHz input → 48 kHz internal</div></div><span class="ctag">Reg 0x14</span></div>
+        <div class="g2">
+          <div class="fg"><label class="fl">INPUT SAMPLE RATE</label>
+            <select class="fs" id="srcIn" onchange="updateSRC()">
+              <option value="32000">32 kHz</option><option value="44100">44.1 kHz</option>
+              <option value="48000" selected>48 kHz (native)</option>
+              <option value="88200">88.2 kHz (→44.1k)</option>
+              <option value="96000">96 kHz (÷2 → 48k)</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">INTERNAL DSP RATE</label>
+            <div class="fs" style="pointer-events:none;color:var(--orange)" id="srcInternal">48 kHz (no SRC)</div>
+          </div>
+        </div>
+        <div class="irow">
+          <div class="ip">SRC Active <span id="srcActive">NO</span></div>
+          <div class="ip">Decimator <span id="srcDec">None</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">Reset Control</div><div class="card-sub">Reg 0x01</div></div><span class="ctag">Reg 0x01</span></div>
+        <div class="g2">
+          <button class="btn btn-r" onclick="doReset('modules')" style="width:100%">⚡ Reset Modules (Bit 4)</button>
+          <button class="btn btn-s" onclick="doReset('registers')" style="width:100%">🔄 Reset Registers (Bit 0)</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">I²S / SAP Configuration</div><div class="card-sub">Reg 0x14, 0x33</div></div><span class="ctag">Reg 0x14</span></div>
+        <div class="g2">
+          <div class="fg"><label class="fl">I²S FORMAT<span class="ca">0x14[5:4]</span></label>
+            <select class="fs" id="i2sFmt" onchange="updateI2S()">
+              <option value="0">I²S Standard</option><option value="1">Left Justified</option><option value="2">Right Justified</option><option value="3">DSP/PCM</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">BIT DEPTH<span class="ca">0x14[3:2]</span></label>
+            <select class="fs" id="bitDepth" onchange="updateI2S()">
+              <option value="0">16-bit</option><option value="1">20-bit</option><option value="2" selected>24-bit</option><option value="3">32-bit</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">BCK RATIO<span class="ca">0x14[1:0]</span></label>
+            <select class="fs" id="bckRatio" onchange="updateI2S()">
+              <option value="0">64×Fs</option><option value="1">48×Fs</option><option value="2">32×Fs</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">CLOCK MODE<span class="ca">Reg 0x33</span></label>
+            <select class="fs" id="clkMode" onchange="updateI2S()">
+              <option value="0">Slave (External)</option><option value="1">Master (Internal)</option>
+            </select>
+          </div>
+        </div>
+        <div class="irow">
+          <div class="ip">Reg 0x14 <span id="r14">0x08</span></div>
+          <div class="ip">Reg 0x33 <span id="r33">0x00</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">Amplifier Settings</div></div></div>
+        <div class="g2">
+          <div class="fg"><label class="fl">SWITCHING FREQ (FSW)<span class="ca">0x02[6:4]</span></label>
+            <select class="fs" id="fswSel" onchange="updateFSW()">
+              <option value="0">384 kHz (000)</option><option value="2">480 kHz (010)</option><option value="3">576 kHz (011)</option><option value="4">768 kHz (100)</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">OUTPUT MODE<span class="ca">Reg 0x02</span></label>
+            <select class="fs" id="modeSel">
+              <option value="BTL">BTL — Stereo</option><option value="PBTL">PBTL — Mono Hi-Power</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">ANALOG GAIN (AGAIN)<span class="ca">0x54[1:0]</span></label>
+            <select class="fs" id="againSel" onchange="updateAgain()">
+              <option value="0">0 dB (00b)</option><option value="1" selected>7.5 dB (01b)</option><option value="2">15 dB (10b)</option><option value="3">18 dB (11b)</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">MASTER VOLUME<span class="ca">Reg 0x4C</span></label>
+            <div class="sg"><input type="range" class="sl" id="masterVol" min="-1035" max="240" value="0" step="5" oninput="updateMasterVol()"><div class="sv" id="masterVolV">0.0 dB</div></div>
+          </div>
+        </div>
+        <div class="irow">
+          <div class="ip">Reg 0x02 <span id="r02">0x00</span></div>
+          <div class="ip">Reg 0x4C <span id="r4C">0x30</span></div>
+          <div class="ip">Reg 0x54 <span id="r54">0x01</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr"><div><div class="card-title">Fault Status</div><div class="card-sub">Reg 0x70–0x73</div></div><button class="btn btn-g btn-sm" onclick="clearFaults()">Clear All</button></div>
+        <div class="fault-grid" id="faultGrid">
+          <div class="fl-led ok"><div class="led"></div>OC Fault (0x70)</div>
+          <div class="fl-led ok"><div class="led"></div>DC Fault (0x71)</div>
+          <div class="fl-led ok"><div class="led"></div>OT Fault (0x72)</div>
+          <div class="fl-led ok"><div class="led"></div>UV Fault (0x73)</div>
+          <div class="fl-led ok"><div class="led"></div>BCK Loss</div>
+          <div class="fl-led ok"><div class="led"></div>PVDD OK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 1: INPUT MIXER ===== -->
+<div class="tc" id="tc1">
+  <div class="irow">
+    <div class="ip">L2L <span>coeff 303</span></div><div class="ip">R2L <span>coeff 304</span></div>
+    <div class="ip">L2R <span>coeff 305</span></div><div class="ip">R2R <span>coeff 306</span></div>
+    <div class="ip">Format <span>1.31</span></div><div class="ip">Range <span>-110 to +48 dB</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Channel Routing Mode</div></div></div>
+      <div class="fg"><label class="fl">MIXER MODE</label>
+        <select class="fs" id="mixMode" onchange="updateMixMode()">
+          <option value="basic">Basic — Channel Select</option>
+          <option value="advanced">Advanced — Manual dB Matrix</option>
+        </select>
+      </div>
+      <div id="mixBasic">
+        <div class="fg"><label class="fl">LEFT OUTPUT SOURCE</label>
+          <select class="fs" id="lSrc" onchange="applyMixBasic()">
+            <option value="left">Left Ch (L2L=0dB, R2L=-110dB)</option>
+            <option value="right">Right Ch (L2L=-110dB, R2L=0dB)</option>
+            <option value="mono">Mono (L2L=-6dB, R2L=-6dB)</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">RIGHT OUTPUT SOURCE</label>
+          <select class="fs" id="rSrc" onchange="applyMixBasic()">
+            <option value="left">Left Ch (L2R=0dB, R2R=-110dB)</option>
+            <option value="right">Right Ch (L2R=-110dB, R2R=0dB)</option>
+            <option value="mono">Mono (L2R=-6dB, R2R=-6dB)</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <label class="tog"><input type="checkbox" id="phL"><div class="tog-track"></div><span class="tog-txt">Invert Left Phase (×-1)</span></label>
+        <label class="tog" style="margin-top:8px"><input type="checkbox" id="phR"><div class="tog-track"></div><span class="tog-txt">Invert Right Phase (×-1)</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">DSP Coefficient Matrix</div></div></div>
+      <table class="mx">
+        <thead><tr><th>In→Out</th><th>Left Out</th><th>Right Out</th></tr></thead>
+        <tbody>
+          <tr><td class="rh">Left In</td>
+            <td><div class="mx-cell">
+              <div class="sg"><input type="range" class="sl-mini" id="l2l" min="-110" max="48" value="0" step="0.5" oninput="updMix('l2l')"><div style="font-family:'JetBrains Mono';font-size:10.5px;color:var(--blue)" id="l2lv">0.0 dB</div></div>
+              <div class="ip" style="font-size:9px">c303 → <span id="l2lh">0x7FFFFFFF</span></div>
+            </div></td>
+            <td><div class="mx-cell">
+              <div class="sg"><input type="range" class="sl-mini" id="l2r" min="-110" max="48" value="-110" step="0.5" oninput="updMix('l2r')"><div style="font-family:'JetBrains Mono';font-size:10.5px;color:var(--blue)" id="l2rv">-110.0 dB</div></div>
+              <div class="ip" style="font-size:9px">c305 → <span id="l2rh">0x00000001</span></div>
+            </div></td>
+          </tr>
+          <tr><td class="rh">Right In</td>
+            <td><div class="mx-cell">
+              <div class="sg"><input type="range" class="sl-mini" id="r2l" min="-110" max="48" value="-110" step="0.5" oninput="updMix('r2l')"><div style="font-family:'JetBrains Mono';font-size:10.5px;color:var(--blue)" id="r2lv">-110.0 dB</div></div>
+              <div class="ip" style="font-size:9px">c304 → <span id="r2lh">0x00000001</span></div>
+            </div></td>
+            <td><div class="mx-cell">
+              <div class="sg"><input type="range" class="sl-mini" id="r2r" min="-110" max="48" value="0" step="0.5" oninput="updMix('r2r')"><div style="font-family:'JetBrains Mono';font-size:10.5px;color:var(--blue)" id="r2rv">0.0 dB</div></div>
+              <div class="ip" style="font-size:9px">c306 → <span id="r2rh">0x7FFFFFFF</span></div>
+            </div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 2: EQ BIQUAD ===== -->
+<div class="tc" id="tc2">
+  <div class="irow">
+    <div class="ip">Start Coeff <span>620</span></div><div class="ip">Width <span>32-bit</span></div>
+    <div class="ip">Q Format <span>5.27</span></div><div class="ip">Scale <span>2²⁷=134217728</span></div>
+    <div class="ip">Bands <span>15</span></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title">Bode Plot — Frequency Response</div></div>
+      <button class="btn btn-s btn-sm" onclick="resetEQ()">Reset All</button>
+    </div>
+    <canvas class="bode" id="bodeC"></canvas>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title">15 Bands Overview</div><div class="card-sub">Click a band to edit</div></div></div>
+    <div class="eq-grid" id="eqGrid"></div>
+  </div>
+  <div class="card" id="eqEd">
+    <div class="card-hdr">
+      <div><div class="card-title" id="eqEdT">Band 1</div><div class="card-sub" id="eqEdC">Coefficients B0@620 B1@621 B2@622 A1@623 A2@624</div></div>
+      <label class="tog"><input type="checkbox" id="bEnable" checked onchange="updBand()"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Active</span></label>
+    </div>
+    <div class="g3">
+      <div class="fg"><label class="fl">FILTER TYPE</label>
+        <select class="fs" id="eqFtype" onchange="updBand()">
+          <option value="bypass">Bypass</option><option value="peakingEQ">Peaking EQ</option>
+          <option value="lowShelf">Low Shelf</option><option value="highShelf">High Shelf</option>
+          <option value="lowPass">Low Pass</option><option value="highPass">High Pass</option>
+          <option value="notch">Notch</option><option value="bandPass">Band Pass</option><option value="allPass">All Pass</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">FREQUENCY (Hz)</label><input type="number" class="fi" id="eqFreq" value="1000" min="20" max="20000" oninput="updBand()"></div>
+      <div class="fg"><label class="fl">Q FACTOR</label><input type="number" class="fi" id="eqQ" value="0.71" min="0.1" max="10" step="0.01" oninput="updBand()"></div>
+    </div>
+    <div class="fg"><label class="fl">GAIN: <span id="eqGL">0.0 dB</span></label>
+      <div class="sg"><span style="font-size:10px;color:var(--text2)">-24</span><input type="range" class="sl" id="eqGS" min="-24" max="12" value="0" step="0.5" oninput="updBand();document.getElementById('eqGN').value=this.value;document.getElementById('eqGL').textContent=this.value+' dB'"><span style="font-size:10px;color:var(--text2)">+12</span><input type="number" class="fi" id="eqGN" value="0" min="-24" max="12" step="0.5" style="width:70px" oninput="document.getElementById('eqGS').value=this.value;updBand();document.getElementById('eqGL').textContent=this.value+' dB'"></div>
+    </div>
+    <table class="ct" style="margin-top:10px">
+      <thead><tr><th>Coeff</th><th>Addr</th><th>Float</th><th>5.27 Hex</th><th>Decimal</th></tr></thead>
+      <tbody id="eqCoeffTb">
+        <tr><td class="cn">B0</td><td class="cn" id="eqA0">620</td><td class="cf" id="eqB0f">1.0</td><td class="ch" id="eqB0h">0x08000000</td><td id="eqB0d">134217728</td></tr>
+        <tr><td class="cn">B1</td><td class="cn" id="eqA1">621</td><td class="cf" id="eqB1f">0.0</td><td class="ch" id="eqB1h">0x00000000</td><td id="eqB1d">0</td></tr>
+        <tr><td class="cn">B2</td><td class="cn" id="eqA2">622</td><td class="cf" id="eqB2f">0.0</td><td class="ch" id="eqB2h">0x00000000</td><td id="eqB2d">0</td></tr>
+        <tr><td class="cn">A1</td><td class="cn" id="eqA3">623</td><td class="cf" id="eqA1f">0.0</td><td class="ch" id="eqA1h">0x00000000</td><td id="eqA1d">0</td></tr>
+        <tr><td class="cn">A2</td><td class="cn" id="eqA4">624</td><td class="cf" id="eqA2f">0.0</td><td class="ch" id="eqA2h">0x00000000</td><td id="eqA2d">0</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== TAB 3: VOLUME ===== -->
+<div class="tc" id="tc3">
+  <div class="irow">
+    <div class="ip">DSP Gain Coeff <span>620</span></div><div class="ip">Vol Alpha Coeff <span>9</span></div>
+    <div class="ip">Master Vol <span>Reg 0x4C</span></div><div class="ip">Format <span>1.31</span></div>
+    <div class="ip">Range <span>-110 to +48 dB</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">DSP Digital Gain</div><div class="card-sub">Coeff 620 — 1.31 format, overheadBits=8</div></div><span class="ctag">coeff 620</span></div>
+      <div class="fg"><label class="fl">DSP GAIN<span class="ab">coeff 620</span></label>
+        <div class="sg"><span style="font-size:10px;color:var(--text2)">-110</span><input type="range" class="sl" id="dspGain" min="-110" max="48" value="0" step="0.5" oninput="updVol()"><span style="font-size:10px;color:var(--text2)">+48</span><div class="sv" id="dspGainV">0.0 dB</div></div>
+      </div>
+      <div class="irow"><div class="ip">Linear <span id="dspGL">1.000000</span></div><div class="ip">1.31 Hex <span id="dspGH">0x7FFFFFFF</span></div></div>
+      <hr class="sdiv">
+      <div class="fg"><label class="fl">VOLUME ALPHA (Fade Rate)<span class="ab">coeff 9</span></label>
+        <div class="sg"><span style="font-size:10px;color:var(--text2)">0</span><input type="range" class="sl" id="volAlpha" min="0" max="48" value="3" step="0.5" oninput="updVolAlpha()"><span style="font-size:10px;color:var(--text2)">48 ms</span><div class="sv" id="volAlphaV">3.0 ms</div></div>
+      </div>
+      <div class="irow"><div class="ip">Alpha const <span id="volAlphaC">0.9375</span></div><div class="ip">1.31 Hex <span id="volAlphaH">0x77FFFFFF</span></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Signal Chain</div><div class="card-sub">Complete gain path — Process Flow 7</div></div></div>
+      <div class="chain">
+        <div class="ch-blk"><div class="ch-name">Input</div><div class="ch-val">0 dB</div></div>
+        <div class="ch-arrow">→</div>
+        <div class="ch-blk"><div class="ch-name">Input Mixer</div><div class="ch-addr">c303–306</div></div>
+        <div class="ch-arrow">→</div>
+        <div class="ch-blk"><div class="ch-name">15 BQs EQ</div><div class="ch-addr">c620+</div></div>
+        <div class="ch-arrow">→</div>
+        <div class="ch-blk hl"><div class="ch-name">DSP Gain</div><div class="ch-val" id="chainGain">0.0 dB</div><div class="ch-addr">c620</div></div>
+        <div class="ch-arrow">→</div>
+        <div class="ch-blk hl"><div class="ch-name">Vol Alpha</div><div class="ch-val" id="chainAlpha">3.0 ms</div><div class="ch-addr">c9</div></div>
+        <div class="ch-arrow">→</div>
+        <div class="ch-blk"><div class="ch-name">Spatializer</div><div class="ch-addr">c282</div></div>
+        <div class="ch-arrow">→</div>
+        <div class="ch-blk"><div class="ch-name">DPEQ</div><div class="ch-addr">c248+</div></div>
+        <div class="ch-arrow">→</div>
+        <div class="ch-blk"><div class="ch-name">DRC×3</div><div class="ch-addr">c775+</div></div>
+        <div class="ch-arrow">→</div>
+        <div class="ch-blk"><div class="ch-name">AMP Out</div><div class="ch-val">🔊</div></div>
+      </div>
+      <canvas id="volCurveC" style="width:100%;height:90px;display:block;border-radius:6px;border:1px solid var(--border);background:#0a0e14;margin-top:12px"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 4: SPATIALIZER ===== -->
+<div class="tc" id="tc4">
+  <div class="irow">
+    <div class="ip">Level Coeff <span>282</span></div>
+    <div class="ip">HPF startCoeff <span>2283</span></div>
+    <div class="ip">LPF startCoeff <span>2288</span></div>
+    <div class="ip">Format <span>1.31</span></div>
+    <div class="ip">Level Range <span>0 to 4 (max=4)</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title">Spatializer</div><div class="card-sub">Widens stereo field using crossfeed processing. Level coeff 282 (1.31)</div></div>
+        <label class="tog"><input type="checkbox" id="spaEn" onchange="updSpa()"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable</span></label>
+      </div>
+
+      <div class="fg"><label class="fl">PRESET</label>
+        <select class="fs" id="spaPreset" onchange="applySpaPreset()">
+          <option value="custom">Custom</option>
+          <option value="full">Full (Level=0.75, HPF@300Hz, LPF@20kHz)</option>
+          <option value="medium">Medium (Level=0.5, HPF@800Hz, LPF@6kHz)</option>
+          <option value="low">Low Intensity (Level=0.25, HPF@4kHz, LPF@20kHz)</option>
+        </select>
+      </div>
+
+      <div class="fg"><label class="fl">LEVEL<span class="ab">coeff 282</span> — (0 to 4)</label>
+        <div class="sg"><span style="font-size:10px;color:var(--text2)">0</span><input type="range" class="sl" id="spaLevel" min="0" max="4" value="0.25" step="0.01" oninput="updSpa()"><span style="font-size:10px;color:var(--text2)">4</span><div class="sv" id="spaLV">0.25</div></div>
+      </div>
+
+      <div class="fg"><label class="fl">FILTER TYPE</label>
+        <select class="fs" id="spaFtype" onchange="updSpa()">
+          <option value="lr2">Linkwitz-Riley 2nd Order</option>
+          <option value="bw2">Butterworth 2nd Order</option>
+        </select>
+      </div>
+
+      <hr class="sdiv">
+      <div class="form-label" style="font-size:10.5px;font-weight:600;color:var(--text2);text-transform:uppercase;margin-bottom:8px">CROSSOVER FILTERS</div>
+      <div class="g2">
+        <div>
+          <div class="fg"><label class="fl">HPF FREQUENCY<span class="ab">coeff 2283</span></label>
+            <div class="sg"><input type="range" class="sl" id="spaHPF" min="20" max="5000" value="4000" oninput="updSpa()"><div class="sv" id="spaHPFV">4000 Hz</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="fg"><label class="fl">LPF FREQUENCY<span class="ab">coeff 2288</span></label>
+            <div class="sg"><input type="range" class="sl" id="spaLPF" min="200" max="20000" value="200" oninput="updSpa()"><div class="sv" id="spaLPFV">200 Hz</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Spatializer Response & Coefficients</div></div></div>
+      <div class="spa-visual">
+        <div class="spa-speaker"><div class="spa-arc">🔈</div><div style="font-size:10px;color:var(--text2)">Left Speaker</div></div>
+        <div style="flex:1;text-align:center">
+          <canvas id="spaCanvas" style="width:100%;height:120px;display:block;border-radius:6px;border:1px solid var(--border);background:#0a0e14"></canvas>
+          <div style="font-size:10px;color:var(--text2);margin-top:4px">Stereo Field Width</div>
+          <div style="height:8px;border-radius:4px;background:var(--border);margin-top:6px;overflow:hidden"><div id="spaWidth" style="height:100%;border-radius:4px;background:linear-gradient(90deg,var(--purple),var(--blue));width:25%;transition:width .3s"></div></div>
+        </div>
+        <div class="spa-speaker"><div class="spa-arc">🔉</div><div style="font-size:10px;color:var(--text2)">Right Speaker</div></div>
+      </div>
+      <hr class="sdiv">
+      <table class="ct">
+        <thead><tr><th>Parameter</th><th>Coeff Addr</th><th>Value</th><th>1.31 Hex</th></tr></thead>
+        <tbody>
+          <tr><td>Level (Spatializer Gain)</td><td class="cn">282</td><td class="cf" id="spaLVC">0.250000</td><td class="ch" id="spaLVH">0x20000000</td></tr>
+          <tr><td>HPF (Lower Boundary)</td><td class="cn">2283–2287</td><td class="cf" id="spaHPFC">HP@4000Hz</td><td class="ch">—5 coeffs—</td></tr>
+          <tr><td>LPF (Upper Boundary)</td><td class="cn">2288–2292</td><td class="cf" id="spaLPFC">LP@200Hz</td><td class="ch">—5 coeffs—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 5: DPEQ ===== -->
+<div class="tc" id="tc5">
+  <div class="irow">
+    <div class="ip">Energy Coeff <span>248</span></div>
+    <div class="ip">Threshold Low <span>coeff 249</span></div>
+    <div class="ip">Threshold High <span>coeff 250</span></div>
+    <div class="ip">SenseEQ <span>coeff 2251</span></div>
+    <div class="ip">LowLevelEQ <span>coeff 2261</span></div>
+    <div class="ip">HighLevelEQ <span>coeff 2266</span></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr">
+      <div><div class="card-title">DPEQ — Dynamic Parametric EQ</div><div class="card-sub">3-path audio: Low Level path + High Level path, controlled by Energy Sensing. Presets: DDE, DBE, DEQ</div></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select class="fs" id="dpeqPreset" style="width:200px" onchange="applyDPEQPreset()">
+          <option value="DEQ">DEQ — Dynamic EQ (Advanced)</option>
+          <option value="DDE">DDE — Dynamic Dialogue Enhancement</option>
+          <option value="DBE">DBE — Dynamic Bass Enhancement</option>
+        </select>
+        <label class="tog"><input type="checkbox" id="dpeqEn" onchange="updDPEQ()"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable</span></label>
+      </div>
+    </div>
+
+    <div class="dpeq-paths">
+      <!-- Energy Sensing Path -->
+      <div class="dpeq-path">
+        <div class="dpeq-path-title" style="color:var(--blue)">🔍 Energy Sensing Path</div>
+        <div class="fg"><label class="fl">ENERGY WINDOW<span class="ab">coeff 248</span></label>
+          <div class="sg"><input type="range" class="sl" id="dpeqEnergy" min="1" max="200" value="100" oninput="updDPEQ()"><div class="sv" id="dpeqEnergyV">100 ms</div></div>
+        </div>
+        <div class="fg"><label class="fl">THRESHOLD LOW<span class="ab">coeff 249</span></label>
+          <div class="sg"><input type="range" class="sl" id="dpeqThL" min="-50" max="0" value="-30" step="0.5" oninput="updDPEQ()"><div class="sv" id="dpeqThLV">-30 dB</div></div>
+        </div>
+        <div class="fg"><label class="fl">THRESHOLD HIGH<span class="ab">coeff 250</span></label>
+          <div class="sg"><input type="range" class="sl" id="dpeqThH" min="-50" max="0" value="-10" step="0.5" oninput="updDPEQ()"><div class="sv" id="dpeqThHV">-10 dB</div></div>
+        </div>
+        <div class="fg"><label class="fl">SENSE EQ FILTER (BQ)<span class="ab">coeff 2251</span></label>
+          <select class="fs" id="dpeqSenseFt">
+            <option value="lr2">Linkwitz-Riley 2nd</option>
+            <option value="lr4">Linkwitz-Riley 4th</option>
+            <option value="bw2">Butterworth 2nd</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Low Level EQ Path -->
+      <div class="dpeq-path">
+        <div class="dpeq-path-title" style="color:var(--green)">📉 Low Level EQ Path</div>
+        <div class="irow"><div class="ip">startCoeff <span>2261</span></div><div class="ip">Format <span>5.27</span></div></div>
+        <div class="fg"><label class="fl">FREQUENCY (Hz)</label><input type="number" class="fi" id="dpeqLLFreq" value="1000" min="20" max="20000" oninput="updDPEQ()"></div>
+        <div class="fg"><label class="fl">GAIN (dB)</label>
+          <div class="sg"><input type="range" class="sl" id="dpeqLLGain" min="-24" max="12" value="0" step="0.5" oninput="updDPEQ()"><div class="sv" id="dpeqLLGainV">0.0 dB</div></div>
+        </div>
+        <div class="fg"><label class="fl">Q FACTOR</label><input type="number" class="fi" id="dpeqLLQ" value="0.71" min="0.1" max="10" step="0.01" oninput="updDPEQ()"></div>
+        <div class="fg"><label class="fl">FILTER TYPE</label>
+          <select class="fs" id="dpeqLLFt" onchange="updDPEQ()">
+            <option value="lowPass">Low Pass</option><option value="highPass">High Pass</option>
+            <option value="peakingEQ">Peaking EQ</option><option value="lowShelf">Low Shelf</option>
+          </select>
+        </div>
+        <div class="irow"><div class="ip">B0 <span id="dpeqLLB0">0x08000000</span></div></div>
+      </div>
+
+      <!-- High Level EQ Path -->
+      <div class="dpeq-path">
+        <div class="dpeq-path-title" style="color:var(--orange)">📈 High Level EQ Path</div>
+        <div class="irow"><div class="ip">startCoeff <span>2266</span></div><div class="ip">Format <span>5.27</span></div></div>
+        <div class="fg"><label class="fl">FREQUENCY (Hz)</label><input type="number" class="fi" id="dpeqHLFreq" value="1000" min="20" max="20000" oninput="updDPEQ()"></div>
+        <div class="fg"><label class="fl">GAIN (dB)</label>
+          <div class="sg"><input type="range" class="sl" id="dpeqHLGain" min="-24" max="12" value="0" step="0.5" oninput="updDPEQ()"><div class="sv" id="dpeqHLGainV">0.0 dB</div></div>
+        </div>
+        <div class="fg"><label class="fl">Q FACTOR</label><input type="number" class="fi" id="dpeqHLQ" value="0.71" min="0.1" max="10" step="0.01" oninput="updDPEQ()"></div>
+        <label class="tog"><input type="checkbox" id="dpeqHLEn" checked onchange="updDPEQ()"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable High Level EQ</span></label>
+        <div class="irow" style="margin-top:8px"><div class="ip">B0 <span id="dpeqHLB0">0x08000000</span></div></div>
+      </div>
+    </div>
+
+    <!-- DPEQ Coefficient Summary -->
+    <hr class="sdiv">
+    <table class="ct">
+      <thead><tr><th>Parameter</th><th>Coeff Addr</th><th>Value</th><th>1.31 / 5.27 Hex</th></tr></thead>
+      <tbody>
+        <tr><td>Energy Window</td><td class="cn">248</td><td class="cf" id="dpeqEC">100 ms</td><td class="ch" id="dpeqEH">0x...</td></tr>
+        <tr><td>Threshold Low</td><td class="cn">249</td><td class="cf" id="dpeqTLC">-30 dB</td><td class="ch" id="dpeqTLH">0x...</td></tr>
+        <tr><td>Threshold High</td><td class="cn">250</td><td class="cf" id="dpeqTHC">-10 dB</td><td class="ch" id="dpeqTHH">0x...</td></tr>
+        <tr><td>SenseEQ BQ</td><td class="cn">2251–2255</td><td class="cf">5 coeffs (5.27)</td><td class="ch">—</td></tr>
+        <tr><td>Low Level EQ BQ</td><td class="cn">2261–2265</td><td class="cf">5 coeffs (5.27)</td><td class="ch">—</td></tr>
+        <tr><td>High Level EQ BQ</td><td class="cn">2266–2270</td><td class="cf">5 coeffs (5.27)</td><td class="ch">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== TAB 6: 3-BAND DRC ===== -->
+<div class="tc" id="tc6">
+  <div class="irow">
+    <div class="ip">DRC startCoeff <span>775</span></div>
+    <div class="ip">MixerGain <span>coeff 854</span></div>
+    <div class="ip">Format <span>1.31</span></div>
+    <div class="ip">4th Order crossover</div>
+    <div class="ip">3 Bands × 3 Regions</div>
+  </div>
+  <div id="drcBandsDiv"></div>
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title">Transfer Curves</div></div></div>
+    <div class="g3">
+      <div><div style="font-size:10px;color:var(--text2);text-align:center;margin-bottom:4px">Band 1 (Low)</div><canvas class="drc-cv" id="drcC0"></canvas></div>
+      <div><div style="font-size:10px;color:var(--text2);text-align:center;margin-bottom:4px">Band 2 (Mid)</div><canvas class="drc-cv" id="drcC1"></canvas></div>
+      <div><div style="font-size:10px;color:var(--text2);text-align:center;margin-bottom:4px">Band 3 (High)</div><canvas class="drc-cv" id="drcC2"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 7: SMARTBASS ===== -->
+<div class="tc" id="tc7">
+  <div class="irow">
+    <div class="ip">Max Biquads <span>5</span></div>
+    <div class="ip">Bass Boost <span>20–1000 Hz</span></div>
+    <div class="ip">Morphing <span>-48 to +12 dB</span></div>
+    <div class="ip">Thermal Tau <span>[10,100,100]ms</span></div>
+    <div class="ip">Component <span>SmartBass w/ Morphing</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">SmartBass w/ Morphing</div><div class="card-sub">Bass excursion protection + frequency extension</div></div>
+        <label class="tog"><input type="checkbox" id="sbEn" onchange="updSB()"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable</span></label>
+      </div>
+      <div class="sa-grid">
+        <div class="fg"><label class="fl">BASS BOOST FREQ (Hz)</label>
+          <div class="sg"><input type="range" class="sl" id="sbFreq" min="20" max="1000" value="100" oninput="updSB()"><div class="sv" id="sbFreqV">100 Hz</div></div>
+        </div>
+        <div class="fg"><label class="fl">ALIGNMENT TYPE</label>
+          <select class="fs" id="sbAlign"><option value="Butterworth">Butterworth</option><option value="Linkwitz-Riley">Linkwitz-Riley</option><option value="Bessel">Bessel</option></select>
+        </div>
+        <div class="fg"><label class="fl">ALIGNMENT ORDER</label>
+          <select class="fs" id="sbOrder"><option value="2">2nd Order</option><option value="4">4th Order</option><option value="6" selected>6th Order</option></select>
+        </div>
+        <div class="fg"><label class="fl">Q FACTOR</label>
+          <div class="sg"><input type="range" class="sl" id="sbQ" min="0.1" max="10" value="1" step="0.05" oninput="updSB()"><div class="sv" id="sbQV">1.00</div></div>
+        </div>
+        <div class="fg"><label class="fl">MORPHING CONTROL<span class="ab">-48 to +12 dB</span></label>
+          <div class="sg"><input type="range" class="sl" id="sbMC" min="-48" max="12" value="-15" step="0.5" oninput="updSB()"><div class="sv" id="sbMCV">-15.0</div></div>
+        </div>
+        <div class="fg"><label class="fl">MORPHING SPEED<span class="ab">-20 to +20</span></label>
+          <div class="sg"><input type="range" class="sl" id="sbMS" min="-20" max="20" value="0" step="1" oninput="updSB()"><div class="sv" id="sbMSV">0</div></div>
+        </div>
+        <div class="fg"><label class="fl">MORPHING DRC RATIO</label>
+          <div class="sg"><input type="range" class="sl" id="sbMDRC" min="1" max="20" value="4" step="0.5" oninput="updSB()"><div class="sv" id="sbMDRCV">4.0</div></div>
+        </div>
+        <div class="fg"><label class="fl">HARMONIC ALIGN<span class="ab">1 to 5</span></label>
+          <div class="sg"><input type="range" class="sl" id="sbHA" min="1" max="5" value="1.5" step="0.1" oninput="updSB()"><div class="sv" id="sbHAV">1.5</div></div>
+        </div>
+      </div>
+      <hr class="sdiv">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <label class="tog"><input type="checkbox" id="sbBypassEx" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Bypass Excursion</span></label>
+        <label class="tog"><input type="checkbox" id="sbBypassTh" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Bypass Thermal</span></label>
+        <label class="tog"><input type="checkbox" id="sbBypassMo" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Bypass Morphing</span></label>
+        <label class="tog"><input type="checkbox" id="sbBypassAC" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Bypass Anti-Clipper</span></label>
+        <label class="tog"><input type="checkbox" id="sbMonoBass"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Mono Bass</span></label>
+        <label class="tog"><input type="checkbox" id="sbBassEQ"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Bass EQ Boost</span></label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">SmartBass Bode Plot</div></div></div>
+      <canvas class="bode" id="sbBode"></canvas>
+      <hr class="sdiv">
+      <div class="fg"><label class="fl">THERMAL TAU (ms)</label>
+        <div class="g3">
+          <input type="number" class="fi" id="sbTTau0" value="10" min="1" max="10000" placeholder="Tau[0]">
+          <input type="number" class="fi" id="sbTTau1" value="100" min="1" max="10000" placeholder="Tau[1]">
+          <input type="number" class="fi" id="sbTTau2" value="100" min="1" max="10000" placeholder="Tau[2]">
+        </div>
+      </div>
+      <div class="fg"><label class="fl">EXCURSION TAU (ms)</label>
+        <div class="g3">
+          <input type="number" class="fi" id="sbETau0" value="10" min="1" max="10000" placeholder="Tau[0]">
+          <input type="number" class="fi" id="sbETau1" value="50" min="1" max="10000" placeholder="Tau[1]">
+          <input type="number" class="fi" id="sbETau2" value="20" min="1" max="10000" placeholder="Tau[2]">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 8: EXCURSION LIMITER ===== -->
+<div class="tc" id="tc8">
+  <div class="irow">
+    <div class="ip">Component <span>Excursion Limiter</span></div>
+    <div class="ip">Type <span>SmartAmp Protection</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Excursion Limiter</div><div class="card-sub">Prevents speaker over-excursion by monitoring and limiting cone displacement</div></div>
+        <label class="tog"><input type="checkbox" id="exclEn" onchange="updExcl()"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable</span></label>
+      </div>
+      <div class="fg"><label class="fl">XMAX LIMIT (mm)</label>
+        <div class="sg"><input type="range" class="sl" id="exclXmax" min="0.1" max="20" value="2" step="0.1" oninput="updExcl()"><div class="sv" id="exclXmaxV">2.0 mm</div></div>
+      </div>
+      <div class="fg"><label class="fl">ATTACK TIME (ms)</label>
+        <div class="sg"><input type="range" class="sl" id="exclAtk" min="0.01" max="1000" value="10" step="0.1" oninput="updExcl()"><div class="sv" id="exclAtkV">10.0 ms</div></div>
+      </div>
+      <div class="fg"><label class="fl">DECAY TIME (ms)</label>
+        <div class="sg"><input type="range" class="sl" id="exclDec" min="0.01" max="1000" value="100" step="0.1" oninput="updExcl()"><div class="sv" id="exclDecV">100.0 ms</div></div>
+      </div>
+      <div class="fg"><label class="fl">LOOK-AHEAD FREQUENCY (Hz)</label>
+        <div class="sg"><input type="range" class="sl" id="exclLA" min="0" max="20000" value="0" step="10" oninput="updExcl()"><div class="sv" id="exclLAV">0 Hz</div></div>
+      </div>
+      <div class="fg"><label class="fl">XMAX UNIT</label>
+        <select class="fs" id="exclUnit"><option value="mm">mm (millimeters)</option><option value="m">m (meters)</option></select>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Excursion Monitoring</div></div></div>
+      <div class="g2">
+        <div class="prot-block">
+          <div class="prot-val" id="exclCurr">0.0 mm</div>
+          <div class="prot-label">Current Excursion</div>
+        </div>
+        <div class="prot-block">
+          <div class="prot-val" id="exclPeak">0.0 mm</div>
+          <div class="prot-label">Peak Excursion</div>
+        </div>
+        <div class="prot-block">
+          <div class="prot-val" id="exclLimit" style="color:var(--orange)">2.0 mm</div>
+          <div class="prot-label">Xmax Limit</div>
+        </div>
+        <div class="prot-block">
+          <div class="prot-val" id="exclHead" style="color:var(--green)">100%</div>
+          <div class="prot-label">Headroom</div>
+        </div>
+      </div>
+      <hr class="sdiv">
+      <div class="info-block">
+        <div style="font-weight:600;color:var(--text);margin-bottom:6px">Excursion Limiter Algorithm</div>
+        <div class="mono">model: speaker displacement = ∫∫(F/Mms)dt²
+limit: if |x(t)| > Xmax → apply gain reduction
+alpha_atk = exp(-1/(fs × t_atk))
+alpha_dec = exp(-1/(fs × t_dec))</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 9: THERMAL LIMITER ===== -->
+<div class="tc" id="tc9">
+  <div class="irow">
+    <div class="ip">Component <span>Thermal Limiter</span></div>
+    <div class="ip">Thermal Tau <span>[10,100,100] ms</span></div>
+    <div class="ip">Type <span>SmartAmp Protection</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Thermal Limiter</div><div class="card-sub">Protects speaker voice coil from thermal damage using RC thermal model</div></div>
+        <label class="tog"><input type="checkbox" id="thermEn" onchange="updTherm()"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable</span></label>
+      </div>
+      <div class="fg"><label class="fl">THERMAL RESISTANCE (Rth)</label>
+        <div class="sg"><input type="range" class="sl" id="thermRth" min="1" max="100" value="20" step="0.5" oninput="updTherm()"><div class="sv" id="thermRthV">20.0 K/W</div></div>
+      </div>
+      <div class="fg"><label class="fl">MAX TEMPERATURE (Tmax)</label>
+        <div class="sg"><input type="range" class="sl" id="thermTmax" min="100" max="250" value="150" step="1" oninput="updTherm()"><div class="sv" id="thermTmaxV">150 °C</div></div>
+      </div>
+      <div class="fg"><label class="fl">AMBIENT TEMPERATURE (Ta)</label>
+        <div class="sg"><input type="range" class="sl" id="thermTa" min="0" max="85" value="25" step="1" oninput="updTherm()"><div class="sv" id="thermTaV">25 °C</div></div>
+      </div>
+      <hr class="sdiv">
+      <div style="font-size:10.5px;font-weight:600;color:var(--text2);text-transform:uppercase;margin-bottom:8px">THERMAL TIME CONSTANTS</div>
+      <div class="g3">
+        <div class="fg"><label class="fl">Tau[0] (ms)</label><input type="number" class="fi" id="thermT0" value="10" min="1" max="10000"></div>
+        <div class="fg"><label class="fl">Tau[1] (ms)</label><input type="number" class="fi" id="thermT1" value="100" min="1" max="10000"></div>
+        <div class="fg"><label class="fl">Tau[2] (ms)</label><input type="number" class="fi" id="thermT2" value="100" min="1" max="10000"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Thermal Model Monitoring</div></div></div>
+      <div class="g2">
+        <div class="prot-block">
+          <div class="prot-val" id="thermCurrT">25 °C</div>
+          <div class="prot-label">Estimated Temp</div>
+        </div>
+        <div class="prot-block">
+          <div class="prot-val" id="thermMaxT" style="color:var(--orange)">150 °C</div>
+          <div class="prot-label">Limit</div>
+        </div>
+        <div class="prot-block">
+          <div class="prot-val" id="thermHead" style="color:var(--green)">125 °C</div>
+          <div class="prot-label">Headroom</div>
+        </div>
+        <div class="prot-block">
+          <div class="prot-val" id="thermPwr">0.0 W</div>
+          <div class="prot-label">Power Estimate</div>
+        </div>
+      </div>
+      <canvas id="thermCanvas" style="width:100%;height:120px;display:block;border-radius:6px;border:1px solid var(--border);background:#0a0e14;margin-top:12px"></canvas>
+      <hr class="sdiv">
+      <div class="info-block">
+        <div class="mono">T_vc(t) = Ta + P×Rth×(1 - exp(-t/τ))
+τ = [τ0, τ1, τ2] = [{thermT0},{thermT1},{thermT2}] ms
+gain_reduction = f(T_vc / T_max)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 10: PVDD AGL ===== -->
+<div class="tc" id="tc10">
+  <div class="irow">
+    <div class="ip">Enable Coeff <span>8</span></div><div class="ip">Threshold <span>coeff 281</span></div>
+    <div class="ip">Alpha Lo <span>coeff 316</span></div><div class="ip">Attack <span>coeff 317</span></div>
+    <div class="ip">Alpha Hi <span>coeff 319</span></div><div class="ip">Release <span>coeff 320</span></div>
+    <div class="ip">thermalOrAgl <span>coeff 417</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">PVDD Auto Gain Limiter</div><div class="card-sub">Monitors PVDD supply voltage and reduces gain if supply drops. onValue=-0.5, offValue=+0.5</div></div>
+        <label class="tog"><input type="checkbox" id="aglEn" onchange="updAGL()"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable AGL</span></label>
+      </div>
+
+      <div class="fg"><label class="fl">THRESHOLD<span class="ab">coeff 281</span> — (-138 to 0 dB)</label>
+        <div class="sg"><input type="range" class="sl" id="aglThr" min="-138" max="0" value="0" step="0.5" oninput="updAGL()"><div class="sv" id="aglThrV">0.0 dB</div></div>
+        <div class="agl-bar" style="margin-top:6px"><div class="agl-fill" id="aglThrBar" style="width:100%"></div></div>
+      </div>
+
+      <div class="fg"><label class="fl">ATTACK<span class="ab">coeff 317</span> (ms)</label>
+        <div class="sg"><input type="range" class="sl" id="aglAtk" min="0" max="1000" value="200" oninput="updAGL()"><div class="sv" id="aglAtkV">200 ms</div></div>
+      </div>
+      <div class="fg"><label class="fl">RELEASE<span class="ab">coeff 320</span> (ms)</label>
+        <div class="sg"><input type="range" class="sl" id="aglRel" min="0" max="1000" value="1" oninput="updAGL()"><div class="sv" id="aglRelV">1 ms</div></div>
+      </div>
+      <div class="fg"><label class="fl">SOFTENING ALPHA<span class="ab">coeff 316/319</span></label>
+        <div class="sg"><input type="range" class="sl" id="aglAlpha" min="1" max="100000" value="550" oninput="updAGL()"><div class="sv" id="aglAlphaV">0.550</div></div>
+      </div>
+      <hr class="sdiv">
+      <div class="fg"><label class="fl">THERMAL-OR-AGL MODE<span class="ab">coeff 417</span></label>
+        <select class="fs" id="aglMode" onchange="updAGL()">
+          <option value="0">AGL mode (value=0)</option>
+          <option value="1">Thermal Limiting mode (value=1)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">AGL Coefficient Values</div></div></div>
+      <table class="ct">
+        <thead><tr><th>Parameter</th><th>Coeff</th><th>Value</th><th>1.31 Hex</th></tr></thead>
+        <tbody>
+          <tr><td>Enable (on=-0.5/off=+0.5)</td><td class="cn">8</td><td class="cf" id="aglEnC">+0.5 (OFF)</td><td class="ch" id="aglEnH">0x40000000</td></tr>
+          <tr><td>Threshold</td><td class="cn">281</td><td class="cf" id="aglThC">1.000000</td><td class="ch" id="aglThH">0x7FFFFFFF</td></tr>
+          <tr><td>Alpha Low</td><td class="cn">316</td><td class="cf" id="aglALLC">0.550000</td><td class="ch" id="aglALLH">0x46666666</td></tr>
+          <tr><td>Attack Alpha</td><td class="cn">317</td><td class="cf" id="aglAtkC">0.200000</td><td class="ch" id="aglAtkH">0x19999999</td></tr>
+          <tr><td>Alpha High</td><td class="cn">319</td><td class="cf" id="aglALHC">0.550000</td><td class="ch" id="aglALHH">0x46666666</td></tr>
+          <tr><td>Release Alpha</td><td class="cn">320</td><td class="cf" id="aglRelC">0.001000</td><td class="ch" id="aglRelH">0x00418937</td></tr>
+          <tr><td>Thermal/AGL Select</td><td class="cn">417</td><td class="cf" id="aglModeC">0 (AGL)</td><td class="ch" id="aglModeH">0x00000000</td></tr>
+        </tbody>
+      </table>
+      <canvas id="aglCanvas" style="width:100%;height:100px;display:block;border-radius:6px;border:1px solid var(--border);background:#0a0e14;margin-top:12px"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 11: CLIPPER / ANTI-CLIPPER ===== -->
+<div class="tc" id="tc11">
+  <div class="irow">
+    <div class="ip">Component <span>Anti-Clipper</span></div>
+    <div class="ip">Type <span>SmartAmp Clipper</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Anti-Clipper</div><div class="card-sub">Final signal clipper before crossbar output. Prevents amplifier clipping distortion</div></div>
+        <label class="tog"><input type="checkbox" id="clipEn"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable Clipper</span></label>
+      </div>
+      <div class="fg"><label class="fl">CLIPPER GAIN LIMIT (dB)<span class="ab">-110 to +24 dB</span></label>
+        <div class="sg"><input type="range" class="sl" id="clipGain" min="-110" max="24" value="0" step="0.5" oninput="updClipper()"><div class="sv" id="clipGainV">0.0 dB</div></div>
+      </div>
+      <div class="fg"><label class="fl">ATTACK EXP<span class="ab">1 to 1000</span></label>
+        <div class="sg"><input type="range" class="sl" id="clipAtkExp" min="1" max="1000" value="10" step="1" oninput="updClipper()"><div class="sv" id="clipAtkExpV">10</div></div>
+      </div>
+      <div class="fg"><label class="fl">DECAY EXP<span class="ab">1 to 1000</span></label>
+        <div class="sg"><input type="range" class="sl" id="clipDecExp" min="1" max="1000" value="100" step="1" oninput="updClipper()"><div class="sv" id="clipDecExpV">100</div></div>
+      </div>
+      <div class="fg"><label class="fl">AC ATTACK EXP<span class="ab">1 to 1000</span></label>
+        <div class="sg"><input type="range" class="sl" id="clipACAtk" min="1" max="1000" value="10" step="1" oninput="updClipper()"><div class="sv" id="clipACAtkV">10</div></div>
+      </div>
+      <div class="fg"><label class="fl">AC DECAY EXP<span class="ab">1 to 1000</span></label>
+        <div class="sg"><input type="range" class="sl" id="clipACDec" min="1" max="1000" value="100" step="1" oninput="updClipper()"><div class="sv" id="clipACDecV">100</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Clipper Transfer Function</div></div></div>
+      <canvas id="clipCanvas" style="width:100%;height:200px;display:block;border-radius:6px;border:1px solid var(--border);background:#0a0e14"></canvas>
+      <hr class="sdiv">
+      <div class="info-block">
+        <div class="mono">y(t) = clip(x(t), -threshold, +threshold)
+gain_reduction = f(|x| / threshold, atk_exp, dec_exp)
+Anti-Clipper prevents amp clipping before output stage</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 12: CROSSBAR ===== -->
+<div class="tc" id="tc12">
+  <div class="irow">
+    <div class="ip">L2I2SL <span>c293</span></div><div class="ip">R2I2SL <span>c294</span></div>
+    <div class="ip">L2I2SR <span>c295</span></div><div class="ip">R2I2SR <span>c296</span></div>
+    <div class="ip">L2AL <span>c297</span></div><div class="ip">R2AL <span>c298</span></div>
+    <div class="ip">L2AR <span>c299</span></div><div class="ip">R2AR <span>c300</span></div>
+    <div class="ip">M2I2SL <span>c327</span></div><div class="ip">M2I2SR <span>c328</span></div>
+    <div class="ip">M2AL <span>c329</span></div><div class="ip">M2AR <span>c330</span></div>
+    <div class="ip">Format <span>1.31</span></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title">Output Crossbar Matrix</div><div class="card-sub">Routes processed signal to AMP or I²S outputs</div></div>
+      <select class="fs" id="cbMode" style="width:180px" onchange="updCB()">
+        <option value="basic">Basic</option><option value="advanced">Advanced (dB)</option>
+      </select>
+    </div>
+    <div class="g2">
+      <div class="fg"><label class="fl">LEFT AMP OUT</label><select class="fs" id="cbLA" onchange="applyCBBasic()"><option value="left">Left Ch</option><option value="right">Right Ch</option></select></div>
+      <div class="fg"><label class="fl">RIGHT AMP OUT</label><select class="fs" id="cbRA" onchange="applyCBBasic()"><option value="right">Right Ch</option><option value="left">Left Ch</option></select></div>
+      <div class="fg"><label class="fl">LEFT I²S OUT</label><select class="fs" id="cbLI" onchange="applyCBBasic()"><option value="left">Left Ch</option><option value="right">Right Ch</option></select></div>
+      <div class="fg"><label class="fl">RIGHT I²S OUT</label><select class="fs" id="cbRI" onchange="applyCBBasic()"><option value="right">Right Ch</option><option value="left">Left Ch</option></select></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title">Crossbar Coefficient Values</div></div></div>
+    <table class="ct" id="cbCoeffTable">
+      <thead><tr><th>Name</th><th>Coeff Addr</th><th>dB</th><th>1.31 Hex</th><th>Description</th></tr></thead>
+      <tbody id="cbCoeffBody"></tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title">Mono Channel Routing</div><div class="card-sub">For PBTL and Mono Bass configurations</div></div></div>
+    <div class="g4" id="monoXbar"></div>
+  </div>
+</div>
+
+<!-- ===== TAB 13: REGISTER MAP ===== -->
+<div class="tc" id="tc13">
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input class="reg-search" type="text" id="regSrch" placeholder="🔍 Search register name or address..." oninput="filterRegs()" style="flex:1">
+    <select class="sel" id="regView" onchange="filterRegs()"><option value="hex">Hex</option><option value="dec">Dec</option><option value="bin">Binary</option></select>
+    <button class="btn btn-g btn-sm" onclick="exportRegCSV()">Export CSV</button>
+  </div>
+  <div class="reg-wrap"><table class="rt" id="regFull">
+    <thead><tr><th>Address</th><th>Register</th><th>Description</th><th>Mode</th><th>Default</th><th>Value</th><th>Bits [7:0]</th></tr></thead>
+    <tbody id="regBody"></tbody>
+  </table></div>
+</div>
+
+<!-- ===== TAB 14: LEVEL METER ===== -->
+<div class="tc" id="tc14">
+  <div class="irow">
+    <div class="ip">TimeConst Coeff <span>310</span></div>
+    <div class="ip">SamplePrePost <span>coeff 311</span></div>
+    <div class="ip">Left Read <span>Book 0x78, Page 0x01, Offset 0x48</span></div>
+    <div class="ip">Right Read <span>Book 0x78, Page 0x01, Offset 0x7C</span></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Level Meter Configuration</div></div></div>
+      <div class="fg"><label class="fl">TIME CONSTANT<span class="ab">coeff 310</span> (ms, 0–5000)</label>
+        <div class="sg"><input type="range" class="sl" id="lmTC" min="0" max="5000" value="1000" oninput="updLM()"><div class="sv" id="lmTCV">1000 ms</div></div>
+      </div>
+      <div class="fg"><label class="fl">SAMPLE POINT<span class="ab">coeff 311</span></label>
+        <select class="fs" id="lmPP" onchange="updLM()">
+          <option value="0">Post Processing (value=0)</option>
+          <option value="0.5">Pre Processing (value=0.5)</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">CHANNEL</label>
+        <select class="fs" id="lmCh" onchange="updLM()">
+          <option value="1">Left Channel (offset 0x48)</option>
+          <option value="0">Right Channel (offset 0x7C)</option>
+        </select>
+      </div>
+      <hr class="sdiv">
+      <table class="ct">
+        <thead><tr><th>Parameter</th><th>Coeff</th><th>Value</th><th>1.31 Hex</th></tr></thead>
+        <tbody>
+          <tr><td>Time Constant</td><td class="cn">310</td><td class="cf" id="lmTCC">1000 ms</td><td class="ch" id="lmTCH">0x...</td></tr>
+          <tr><td>Pre/Post</td><td class="cn">311</td><td class="cf" id="lmPPC">Post (0)</td><td class="ch" id="lmPPH">0x00000000</td></tr>
+        </tbody>
+      </table>
+      <div class="info-block" style="margin-top:12px">
+        <div class="mono">Read: I²C addr 0x98, Book 0x78, Page 0x01
+Left level:  offset 0x48 (32-bit value)
+Right level: offset 0x7C (32-bit value)
+Level in dB = 20×log10(value / 2^31)</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Level Meter Display</div></div>
+        <button class="btn btn-p btn-sm" onclick="startLMSim()">▶ Simulate</button>
+      </div>
+      <div style="display:flex;gap:20px;justify-content:center;align-items:flex-end;padding:20px">
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:6px">LEFT</div>
+          <div class="lm-bar" id="lmBarL"><div class="lm-fill" id="lmFillL" style="height:0%"></div></div>
+          <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--blue);margin-top:4px" id="lmValL">-∞ dB</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:10px;color:var(--text2);margin-bottom:6px">RIGHT</div>
+          <div class="lm-bar" id="lmBarR"><div class="lm-fill" id="lmFillR" style="height:0%"></div></div>
+          <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--blue);margin-top:4px" id="lmValR">-∞ dB</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:10px;color:var(--text2)">Mux output → Level Meter display</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TAB 15: CODE GENERATOR ===== -->
+<div class="tc" id="tc15">
+  <div class="g2">
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Export Settings</div></div></div>
+      <div class="fg"><label class="fl">FORMAT</label>
+        <select class="fs" id="expFmt"><option value="h">.h C Header Array</option><option value="cfg">.cfg PPC3 Format</option><option value="eeprom">.eeprom Hex Dump</option><option value="mtk">.mtk MediaTek</option></select>
+      </div>
+      <div class="fg"><label class="fl">INCLUDE SECTIONS</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <label class="tog"><input type="checkbox" id="expHW" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Hardware Regs</span></label>
+          <label class="tog"><input type="checkbox" id="expMix" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Input Mixer</span></label>
+          <label class="tog"><input type="checkbox" id="expEQ" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">EQ Biquad×15</span></label>
+          <label class="tog"><input type="checkbox" id="expVol" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Volume</span></label>
+          <label class="tog"><input type="checkbox" id="expSpa" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Spatializer</span></label>
+          <label class="tog"><input type="checkbox" id="expDPEQ" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">DPEQ</span></label>
+          <label class="tog"><input type="checkbox" id="expDRC" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">3-Band DRC</span></label>
+          <label class="tog"><input type="checkbox" id="expAGL" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">PVDD AGL</span></label>
+          <label class="tog"><input type="checkbox" id="expCB" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Crossbar</span></label>
+          <label class="tog"><input type="checkbox" id="expLM" checked><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Level Meter</span></label>
+        </div>
+      </div>
+      <div class="fg"><label class="fl">ARRAY NAME</label><input type="text" class="fi" id="arrName" value="tas5825m_pf7_config"></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-p" style="flex:1" onclick="genCode()">⚡ Generate</button>
+        <button class="btn btn-g" onclick="dlCode()">⬇ Download</button>
+        <button class="btn btn-s" onclick="copyCode()">📋 Copy</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div><div class="card-title">Generated Code</div></div></div>
+      <div class="code-out" id="codeOut">// Click Generate to produce output
+// TAS5825M Process Flow 7 — All blocks
+// Verified addresses from TI PPC3 source</div>
+    </div>
+  </div>
+
+  <!-- Complete Address Reference -->
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title">Complete DSP Coefficient Address Reference — Process Flow 7</div></div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:6px">Input Mixer</div>
+        <table class="ct"><thead><tr><th>Name</th><th>Addr</th></tr></thead><tbody>
+          <tr><td>L2L</td><td class="cn">303</td></tr><tr><td>R2L</td><td class="cn">304</td></tr>
+          <tr><td>L2R</td><td class="cn">305</td></tr><tr><td>R2R</td><td class="cn">306</td></tr>
+        </tbody></table>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:6px">Volume/AGL</div>
+        <table class="ct"><thead><tr><th>Name</th><th>Addr</th></tr></thead><tbody>
+          <tr><td>AGL Enable</td><td class="cn">8</td></tr><tr><td>Vol Alpha</td><td class="cn">9</td></tr>
+          <tr><td>AGL Thresh</td><td class="cn">281</td></tr><tr><td>Spatializer</td><td class="cn">282</td></tr>
+          <tr><td>Lvl Meter TC</td><td class="cn">310</td></tr><tr><td>Lvl Meter PP</td><td class="cn">311</td></tr>
+          <tr><td>AGL Alpha Lo</td><td class="cn">316</td></tr><tr><td>AGL Attack</td><td class="cn">317</td></tr>
+          <tr><td>AGL Alpha Hi</td><td class="cn">319</td></tr><tr><td>AGL Release</td><td class="cn">320</td></tr>
+          <tr><td>DSP Gain</td><td class="cn">620</td></tr>
+        </tbody></table>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:6px">DPEQ</div>
+        <table class="ct"><thead><tr><th>Name</th><th>Addr</th></tr></thead><tbody>
+          <tr><td>Energy</td><td class="cn">248</td></tr><tr><td>Thresh Low</td><td class="cn">249</td></tr>
+          <tr><td>Thresh High</td><td class="cn">250</td></tr><tr><td>SenseEQ BQ</td><td class="cn">2251</td></tr>
+          <tr><td>LowLevel BQ</td><td class="cn">2261</td></tr><tr><td>HighLevel BQ</td><td class="cn">2266</td></tr>
+          <tr><td>Spatializer HPF</td><td class="cn">2283</td></tr><tr><td>Spatializer LPF</td><td class="cn">2288</td></tr>
+          <tr><td>Thermal/AGL</td><td class="cn">417</td></tr>
+        </tbody></table>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:6px">Crossbar / DRC</div>
+        <table class="ct"><thead><tr><th>Name</th><th>Addr</th></tr></thead><tbody>
+          <tr><td>L2I2SL</td><td class="cn">293</td></tr><tr><td>R2I2SL</td><td class="cn">294</td></tr>
+          <tr><td>L2I2SR</td><td class="cn">295</td></tr><tr><td>R2I2SR</td><td class="cn">296</td></tr>
+          <tr><td>L2AL</td><td class="cn">297</td></tr><tr><td>R2AL</td><td class="cn">298</td></tr>
+          <tr><td>L2AR</td><td class="cn">299</td></tr><tr><td>R2AR</td><td class="cn">300</td></tr>
+          <tr><td>DRC Start</td><td class="cn">775</td></tr><tr><td>DRC MixGain</td><td class="cn">854</td></tr>
+          <tr><td>EQ Biquad</td><td class="cn">620–694</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast">✓ Done</div>
+
+<script>
+// ========= STATE =========
+const S = {
+  power:'HIZ', sr:48000, fsw:0, again:1, masterVol:0,
+  l2l:0,r2l:-110,l2r:-110,r2r:0,
+  dspGain:0, volAlpha:3,
+  spaEn:false, spaLevel:0.25, spaHPF:4000, spaLPF:200,
+  dpeqEn:false, dpeqEnergy:100, dpeqThL:-30, dpeqThH:-10,
+  aglEn:false, aglThr:0, aglAtk:200, aglRel:1, aglAlpha:550, aglMode:0,
+  cbL2AL:0,cbR2AL:-110,cbL2AR:-110,cbR2AR:0,cbL2I2SL:0,cbR2I2SL:-110,cbL2I2SR:-110,cbR2I2SR:0,
+  cbM2AL:-110,cbM2AR:-110,cbM2I2SL:-110,cbM2I2SR:-110,
+  eqBands:[],selBand:0,
+  drcBands:[]
+};
+
+// ========= FIXED POINT =========
+const fp131 = v=>{const c=Math.max(-1,Math.min(0.99999999953,v));return Math.round(c*2147483648)|0};
+const fp527 = v=>Math.round(v*134217728)|0;
+const dB2lin = db=>db<=-110?0:Math.pow(10,db/20);
+const lin2dB = l=>l<=0?-110:20*Math.log10(l);
+const h32 = v=>'0x'+(v>>>0).toString(16).toUpperCase().padStart(8,'0');
+const gainFP = db=>{const l=dB2lin(db);return fp131(Math.min(l/256,1))};
+
+// ========= BIQUAD CALC =========
+function bqCalc(type,freq,gain,q,fs){
+  const w=2*Math.PI*freq/fs,cw=Math.cos(w),sw=Math.sin(w),a=sw/(2*q),A=Math.pow(10,gain/40);
+  let b0,b1,b2,a0,a1,a2;
+  if(type==='bypass')return{b0:1,b1:0,b2:0,a1:0,a2:0};
+  if(type==='peakingEQ'){b0=1+a*A;b1=-2*cw;b2=1-a*A;a0=1+a/A;a1=-2*cw;a2=1-a/A}
+  else if(type==='lowShelf'){b0=A*((A+1)-(A-1)*cw+2*Math.sqrt(A)*a);b1=2*A*((A-1)-(A+1)*cw);b2=A*((A+1)-(A-1)*cw-2*Math.sqrt(A)*a);a0=(A+1)+(A-1)*cw+2*Math.sqrt(A)*a;a1=-2*((A-1)+(A+1)*cw);a2=(A+1)+(A-1)*cw-2*Math.sqrt(A)*a}
+  else if(type==='highShelf'){b0=A*((A+1)+(A-1)*cw+2*Math.sqrt(A)*a);b1=-2*A*((A-1)+(A+1)*cw);b2=A*((A+1)+(A-1)*cw-2*Math.sqrt(A)*a);a0=(A+1)-(A-1)*cw+2*Math.sqrt(A)*a;a1=2*((A-1)-(A+1)*cw);a2=(A+1)-(A-1)*cw-2*Math.sqrt(A)*a}
+  else if(type==='lowPass'){b0=(1-cw)/2;b1=1-cw;b2=(1-cw)/2;a0=1+a;a1=-2*cw;a2=1-a}
+  else if(type==='highPass'){b0=(1+cw)/2;b1=-(1+cw);b2=(1+cw)/2;a0=1+a;a1=-2*cw;a2=1-a}
+  else if(type==='notch'){b0=1;b1=-2*cw;b2=1;a0=1+a;a1=-2*cw;a2=1-a}
+  else if(type==='bandPass'){b0=sw/2;b1=0;b2=-sw/2;a0=1+a;a1=-2*cw;a2=1-a}
+  else{b0=1-a;b1=-2*cw;b2=1+a;a0=1+a;a1=-2*cw;a2=1-a}
+  return{b0:b0/a0,b1:b1/a0,b2:b2/a0,a1:a1/a0,a2:a2/a0};
+}
+
+function bodeResp(bands,f,fs){
+  let rH=1,iH=0;
+  for(const b of bands){
+    if(!b.enable||b.type==='bypass')continue;
+    const w=2*Math.PI*f/fs,cw=Math.cos(w),sw=Math.sin(w),c2=Math.cos(2*w),s2=Math.sin(2*w);
+    const nR=b.b0+b.b1*cw+b.b2*c2,nI=-(b.b1*sw+b.b2*s2);
+    const dR=1+b.a1*cw+b.a2*c2,dI=-(b.a1*sw+b.a2*s2);
+    const d2=dR*dR+dI*dI;
+    const sR=(nR*dR+nI*dI)/d2,sI=(nI*dR-nR*dI)/d2;
+    const r2=rH,i2=iH;rH=r2*sR-i2*sI;iH=r2*sI+i2*sR;
+  }
+  return 20*Math.log10(Math.sqrt(rH*rH+iH*iH)+1e-12);
+}
+
+// ========= DRAW BODE =========
+function drawBode(cid,bands){
+  const cv=document.getElementById(cid);if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.offsetWidth||700,H=cv.offsetHeight||260;
+  cv.width=W;cv.height=H;
+  const fs=S.sr||48000,P={l:48,r:16,t:18,b:36},pw=W-P.l-P.r,ph=H-P.t-P.b;
+  const dbMn=-24,dbMx=12;
+  ctx.fillStyle='#0a0e14';ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.lineWidth=1;
+  for(const f of[20,50,100,200,500,1000,2000,5000,10000,20000]){
+    const x=P.l+Math.log10(f/20)/Math.log10(1000)*pw;
+    ctx.strokeStyle='#1a2030';ctx.beginPath();ctx.moveTo(x,P.t);ctx.lineTo(x,P.t+ph);ctx.stroke();
+    ctx.fillStyle='#3d4451';ctx.font='9px JetBrains Mono';ctx.textAlign='center';
+    ctx.fillText(f>=1000?f/1000+'k':f,x,H-6);
+  }
+  for(const db of[-24,-18,-12,-6,0,6,12]){
+    const y=P.t+(1-(db-dbMn)/(dbMx-dbMn))*ph;
+    ctx.strokeStyle=db===0?'#2d3a4d':'#1a2030';ctx.beginPath();ctx.moveTo(P.l,y);ctx.lineTo(P.l+pw,y);ctx.stroke();
+    ctx.fillStyle='#484f58';ctx.font='9px JetBrains Mono';ctx.textAlign='right';ctx.fillText(db+'dB',P.l-3,y+3);
+  }
+  // Individual band curves
+  ctx.globalAlpha=0.35;
+  bands.forEach((b,bi)=>{
+    if(!b.enable||b.type==='bypass')return;
+    ctx.strokeStyle=`hsl(${bi*24+160},70%,60%)`;ctx.lineWidth=1;ctx.beginPath();
+    for(let px=0;px<pw;px++){const f=20*Math.pow(1000,px/pw),db=bodeResp([b],f,fs),x=P.l+px,y=P.t+(1-(db-dbMn)/(dbMx-dbMn))*ph;px?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
+  });
+  ctx.globalAlpha=1;
+  // Combined
+  ctx.strokeStyle='#58a6ff';ctx.lineWidth=2.5;ctx.shadowColor='#58a6ff';ctx.shadowBlur=8;
+  ctx.beginPath();
+  for(let px=0;px<pw;px++){const f=20*Math.pow(1000,px/pw),db=Math.min(dbMx,Math.max(dbMn,bodeResp(bands,f,fs))),x=P.l+px,y=P.t+(1-(db-dbMn)/(dbMx-dbMn))*ph;px?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
+  ctx.shadowBlur=0;
+  // 0dB line
+  const y0=P.t+(1-(0-dbMn)/(dbMx-dbMn))*ph;
+  ctx.strokeStyle='#3d4451';ctx.lineWidth=0.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(P.l,y0);ctx.lineTo(P.l+pw,y0);ctx.stroke();ctx.setLineDash([]);
+}
+
+// ========= DRC CURVE =========
+function drawDRC(cid,band){
+  const cv=document.getElementById(cid);if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.offsetWidth||200,H=190;
+  cv.width=W;cv.height=H;
+  const P=28,pw=W-P*2,ph=H-P*2;
+  const mn=-80,mx=0;
+  ctx.fillStyle='#0a0e14';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#1a2030';ctx.lineWidth=1;
+  for(let db=-80;db<=0;db+=20){
+    const x=P+(db-mn)/(mx-mn)*pw,y=P+(1-(db-mn)/(mx-mn))*ph;
+    ctx.beginPath();ctx.moveTo(x,P);ctx.lineTo(x,P+ph);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(P,y);ctx.lineTo(P+pw,y);ctx.stroke();
+  }
+  ctx.strokeStyle='#2d3748';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(P,P+ph);ctx.lineTo(P+pw,P);ctx.stroke();ctx.setLineDash([]);
+  ctx.strokeStyle='#f85149';ctx.lineWidth=2;ctx.beginPath();
+  for(let px=0;px<=pw;px++){
+    const inDb=mn+px/pw*(mx-mn);let outDb=inDb;
+    const r0=band.regions[0],r1=band.regions[1];
+    if(inDb<r0.threshold)outDb=r0.threshold+(inDb-r0.threshold)/Math.max(1,r0.ratio);
+    else if(inDb<r1.threshold)outDb=r1.threshold+(inDb-r1.threshold)/Math.max(1,r1.ratio);
+    const y=P+(1-(Math.max(mn,Math.min(mx,outDb))-mn)/(mx-mn))*ph;
+    px?ctx.lineTo(P+px,y):ctx.moveTo(P+px,y);
+  }
+  ctx.stroke();
+  [band.regions[0],band.regions[1]].forEach(r=>{
+    const x=P+(r.threshold-mn)/(mx-mn)*pw;
+    ctx.strokeStyle='#d29922';ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(x,P);ctx.lineTo(x,P+ph);ctx.stroke();ctx.setLineDash([]);
+  });
+  ctx.fillStyle='#484f58';ctx.font='8px JetBrains Mono';ctx.textAlign='center';ctx.fillText('Input dB',P+pw/2,H-4);
+}
+
+// ========= INIT DATA =========
+function initEQ(){
+  S.eqBands=[];
+  const freqs=[20,63,125,250,400,630,1000,1600,2500,4000,6300,8000,10000,14000,20000];
+  for(let i=0;i<15;i++)S.eqBands.push({enable:true,type:'bypass',freq:freqs[i],gain:0,q:0.71,b0:1,b1:0,b2:0,a1:0,a2:0});
+}
+function initDRC(){
+  S.drcBands=[];
+  for(let i=0;i<3;i++)S.drcBands.push({enable:true,attack:25,release:50,energy:25,mixerGain:1,regions:[{threshold:-124,ratio:1},{threshold:-60,ratio:2},{threshold:0,ratio:100,k:-0.99}]});
+}
+
+// ========= TAB SWITCH =========
+function switchTab(n){
+  document.querySelectorAll('.tc').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('[id^=pf]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tc'+n)?.classList.add('active');
+  document.getElementById('tab'+n)?.classList.add('active');
+  document.getElementById('pf'+n)?.classList.add('active');
+  setTimeout(()=>{
+    if(n===2){drawBode('bodeC',S.eqBands);}
+    if(n===6){for(let i=0;i<3;i++)drawDRC('drcC'+i,S.drcBands[i]);}
+    if(n===10)drawAGL();
+    if(n===3)drawVolCurve();
+    if(n===7)drawBode('sbBode',[]);
+    if(n===11)drawClipper();
+    if(n===4)drawSpa();
+    if(n===13)renderRegs();
+  },60);
+}
+function onSRChange(){S.sr=parseInt(document.getElementById('srSel').value);updateSRC();}
+
+// ========= TAB 0 FUNCTIONS =========
+function setPwr(s,i){
+  S.power=s;document.querySelectorAll('.pw-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.pw-btn')[i]?.classList.add('active');
+  const bits=['00','01','11','10'][i];
+  document.getElementById('pwrBadge').textContent=s.replace('_',' ');
+  document.getElementById('pwrBits').textContent=bits;
+  document.getElementById('ampSt').textContent=s==='PLAY'?'Active':'Off';
+  document.getElementById('reg03').textContent='0x0'+parseInt(bits,2);
+  showToast('Power → '+s);
+}
+function updateSRC(){
+  const v=parseInt(document.getElementById('srcIn').value);
+  const isActive=v>48000;const isDecim=v===96000||v===88200;
+  document.getElementById('srcInternal').textContent=isDecim?'48 kHz (÷2 decimator)':v<=48000?v/1000+' kHz (native)':'44.1 kHz (SRC)';
+  document.getElementById('srcActive').textContent=isActive?'YES':'NO';
+  document.getElementById('srcDec').textContent=isDecim?'÷2 Active':'None';
+}
+function updateFSW(){
+  const v=parseInt(document.getElementById('fswSel').value);
+  document.getElementById('r02').textContent='0x'+((v<<4)&0xFF).toString(16).toUpperCase().padStart(2,'0');
+}
+function updateI2S(){
+  const f=parseInt(document.getElementById('i2sFmt').value),b=parseInt(document.getElementById('bitDepth').value),bk=parseInt(document.getElementById('bckRatio').value);
+  document.getElementById('r14').textContent='0x'+((f<<4|b<<2|bk)&0xFF).toString(16).toUpperCase().padStart(2,'0');
+  document.getElementById('r33').textContent='0x0'+document.getElementById('clkMode').value;
+}
+function updateAgain(){
+  const v=[0,1,2,3][parseInt(document.getElementById('againSel').value)];
+  document.getElementById('r54').textContent='0x0'+v;
+}
+function updateMasterVol(){
+  const v=parseInt(document.getElementById('masterVol').value)/10;S.masterVol=v;
+  document.getElementById('masterVolV').textContent=v.toFixed(1)+' dB';
+  const reg=Math.max(0,Math.min(255,Math.round((24-v)/0.5)));
+  document.getElementById('r4C').textContent='0x'+reg.toString(16).toUpperCase().padStart(2,'0');
+}
+function doReset(t){showToast('Reset '+t+' (Reg 0x01 Bit '+{modules:4,registers:0}[t]+' = 1, auto-clear)');}
+function clearFaults(){showToast('Faults cleared');}
+
+// ========= MIXER =========
+function updateMixMode(){document.getElementById('mixBasic').style.display=document.getElementById('mixMode').value==='basic'?'':'none';}
+function updMix(k){
+  const v=parseFloat(document.getElementById(k).value);S[k]=v;
+  document.getElementById(k+'v').textContent=v.toFixed(1)+' dB';
+  const lin=dB2lin(v),fp=fp131(Math.min(lin/256,1));
+  document.getElementById(k+'h').textContent=h32(fp);
+}
+function applyMixBasic(){
+  const lp={left:{l2l:0,r2l:-110},right:{l2l:-110,r2l:0},mono:{l2l:-6,r2l:-6}};
+  const rp={left:{l2r:0,r2r:-110},right:{l2r:-110,r2r:0},mono:{l2r:-6,r2r:-6}};
+  const ls=document.getElementById('lSrc').value,rs=document.getElementById('rSrc').value;
+  const lv=lp[ls],rv=rp[rs];
+  ['l2l','r2l','l2r','r2r'].forEach(k=>{
+    const nv=k.startsWith('l')?lv[k]:rv[k];
+    document.getElementById(k).value=nv; updMix(k);
+  });
+}
+
+// ========= EQ =========
+function renderEQGrid(){
+  const g=document.getElementById('eqGrid');g.innerHTML='';
+  const tnames=['BP','PEQ','LS','HS','LP','HP','N','BPF','APF','bypass'];
+  const tmap={bypass:'BP',peakingEQ:'PEQ',lowShelf:'LS',highShelf:'HS',lowPass:'LP',highPass:'HP',notch:'N',bandPass:'BPF',allPass:'APF'};
+  S.eqBands.forEach((b,i)=>{
+    const el=document.createElement('div');el.className='eq-band'+(i===S.selBand?' sel':'');
+    el.onclick=()=>selectBand(i);
+    el.innerHTML=`<div class="eq-bn">Band ${i+1}</div><button class="eq-btn ${b.enable?'on':'off'}" onclick="event.stopPropagation();toggleBand(${i})">${b.enable?'ON':'OFF'}</button><div class="eq-freq">${b.freq>=1000?(b.freq/1000).toFixed(1)+'k':b.freq}</div><div class="eq-gain" style="color:${b.gain>0?'var(--green)':b.gain<0?'var(--red)':'var(--blue)'}">${b.gain>0?'+':''}${b.gain.toFixed(1)}</div><div class="eq-type">${tmap[b.type]||'BP'}</div><div class="eq-ca">B0@${620+i*5}</div>`;
+    g.appendChild(el);
+  });
+}
+function toggleBand(i){S.eqBands[i].enable=!S.eqBands[i].enable;renderEQGrid();drawBode('bodeC',S.eqBands);}
+function selectBand(i){
+  S.selBand=i;const b=S.eqBands[i];
+  document.getElementById('eqEdT').textContent='Band '+(i+1)+' Editor';
+  const ba=620+i*5;
+  document.getElementById('eqEdC').textContent=`B0@${ba} B1@${ba+1} B2@${ba+2} A1@${ba+3} A2@${ba+4}`;
+  ['A0','A1','A2','A3','A4'].forEach((id,j)=>document.getElementById('eq'+id).textContent=ba+j);
+  document.getElementById('eqFtype').value=b.type;
+  document.getElementById('eqFreq').value=b.freq;
+  document.getElementById('eqQ').value=b.q;
+  document.getElementById('eqGS').value=b.gain;
+  document.getElementById('eqGN').value=b.gain;
+  document.getElementById('eqGL').textContent=b.gain+' dB';
+  document.getElementById('bEnable').checked=b.enable;
+  renderEQGrid();updBandCoeffs();
+}
+function updBand(){
+  const i=S.selBand,b=S.eqBands[i];
+  b.type=document.getElementById('eqFtype').value;
+  b.freq=parseFloat(document.getElementById('eqFreq').value)||1000;
+  b.q=parseFloat(document.getElementById('eqQ').value)||0.71;
+  b.gain=parseFloat(document.getElementById('eqGS').value)||0;
+  b.enable=document.getElementById('bEnable').checked;
+  const c=bqCalc(b.type,b.freq,b.gain,b.q,S.sr||48000);
+  b.b0=c.b0;b.b1=c.b1;b.b2=c.b2;b.a1=c.a1;b.a2=c.a2;
+  updBandCoeffs();renderEQGrid();drawBode('bodeC',S.eqBands);
+}
+function updBandCoeffs(){
+  const b=S.eqBands[S.selBand];
+  const coeffs={B0:b.b0,B1:b.b1,B2:b.b2,A1:b.a1,A2:b.a2};
+  for(const[n,v] of Object.entries(coeffs)){
+    const fp=fp527(v);
+    document.getElementById('eq'+n+'f').textContent=v.toFixed(7);
+    document.getElementById('eq'+n+'h').textContent=h32(fp);
+    document.getElementById('eq'+n+'d').textContent=fp;
+  }
+}
+function resetEQ(){initEQ();renderEQGrid();drawBode('bodeC',S.eqBands);selectBand(0);showToast('EQ reset');}
+
+// ========= VOLUME =========
+function updVol(){
+  S.dspGain=parseFloat(document.getElementById('dspGain').value);
+  document.getElementById('dspGainV').textContent=S.dspGain.toFixed(1)+' dB';
+  const lin=dB2lin(S.dspGain);
+  document.getElementById('dspGL').textContent=lin.toFixed(6);
+  document.getElementById('dspGH').textContent=h32(gainFP(S.dspGain));
+  document.getElementById('chainGain').textContent=S.dspGain.toFixed(1)+' dB';
+  drawVolCurve();
+}
+function updVolAlpha(){
+  S.volAlpha=parseFloat(document.getElementById('volAlpha').value);
+  document.getElementById('volAlphaV').textContent=S.volAlpha.toFixed(1)+' ms';
+  const alpha=Math.exp(-1/(S.volAlpha*0.001*48000+0.001));
+  document.getElementById('volAlphaC').textContent=alpha.toFixed(4);
+  document.getElementById('volAlphaH').textContent=h32(fp131(alpha));
+  document.getElementById('chainAlpha').textContent=S.volAlpha.toFixed(1)+' ms';
+}
+function drawVolCurve(){
+  const cv=document.getElementById('volCurveC');if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.offsetWidth||400,H=90;
+  cv.width=W;cv.height=H;ctx.fillStyle='#0a0e14';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#3fb950';ctx.lineWidth=2;ctx.beginPath();
+  for(let px=0;px<W;px++){const db=-110+px/W*158,y=H-(1-(db+110)/158)*(H-10)-5;px?ctx.lineTo(px,y):ctx.moveTo(px,y);}ctx.stroke();
+  const gx=(S.dspGain+110)/158*W;
+  ctx.strokeStyle='#58a6ff';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();ctx.setLineDash([]);
+}
+
+// ========= SPATIALIZER =========
+function updSpa(){
+  S.spaLevel=parseFloat(document.getElementById('spaLevel').value);
+  S.spaHPF=parseFloat(document.getElementById('spaHPF').value);
+  S.spaLPF=parseFloat(document.getElementById('spaLPF').value);
+  document.getElementById('spaLV').textContent=S.spaLevel.toFixed(2);
+  document.getElementById('spaHPFV').textContent=S.spaHPF+' Hz';
+  document.getElementById('spaLPFV').textContent=S.spaLPF+' Hz';
+  document.getElementById('spaWidth').style.width=(S.spaLevel/4*100)+'%';
+  document.getElementById('spaLVC').textContent=S.spaLevel.toFixed(6);
+  document.getElementById('spaLVH').textContent=h32(fp131(Math.min(S.spaLevel/4,1)));
+  document.getElementById('spaHPFC').textContent='HP@'+S.spaHPF+'Hz';
+  document.getElementById('spaLPFC').textContent='LP@'+S.spaLPF+'Hz';
+  drawSpa();
+}
+function applySpaPreset(){
+  const p=document.getElementById('spaPreset').value;
+  const presets={full:{level:0.75,hpf:300,lpf:20000},medium:{level:0.5,hpf:800,lpf:6000},low:{level:0.25,hpf:4000,lpf:20000},custom:{level:0.25,hpf:4000,lpf:200}};
+  const pr=presets[p]||presets.custom;
+  document.getElementById('spaLevel').value=pr.level;
+  document.getElementById('spaHPF').value=pr.hpf;
+  document.getElementById('spaLPF').value=pr.lpf;
+  updSpa();
+}
+function drawSpa(){
+  const cv=document.getElementById('spaCanvas');if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.offsetWidth||300,H=120;
+  cv.width=W;cv.height=H;ctx.fillStyle='#0a0e14';ctx.fillRect(0,0,W,H);
+  const level=S.spaLevel/4;
+  const x0=W/2,y0=H/2,r=40;
+  ctx.strokeStyle='rgba(88,166,255,0.2)';ctx.lineWidth=1;ctx.beginPath();ctx.arc(x0,y0,r,0,Math.PI*2);ctx.stroke();
+  ctx.strokeStyle=`rgba(163,113,247,${0.3+level*0.7})`;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(x0,y0,r+level*r*2,r,0,0,Math.PI*2);ctx.stroke();
+  ctx.strokeStyle='#3fb950';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(x0-r,y0);ctx.lineTo(x0-r-level*30,y0);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x0+r,y0);ctx.lineTo(x0+r+level*30,y0);ctx.stroke();
+}
+
+// ========= DPEQ =========
+function updDPEQ(){
+  S.dpeqEnergy=parseFloat(document.getElementById('dpeqEnergy').value);
+  S.dpeqThL=parseFloat(document.getElementById('dpeqThL').value);
+  S.dpeqThH=parseFloat(document.getElementById('dpeqThH').value);
+  document.getElementById('dpeqEnergyV').textContent=S.dpeqEnergy+' ms';
+  document.getElementById('dpeqThLV').textContent=S.dpeqThL+' dB';
+  document.getElementById('dpeqThHV').textContent=S.dpeqThH+' dB';
+  document.getElementById('dpeqLLGainV').textContent=parseFloat(document.getElementById('dpeqLLGain').value).toFixed(1)+' dB';
+  document.getElementById('dpeqHLGainV').textContent=parseFloat(document.getElementById('dpeqHLGain').value).toFixed(1)+' dB';
+  // Coeff table
+  const fs=S.sr||48000;
+  const alpha=Math.exp(-1/(S.dpeqEnergy*0.001*fs+1e-9));
+  document.getElementById('dpeqEC').textContent=S.dpeqEnergy+' ms';
+  document.getElementById('dpeqEH').textContent=h32(fp131(alpha));
+  const thLLin=dB2lin(S.dpeqThL);
+  document.getElementById('dpeqTLC').textContent=S.dpeqThL+' dB';
+  document.getElementById('dpeqTLH').textContent=h32(fp131(Math.min(thLLin/256,1)));
+  const thHLin=dB2lin(S.dpeqThH);
+  document.getElementById('dpeqTHC').textContent=S.dpeqThH+' dB';
+  document.getElementById('dpeqTHH').textContent=h32(fp131(Math.min(thHLin/256,1)));
+  // LL/HL biquad B0
+  const llFreq=parseFloat(document.getElementById('dpeqLLFreq').value)||1000;
+  const llGain=parseFloat(document.getElementById('dpeqLLGain').value)||0;
+  const llQ=parseFloat(document.getElementById('dpeqLLQ').value)||0.71;
+  const llType=document.getElementById('dpeqLLFt').value;
+  const llC=bqCalc(llType,llFreq,llGain,llQ,fs);
+  document.getElementById('dpeqLLB0').textContent=h32(fp527(llC.b0));
+  const hlFreq=parseFloat(document.getElementById('dpeqHLFreq').value)||1000;
+  const hlGain=parseFloat(document.getElementById('dpeqHLGain').value)||0;
+  const hlQ=parseFloat(document.getElementById('dpeqHLQ').value)||0.71;
+  const hlC=bqCalc('peakingEQ',hlFreq,hlGain,hlQ,fs);
+  document.getElementById('dpeqHLB0').textContent=h32(fp527(hlC.b0));
+}
+function applyDPEQPreset(){
+  const p=document.getElementById('dpeqPreset').value;
+  if(p==='DDE'){document.getElementById('dpeqThL').value=-40;document.getElementById('dpeqThH').value=-20;}
+  if(p==='DBE'){document.getElementById('dpeqThL').value=-50;document.getElementById('dpeqThH').value=-15;}
+  updDPEQ();
+}
+
+// ========= DRC =========
+function renderDRC(){
+  const div=document.getElementById('drcBandsDiv');div.innerHTML='';
+  const names=['Low Band','Mid Band','High Band'],coeffBase=[775,800,825];
+  S.drcBands.forEach((band,i)=>{
+    const el=document.createElement('div');el.className='card';
+    el.innerHTML=`<div class="card-hdr"><div><div class="card-title">DRC ${names[i]}</div><div class="card-sub">startCoeff ${coeffBase[i]}, format 1.31</div></div><div style="display:flex;gap:8px;align-items:center"><span class="ctag">Band ${i+1}</span><label class="tog"><input type="checkbox" ${band.enable?'checked':''} onchange="S.drcBands[${i}].enable=this.checked;drawDRC('drcC${i}',S.drcBands[${i}])"><div class="tog-track"></div><span class="tog-txt" style="font-size:11px">Enable</span></label></div></div>
+    <div class="g3">
+      <div class="fg"><label class="fl">ATTACK (ms)</label><div class="sg"><input type="range" class="sl" min="0.002" max="1000" value="${band.attack}" step="0.5" oninput="S.drcBands[${i}].attack=parseFloat(this.value);document.getElementById('da${i}').textContent=parseFloat(this.value).toFixed(1)+' ms'"><div class="sv" id="da${i}">${band.attack} ms</div></div></div>
+      <div class="fg"><label class="fl">RELEASE (ms)</label><div class="sg"><input type="range" class="sl" min="0.002" max="1000" value="${band.release}" step="0.5" oninput="S.drcBands[${i}].release=parseFloat(this.value);document.getElementById('dr${i}').textContent=parseFloat(this.value).toFixed(1)+' ms'"><div class="sv" id="dr${i}">${band.release} ms</div></div></div>
+      <div class="fg"><label class="fl">MIXER GAIN<span class="ab">c${853+i}</span></label><div class="sg"><input type="range" class="sl" min="-20" max="20" value="0" step="0.5" oninput="document.getElementById('dmg${i}').textContent=parseFloat(this.value).toFixed(1)+' dB'"><div class="sv" id="dmg${i}">0.0 dB</div></div></div>
+    </div>
+    <div class="g3">${band.regions.map((r,ri)=>`<div><div class="fl">REGION ${ri} THRESHOLD<span class="ab">r${ri}</span></div><div class="sg"><input type="range" class="sl" min="-138" max="0" value="${r.threshold}" step="0.5" oninput="S.drcBands[${i}].regions[${ri}].threshold=parseFloat(this.value);document.getElementById('dt${i}_${ri}').textContent=parseFloat(this.value).toFixed(1)+' dB';drawDRC('drcC${i}',S.drcBands[${i}])"><div class="sv" id="dt${i}_${ri}">${r.threshold} dB</div></div><div class="fl" style="margin-top:6px">RATIO</div><input type="number" class="fi" value="${r.ratio}" min="1" max="200" step="0.1" onchange="S.drcBands[${i}].regions[${ri}].ratio=parseFloat(this.value);drawDRC('drcC${i}',S.drcBands[${i}])"></div>`).join('')}</div>`;
+    div.appendChild(el);
+  });
+}
+
+// ========= AGL =========
+function updAGL(){
+  S.aglEn=document.getElementById('aglEn').checked;
+  S.aglThr=parseFloat(document.getElementById('aglThr').value);
+  S.aglAtk=parseFloat(document.getElementById('aglAtk').value);
+  S.aglRel=parseFloat(document.getElementById('aglRel').value);
+  S.aglAlpha=parseFloat(document.getElementById('aglAlpha').value);
+  S.aglMode=parseInt(document.getElementById('aglMode').value);
+  document.getElementById('aglThrV').textContent=S.aglThr.toFixed(1)+' dB';
+  document.getElementById('aglAtkV').textContent=S.aglAtk.toFixed(0)+' ms';
+  document.getElementById('aglRelV').textContent=S.aglRel.toFixed(0)+' ms';
+  document.getElementById('aglAlphaV').textContent=(S.aglAlpha/1000).toFixed(3);
+  document.getElementById('aglThrBar').style.width=((S.aglThr+138)/138*100)+'%';
+  const en=S.aglEn?-0.5:0.5;
+  document.getElementById('aglEnC').textContent=(en>0?'+':'')+en+(S.aglEn?' (ON)':' (OFF)');
+  document.getElementById('aglEnH').textContent=h32(fp131(en));
+  const thLin=dB2lin(S.aglThr);
+  document.getElementById('aglThC').textContent=thLin.toFixed(6);
+  document.getElementById('aglThH').textContent=h32(fp131(Math.min(thLin/256,1)));
+  const alpha=S.aglAlpha/1000;
+  document.getElementById('aglALLC').textContent=alpha.toFixed(6);document.getElementById('aglALLH').textContent=h32(fp131(alpha));
+  document.getElementById('aglALHC').textContent=alpha.toFixed(6);document.getElementById('aglALHH').textContent=h32(fp131(alpha));
+  const fs=S.sr||48000;
+  const atkA=Math.exp(-1/(S.aglAtk*0.001*fs+1e-9));
+  document.getElementById('aglAtkC').textContent=atkA.toFixed(6);document.getElementById('aglAtkH').textContent=h32(fp131(atkA));
+  const relA=Math.exp(-1/(S.aglRel*0.001*fs+1e-9));
+  document.getElementById('aglRelC').textContent=relA.toFixed(6);document.getElementById('aglRelH').textContent=h32(fp131(relA));
+  document.getElementById('aglModeC').textContent=S.aglMode===0?'0 (AGL)':'1 (Thermal)';
+  document.getElementById('aglModeH').textContent=h32(fp131(S.aglMode));
+  drawAGL();
+}
+function drawAGL(){
+  const cv=document.getElementById('aglCanvas');if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.offsetWidth||400,H=100;
+  cv.width=W;cv.height=H;ctx.fillStyle='#0a0e14';ctx.fillRect(0,0,W,H);
+  const atk=S.aglAtk,rel=S.aglRel,tot=atk*3+rel*3;
+  ctx.strokeStyle='#58a6ff';ctx.lineWidth=2;ctx.beginPath();
+  for(let px=0;px<W;px++){const t=px/W*tot,env=t<atk?t/atk:t<atk+rel?1-(t-atk)/rel:0,y=H-env*(H-10)-5;px?ctx.lineTo(px,y):ctx.moveTo(px,y);}ctx.stroke();
+  ctx.fillStyle='#484f58';ctx.font='9px JetBrains Mono';
+  ctx.fillText('Attack:'+S.aglAtk+'ms',4,10);ctx.fillText('Release:'+S.aglRel+'ms',4,20);
+}
+
+// ========= SMART BASS =========
+function updSB(){
+  document.getElementById('sbFreqV').textContent=document.getElementById('sbFreq').value+' Hz';
+  document.getElementById('sbQV').textContent=parseFloat(document.getElementById('sbQ').value).toFixed(2);
+  document.getElementById('sbMCV').textContent=parseFloat(document.getElementById('sbMC').value).toFixed(1);
+  document.getElementById('sbMSV').textContent=document.getElementById('sbMS').value;
+  document.getElementById('sbMDRCV').textContent=parseFloat(document.getElementById('sbMDRC').value).toFixed(1);
+  document.getElementById('sbHAV').textContent=parseFloat(document.getElementById('sbHA').value).toFixed(1);
+  drawBode('sbBode',[]);
+}
+
+// ========= EXCURSION =========
+function updExcl(){
+  document.getElementById('exclXmaxV').textContent=parseFloat(document.getElementById('exclXmax').value).toFixed(1)+' mm';
+  document.getElementById('exclAtkV').textContent=parseFloat(document.getElementById('exclAtk').value).toFixed(1)+' ms';
+  document.getElementById('exclDecV').textContent=parseFloat(document.getElementById('exclDec').value).toFixed(1)+' ms';
+  document.getElementById('exclLAV').textContent=document.getElementById('exclLA').value+' Hz';
+  const xmax=parseFloat(document.getElementById('exclXmax').value);
+  document.getElementById('exclLimit').textContent=xmax.toFixed(1)+' mm';
+}
+
+// ========= THERMAL =========
+function updTherm(){
+  document.getElementById('thermRthV').textContent=parseFloat(document.getElementById('thermRth').value).toFixed(1)+' K/W';
+  document.getElementById('thermTmaxV').textContent=document.getElementById('thermTmax').value+' °C';
+  document.getElementById('thermTaV').textContent=document.getElementById('thermTa').value+' °C';
+  const tmax=parseInt(document.getElementById('thermTmax').value),ta=parseInt(document.getElementById('thermTa').value);
+  document.getElementById('thermMaxT').textContent=tmax+' °C';
+  document.getElementById('thermCurrT').textContent=ta+' °C';
+  document.getElementById('thermHead').textContent=(tmax-ta)+' °C';
+}
+
+// ========= CLIPPER =========
+function updClipper(){
+  const g=parseFloat(document.getElementById('clipGain').value);
+  document.getElementById('clipGainV').textContent=g.toFixed(1)+' dB';
+  document.getElementById('clipAtkExpV').textContent=document.getElementById('clipAtkExp').value;
+  document.getElementById('clipDecExpV').textContent=document.getElementById('clipDecExp').value;
+  document.getElementById('clipACAtkV').textContent=document.getElementById('clipACAtk').value;
+  document.getElementById('clipACDecV').textContent=document.getElementById('clipACDec').value;
+  drawClipper();
+}
+function drawClipper(){
+  const cv=document.getElementById('clipCanvas');if(!cv)return;
+  const ctx=cv.getContext('2d'),W=cv.offsetWidth||300,H=200;
+  cv.width=W;cv.height=H;ctx.fillStyle='#0a0e14';ctx.fillRect(0,0,W,H);
+  const P=30,pw=W-P*2,ph=H-P*2;
+  ctx.strokeStyle='#1a2030';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const x=P+i/4*pw,y=P+i/4*ph;ctx.beginPath();ctx.moveTo(x,P);ctx.lineTo(x,P+ph);ctx.stroke();ctx.beginPath();ctx.moveTo(P,y);ctx.lineTo(P+pw,y);ctx.stroke();}
+  ctx.strokeStyle='#2d3748';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(P,P+ph/2);ctx.lineTo(P+pw,P);ctx.stroke();ctx.setLineDash([]);
+  const gain=document.getElementById('clipGain')?parseFloat(document.getElementById('clipGain').value):0;
+  const linGain=dB2lin(gain);
+  ctx.strokeStyle='#f85149';ctx.lineWidth=2.5;ctx.shadowColor='#f85149';ctx.shadowBlur=6;ctx.beginPath();
+  for(let px=0;px<=pw;px++){
+    const x=P+px,inN=(px/pw*2-1),out=Math.max(-1,Math.min(1,inN*linGain)),y=P+ph/2-out*ph/2;
+    px?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  }ctx.stroke();ctx.shadowBlur=0;
+}
+
+// ========= CROSSBAR =========
+function applyCBBasic(){
+  const lAmp=document.getElementById('cbLA').value,rAmp=document.getElementById('cbRA').value;
+  const lI2S=document.getElementById('cbLI').value,rI2S=document.getElementById('cbRI').value;
+  S.cbL2AL=lAmp==='left'?0:-110;S.cbR2AL=lAmp==='right'?0:-110;
+  S.cbL2AR=rAmp==='left'?0:-110;S.cbR2AR=rAmp==='right'?0:-110;
+  S.cbL2I2SL=lI2S==='left'?0:-110;S.cbR2I2SL=lI2S==='right'?0:-110;
+  S.cbL2I2SR=rI2S==='left'?0:-110;S.cbR2I2SR=rI2S==='right'?0:-110;
+  updCBTable();
+}
+function updCB(){updCBTable();}
+function updCBTable(){
+  const entries=[
+    {n:'L2I2SL',a:293,k:'cbL2I2SL',d:'Left→I2S Left'},{n:'R2I2SL',a:294,k:'cbR2I2SL',d:'Right→I2S Left'},
+    {n:'L2I2SR',a:295,k:'cbL2I2SR',d:'Left→I2S Right'},{n:'R2I2SR',a:296,k:'cbR2I2SR',d:'Right→I2S Right'},
+    {n:'L2AL',a:297,k:'cbL2AL',d:'Left→Amp Left'},{n:'R2AL',a:298,k:'cbR2AL',d:'Right→Amp Left'},
+    {n:'L2AR',a:299,k:'cbL2AR',d:'Left→Amp Right'},{n:'R2AR',a:300,k:'cbR2AR',d:'Right→Amp Right'},
+  ];
+  document.getElementById('cbCoeffBody').innerHTML=entries.map(e=>{
+    const db=S[e.k]??-110,fp=fp131(Math.min(dB2lin(db)/256,1));
+    return`<tr><td class="cn">${e.n}</td><td class="cn">${e.a}</td><td class="cf">${db.toFixed(1)} dB</td><td class="ch">${h32(fp)}</td><td style="font-size:10.5px;color:var(--text2)">${e.d}</td></tr>`;
+  }).join('');
+  // Mono crossbar
+  const monoEntries=[{n:'M2AL',a:329,k:'cbM2AL'},{n:'M2AR',a:330,k:'cbM2AR'},{n:'M2I2SL',a:327,k:'cbM2I2SL'},{n:'M2I2SR',a:328,k:'cbM2I2SR'}];
+  document.getElementById('monoXbar').innerHTML=monoEntries.map(e=>{
+    const db=S[e.k]??-110;
+    return`<div class="fg"><label class="fl">${e.n}<span class="ab">c${e.a}</span></label><div class="sg"><input type="range" class="sl" min="-110" max="48" value="${db}" step="0.5" oninput="S.${e.k}=parseFloat(this.value);updCBTable()"><div class="sv">${db.toFixed(1)} dB</div></div></div>`;
+  }).join('');
+}
+
+// ========= LEVEL METER =========
+function updLM(){
+  const tc=parseInt(document.getElementById('lmTC').value);
+  document.getElementById('lmTCV').textContent=tc+' ms';
+  document.getElementById('lmTCC').textContent=tc+' ms';
+  const pp=document.getElementById('lmPP').value;
+  document.getElementById('lmPPC').textContent=pp==='0'?'Post (0)':'Pre (0.5)';
+  document.getElementById('lmPPH').textContent=h32(fp131(parseFloat(pp)));
+  const alpha=Math.exp(-1/(tc*0.001*48000+1e-9));
+  document.getElementById('lmTCH').textContent=h32(fp131(alpha));
+}
+let lmSim=false;
+function startLMSim(){
+  lmSim=!lmSim;
+  if(lmSim)animLM();
+}
+function animLM(){
+  if(!lmSim)return;
+  const lv=Math.random()*100,rv=Math.random()*100;
+  document.getElementById('lmFillL').style.height=lv+'%';
+  document.getElementById('lmFillR').style.height=rv+'%';
+  const ldB=20*Math.log10(lv/100+0.001),rdB=20*Math.log10(rv/100+0.001);
+  document.getElementById('lmValL').textContent=ldB.toFixed(1)+' dB';
+  document.getElementById('lmValR').textContent=rdB.toFixed(1)+' dB';
+  setTimeout(animLM,100);
+}
+
+// ========= REGISTER MAP =========
+const REGS=[
+  {a:'0x01',n:'Reset Control',d:'Bit[4]=Reset modules, Bit[0]=Reset registers. Auto-cleared.',m:'R/W',def:'0x00'},
+  {a:'0x02',n:'Device Control 1',d:'FSW bits[6:4]: 000=384k,010=480k,011=576k,100=768k',m:'R/W',def:'0x00'},
+  {a:'0x03',n:'Device Control 2',d:'Power state bits[1:0]: 00=DeepSleep,01=HIZ,10=Mute,11=Play',m:'R/W',def:'0x01'},
+  {a:'0x06',n:'Clock Error Halt',d:'Halt behavior on clock error',m:'R/W',def:'0x00'},
+  {a:'0x08',n:'SAP Control 1',d:'Serial port word length, polarity',m:'R/W',def:'0x00'},
+  {a:'0x09',n:'SAP Control 2',d:'TDM channel select',m:'R/W',def:'0x00'},
+  {a:'0x0A',n:'SAP Control 3',d:'Mono mix, channel swap',m:'R/W',def:'0x00'},
+  {a:'0x13',n:'DSP Misc Ctrl 1',d:'DSP mode control',m:'R/W',def:'0x00'},
+  {a:'0x14',n:'I2S Control',d:'Bits[5:4]=format, [3:2]=word length, [1:0]=BCK ratio',m:'R/W',def:'0x08'},
+  {a:'0x1B',n:'GPIO Control',d:'GPIO pin direction and function',m:'R/W',def:'0x00'},
+  {a:'0x25',n:'FS Channel Gain 1',d:'Left channel volume register',m:'R/W',def:'0x30'},
+  {a:'0x26',n:'FS Channel Gain 2',d:'Right channel volume register',m:'R/W',def:'0x30'},
+  {a:'0x30',n:'Volume Control 1',d:'Left channel digital volume 0x00=+24dB, 0xFF=mute, 0.5dB/LSB',m:'R/W',def:'0x30'},
+  {a:'0x31',n:'Volume Control 2',d:'Right channel digital volume',m:'R/W',def:'0x30'},
+  {a:'0x33',n:'Master Volume',d:'Master digital volume 0x00=+24dB, 0xFF=mute, 0.5dB/LSB',m:'R/W',def:'0x30'},
+  {a:'0x35',n:'Volume Fade',d:'Volume fade rate control',m:'R/W',def:'0x00'},
+  {a:'0x36',n:'MVOL Ctrl',d:'Master volume control register',m:'R/W',def:'0x00'},
+  {a:'0x40',n:'Analog Control',d:'Analog settings, PVDD monitoring',m:'R/W',def:'0x00'},
+  {a:'0x4C',n:'Volume Ctrl',d:'Master volume 0x00=+24dB, 0xFF=mute, step 0.5dB/LSB',m:'R/W',def:'0x30'},
+  {a:'0x54',n:'AGAIN (Analog Gain)',d:'Analog gain: 0=0dB,1=7.5dB,2=15dB,3=18dB (bits[1:0])',m:'R/W',def:'0x01'},
+  {a:'0x56',n:'Class-H Control 1',d:'Class-H voltage tracking',m:'R/W',def:'0x00'},
+  {a:'0x57',n:'Class-H VDD',d:'Class-H supply control',m:'R/W',def:'0x00'},
+  {a:'0x60',n:'BQ Enable',d:'Biquad/EQ enable bits',m:'R/W',def:'0x00'},
+  {a:'0x61',n:'Mixer Enable',d:'Input mixer enable',m:'R/W',def:'0x00'},
+  {a:'0x62',n:'DRC Enable',d:'DRC enable bits per band',m:'R/W',def:'0x00'},
+  {a:'0x63',n:'Clip Ctrl',d:'Anti-clipper enable',m:'R/W',def:'0x00'},
+  {a:'0x64',n:'MDAC Ctrl',d:'Modulator DAC control',m:'R/W',def:'0x00'},
+  {a:'0x65',n:'DC Block',d:'DC blocking filter',m:'R/W',def:'0x00'},
+  {a:'0x66',n:'SmartAmp Ctrl',d:'SmartAmp processing control',m:'R/W',def:'0x00'},
+  {a:'0x67',n:'Device ID',d:'Chip ID — should read 0x95 for TAS5825M',m:'R',def:'0x95'},
+  {a:'0x68',n:'Power State',d:'Current power state readback',m:'R',def:'0x00'},
+  {a:'0x69',n:'PLL Status',d:'PLL lock status',m:'R',def:'0x00'},
+  {a:'0x6A',n:'DSP Status',d:'DSP running status',m:'R',def:'0x00'},
+  {a:'0x6B',n:'BCK Status',d:'BCK clock detection',m:'R',def:'0x00'},
+  {a:'0x70',n:'Fault Status 1',d:'Over-current fault per channel',m:'R',def:'0x00'},
+  {a:'0x71',n:'Fault Status 2',d:'DC fault detection',m:'R',def:'0x00'},
+  {a:'0x72',n:'Fault Status 3',d:'Over-temperature fault',m:'R',def:'0x00'},
+  {a:'0x73',n:'Fault Status 4',d:'Under-voltage fault',m:'R',def:'0x00'},
+  {a:'0x78',n:'Fault Clear',d:'Write to clear fault status',m:'R/W',def:'0x00'},
+  {a:'0x7E',n:'Page Select',d:'Page select — write page number (0x00 = page 0)',m:'R/W',def:'0x00'},
+  {a:'0x7F',n:'Book Select',d:'Book select — write book number (0x00=Book0, 0x8C=DSP ctrl)',m:'R/W',def:'0x00'},
+];
+const regVals={};REGS.forEach(r=>regVals[r.a]=r.def);
+function renderRegs(){
+  const srch=(document.getElementById('regSrch').value||'').toLowerCase();
+  const mode=document.getElementById('regView').value;
+  const tb=document.getElementById('regBody');tb.innerHTML='';
+  for(const r of REGS){
+    if(srch&&!r.n.toLowerCase().includes(srch)&&!r.a.toLowerCase().includes(srch)&&!r.d.toLowerCase().includes(srch))continue;
+    const nv=parseInt(regVals[r.a]||r.def,16)||0;
+    const dv=mode==='dec'?nv.toString():mode==='bin'?nv.toString(2).padStart(8,'0'):regVals[r.a]||r.def;
+    const bits=nv.toString(2).padStart(8,'0').split('').map((b,i)=>`<span style="color:${b==='1'?'var(--blue)':'var(--text3)'}">${b}</span>`).join('');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="cn">${r.a}</span></td><td style="font-weight:500">${r.n}</td><td style="color:var(--text2);font-size:10.5px;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.d}">${r.d}</td><td><span style="font-family:'JetBrains Mono';font-size:10px;color:${r.m==='R'?'var(--text3)':'var(--green)'}">${r.m}</span></td><td class="ch" style="font-size:10.5px">${r.def}</td><td><input class="rv" value="${dv}" onchange="regVals['${r.a}']='0x'+parseInt(this.value,${mode==='bin'?2:mode==='dec'?10:16}).toString(16).toUpperCase().padStart(2,'0')"></td><td style="font-family:'JetBrains Mono';font-size:10px;letter-spacing:1px">${bits}</td>`;
+    tb.appendChild(tr);
+  }
+}
+function filterRegs(){renderRegs();}
+function exportRegCSV(){
+  let csv='Address,Name,Mode,Default,Value,Description\n';
+  REGS.forEach(r=>csv+=`${r.a},"${r.n}","${r.m}","${r.def}","${regVals[r.a]||r.def}","${r.d}"\n`);
+  dlFile(csv,'tas5825m_regs.csv','text/csv');
+}
+
+// ========= CODE GENERATOR =========
+function genCode(){
+  const fmt=document.getElementById('expFmt').value;
+  const name=document.getElementById('arrName').value||'tas5825m_pf7_config';
+  const fs=S.sr||48000;
+  let code='';
+  if(fmt==='h'){
+    code=`/**\n * ${name}.h — TAS5825M Process Flow 7 Configuration\n * Generated by TAS5825M DSP Studio\n * I2C: ${document.getElementById('i2cAddr').value} | SR: ${fs} Hz\n * Process Flow: SRC→InMix→15BQ→Vol→Spatializer→DPEQ→DRC3→SmartBass→Excursion→Thermal→PVDD_AGL→Clipper→Crossbar\n */\n#ifndef ${name.toUpperCase()}_H\n#define ${name.toUpperCase()}_H\n#include <stdint.h>\n\n`;
+    if(document.getElementById('expHW').checked){
+      code+=`// ═══ HARDWARE REGISTERS (Book 0x00, Page 0x00) ═══\n// {book, page, offset, value}\nstatic const uint8_t ${name}_hw[][4] = {\n`;
+      code+=`    {0x00,0x00,0x01,0x00}, // Reset Control (clear)\n`;
+      code+=`    {0x00,0x00,0x02,0x${((parseInt(document.getElementById('fswSel').value)<<4)&0xFF).toString(16).toUpperCase().padStart(2,'0')}}, // Device Ctrl 1 - FSW\n`;
+      code+=`    {0x00,0x00,0x03,0x01}, // Device Ctrl 2 - HIZ\n`;
+      code+=`    {0x00,0x00,0x14,0x${((parseInt(document.getElementById('i2sFmt').value)<<4|parseInt(document.getElementById('bitDepth').value)<<2|parseInt(document.getElementById('bckRatio').value))&0xFF).toString(16).toUpperCase().padStart(2,'0')}}, // I2S Control\n`;
+      code+=`    {0x00,0x00,0x4C,0x${Math.max(0,Math.min(255,Math.round((24-S.masterVol)/0.5))).toString(16).toUpperCase().padStart(2,'0')}}, // Master Volume\n`;
+      code+=`    {0x00,0x00,0x54,0x0${document.getElementById('againSel').value}}, // AGAIN\n`;
+      code+=`    {0x00,0x00,0x03,0x03}, // PLAY mode\n`;
+      code+=`};\n\n`;
+    }
+    if(document.getElementById('expMix').checked){
+      code+=`// ═══ INPUT MIXER (1.31 format) — Section 16.1 ═══\n// {coeff_addr, value}\nstatic const uint32_t ${name}_mixer[][2] = {\n`;
+      [{n:'L2L',a:303,k:'l2l'},{n:'R2L',a:304,k:'r2l'},{n:'L2R',a:305,k:'l2r'},{n:'R2R',a:306,k:'r2r'}].forEach(e=>{
+        const fp=fp131(Math.min(dB2lin(S[e.k])/256,1));
+        code+=`    {${e.a.toString().padStart(3)}, ${h32(fp)}}, // ${e.n} = ${S[e.k].toFixed(1)} dB\n`;
+      });
+      code+=`};\n\n`;
+    }
+    if(document.getElementById('expEQ').checked){
+      code+=`// ═══ EQ BIQUAD ×15 (5.27 format) — Section 16.2 ═══\n// startCoeff=620, coeffWidth=32, coeffDefaultQ=27\n// {base_addr, b0, b1, b2, a1, a2}\nstatic const uint32_t ${name}_eq[][6] = {\n`;
+      S.eqBands.forEach((b,i)=>{
+        const ba=620+i*5,c=bqCalc(b.type,b.freq,b.gain,b.q,fs);
+        code+=`    {${ba}, ${h32(fp527(c.b0))}, ${h32(fp527(c.b1))}, ${h32(fp527(c.b2))}, ${h32(fp527(c.a1))}, ${h32(fp527(c.a2))}}, // Band${i+1} ${b.type} @${b.freq}Hz Q=${b.q}\n`;
+      });
+      code+=`};\n\n`;
+    }
+    if(document.getElementById('expVol').checked){
+      const alpha=Math.exp(-1/(S.volAlpha*0.001*48000+0.001));
+      code+=`// ═══ VOLUME & ALPHA (1.31 format) ═══\nstatic const uint32_t ${name}_volume[][2] = {\n`;
+      code+=`    {  9, ${h32(fp131(alpha))}}, // Vol Alpha = ${S.volAlpha.toFixed(1)} ms (fade rate)\n`;
+      code+=`    {620, ${h32(gainFP(S.dspGain))}}, // DSP Gain = ${S.dspGain.toFixed(1)} dB\n`;
+      code+=`};\n\n`;
+    }
+    if(document.getElementById('expSpa').checked){
+      code+=`// ═══ SPATIALIZER (1.31 format) — Section 16.5 ═══\n// Level coeff 282, HPF coeff 2283, LPF coeff 2288\nstatic const uint32_t ${name}_spatializer[][2] = {\n`;
+      code+=`    {282, ${h32(fp131(Math.min(S.spaLevel/4,1)))}}, // Level = ${S.spaLevel.toFixed(2)} (${S.spaEn?'ON':'OFF'})\n`;
+      code+=`    // HPF BQ @${S.spaHPF}Hz: 5 coeffs at addr 2283-2287\n`;
+      code+=`    // LPF BQ @${S.spaLPF}Hz: 5 coeffs at addr 2288-2292\n`;
+      code+=`};\n\n`;
+    }
+    if(document.getElementById('expDPEQ').checked){
+      const alpha=Math.exp(-1/(S.dpeqEnergy*0.001*(S.sr||48000)+1e-9));
+      code+=`// ═══ DPEQ — Dynamic Parametric EQ (Section 16.6) ═══\n// Energy coeff 248, ThreshLow 249, ThreshHigh 250\n// SenseEQ BQ 2251, LowLevelEQ BQ 2261, HighLevelEQ BQ 2266\nstatic const uint32_t ${name}_dpeq[][2] = {\n`;
+      code+=`    {248, ${h32(fp131(alpha))}}, // Energy Window = ${S.dpeqEnergy} ms\n`;
+      code+=`    {249, ${h32(fp131(Math.min(dB2lin(S.dpeqThL)/256,1)))}}, // Threshold Low = ${S.dpeqThL} dB\n`;
+      code+=`    {250, ${h32(fp131(Math.min(dB2lin(S.dpeqThH)/256,1)))}}, // Threshold High = ${S.dpeqThH} dB\n`;
+      code+=`    // SenseEQ biquad:    5 coeffs at 2251-2255 (5.27)\n`;
+      code+=`    // LowLevel EQ biquad: 5 coeffs at 2261-2265 (5.27)\n`;
+      code+=`    // HighLevel EQ biquad:5 coeffs at 2266-2270 (5.27)\n`;
+      code+=`};\n\n`;
+    }
+    if(document.getElementById('expAGL').checked){
+      const fs2=S.sr||48000;const en=S.aglEn?-0.5:0.5;
+      const atkA=Math.exp(-1/(S.aglAtk*0.001*fs2+1e-9));
+      const relA=Math.exp(-1/(S.aglRel*0.001*fs2+1e-9));
+      const alpha=S.aglAlpha/1000;
+      code+=`// ═══ PVDD AGL — Auto Gain Limiter (1.31 format) ═══\n// Enable coeff 8 (on=-0.5, off=+0.5)\n// Threshold 281, AlphaLo 316, Attack 317, AlphaHi 319, Release 320\n// ThermalOrAgl mode coeff 417\nstatic const uint32_t ${name}_agl[][2] = {\n`;
+      code+=`    {  8, ${h32(fp131(en))}}, // AGL ${S.aglEn?'ON (val=-0.5)':'OFF (val=+0.5)'}\n`;
+      code+=`    {281, ${h32(fp131(Math.min(dB2lin(S.aglThr)/256,1)))}}, // Threshold = ${S.aglThr.toFixed(1)} dB\n`;
+      code+=`    {316, ${h32(fp131(alpha))}}, // Alpha Lo (softening)\n`;
+      code+=`    {317, ${h32(fp131(atkA))}}, // Attack = ${S.aglAtk} ms\n`;
+      code+=`    {319, ${h32(fp131(alpha))}}, // Alpha Hi (softening)\n`;
+      code+=`    {320, ${h32(fp131(relA))}}, // Release = ${S.aglRel} ms\n`;
+      code+=`    {417, ${h32(fp131(S.aglMode))}}, // ThermalOrAGL mode = ${S.aglMode}\n`;
+      code+=`};\n\n`;
+    }
+    if(document.getElementById('expCB').checked){
+      code+=`// ═══ OUTPUT CROSSBAR (1.31 format) ═══\n// AMP: L2AL=297,R2AL=298,L2AR=299,R2AR=300\n// I2S: L2I2SL=293,R2I2SL=294,L2I2SR=295,R2I2SR=296\n// Mono: M2I2SL=327,M2I2SR=328,M2AL=329,M2AR=330\nstatic const uint32_t ${name}_crossbar[][2] = {\n`;
+      [{n:'L2I2SL',a:293,k:'cbL2I2SL'},{n:'R2I2SL',a:294,k:'cbR2I2SL'},{n:'L2I2SR',a:295,k:'cbL2I2SR'},{n:'R2I2SR',a:296,k:'cbR2I2SR'},
+       {n:'L2AL',a:297,k:'cbL2AL'},{n:'R2AL',a:298,k:'cbR2AL'},{n:'L2AR',a:299,k:'cbL2AR'},{n:'R2AR',a:300,k:'cbR2AR'}].forEach(e=>{
+        const db=S[e.k]??-110,fp=fp131(Math.min(dB2lin(db)/256,1));
+        code+=`    {${e.a.toString().padStart(3)}, ${h32(fp)}}, // ${e.n} = ${db.toFixed(1)} dB\n`;
+      });
+      code+=`};\n\n`;
+    }
+    if(document.getElementById('expLM').checked){
+      const alpha=Math.exp(-1/(parseInt(document.getElementById('lmTC').value)*0.001*48000+1e-9));
+      code+=`// ═══ LEVEL METER (1.31 format) ═══\n// TimeConst coeff 310, SamplePrePost coeff 311\n// Read: Book 0x78, Page 0x01, Left@0x48, Right@0x7C\nstatic const uint32_t ${name}_levelmeter[][2] = {\n`;
+      code+=`    {310, ${h32(fp131(alpha))}}, // Time Constant = ${document.getElementById('lmTC').value} ms\n`;
+      code+=`    {311, ${h32(fp131(parseFloat(document.getElementById('lmPP').value)))}}, // Sample: ${document.getElementById('lmPP').value==='0'?'Post':'Pre'} processing\n`;
+      code+=`};\n\n`;
+    }
+    code+=`#endif // ${name.toUpperCase()}_H\n`;
+  } else if(fmt==='cfg'){
+    const i2c=document.getElementById('i2cAddr').value;
+    code=`# TAS5825M Process Flow 7 Configuration\n# Generated by TAS5825M DSP Studio\n# I2C: ${i2c}  SR: ${fs} Hz\n\n`;
+    code+=`# === Book/Page setup ===\nw ${i2c} 7F 00  # Book 0\nw ${i2c} 00 00  # Page 0\n\n# === Hardware Init ===\nw ${i2c} 01 00  # Clear reset\nw ${i2c} 03 00  # HIZ mode\nw ${i2c} 14 ${((parseInt(document.getElementById('i2sFmt').value)<<4|parseInt(document.getElementById('bitDepth').value)<<2|parseInt(document.getElementById('bckRatio').value))&0xFF).toString(16).padStart(2,'0').toUpperCase()}  # I2S Control\nw ${i2c} 4C ${Math.max(0,Math.min(255,Math.round((24-S.masterVol)/0.5))).toString(16).padStart(2,'0').toUpperCase()}  # Master Volume\nw ${i2c} 54 0${document.getElementById('againSel').value}  # AGAIN\nw ${i2c} 03 03  # PLAY mode\n\n`;
+    code+=`# === DSP Coefficients (Book 0x8C) ===\n# Write mixer, EQ, DRC, AGL, crossbar coefficients here\n# using coeff write protocol: addr = coeff_num × 4 + base\n`;
+  } else{
+    code=`// ${fmt} format output\n// TAS5825M Process Flow 7\n`;
+  }
+  document.getElementById('codeOut').textContent=code;
+  showToast('Code generated!');
+}
+function copyCode(){navigator.clipboard?.writeText(document.getElementById('codeOut').textContent).then(()=>showToast('Copied!'));}
+function dlCode(){const fmt=document.getElementById('expFmt').value,name=(document.getElementById('arrName').value||'config')+'.'+fmt;dlFile(document.getElementById('codeOut').textContent,name,'text/plain');}
+function dlFile(content,fname,mime){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:mime}));a.download=fname;a.click();}
+
+// ========= TOAST =========
+function showToast(msg){const t=document.getElementById('toast');t.textContent='✓ '+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ========= INIT =========
+function init(){
+  initEQ();initDRC();
+  renderEQGrid();selectBand(0);
+  renderDRC();
+  updMix('l2l');updMix('r2l');updMix('l2r');updMix('r2r');
+  updVol();updVolAlpha();
+  updSpa();updDPEQ();updAGL();
+  updCBTable();updLM();
+  updateFSW();updateI2S();updateMasterVol();
+  renderRegs();genCode();
+  setTimeout(()=>{drawBode('bodeC',S.eqBands);drawVolCurve();},120);
+}
+window.addEventListener('load',init);
+window.addEventListener('resize',()=>{
+  const a=document.querySelector('.tc.active');if(!a)return;
+  const n=a.id.replace('tc','');
+  if(n==='2')drawBode('bodeC',S.eqBands);
+  if(n==='7')drawBode('sbBode',[]);
+  if(n==='11')drawClipper();
+});
+</script>
+</body>
+</html>
