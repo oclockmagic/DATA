@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -485,7 +485,16 @@
                 <input autocomplete="off" placeholder="Note..." type="text" id='text' maxlength="255"
                     style="width: 100%; box-sizing: border-box;">
             </div>
-            [[_TEN_LIST_]]
+            <div id='quote-selection-container'>
+<label style='font-size: 11px; opacity: 0.8; display: block;'>Danh ngôn / Tên nhanh</label>
+<select id='quote_idx' style='width: 100%; margin-top: 5px; outline: none;'>
+<option value='0'>Dang ngon</option>
+<option value='1'>Danh ngon TA</option>
+<option value='3'>English</option>
+<option value='2'>Thien chua</option>
+</select>
+</div>
+
         </div>
 
         <div id="section-alarm" class="section-glass" style="display: none;">
@@ -535,7 +544,169 @@
                 </div>
                 <div class="flex-column" style="margin-top: 10px; margin-bottom: 10px;">
                     <label>Melody</label>
-                    <select id="mel" class="listmelody">@@888***</select>
+                    <select id="mel" class="listmelody"><option value="0">-No melody</option>
+<option value="1">HappyBirthday</option>
+<option value="2">Pokemon</option>
+<option value="3">007</option>
+<option value="4">7Days</option>
+<option value="5">Adams Family</option>
+<option value="6">Agadoo</option>
+<option value="7">Alice Cooper-Poison</option>
+<option value="8">Alvin and the Chipmonks</option>
+<option value="9">Amazing Grace</option>
+<option value="10">Axel</option>
+<option value="11">Ba Ba Black Sheep</option>
+<option value="12">Back to the Future</option>
+<option value="13">Barbie Girl</option>
+<option value="14">Batman</option>
+<option value="15">Be bopalula</option>
+<option value="16">Benny Hill</option>
+<option value="17">Bethoven</option>
+<option value="18">Birdy Song</option>
+<option value="19">Black Bear</option>
+<option value="20">Bod</option>
+<option value="21">Bolero</option>
+<option value="22">Borteus</option>
+<option value="23">BSP</option>
+<option value="24">Camberwick Green</option>
+<option value="25">Canon</option>
+<option value="26">Cantina</option>
+<option value="27">Captain Pugwash</option>
+<option value="28">Chariots of Fire</option>
+<option value="29">Coca Cola</option>
+<option value="30">Colonel Bogey</option>
+<option value="31">Dallas</option>
+<option value="32">Dangerman</option>
+<option value="33">Death March</option>
+<option value="34">Deep Purple-Lazy</option>
+<option value="35">Deep Purple-Smoke on the Water</option>
+<option value="36">Digimon</option>
+<option value="37">Don't Care</option>
+<option value="38">Dragonballz</option>
+<option value="39">Dream</option>
+<option value="40">Duelling Banjos</option>
+<option value="41">Dustman</option>
+<option value="42">Entertainer</option>
+<option value="43">Fairground</option>
+<option value="44">Fawlty Towers</option>
+<option value="45">Figaro</option>
+<option value="46">Final Countdown</option>
+<option value="47">Flintstones</option>
+<option value="48">Flute</option>
+<option value="49">Fraggle Rock</option>
+<option value="50">Friends</option>
+<option value="51">Fruit and Nut</option>
+<option value="52">Funky Town</option>
+<option value="53">Futurama</option>
+<option value="54">GB National Anthem</option>
+<option value="55">Ghost Busters</option>
+<option value="56">Greensleaves</option>
+<option value="57">Halloween</option>
+<option value="58">Have I Got News for You</option>
+<option value="59">Hawaii 5 0</option>
+<option value="60">Heman</option>
+<option value="61">Henrys Cat</option>
+<option value="62">Hitchcock</option>
+<option value="63">Hunter</option>
+<option value="64">If I Were a Rich Man</option>
+<option value="65">Itchy and Scratchy</option>
+<option value="66">Jackson</option>
+<option value="67">Jesus Christ Superstar</option>
+<option value="68">Jingle Bells</option>
+<option value="69">Kiss</option>
+<option value="70">Knight Rider</option>
+<option value="71">Led Zepelin-Stairway to Heaven</option>
+<option value="72">Let it be</option>
+<option value="73">Let it Snow</option>
+<option value="74">Light My Fire</option>
+<option value="75">Macarena</option>
+<option value="76">Magic Roundabout</option>
+<option value="77">Match of the day</option>
+<option value="78">Metsa</option>
+<option value="79">Mission Impossible</option>
+<option value="80">Monty Python</option>
+<option value="81">Mozart</option>
+<option value="82">Mr Benn</option>
+<option value="83">Mr Men</option>
+<option value="84">Munsters</option>
+<option value="85">Muppet</option>
+<option value="86">Muppets</option>
+<option value="87">Napoli</option>
+<option value="88">New Year</option>
+<option value="89">Nut cracker Suite</option>
+<option value="90">Nut march</option>
+<option value="91">Oh Little Start of Bethlehem</option>
+<option value="92">On Ilckley Moor</option>
+<option value="93">On the 12th Day of christmas</option>
+<option value="94">Oxygen</option>
+<option value="95">Pager</option>
+<option value="96">Phantom</option>
+<option value="97">Piccolo</option>
+<option value="98">Pienian</option>
+<option value="99">Pilipom</option>
+<option value="100">Pingu</option>
+<option value="101">Pinky and the Brain</option>
+<option value="102">Polka</option>
+<option value="103">Popcorn</option>
+<option value="104">Popeye</option>
+<option value="105">Porsaita</option>
+<option value="106">Postman Pat</option>
+<option value="107">Prima</option>
+<option value="108">QuoFNigt</option>
+<option value="109">Rhubarb and Custard</option>
+<option value="110">Rich Man's World</option>
+<option value="111">Ring High</option>
+<option value="112">Ring Low</option>
+<option value="113">Rudolph the Red Nosed Raindeer</option>
+<option value="114">Rugrats</option>
+<option value="115">Rule Britania</option>
+<option value="116">Santa Clause is Coming Tonight</option>
+<option value="117">Scale</option>
+<option value="118">Scatman</option>
+<option value="119">Scooby Doo</option>
+<option value="120">Sesame Street</option>
+<option value="121">Simpsons</option>
+<option value="122">Smurfs</option>
+<option value="123">Soap</option>
+<option value="124">South Park</option>
+<option value="125">Spiderman</option>
+<option value="126">Star Trek</option>
+<option value="127">Star Wars</option>
+<option value="128">Super Man</option>
+<option value="129">Sweeney</option>
+<option value="130">Take On Me</option>
+<option value="131">Tarzan</option>
+<option value="132">Teenage Dirt Bag</option>
+<option value="133">Teenage Turtles</option>
+<option value="134">Tele Tubbies</option>
+<option value="135">Thankyou</option>
+<option value="136">The A Team</option>
+<option value="137">Thomas The Tank</option>
+<option value="138">Thunder Birds</option>
+<option value="139">Tigger</option>
+<option value="140">Time to say good bye</option>
+<option value="141">Titanic</option>
+<option value="142">To The Dump</option>
+<option value="143">Toccata</option>
+<option value="144">Tones</option>
+<option value="145">Top Cat</option>
+<option value="146">Transformers</option>
+<option value="147">Trim Phone</option>
+<option value="148">Tubular Bells</option>
+<option value="149">Under the Sea</option>
+<option value="150">USA National Anthem</option>
+<option value="151">Vanessa Mae</option>
+<option value="152">Verve</option>
+<option value="153">Walk of Life</option>
+<option value="154">Wannabe</option>
+<option value="155">We Wish you a Merry Christmas</option>
+<option value="156">While Shepards Watch</option>
+<option value="157">Winne the pooh</option>
+<option value="158">Wolf Whistle</option>
+<option value="159">Wombles</option>
+<option value="160">YMCA</option>
+<option value="161">Zorba (Give it time!)</option>
+</select>
                 </div>
             </div>
         </div>
