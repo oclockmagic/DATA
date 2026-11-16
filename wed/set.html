@@ -644,6 +644,20 @@
             </div>
         </div>
 
+        <!-- Server Data Path -->
+        <div class="section-card">
+            <span class="section-label">Server Data Path (GitHub / CDN)</span>
+            <div class="input-row" style="align-items: center; gap: 10px;">
+                <div style="flex: 1;">
+                    <input type='text' id='datapath' value='' placeholder="https://raw.githubusercontent.com/.../">
+                </div>
+                <button class="btn btn-primary" id="save-path" style="margin-bottom: 0;">Save</button>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted, #94a3b8); margin-top: 6px;">
+                Đường dẫn kho lưu trữ dữ liệu trực tuyến (icon, truyện, audio, asset).
+            </div>
+        </div>
+
         <!-- System Actions -->
         <div class="section-card">
             <span class="section-label">Data Management</span>
@@ -677,6 +691,7 @@
         document.getElementById('wifi0').addEventListener("input", e => { websocket.send("#Wi0$" + e.target.value) });
         document.getElementById('wifi1').addEventListener("input", e => { websocket.send("#Wi1$" + e.target.value) });
         document.getElementById('bluetooth').addEventListener("input", e => { websocket.send("#Blu$" + e.target.value) });
+        document.getElementById('datapath').addEventListener("input", e => { websocket.send("#Path$" + e.target.value.trim()) });
 
         document.getElementById('online').addEventListener("change", e => { websocket.send("#ONL$" + parseInt(e.target.value)) });
         document.getElementById('tzone').addEventListener("change", e => { websocket.send("#TZO$" + parseInt(e.target.value)) });
@@ -775,6 +790,19 @@
             const b = document.getElementById('bluetooth').value;
             if (b.length < 3) { showNotify("NAME TOO SHORT (MIN 3)", "error"); return; }
             showConfirm("Save Bluetooth Name?", () => { websocket.send("#SAV_BLU$"); });
+        });
+
+        document.getElementById('save-path').addEventListener("click", () => {
+            let p = document.getElementById('datapath').value.trim();
+            if (p.length < 8 || (!p.startsWith("http://") && !p.startsWith("https://"))) {
+                showNotify("INVALID URL (MUST START WITH HTTP/HTTPS)", "error");
+                return;
+            }
+            if (!p.endsWith("/")) p += "/";
+            document.getElementById('datapath').value = p;
+            showConfirm(`Save Server Data Path?\n\n${p}`, () => {
+                websocket.send("#SAV_PATH$" + p);
+            });
         });
 
         // Handle "Add" and "Delete" buttons in WiFi list
@@ -903,6 +931,9 @@
                             }
                         } else if (parts[i].startsWith("SCAN:")) {
                             scanEntries.push(parts[i].substring(5));
+                        } else if (parts[i].startsWith("PATH:")) {
+                            var pElem = document.getElementById('datapath');
+                            if (pElem) pElem.value = parts[i].substring(5);
                         }
                     }
 
