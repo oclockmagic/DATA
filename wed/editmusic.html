@@ -631,31 +631,15 @@
         <hr>
         <!-- Background Section -->
         <div class="section-card">
-            <span class="section-label">Background Image</span>
+            <span class="section-label">Background</span>
+            <!-- Source & Upload -->
             <div style="display: flex; align-items: center; gap: 12px;">
-                <div class="custom-select-wrapper" id="wrap-background" style="flex: 1;">
-                    <div class="custom-select" id="sel-background">
-                        <span class="custom-select-trigger">
-                            <div class="selected-box">
-                                <img class="selected-img" src="" style="display: none;">
-                                <span class="selected-text">Loading...</span>
-                            </div>
-                            <div class="arrow"></div>
-                        </span>
-                        <div class="custom-options">
-                            <input type="text" class="search-box" placeholder="Search..."
-                                onclick="event.stopPropagation()">
-                            <div class="options-container"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="custom-select-wrapper" id="wrap-bg-ini" style="width: 100px;">
+                <div class="custom-select-wrapper" id="wrap-bg-ini" style="flex: 1;">
                     <div class="custom-select" id="sel-bg-ini">
                         <span class="custom-select-trigger">
                             <div class="selected-box">
                                 <img class="selected-img" src="" style="display: none;">
-                                <span class="selected-text" style="display:none;">...</span>
+                                <span class="selected-text">Source...</span>
                             </div>
                             <div class="arrow"></div>
                         </span>
@@ -680,10 +664,46 @@
                     <input type="file" id="file-bg" accept="image/*" style="display: none;">
                 </div>
             </div>
-            <div style="display:flex; align-items:center; gap:10px; margin-top:8px; padding: 0 2px;">
-                <span style="font-size:10px; color:var(--text-dim); white-space:nowrap; letter-spacing:1px;">GIF
-                    SPD</span>
-                <input type="range" id="bg-gif-speed" min="1" max="16" value="4"
+
+            <!-- Effect (Move) & Beat (Flash) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                <div>
+                    <span class="section-label" style="font-size: 9px; margin-bottom: 4px;">Effect</span>
+                    <div class="custom-select" id="sel-bg-move">
+                        <span class="custom-select-trigger">
+                            <div class="selected-box">
+                                <img class="selected-img" src="" style="display: none;">
+                                <span class="selected-text">...</span>
+                            </div>
+                            <div class="arrow"></div>
+                        </span>
+                        <div class="custom-options">
+                            <div class="options-container"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="section-label" style="font-size: 9px; margin-bottom: 4px;">Beat</span>
+                    <div class="custom-select" id="sel-bg-flash">
+                        <span class="custom-select-trigger">
+                            <div class="selected-box">
+                                <img class="selected-img" src="" style="display: none;">
+                                <span class="selected-text">...</span>
+                            </div>
+                            <div class="arrow"></div>
+                        </span>
+                        <div class="custom-options">
+                            <div class="options-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Speed -->
+            <div style="display:flex; align-items:center; gap:10px; margin-top:10px; padding: 0 2px;">
+                <span style="font-size:10px; color:var(--text-dim); white-space:nowrap; letter-spacing:1px;">SPEED</span>
+                <input type="range" id="bg-gif-speed" min="1" max="32" value="4"
                     style="flex:1; accent-color:var(--primary);">
                 <span id="bg-gif-speed-val"
                     style="font-size:11px; color:var(--primary); min-width:22px; text-align:right;">4</span>
@@ -727,9 +747,8 @@
                 </div>
             </div>
             <div style="display:flex; align-items:center; gap:10px; margin-top:8px; padding: 0 2px;">
-                <span style="font-size:10px; color:var(--text-dim); white-space:nowrap; letter-spacing:1px;">GIF
-                    SPD</span>
-                <input type="range" id="bass-gif-speed" min="1" max="16" value="4"
+                <span style="font-size:10px; color:var(--text-dim); white-space:nowrap; letter-spacing:1px;">SPEED</span>
+                <input type="range" id="bass-gif-speed" min="1" max="32" value="4"
                     style="flex:1; accent-color:var(--accent);">
                 <span id="bass-gif-speed-val"
                     style="font-size:11px; color:var(--accent); min-width:22px; text-align:right;">4</span>
@@ -742,7 +761,7 @@
             </div>
 
             <div>
-                <span class="section-label" style="font-size: 9px;">Bar Type</span>
+                <span class="section-label" style="font-size: 9px;">Type</span>
                 <div class="custom-select" id="sel-eq-type">
                     <span class="custom-select-trigger">
                         <div class="selected-box">
@@ -758,23 +777,7 @@
             </div>
 
             <div>
-                <span class="section-label" style="font-size: 9px;">Effect</span>
-                <div class="custom-select" id="sel-eq-effect">
-                    <span class="custom-select-trigger">
-                        <div class="selected-box">
-                            <img class="selected-img" src="" style="display: none;">
-                            <span class="selected-text">...</span>
-                        </div>
-                        <div class="arrow"></div>
-                    </span>
-                    <div class="custom-options">
-                        <div class="options-container"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <span class="section-label" style="font-size: 9px;">Color Theme</span>
+                <span class="section-label" style="font-size: 9px;">Color</span>
                 <div class="custom-select" id="sel-eq-color">
                     <span class="custom-select-trigger">
                         <div class="selected-box">
@@ -790,7 +793,23 @@
             </div>
 
             <div>
-                <span class="section-label" style="font-size: 9px;">Peak Style</span>
+                <span class="section-label" style="font-size: 9px;">Color Effect</span>
+                <div class="custom-select" id="sel-eq-effect">
+                    <span class="custom-select-trigger">
+                        <div class="selected-box">
+                            <img class="selected-img" src="" style="display: none;">
+                            <span class="selected-text">...</span>
+                        </div>
+                        <div class="arrow"></div>
+                    </span>
+                    <div class="custom-options">
+                        <div class="options-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <span class="section-label" style="font-size: 9px;">Color Peak</span>
                 <div class="custom-select" id="sel-eq-peak">
                     <span class="custom-select-trigger">
                         <div class="selected-box">
@@ -874,23 +893,25 @@
         const RAW_BASE = "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/fft/";
 
         const DATA = {
-            "background": ["000.bmp","00000.bmp","01.bmp","02.bmp","Aa.bmp","gg.bmp","happybirthday1.bmp","happybirthday10.bmp","happybirthday11.bmp","happybirthday12.bmp","happybirthday13.bmp","happybirthday14.bmp","happybirthday2.bmp","happybirthday3.bmp","happybirthday4.bmp","happybirthday5.bmp","happybirthday6.bmp","happybirthday7.bmp","happybirthday8.bmp","happybirthday9.bmp","hu_(1).bmp","hu_(10).bmp","hu_(100).bmp","hu_(103).bmp","hu_(104).bmp","hu_(105).bmp","hu_(106).bmp","hu_(109).bmp","hu_(11).bmp","hu_(110).bmp","hu_(111).bmp","hu_(115).bmp","hu_(117).bmp","hu_(118).bmp","hu_(119).bmp","hu_(12).bmp","hu_(120).bmp","hu_(122).bmp","hu_(127).bmp","hu_(13).bmp","hu_(130).bmp","hu_(136).bmp","hu_(137).bmp","hu_(139).bmp","hu_(141).bmp","hu_(142).bmp","hu_(143).bmp","hu_(144).bmp","hu_(145).bmp","hu_(148).bmp","hu_(149).bmp","hu_(15).bmp","hu_(154).bmp","hu_(157).bmp","hu_(158).bmp","hu_(16).bmp","hu_(160).bmp","hu_(161).bmp","hu_(163).bmp","hu_(164).bmp","hu_(165).bmp","hu_(167).bmp","hu_(168).bmp","hu_(17).bmp","hu_(172).bmp","hu_(173).bmp","hu_(175).bmp","hu_(176).bmp","hu_(177).bmp","hu_(179).bmp","hu_(18).bmp","hu_(180).bmp","hu_(182).bmp","hu_(184).bmp","hu_(186).bmp","hu_(187).bmp","hu_(188).bmp","hu_(189).bmp","hu_(191).bmp","hu_(192).bmp","hu_(193).bmp","hu_(197).bmp","hu_(198).bmp","hu_(199).bmp","hu_(2).bmp","hu_(20).bmp","hu_(200).bmp","hu_(202).bmp","hu_(204).bmp","hu_(205).bmp","hu_(207).bmp","hu_(209).bmp","hu_(210).bmp","hu_(212).bmp","hu_(214).bmp","hu_(215).bmp","hu_(216).bmp","hu_(217).bmp","hu_(218).bmp","hu_(219).bmp","hu_(224).bmp","hu_(225).bmp","hu_(226).bmp","hu_(227).bmp","hu_(228).bmp","hu_(23).bmp","hu_(230).bmp","hu_(232).bmp","hu_(233).bmp","hu_(234).bmp","hu_(235).bmp","hu_(236).bmp","hu_(237).bmp","hu_(238).bmp","hu_(239).bmp","hu_(24).bmp","hu_(241).bmp","hu_(242).bmp","hu_(243).bmp","hu_(244).bmp","hu_(246).bmp","hu_(247).bmp","hu_(249).bmp","hu_(25).bmp","hu_(250).bmp","hu_(253).bmp","hu_(259).bmp","hu_(26).bmp","hu_(261).bmp","hu_(262).bmp","hu_(264).bmp","hu_(265).bmp","hu_(27).bmp","hu_(272).bmp","hu_(273).bmp","hu_(275).bmp","hu_(276).bmp","hu_(277).bmp","hu_(278).bmp","hu_(28).bmp","hu_(280).bmp","hu_(281).bmp","hu_(282).bmp","hu_(283).bmp","hu_(285).bmp","hu_(286).bmp","hu_(288).bmp","hu_(29).bmp","hu_(290).bmp","hu_(292).bmp","hu_(293).bmp","hu_(294).bmp","hu_(296).bmp","hu_(297).bmp","hu_(298).bmp","hu_(299).bmp","hu_(3).bmp","hu_(300).bmp","hu_(302).bmp","hu_(303).bmp","hu_(304).bmp","hu_(305).bmp","hu_(306).bmp","hu_(31).bmp","hu_(310).bmp","hu_(311).bmp","hu_(312).bmp","hu_(314).bmp","hu_(315).bmp","hu_(316).bmp","hu_(318).bmp","hu_(319).bmp","hu_(32).bmp","hu_(320).bmp","hu_(321).bmp","hu_(322).bmp","hu_(324).bmp","hu_(325).bmp","hu_(326).bmp","hu_(327).bmp","hu_(329).bmp","hu_(33).bmp","hu_(330).bmp","hu_(331).bmp","hu_(332).bmp","hu_(333).bmp","hu_(334).bmp","hu_(335).bmp","hu_(336).bmp","hu_(338).bmp","hu_(339).bmp","hu_(34).bmp","hu_(340).bmp","hu_(342).bmp","hu_(343).bmp","hu_(344).bmp","hu_(345).bmp","hu_(347).bmp","hu_(348).bmp","hu_(35).bmp","hu_(350).bmp","hu_(351).bmp","hu_(353).bmp","hu_(354).bmp","hu_(356).bmp","hu_(357).bmp","hu_(358).bmp","hu_(359).bmp","hu_(36).bmp","hu_(360).bmp","hu_(361).bmp","hu_(362).bmp","hu_(363).bmp","hu_(366).bmp","hu_(367).bmp","hu_(369).bmp","hu_(37).bmp","hu_(370).bmp","hu_(371).bmp","hu_(372).bmp","hu_(375).bmp","hu_(376).bmp","hu_(377).bmp","hu_(378).bmp","hu_(379).bmp","hu_(38).bmp","hu_(381).bmp","hu_(382).bmp","hu_(383).bmp","hu_(385).bmp","hu_(388).bmp","hu_(39).bmp","hu_(390).bmp","hu_(391).bmp","hu_(392).bmp","hu_(393).bmp","hu_(394).bmp","hu_(396).bmp","hu_(397).bmp","hu_(398).bmp","hu_(399).bmp","hu_(4).bmp","hu_(40).bmp","hu_(400).bmp","hu_(401).bmp","hu_(402).bmp","hu_(403).bmp","hu_(407).bmp","hu_(41).bmp","hu_(410).bmp","hu_(411).bmp","hu_(413).bmp","hu_(414).bmp","hu_(415).bmp","hu_(416).bmp","hu_(417).bmp","hu_(418).bmp","hu_(419).bmp","hu_(42).bmp","hu_(420).bmp","hu_(421).bmp","hu_(422).bmp","hu_(423).bmp","hu_(424).bmp","hu_(425).bmp","hu_(427).bmp","hu_(428).bmp","hu_(429).bmp","hu_(43).bmp","hu_(430).bmp","hu_(44).bmp","hu_(45).bmp","hu_(49).bmp","hu_(5).bmp","hu_(50).bmp","hu_(54).bmp","hu_(55).bmp","hu_(56).bmp","hu_(58).bmp","hu_(61).bmp","hu_(64).bmp","hu_(65).bmp","hu_(66).bmp","hu_(7).bmp","hu_(70).bmp","hu_(77).bmp","hu_(8).bmp","hu_(83).bmp","hu_(84).bmp","hu_(85).bmp","hu_(87).bmp","hu_(88).bmp","hu_(89).bmp","hu_(9).bmp","hu_(90).bmp","hu_(91).bmp","hu_(92).bmp","hu_(93).bmp","hu_(98).bmp","jj.bmp","kk.bmp","o9.bmp","tgttt.bmp","ukl.bmp"],
             "background/ini": ["none.png", "file.png", "image.png"],
+            "background/move": ["None", "Zoom", "Move0", "Move1"],
+            "background/flash": ["Off", "White", "Rainbow", "Heatmap", "Invert"],
             "bass": ["none.png","file.png","image.png","random.png","1.bmp","10.bmp","13.bmp","14.bmp","15.bmp","2.bmp","20.bmp","21.bmp","22.bmp","23.bmp","24.bmp","25.bmp","26.bmp","27.bmp","28.bmp","29.bmp","3.bmp","30.bmp","31.bmp","32.bmp","33.bmp","34.bmp","35.bmp","36.bmp","37.bmp","38.bmp","39.bmp","4.bmp","40.bmp","41.bmp","42.bmp","43.bmp","44.bmp","45.bmp","46.bmp","47.bmp","48.bmp","49.bmp","5.bmp","50.bmp","51.bmp","52.bmp","53.bmp","55.bmp","56.bmp","57.bmp","58.bmp","59.bmp","6.bmp","60.bmp","61.bmp","63.bmp","64.bmp","66.bmp","68.bmp","69.bmp","7.bmp","70.bmp","71.bmp","72.bmp","73.bmp","74.bmp","75.bmp","76.bmp","8.bmp","9.bmp","kk.bmp","ll.bmp"],
             "equalizer/type": [],
             "equalizer/color": [],
-            "equalizer/effect": [],
+            "equalizer/effect": ["Stand", "Run", "Change"],
             "equalizer/peak": []
         };
 
         const CONFIG = [
-            { id: 'sel-background', path: 'background', label: 'Background' },
-            { id: 'sel-bg-ini', path: 'background/ini', label: 'Mode' },
+            { id: 'sel-bg-ini', path: 'background/ini', label: 'Source' },
+            { id: 'sel-bg-move', path: 'background/move', label: 'Effect' },
+            { id: 'sel-bg-flash', path: 'background/flash', label: 'Beat' },
             { id: 'sel-bass', path: 'bass', label: 'Bass' },
             { id: 'sel-eq-type', path: 'equalizer/type', label: 'Type' },
             { id: 'sel-eq-color', path: 'equalizer/color', label: 'Color' },
-            { id: 'sel-eq-effect', path: 'equalizer/effect', label: 'Effect' },
-            { id: 'sel-eq-peak', path: 'equalizer/peak', label: 'Peak' }
+            { id: 'sel-eq-effect', path: 'equalizer/effect', label: 'Color Effect' },
+            { id: 'sel-eq-peak', path: 'equalizer/peak', label: 'Color Peak' }
         ];
 
         const bgCanvas = document.getElementById('bg-canvas');
@@ -986,19 +1007,24 @@
                     return;
                 }
                 items.forEach((name, idx) => {
-                    const imgUrl = RAW_BASE + config.path + "/" + name;
-                    const displayName = name.replace(/\.[^/.]+$/, "");
+                    const isImg = typeof name === 'string' && name.toLowerCase().endsWith('.png');
+                    const imgUrl = isImg ? RAW_BASE + config.path + "/" + name : "";
+                    const displayName = isImg ? name.replace(/\.[^/.]+$/, "") : name;
                     const opt = document.createElement('div');
                     opt.className = 'custom-option';
 
-                    const imgTag = name && name.toLowerCase().endsWith('.png') ? `<img src="${imgUrl}">` : '';
+                    const imgTag = isImg ? `<img src="${imgUrl}">` : '';
                     opt.innerHTML = `${imgTag}<span>${displayName}</span>`;
                     opt.setAttribute('data-index', idx);
 
                     opt.onclick = () => {
                         if (selectedImg) {
-                            selectedImg.src = imgUrl;
-                            selectedImg.style.display = 'block';
+                            if (isImg) {
+                                selectedImg.src = imgUrl;
+                                selectedImg.style.display = 'block';
+                            } else {
+                                selectedImg.style.display = 'none';
+                            }
                         }
                         if (selectedText) selectedText.innerText = displayName;
                         el.classList.remove('open');
@@ -1007,7 +1033,7 @@
                         if (config.id === 'sel-bass') updateBassUploadState(idx);
 
                         // Auto-save changes for dropdowns
-                        if (['sel-bg-ini', 'sel-bass', 'sel-background', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
+                        if (['sel-bg-ini', 'sel-bg-move', 'sel-bg-flash', 'sel-bass', 'sel-eq-type', 'sel-eq-color', 'sel-eq-effect', 'sel-eq-peak'].includes(config.id)) {
                             triggerAutoSave();
                         }
                     };
@@ -1020,14 +1046,18 @@
             if (images.length > 0) {
                 if (selectedIndex < 0 || selectedIndex >= images.length) selectedIndex = 0;
                 const activeName = images[selectedIndex];
-                const imgUrl = RAW_BASE + config.path + "/" + activeName;
-                if (selectedImg && activeName && activeName.toLowerCase().endsWith('.png')) {
-                    selectedImg.src = imgUrl;
-                    selectedImg.style.display = 'block';
-                } else if (selectedImg) {
-                    selectedImg.style.display = 'none';
+                const isImg = typeof activeName === 'string' && activeName.toLowerCase().endsWith('.png');
+                const imgUrl = isImg ? RAW_BASE + config.path + "/" + activeName : "";
+                if (selectedImg) {
+                    if (isImg) {
+                        selectedImg.src = imgUrl;
+                        selectedImg.style.display = 'block';
+                    } else {
+                        selectedImg.style.display = 'none';
+                    }
                 }
-                if (selectedText) selectedText.innerText = activeName.replace(/\.[^/.]+$/, "");
+                const activeDisplay = isImg ? activeName.replace(/\.[^/.]+$/, "") : activeName;
+                if (selectedText) selectedText.innerText = activeDisplay;
                 el.setAttribute('data-index', selectedIndex);
             } else {
                 if (selectedText) selectedText.innerText = "No " + config.label + " files";
@@ -1240,13 +1270,18 @@
                     if (parts.length >= 11) {
                         currentMusicIdx = parts[1];
                         console.log("Updating UI with values:", parts);
-                        updateUIComponent('sel-background', parts[2]);
+                        const raw_bg_effect = parseInt(parts[2]) || 0;
+                        const bg_move = raw_bg_effect % 4;
+                        const bg_flash = Math.floor(raw_bg_effect / 4) % 5;
+
+                        updateUIComponent('sel-bg-ini', parts[8]);
+                        updateUIComponent('sel-bg-move', bg_move);
+                        updateUIComponent('sel-bg-flash', bg_flash);
                         updateUIComponent('sel-bass', parts[3]);
                         updateUIComponent('sel-eq-type', parts[4]);
                         updateUIComponent('sel-eq-color', parts[5]);
                         updateUIComponent('sel-eq-effect', parts[6]);
                         updateUIComponent('sel-eq-peak', parts[7]);
-                        updateUIComponent('sel-bg-ini', parts[8]);
 
                         const bgSpd = document.getElementById('bg-gif-speed');
                         if (bgSpd) { bgSpd.value = parts[9]; document.getElementById('bg-gif-speed-val').innerText = parts[9]; }
@@ -1360,8 +1395,10 @@
 
         function sendMetadata() {
             if (!isDataLoaded) return;
-            const bg_sel = getIdx('sel-background');
             const bg_mode = getIdx('sel-bg-ini');
+            const bg_move = parseInt(getIdx('sel-bg-move')) || 0;
+            const bg_flash = parseInt(getIdx('sel-bg-flash')) || 0;
+            const bg_sel = bg_move + (bg_flash * 4);
             const bass = getIdx('sel-bass');
             const eq_type = getIdx('sel-eq-type');
             const eq_color = getIdx('sel-eq-color');
@@ -1402,15 +1439,16 @@
             const name = items[val];
 
             if (name !== undefined) {
-                const imgUrl = RAW_BASE + config.path + "/" + name;
-                const displayName = name.replace(/\.[^/.]+$/, "");
+                const isImg = typeof name === 'string' && name.toLowerCase().endsWith('.png');
+                const imgUrl = isImg ? RAW_BASE + config.path + "/" + name : "";
+                const displayName = isImg ? name.replace(/\.[^/.]+$/, "") : name;
 
                 const selText = el.querySelector('.selected-text');
                 if (selText) selText.innerText = displayName;
 
                 const selImg = el.querySelector('.selected-img');
                 if (selImg) {
-                    if (name && name.toLowerCase().endsWith('.png')) {
+                    if (isImg) {
                         selImg.src = imgUrl;
                         selImg.style.display = 'block';
                     } else {
@@ -1420,7 +1458,7 @@
 
                 if (id === 'sel-bg-ini') updateBgUploadState(val);
                 if (id === 'sel-bass') updateBassUploadState(val);
-                console.log(`Updated ${id} to index ${val} (Direct from DATA: ${displayName})`);
+                console.log(`Updated ${id} to index ${val} (${displayName})`);
             } else {
                 console.warn(`Index ${val} NOT FOUND in DATA for path ${config.path}`);
             }
