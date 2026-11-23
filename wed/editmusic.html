@@ -892,15 +892,35 @@
     <script>
         const RAW_BASE = "https://raw.githubusercontent.com/oclockmagic/DATA/refs/heads/main/fft/";
 
+        const DEFAULT_BASS = ["none.png","file.png","image.png","random.png","0.png","1.png","10.png","13.png","14.png","15.png","2.png","20.png","21.png","22.png","23.png","24.png","25.png","26.png","27.png","28.png","29.png","3.png","30.png","31.png","32.png","33.png","34.png","35.png","36.png","37.png","38.png","39.png","4.png","40.png","41.png","42.png","43.png","44.png","45.png","46.png","47.png","48.png","49.png","5.png","50.png","51.png","52.png","53.png","55.png","56.png","57.png","58.png","59.png","6.png","60.png","61.png","63.png","64.png","66.png","68.png","69.png","7.png","70.png","71.png","72.png","73.png","74.png","8.png","9.png","kk.png","ll.png"];
+
+        const DEFAULT_EQ_TYPE = ["000.png","001.png","01-cot.png","02-cot_peak_down.png","03-cot_peak_up.png","04-nhay.png","05-nhay_dac.png","06-nhay_tim.png","07-nhay_vuong.png","08-nhay_tron.png","09-chay.png","10-chay_peak_down.png","11-chay_peak_up.png","12-giua.png","13-giua_peak_down.png","14-giua_peak_up.png","15-xuong.png","16-xuong_peak_down.png","17-xuong_peak_up.png","18-vacham_cong.png","19-vacham_vuong.png","20-vacham_tron.png","21-vacham_tim.png","22-vacham_dac.png","23-vacham_ran1.png","23-vacham_random.png","24-cotdoi.png","25-cotdoi_peak_1.png","25-cotdoi_peak_2.png","25-cotdoi_peak_3.png"];
+
+        const DEFAULT_EQ_COLOR = ["011.png","012.png","013.png","014.png","016.png","017.png","018.png","019.png","020.png","021.png","022.png","023.png","024.png","025.png","026.png","027.png","028.png","file.png","random.png"];
+
+        const DEFAULT_EQ_PEAK = ["1.png","2.png","3.png","4.png","file.png","random.png"];
+
+        var _BASS_DATA_, _EQ_TYPE_DATA_, _EQ_COLOR_DATA_, _EQ_PEAK_DATA_;
+        function getSafeArray(val, fallback) {
+            if (!Array.isArray(val) || val.length === 0) return fallback;
+            if (val.length === 1 && (val[0] === undefined || Array.isArray(val[0]))) return fallback;
+            return val.map(item => (typeof item === 'string') ? item.replace(/\.bmp$/i, '.png') : item);
+        }
+
+        const rawBass = ["none.png","file.png","image.png","random.png","1.png","10.png","13.png","14.png","15.png","2.png","20.png","21.png","22.png","23.png","24.png","25.png","26.png","27.png","28.png","29.png","3.png","30.png","31.png","32.png","33.png","34.png","35.png","36.png","37.png","38.png","39.png","4.png","40.png","41.png","42.png","43.png","44.png","45.png","46.png","47.png","48.png","49.png","5.png","50.png","51.png","52.png","53.png","55.png","56.png","57.png","58.png","59.png","6.png","60.png","61.png","63.png","64.png","66.png","68.png","69.png","7.png","70.png","71.png","72.png","73.png","74.png","75.png","76.png","8.png","9.png","kk.png","ll.png"];
+        const rawEqType = ["00-random.png","01-cot.png","02-cot_peak_down.png","03-cot_peak_up.png","04-nhay.png","05-nhay_dac.png","06-nhay_tim.png","07-nhay_vuong.png","08-nhay_tron.png","09-chay.png","10-chay_peak_down.png","11-chay_peak_up.png","12-giua.png","13-giua_peak_down.png","14-giua_peak_up.png","15-xuong.png","16-xuong_peak_down.png","17-xuong_peak_up.png","18-vacham_cong.png","19-vacham_vuong.png","20-vacham_tron.png","21-vacham_tim.png","22-vacham_dac.png","23-vacham_random.png","24-cotdoi.png","25-cotdoi_peak_down.png"];
+        const rawEqColor = ["random.png","file.png","011.png","012.png","013.png","014.png","016.png","017.png","018.png","019.png","020.png","021.png","022.png","023.png","024.png","025.png","026.png","027.png","028.png"];
+        const rawEqPeak = ["random.png","file.png","1.png","2.png","3.png","4.png"];
+
         const DATA = {
             "background/ini": ["none.png", "file.png", "image.png"],
             "background/move": ["None", "Zoom", "Move0", "Move1"],
             "background/flash": ["Off", "White", "Rainbow", "Heatmap", "Invert"],
-            "bass": ["none.png","file.png","image.png","random.png","1.bmp","10.bmp","13.bmp","14.bmp","15.bmp","2.bmp","20.bmp","21.bmp","22.bmp","23.bmp","24.bmp","25.bmp","26.bmp","27.bmp","28.bmp","29.bmp","3.bmp","30.bmp","31.bmp","32.bmp","33.bmp","34.bmp","35.bmp","36.bmp","37.bmp","38.bmp","39.bmp","4.bmp","40.bmp","41.bmp","42.bmp","43.bmp","44.bmp","45.bmp","46.bmp","47.bmp","48.bmp","49.bmp","5.bmp","50.bmp","51.bmp","52.bmp","53.bmp","55.bmp","56.bmp","57.bmp","58.bmp","59.bmp","6.bmp","60.bmp","61.bmp","63.bmp","64.bmp","66.bmp","68.bmp","69.bmp","7.bmp","70.bmp","71.bmp","72.bmp","73.bmp","74.bmp","75.bmp","76.bmp","8.bmp","9.bmp","kk.bmp","ll.bmp"],
-            "equalizer/type": [],
-            "equalizer/color": [],
+            "bass": getSafeArray(rawBass, DEFAULT_BASS),
+            "equalizer/type": getSafeArray(rawEqType, DEFAULT_EQ_TYPE),
+            "equalizer/color": getSafeArray(rawEqColor, DEFAULT_EQ_COLOR),
             "equalizer/effect": ["Stand", "Run", "Change"],
-            "equalizer/peak": []
+            "equalizer/peak": getSafeArray(rawEqPeak, DEFAULT_EQ_PEAK)
         };
 
         const CONFIG = [
@@ -1007,8 +1027,9 @@
                     return;
                 }
                 items.forEach((name, idx) => {
-                    const isImg = typeof name === 'string' && name.toLowerCase().endsWith('.png');
-                    const imgUrl = isImg ? RAW_BASE + config.path + "/" + name : "";
+                    const isImg = typeof name === 'string' && /\.(png|bmp|jpg|jpeg)$/i.test(name);
+                    const fixedFile = isImg ? name.replace(/\.bmp$/i, ".png") : name;
+                    const imgUrl = isImg ? RAW_BASE + config.path + "/" + fixedFile : "";
                     const displayName = isImg ? name.replace(/\.[^/.]+$/, "") : name;
                     const opt = document.createElement('div');
                     opt.className = 'custom-option';
@@ -1046,8 +1067,9 @@
             if (images.length > 0) {
                 if (selectedIndex < 0 || selectedIndex >= images.length) selectedIndex = 0;
                 const activeName = images[selectedIndex];
-                const isImg = typeof activeName === 'string' && activeName.toLowerCase().endsWith('.png');
-                const imgUrl = isImg ? RAW_BASE + config.path + "/" + activeName : "";
+                const isImg = typeof activeName === 'string' && /\.(png|bmp|jpg|jpeg)$/i.test(activeName);
+                const fixedFile = isImg ? activeName.replace(/\.bmp$/i, ".png") : activeName;
+                const imgUrl = isImg ? RAW_BASE + config.path + "/" + fixedFile : "";
                 if (selectedImg) {
                     if (isImg) {
                         selectedImg.src = imgUrl;
@@ -1108,7 +1130,9 @@
                     if (index >= 4) { // Các item hình ảnh thực tế bắt đầu từ index 4
                         const images = state['sel-bass'] || [];
                         if (images[index]) {
-                            const imgUrl = RAW_BASE + "bass/" + images[index];
+                            const rawName = images[index];
+                            const fixedName = (typeof rawName === 'string') ? rawName.replace(/\.bmp$/i, ".png") : rawName;
+                            const imgUrl = RAW_BASE + "bass/" + fixedName;
                             console.log("Auto-drawing Bass Image:", imgUrl);
                             const img = new Image();
                             img.crossOrigin = "anonymous";
@@ -1436,11 +1460,16 @@
             if (!config) return;
 
             const items = DATA[config.path] || [];
-            const name = items[val];
+            let name = items[val];
+            if (name === undefined && items.length > 0) {
+                console.warn(`Index ${val} NOT FOUND in DATA for path ${config.path}, falling back to index 0`);
+                name = items[0];
+            }
 
             if (name !== undefined) {
-                const isImg = typeof name === 'string' && name.toLowerCase().endsWith('.png');
-                const imgUrl = isImg ? RAW_BASE + config.path + "/" + name : "";
+                const isImg = typeof name === 'string' && /\.(png|bmp|jpg|jpeg)$/i.test(name);
+                const fixedFile = isImg ? name.replace(/\.bmp$/i, ".png") : name;
+                const imgUrl = isImg ? RAW_BASE + config.path + "/" + fixedFile : "";
                 const displayName = isImg ? name.replace(/\.[^/.]+$/, "") : name;
 
                 const selText = el.querySelector('.selected-text');
